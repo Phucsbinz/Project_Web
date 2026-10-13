@@ -11,3 +11,7 @@ Ghi mọi prompt thực dùng cho UC-ORD-01–08, UC-NOT-01 và UC-RPT-01: giỏ
 ## Bản ghi nguyên văn
 
 [Thêm bản ghi thực theo mẫu.]
+
+## Cập nhật baseline 3.0
+
+Phạm vi UC/role theo IMPLEMENTATION và USE_CASES hiện tại, không dùng danh sách mã cũ. Code/prompt/hình/test của thành viên chưa thực hiện giữ trạng thái chưa có; journal khởi tạo ở AI_PROMPT_HISTORY. Cấu hình trực tiếp properties theo main, không .env.

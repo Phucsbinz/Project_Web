@@ -11,3 +11,7 @@ Ghi tại đây mọi prompt thành viên gửi khi làm UC-CAT-01–09, bao g�
 ## Bản ghi nguyên văn
 
 [Thêm bản ghi thực theo mẫu, giữ lịch sử cả kết quả AI sai và lần sửa.]
+
+## Cập nhật baseline 3.0
+
+Phạm vi UC/role theo IMPLEMENTATION và USE_CASES hiện tại, không dùng danh sách mã cũ. Code/prompt/hình/test của thành viên chưa thực hiện giữ trạng thái chưa có; journal khởi tạo ở AI_PROMPT_HISTORY. Cấu hình trực tiếp properties theo main, không .env.

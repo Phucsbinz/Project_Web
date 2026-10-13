@@ -1,39 +1,29 @@
-# UTETra — Hồ sơ phát triển chức năng và sử dụng AI
+# UTETra — Hồ sơ và cấu hình chung của nhóm
 
-> Ngày khởi tạo: 13/10/2026. Đây là bộ tài liệu làm việc để nhóm cập nhật trong quá trình lập trình và tổng hợp thành báo cáo `.docx` theo yêu cầu giảng viên.
+> Cập nhật 13/10/2026 theo toàn bộ quy định mới của giảng viên. Đọc đầu tiên [QUY_DINH_VA_CAU_HINH_CHUNG.md](QUY_DINH_VA_CAU_HINH_CHUNG.md).
 
-## 1. Yêu cầu báo cáo
+## 1. Bộ tài liệu chính
 
-Mỗi chức năng cần có hướng dẫn xây dựng chi tiết, hình kiến trúc, sơ đồ hoạt động, hình diễn giải source code, hình diễn giải giao diện, hướng dẫn setup và danh sách prompt AI đã dùng để sinh code/sinh hình. Markdown là bản nguồn để nhóm ghi chép; báo cáo Word được tổng hợp sau khi có code, hình và kết quả kiểm chứng thực tế.
+- [PROJECT_PLAN](../PROJECT_PLAN.md): stack, MVC/3 tầng, scope và phân công.
+- [DATABASE_DESIGN](../DATABASE_DESIGN.md): 43 bảng bắt buộc + 2 Shipper thêm; V1 hiện thực 3 bảng identity.
+- [USE_CASES](../USE_CASES.md): 55 UC P0 + 3 UC Shipper P1, actor/owner/validation/payment/state.
+- [COMMON_BASELINE](COMMON_BASELINE.md), [SETUP](SETUP.md), [BASELINE_VERIFICATION](BASELINE_VERIFICATION.md): cấu hình thực, chạy và chứng cứ kiểm thử.
+- [Khảo sát và phân tích](SURVEY_SYSTEM_ANALYSIS.md): bố cục mẫu DOCX và phần nhóm phải khảo sát thật.
+- [BRANCH_WORKFLOW](BRANCH_WORKFLOW.md): main → feature → integration; từng UC do một owner làm đủ tầng.
+- [AI_WORKFLOW](AI_WORKFLOW.md), [prompt đã gửi](AI_PROMPT_HISTORY.md), [REPORT_ASSEMBLY](REPORT_ASSEMBLY.md): nhật ký và báo cáo DOCX.
 
-Không đánh dấu chức năng đã hoàn thành khi mới có đặc tả hoặc sơ đồ đề xuất. Các vị trí `[CẦN BỔ SUNG]` phải được thay bằng thông tin thực trước khi đưa vào báo cáo nộp.
+## 2. Nhánh và hồ sơ
 
-## 2. Cách đọc và sử dụng
+| Thành viên/nhánh | Use case/role liên quan | Hồ sơ |
+| --- | --- | --- |
+| TV1 catalog-sales | Guest/User menu/top; Vendor shop/catalog/promo; Manager/Admin catalog/shop | [IMPLEMENTATION](features/catalog-sales/IMPLEMENTATION.md) |
+| TV2 identity-membership | Guest/User OTP/auth/profile/community/points; Manager/Admin user/role/scope | [IMPLEMENTATION](features/identity-membership/IMPLEMENTATION.md) |
+| TV3 order-payment | User/Vendor checkout/COD/VNPAY; Vendor vận hành; Manager/Admin carrier/commission/refund/revenue; Shipper thêm | [IMPLEMENTATION](features/order-payment/IMPLEMENTATION.md) |
 
-1. Đọc [phân chia nhánh và quy trình Git](BRANCH_WORKFLOW.md).
-2. Đọc [cấu hình chung và hợp đồng tích hợp](COMMON_BASELINE.md) cùng [hướng dẫn setup](SETUP.md).
-3. Đọc [hướng dẫn cho AI của thành viên](AI_WORKFLOW.md).
-4. Mỗi người nhận một nhánh và cập nhật hồ sơ của mình trong `docs/features/`.
-5. Khi hoàn thành từng use case, nhân bản [mẫu hồ sơ use case](templates/USE_CASE_NOTE.md) vào `docs/features/<module>/use-cases/<UC-ID>.md`.
-6. Ghi prompt thật vào nhật ký của module; tham khảo [mẫu ghi prompt](templates/PROMPT_ENTRY.md). Prompt của người dùng trong cuộc trò chuyện khởi tạo được lưu riêng tại [nhật ký yêu cầu](AI_PROMPT_HISTORY.md).
-7. Lưu hình, sơ đồ và nguồn hình theo [quy trình tổng hợp báo cáo Word](REPORT_ASSEMBLY.md).
+Main có pom/config/layout/migration/common code. Không tự dựng project/thư viện khác khi chuyển nhánh. Vendor kế thừa quyền User; Manager scope shop; Admin toàn app. Giữ tất cả chức năng thầy yêu cầu, chỉ phần khoảng cách đã bỏ theo quyết định nhóm. MySQL/TiDB utetra_db là CSDL riêng; cấu hình trực tiếp application*.properties và được theo dõi bởi Git.
 
-## 3. Phân công theo luồng nghiệp vụ
+## 3. Cách ghi hồ sơ
 
-| Thành viên | Nhánh | Luồng phụ trách từ đầu đến cuối | Hồ sơ |
-| --- | --- | --- | --- |
-| TV1 | `feature/catalog-sales` | Quản lý danh mục/món/size/topping/chi nhánh → upload ảnh → khách chọn chi nhánh và xem/tùy biến món | [Danh mục và chi nhánh](features/catalog-sales/IMPLEMENTATION.md) |
-| TV2 | `feature/identity-membership` | Đăng ký/đăng nhập → bảo vệ tài khoản → hồ sơ/địa chỉ → phân công nhân viên → điểm và hạng thành viên | [Tài khoản và thành viên](features/identity-membership/IMPLEMENTATION.md) |
-| TV3 | `feature/order-payment` | Giỏ hàng → checkout → COD → xử lý/hủy đơn → điểm qua hợp đồng dùng chung → realtime và báo cáo | [Bán hàng và thanh toán](features/order-payment/IMPLEMENTATION.md) |
+Mỗi UC dùng [mẫu hồ sơ](templates/USE_CASE_NOTE.md), prompt dùng [mẫu prompt](templates/PROMPT_ENTRY.md). Ghi actor/owner/schema/file/symbol/commit, kiến trúc/activity/sequence, hướng dẫn từng bước, ảnh code/UI thật, setup, test và kết quả AI nhóm sửa. Prompt gợi ý không tính đã dùng; code/hình chưa thực hiện phải ghi rõ.
 
-Mỗi người làm Entity/Repository, DTO, Service, Controller, JSP/JavaScript, kiểm thử và tài liệu cho use case của mình. Không chia nhánh riêng theo Entity/Service/Controller hoặc giao diện/backend khiến một người phải nhận các phần rời rạc. Trọng tâm nghiệm thu là luồng bán hàng và thanh toán; các chức năng khác vẫn giữ theo đặc tả hiện có.
-
-`main` lưu cấu hình/baseline chung và những thay đổi đã được kiểm chứng. `integration/utetra` dùng ghép ba phân hệ trước khi đưa bản chạy chung về `main`. Khách tự chọn chi nhánh; không tính khoảng cách hoặc tự tìm cửa hàng gần nhất.
-
-## 4. Tài liệu nguồn hiện có
-
-- [PROJECT_PLAN.md](../PROJECT_PLAN.md): phạm vi, kiến trúc và lộ trình.
-- [USE_CASES.md](../USE_CASES.md): mã use case và quy tắc nghiệp vụ.
-- [DATABASE_DESIGN.md](../DATABASE_DESIGN.md): 26 bảng, ràng buộc và transaction.
-
-Ba tài liệu này vẫn là nguồn đặc tả chung. Bộ hồ sơ mới bổ sung hướng dẫn làm việc và minh chứng, không tự cắt giảm chức năng hoặc thay đổi nghiệp vụ.
+Repo có nền cấu hình, chưa có tất cả tính năng thương mại. Credential SMTP/Cloudinary/VNPAY chưa cung cấp không được ghi như đã tích hợp; feature giữ config từ main và bổ sung UC của mình.
