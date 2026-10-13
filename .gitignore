@@ -1,0 +1,24 @@
+# Build/IDE files
+target/
+build/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+application-local.yml
+application-local.properties
+*.jks
+*.p12
+
+# Local logs/temp
+*.log
+tmp/
+.local/
+Thumbs.db
+.DS_Store
