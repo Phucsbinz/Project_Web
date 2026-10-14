@@ -23,3 +23,7 @@ Không đánh dấu test hoặc provider thành công nếu chưa kiểm chứng
 Quy trình: đọc → ghi prompt → xác định flow/BR/schema/quyền → activity/sequence → code từng tầng → test → chụp code/UI/export hình → setup → nhóm review/commit. Không xóa toàn bộ tài liệu trước khi viết; chỉnh tại chỗ, giữ lịch sử và lỗi/sửa để tra lại.
 
 Hình AI/mockup/diagram thiết kế ghi rõ nguồn/prompt và chưa triển khai. Hình source/UI để nghiệm thu lấy ứng dụng thật và code đúng commit, có callout/caption. Prompt gợi ý chưa gửi không tính đã dùng; model/thời gian không biết thì ghi không rõ. Không hiển thị password/OTP/token/private key dù config repo private được phép theo dõi.
+
+## Nơi lưu prompt theo nhánh
+
+Yêu cầu người dùng ngày14/10/2026: “à nhớ các prompt của tôi thì note vào prompt của nhánh đó nha”. Prompt sửa nền/cấu hình/contract/phân công chung ghi nguyên văn trong docs/BASELINE_AI_LOG.md trên main; nhật ký yêu cầu chung có thể liên kết nguồn này. Prompt triển khaiUC của feature ghi nguyên văn trong docs/features/<module>/AI_LOG.md của feature đó và liên kết hồ sơUC. Prompt tích hợp liên kết nhật ký nguồn và ghi công việc integration riêng. Không tự chuyển prompt mẫu hoặc prompt kế thừa thành “đã dùng codeUC”; không ghi secret/time/model suy đoán.

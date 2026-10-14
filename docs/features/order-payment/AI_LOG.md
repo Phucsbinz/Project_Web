@@ -15,3 +15,7 @@ Ghi mọi prompt thực dùng cho 21 UC P0 và 3 UC Shipper P1 của order-payme
 ## Cập nhật baseline 3.0
 
 Phạm vi UC/role theo IMPLEMENTATION và USE_CASES hiện tại, không dùng danh sách mã cũ. Code/prompt/hình/test của thành viên chưa thực hiện giữ trạng thái chưa có; journal khởi tạo ở AI_PROMPT_HISTORY. Cấu hình trực tiếp properties theo main, không .env.
+
+## Prompt nền chung kế thừa từ main — 14/10/2026
+
+Xem các bản ghi nguyên văn CLOUD-MAIN-001 đến012 tại [BASELINE_AI_LOG](../../BASELINE_AI_LOG.md). Người dùng yêu cầu bổ sung đặc tả, sửa nền và đồng bộ nhánh; đây là công việc main, không phải prompt triển khai nghiệp vụ của thành viên. Chưa có prompt code UC riêng trong phiên này. Khi bắt đầu UC của nhánh, append prompt nguyên văn vào file này và liên kết note UC, code/commit/test/response thực.
