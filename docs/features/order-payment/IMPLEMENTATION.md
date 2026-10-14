@@ -1,143 +1,118 @@
-# Nhánh feature/order-payment — Bán hàng, thanh toán và vận hành đơn
+# feature/order-payment — Bán hàng, thanh toán và vận hành mọi role
 
-## 1. Thông tin nhận việc
+> Cập nhật theo quy định thầy ngày 13/10/2026. Người phụ trách TV3: [điền tên]. Baseline main/commit: [điền]. Đây là hướng dẫn công việc, không xác nhận mọi UC đã code.
 
-| Mục | Giá trị |
-| --- | --- |
-| Người phụ trách | [CẦN BỔ SUNG] — TV3 |
-| Nhánh | feature/order-payment |
-| Baseline/commit | [CẦN BỔ SUNG] |
-| Use case | UC-ORD-01–08; UC-NOT-01; UC-RPT-01 |
-| Trạng thái | Chưa lập trình; hướng dẫn và sơ đồ thiết kế ban đầu |
-| Nhật ký AI | [AI_LOG.md](AI_LOG.md) |
+## 1. Các file phải đọc và cấu hình
 
-Đây là luồng nghiệp vụ chính: **giỏ → đặt hàng → COD → xử lý/hủy/hoàn tất → thu tiền/điểm → theo dõi và báo cáo**. Một người phụ trách đầy đủ dữ liệu/transaction/API/JSP/test/hồ sơ. Không tách thanh toán hoặc realtime cho người khác làm độc lập khi chưa có hợp đồng transaction.
+Đọc QUY_DINH_VA_CAU_HINH_CHUNG, PROJECT_PLAN, DATABASE_DESIGN, USE_CASES, docs/README, COMMON_BASELINE, SETUP và file hướng dẫn ở gốc nhánh. Java21/Boot3.5.13/WAR/JSP/JSTL/SiteMesh3.2.2/Bootstrap5.3.3/MavenWrapper/MySQL utetra_db/JPA/Flyway theo main; không .env, không tự đổi pom/profile/migration/secret. Một template Shop Homepage chung; Vendor có quyền User, Manager theo scope, Admin global.
 
-Đọc đặc tả gốc, [baseline](../../COMMON_BASELINE.md), [setup](../../SETUP.md) và hướng dẫn nhánh. Các chức năng khác giữ nguyên; chi nhánh do khách tự chọn, không tính khoảng cách.
+## 2. Use case, role và công việc
 
-## 2. Công việc theo use case
+| Mã | Chức năng | Actor | Module owner | Phạm vi | Kết quả kiểm chứng cần đạt |
+| --- | --- | --- | --- | --- | --- |
+| UC-ORD-01 | Thêm món vào giỏ | Guest, User, Vendor | order-payment | P0 bắt buộc | Validate tùy chọn, gộp đúng cấu hình, topping theo mỗi ly |
+| UC-ORD-02 | Sửa/xóa/hợp nhất giỏ | Guest, User, Vendor | order-payment | P0 bắt buộc | Giỏ database cho người đăng nhập, session cho Guest; merge chống lặp |
+| UC-ORD-03 | Checkout | User, Vendor | order-payment | P0 bắt buộc | Store/area/carrier/address/quote, server tính giá, snapshot và idempotency |
+| UC-ORD-04 | Chọn mã giảm giá | User, Vendor | order-payment | P0 bắt buộc | Scope shop/sản phẩm/thời gian/hạn mức; khóa quota tại checkout |
+| UC-ORD-05 | Thanh toán COD | User, Vendor | order-payment | P0 bắt buộc | Khách xác nhận tiền; chỉ người có quyền ghi thu tiền khi giao thành công |
+| UC-ORD-06 | Thanh toán VNPAY | User, Vendor | order-payment | P0 bắt buộc | Sandbox URL ký, IPN xác thực số tiền/ref/signature, callback idempotent |
+| UC-ORD-07 | Lịch sử và theo dõi đơn | User, Vendor | order-payment | P0 bắt buộc | Đơn mình theo mới/xác nhận/lấy hàng/giao/đã giao/hủy/trả/hoàn |
+| UC-ORD-08 | Hủy đơn | User, Vendor | order-payment | P0 bắt buộc | Chỉ NEW cho khách; hoàn điểm, tạo refund nếu đã trả, không refund lặp |
+| UC-ORD-09 | Yêu cầu trả hàng–hoàn tiền | User, Vendor | order-payment | P0 bắt buộc | Đơn đã giao, cửa sổ cấu hình, lý do/chứng cứ, theo dõi kết quả thật |
+| UC-ORD-10 | Realtime và hộp thông báo | Người đăng nhập | order-payment | P0 bắt buộc | Lưu người nhận riêng, after commit, quyền subscribe, reconnect/polling |
+| UC-VND-04 | Quản lý đơn shop | Vendor | order-payment | P0 bắt buộc | Shop mình, chuyển trạng thái hợp lệ/version, có bước PICKED_UP |
+| UC-VND-06 | Doanh thu shop | Vendor | order-payment | P0 bắt buộc | Hàng hóa/phí/hoa hồng/hoàn/net tách riêng, filter shop/date |
+| UC-VND-07 | Xử lý yêu cầu trả hàng | Vendor | order-payment | P0 bắt buộc | Chấp nhận/từ chối có lý do theo shop; refund qua dịch vụ chung |
+| UC-MGR-04 | Chiết khấu app cho shop | Manager | order-payment | P0 bắt buộc | Tỷ lệ/policy shop được giao, không đổi snapshot đơn cũ |
+| UC-MGR-06 | Nhà vận chuyển và phí | Manager | order-payment | P0 bắt buộc | Tên/phí và biểu phí khu vực trong phạm vi được cấp, không tính kilomet |
+| UC-MGR-08 | Đơn, trả hàng và hoàn tiền | Manager | order-payment | P0 bắt buộc | Kiểm quyền shop, transition/transaction/refund/audit |
+| UC-MGR-09 | Báo cáo cửa hàng | Manager | order-payment | P0 bắt buộc | Doanh thu/net/hoàn theo phạm vi shop được giao |
+| UC-ADM-04 | Chiết khấu app cho shop | Admin | order-payment | P0 bắt buộc | Policy hoa hồng toàn app/shop, tỷ lệ snapshot và ledger doanh thu |
+| UC-ADM-06 | Nhà vận chuyển/phí | Admin | order-payment | P0 bắt buộc | CRUD carrier/rate toàn hệ thống; audit và giữ phí đơn đã chốt |
+| UC-ADM-08 | Đơn/giao dịch/trả–hoàn | Admin | order-payment | P0 bắt buộc | Tra cứu, đối soát, refund có chứng cứ, không giả PAID/REFUNDED |
+| UC-ADM-09 | Báo cáo toàn hệ thống | Admin | order-payment | P0 bắt buộc | Giá trị thu, hoàn, hoa hồng và shop net đối chiếu được |
+| UC-SHP-01 | Đơn giao được phân công | Shipper | order-payment | P1 thêm | Phần thêm, chỉ assignment còn hiệu lực |
+| UC-SHP-02 | Cập nhật giao hàng | Shipper | order-payment | P1 thêm | Phần thêm, lấy/giao/thất bại/COD theo assignment, không tự refund |
+| UC-SHP-03 | Thống kê giao hàng | Shipper | order-payment | P1 thêm | Phần thêm, thống kê đúng đơn giao cho mình |
 
-| UC | Công việc từ đầu đến cuối | Minh chứng |
-| --- | --- | --- |
-| ORD-01 | Nhận variant/sugar/ice/topping → kiểm catalog → tính giá → thêm/gộp giỏ → UI | Món hợp lệ/không hợp lệ, giá gồm topping theo mỗi ly |
-| ORD-02 | Session/DB cart → tăng/giảm/xóa → merge sau login → kiểm version/giới hạn | Giỏ cùng/khác chi nhánh, merge retry không nhân đôi |
-| ORD-03 | Customer checkout → địa chỉ/khu vực → giá/điểm → idempotency/transaction/snapshot → xác nhận | Checkout thành công, giá thay đổi, submit lặp, rollback |
-| ORD-04 | Khách xác nhận COD → UI chưa trả → Staff thu đủ tiền khi hoàn tất → PAID | Tiền phải trả, người/thời điểm thu, thu lặp bị chặn |
-| ORD-05 | Notifications DB từng người → event sau commit → UI chuông đơn mới | Đúng chi nhánh, offline đọc lại, rollback không phát |
-| ORD-06 | Staff/Admin đọc hàng đợi → chuyển trạng thái hợp lệ/version → history | Không bỏ bước, sai chi nhánh/màn hình cũ bị chặn |
-| ORD-07 | Chủ đơn xem detail/timeline → socket user queue → reconnect/polling | Trạng thái mới, sự kiện trùng, tài khoản khác không xem |
-| ORD-08 | Lịch sử đơn → hủy PENDING → refund một lần → UI | Hủy/nhận đơn cạnh tranh, đơn cũ giữ snapshot |
-| NOT-01 | Inbox/user → đọc/đánh dấu read_at → quyền hiện tại | Đọc độc lập mỗi người, không truy cập inbox khác |
-| RPT-01 | Query COMPLETED/PAID → subtotal-discount/phí/thực thu → lọc role/store/date | Số liệu đối chiếu seed, đơn hủy/chưa trả loại khỏi doanh thu |
+Mỗi UC do một người làm đủ Entity/Repo/DTO → Service → Controller → JSP/JS → kiểm thử → hồ sơ. Viết báo cáo tách phần actor/role của từng UC, không chỉ tên module. Chọn chi nhánh thủ công; không loại các chức năng OTP/voucher/refund/review/carrier của thầy.
 
-## 3. Cấu hình, schema và phụ thuộc
+## 3. Schema, contract và phụ thuộc
 
-- Không đổi baseline Boot/WAR/JSP/SiteMesh/JPA/profile. Owner 8 bảng: carts, cart_items, cart_item_toppings, orders, order_items, order_item_toppings, order_status_history, notifications.
-- CatalogService/StoreService từ TV1 cung cấp giá, lựa chọn hợp lệ, trạng thái bán và phí khu vực. Không tự tạo bảng giá hoặc tính khoảng cách.
-- CurrentUser/AuthorizationService/AddressService/LoyaltyService/AuditService từ TV2. Không viết lại JWT, quyền hoặc ledger riêng; dịch vụ điểm tham gia transaction của OrderService.
-- WebSocket /ws + STOMP same origin và CSRF CONNECT theo baseline. Cấu hình endpoint/broker/security chốt trên main; nhánh này triển khai event/notifications và frontend subscribe.
-- Customer /cart/**, /checkout, /orders/**; Staff /staff/orders/**, /staff/reports; Admin /admin/dashboard, /admin/reports; /notifications/**. Không tạo route công khai để tra đơn chỉ bằng orderCode.
-- P0 COD; QR/cổng thanh toán vẫn là P1 đã ghi trong đặc tả, không tuyên bố tích hợp khi chỉ hiển thị QR. Thay phạm vi thanh toán phải cập nhật đặc tả và schema qua main.
+Owner các bảng: carts, cart_items, cart_item_toppings, orders, order_items, order_item_toppings, order_status_history, notifications, coupon_redemptions, commission_policies, carriers, carrier_area_rates, payment_transactions, payment_callback_events, return_requests, refund_transactions, store_settlements, delivery_assignments, delivery_events. Chỉ V1 identity đã có trong baseline; bảng khác theo schema thiết kế và migration main mới, không tự tạo cấu trúc khác.
 
-## 4. Thứ tự triển khai
+Contract: CartService, OrderService, PaymentService, RefundService, ReportService, NotificationService. Phụ thuộc: Giá/store/promo TV1, quyền/address/loyalty/audit TV2; COD + VNPAY, carrier/commission/settlement, STOMP và Shipper thêm. Signature/DTO/error/transaction/locking phải chốt trên main trước khi ghép; mock chỉ trong test. Không viết lại giá/điểm/auth/payment service của owner khác.
 
-1. Đồng bộ B0, chốt contract với TV1/TV2; tạo mock chỉ trong test để không chờ UI của nhau.
-2. Entity/Repo/DTO và migration giỏ/đơn/history/notifications đúng schema.
-3. CartService và session adapter, hash cấu hình gộp dòng, version/merge key; JSP tùy biến/giỏ.
-4. Checkout DTO và UI báo giá; server kiểm store/area/variant/toppings/địa chỉ/điểm, trả quote mới khi giá đổi.
-5. Transaction chống đơn trùng, khóa đúng thứ tự, snapshot, ledger cùng transaction, xóa giỏ và history/notifications.
-6. State machine và cancel/complete/thu COD; optimistic conflict, quyền chi nhánh, ghi điểm đúng một lần.
-7. JSP quản lý đơn/detail/timeline/lịch sử; event sau commit, socket authorized, inbox/polling/reconnect.
-8. Dashboard/report theo BR-20–21, không tính revenue từ order chưa trả.
-9. Chạy AT-01–16; đối chiếu ví dụ 96.000 + 15.000 − 10.000 = 101.000, earn 8 điểm; lưu test/hình/prompt.
+## 4. Thứ tự thực hiện từng UC
 
-## 5. Sơ đồ kiến trúc dự kiến
+1. Merge main, ghi baseline/role/UC, đọc tiền điều kiện/BR/acceptance và dependency.
+2. Chốt activity/sequence và schema/DTO/permission; đề xuất migration vào main.
+3. Entity/Repository/query/DTO → Service validation/quyền/transaction/idempotency.
+4. Controller route/error/CSRF → JSP/Bootstrap/JS loading/empty/error theo cùng template.
+5. Chạy test luồng chính/lỗi/quyền/cạnh tranh/callback/media theo UC; đọc kết quả thật.
+6. Ghi code path/symbol/commit, chụp code có chú giải và UI chạy thật; xuất sơ đồ có nguồn.
+7. Điền setup/demo/data/profile, prompt nguyên văn/response/nhóm sửa/test; review/commit.
+
+## 5. Kiến trúc dự kiến của module
 
 ```mermaid
 flowchart LR
-    Customer[Cart / Checkout / Order JSP] --> C[Customer Controllers]
-    Staff[Staff / Admin JSP] --> SC[Operation Controllers]
-    C --> O[CartService / OrderService]
-    SC --> O
-    O --> Cat[CatalogService / StoreService TV1]
-    O --> Identity[Authorization / Address / Loyalty TV2]
-    O --> DB[(Cart / Order / History / Notifications)]
-    O --> Commit[Sau commit]
-    Commit --> WS[STOMP Broker]
-    WS --> Customer
-    WS --> Staff
-    SC --> Report[ReportService / DTO Query]
-    Report --> DB
+    UI[JSP / Bootstrap theo role] --> C[Controller / DTO / CSRF]
+    C --> S[Service / quyền / validation / transaction]
+    S --> R[JPA Repository]
+    R --> DB[(MySQL utetra_db)]
+    S --> Common[Contract main và module khác]
+    S --> Provider[Provider cần thiết theo UC]
 ```
 
-## 6. Activity checkout dự kiến
+Sơ đồ này là khung kiến trúc dự kiến. Mỗi UC phải có activity/sequence riêng từ code thực và xuất ảnh PNG/SVG; không dùng một hình generic thay tất cả UC trong báo cáo cuối.
 
-```mermaid
-flowchart TD
-    A[Customer gửi checkout và key] --> B{Quyền và CSRF hợp lệ?}
-    B -->|Không| E[Trả lỗi]
-    B -->|Có| K{Key đã tạo đơn?}
-    K -->|Có, cùng hash| Old[Trả đơn cũ]
-    K -->|Có, khác hash| Conflict[Trả 409]
-    K -->|Chưa| L[Khóa giỏ, kiểm lại key và version]
-    L --> C{Chi nhánh, khu vực, món và giá hợp lệ?}
-    C -->|Giá đổi| Quote[Báo giá mới, khách xác nhận lại]
-    C -->|Không hợp lệ| E
-    C -->|Có| P[Khóa account điểm và kiểm số dư]
-    P --> T[Tạo snapshot đơn, redeem, history, notification, xóa dòng giỏ]
-    T --> D{Commit thành công?}
-    D -->|Không| R[Rollback tất cả, giữ giỏ và điểm]
-    D -->|Có| W[Phát event sau commit]
-    W --> OK[Trang xác nhận COD chưa thanh toán]
-```
+## 6. Chỗ ghi minh chứng và tiến độ
 
-Nguồn sơ đồ này là thiết kế, cần bổ sung sơ đồ riêng cho cart merge, thu COD/hoàn tất, hủy/refund, realtime và report theo UC khi có code. Khi xuất hình, ghi commit và điểm khác so với thiết kế ban đầu.
-
-## 7. Hướng dẫn diễn giải code và UI
-
-| Luồng | Code thực cần chụp và giải thích | UI cần chụp | Path/symbol/commit |
-| --- | --- | --- | --- |
-| Giỏ | Cấu hình hash, gộp, merge session và cart version | Giỏ/options, giới hạn, hết món | [CẦN BỔ SUNG] |
-| Checkout | Khóa/idempotency, quote, tính BigDecimal, snapshot, transaction | Địa chỉ/store/area, tiền/điểm, lỗi và success | [CẦN BỔ SUNG] |
-| COD/đơn | Transition/permission/version, paid_at, earn/refund | Staff queue/detail, confirm thu tiền, cancel | [CẦN BỔ SUNG] |
-| Realtime | After commit, authorized destinations, reconnect | Hai trình duyệt đơn mới/status, inbox | [CẦN BỔ SUNG] |
-| Báo cáo | Query trạng thái/thời gian/phạm vi chi nhánh | Dashboard và seed đối chiếu | [CẦN BỔ SUNG] |
-
-Mỗi ảnh code đánh số điểm quan trọng, giải thích đầu vào/đầu ra và vì sao cần kiểm tra. Với transaction, chỉ rõ lỗi nào rollback dữ liệu và vì sao socket lỗi không hủy đơn. Screenshot UI từ ứng dụng chạy thực, không dùng mockup làm bằng chứng.
-
-## 8. Setup và kiểm chứng riêng
-
-Cần seed hai khách, Staff A/B, Admin, món/size/topping/store/area và account điểm. Setup trên cùng profile/config main; mở ít nhất hai phiên trình duyệt: Customer và Staff đúng chi nhánh, thêm Staff chi nhánh khác cho test quyền.
-
-Ghi lệnh thực chạy/test, commit, orderCode thử, trạng thái/payment/ledger trước–sau. Test hai request checkout cùng key, hủy cạnh tranh nhận đơn, complete/thu COD lặp, rollback điểm, subscribe trái quyền và reconnect. Giữ data giả lập, che thông tin người nhận/token trên hình.
-
-## 9. Prompt gợi ý — chưa sử dụng
-
-```text
-Đọc UC-ORD-03 và schema UTETra. Làm checkout COD từ Cart DTO đến JSP
-trên feature/order-payment, dùng contract TV1/TV2 của main.
-Không nhận giá client. Giữ snapshot, checkout_key/request_hash, cart version,
-transaction giỏ/đơn/điểm/history/notifications. Nếu quote đổi phải xác nhận lại.
-Giải thích code, test replay và rollback; ghi prompt và minh chứng thật vào hồ sơ.
-```
-
-```text
-Từ code thực UC-ORD-04/06/08 tại <commit>, dựng activity diagram hoàn tất
-COD và hủy đơn: quyền, version, PAID, EARN/REFUND đúng một lần.
-Chỉ rõ đoạn code cần chụp/callout và trạng thái UI cần minh chứng.
-Không vẽ cổng thanh toán hoặc chức năng chưa có; ghi hạn chế hiện tại.
-```
-
-## 10. Tiến độ và bàn giao
-
-| UC | Code/test | Diagram/code/UI images | Setup | Prompt thật | Review/commit |
+| UC/role | Path/symbol/commit | Activity/sequence/ảnh code/UI | Config/setup/data | Prompt/response | Test/reviewer/trạng thái |
 | --- | --- | --- | --- | --- | --- |
-| 10 UC được giao, tách mỗi UC thành một dòng khi làm | Chưa | Chưa kiểm chứng | Chưa | Chưa | [điền] |
+| UC-ORD-01 / Guest, User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ORD-02 / Guest, User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ORD-03 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ORD-04 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ORD-05 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ORD-06 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ORD-07 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ORD-08 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ORD-09 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ORD-10 / Người đăng nhập | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-VND-04 / Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-VND-06 / Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-VND-07 / Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-MGR-04 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-MGR-06 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-MGR-08 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-MGR-09 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ADM-04 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ADM-06 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ADM-08 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ADM-09 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-SHP-01 / Shipper | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-SHP-02 / Shipper | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-SHP-03 / Shipper | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
 
-- [ ] Đủ 10 UC và toàn luồng từ giỏ tới báo cáo.
-- [ ] Tiền/điểm/đơn không trùng, không âm, rollback đúng và snapshot giữ lịch sử.
-- [ ] HTTP/socket theo chủ đơn và chi nhánh; các contract chạy thật khi ghép.
-- [ ] Setup mới chạy được; hình/prompt/test thực đầy đủ theo yêu cầu báo cáo.
-- [ ] Giữ chức năng ngoài phần tính khoảng cách theo đặc tả.
+Ghi setup thực và thao tác demo theo role; lỗi/vấn đề còn lại ở cuối từng UC note. Không chụp secret/config password vào báo cáo. Phản hồi dài lưu ai-responses/<ID>.md; ảnh/source lưu assets/<UC-ID>. Không bịa test pass hoặc ảnh chạy.
 
-Lỗi còn lại/phụ thuộc cần xử lý: [CẦN BỔ SUNG].
+## 7. Prompt mẫu — chưa sử dụng
+
+```text
+Đọc toàn bộ quy định/baseline UTETra và hướng dẫn nhánh hiện tại.
+Triển khai <UC-ID> từ Entity/Repo/DTO tới Service/Controller/JSP/test.
+Giữ MySQL utetra_db, stack và contract main. Actor/scope/OTP/payment/media
+phải đúng đặc tả; không tự bỏ chức năng hoặc đổi framework.
+Ghi prompt thật, phản hồi, code/ảnh/setup/commit, phần nhóm sửa và kiểm chứng
+vào AI_LOG và hồ sơ UC. Sơ đồ dự kiến và ảnh UI thật phải phân biệt.
+```
+
+## 8. Checklist bàn giao
+
+- [ ] Đủ UC/role được giao; cả luồng chính/lỗi và quyền dữ liệu.
+- [ ] Cấu hình/DDL/DTO/contract đúng main; provider thiếu ghi rõ.
+- [ ] Có kiến trúc/activity/sequence, hình code/UI chú giải, setup và test thật.
+- [ ] Prompt nguyên văn/response/nhóm sửa/commit/reviewer đầy đủ.
+- [ ] Ghép integration cùng owner dependency; kiểm chức năng chung theo thang điểm.

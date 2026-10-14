@@ -7,15 +7,6 @@ build/
 .project
 .settings/
 
-# Local configuration and secrets
-.env
-.env.*
-!.env.example
-application-local.yml
-application-local.properties
-*.jks
-*.p12
-
 # Local logs/temp
 *.log
 tmp/

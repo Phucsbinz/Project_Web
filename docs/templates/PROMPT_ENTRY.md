@@ -24,3 +24,7 @@ Toàn văn phản hồi hoặc file lưu phản hồi: [điền]. File code/hìn
 Nhóm sửa gì, ai sửa, vì sao: [điền]. Đối chiếu schema/contract và quyền: [điền]. Lệnh test/chạy/thao tác kiểm tra hình: [điền]. Kết quả thật và minh chứng: [điền]. Commit sau/reviewer: [điền]. Hạn chế và prompt tiếp theo: [điền].
 
 Prompt gợi ý chưa gửi không đưa vào danh sách “đã sử dụng”. Giữ lịch sử nếu kết quả AI sai và được sửa sau đó.
+
+## Đối chiếu quy định cuối kỳ
+
+Ghi actor/role, owner/shop/scope/purchase eligibility và tiêu chí điểm liên quan. Đọc QUY_DINH_VA_CAU_HINH_CHUNG và schema/UC phiên bản hiện tại. Config trực tiếp application properties; không chép secret vào hồ sơ. OTP email/Vendor quyền User/COD+online/coupon/returns thuộc bắt buộc khi UC liên quan; Shipper ghi phần thêm.

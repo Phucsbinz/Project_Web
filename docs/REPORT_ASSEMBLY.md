@@ -13,14 +13,15 @@
 
 ## 2. Cấu trúc báo cáo đề xuất
 
-1. Thông tin đề tài/thành viên, mục tiêu và bảng phân công use case/nhánh.
-2. Kiến trúc toàn ứng dụng, công nghệ, dữ liệu và cấu hình chung.
-3. Hướng dẫn setup từ môi trường sạch, seed demo và cách chạy.
-4. Chức năng danh mục và chi nhánh: từng UC của TV1.
-5. Chức năng tài khoản/thành viên: từng UC của TV2.
-6. Chức năng giỏ/đặt/thanh toán/vận hành/realtime/báo cáo: từng UC của TV3.
-7. Ghép nhánh và kiểm thử xuyên suốt, kết quả và hạn chế thực tế.
-8. Phụ lục nhật ký prompt AI và kiểm kê hình/code/commit.
+1. Thông tin đề tài/thành viên, mục tiêu, bảng phân công use case/role/nhánh và minh chứng GitHub.
+2. Khảo sát hiện trạng thực theo SURVEY_SYSTEM_ANALYSIS, phân tích actor/use case/sequence/ERD; mẫu DOCX là tham khảo.
+3. Kiến trúc toàn ứng dụng, công nghệ, dữ liệu và cấu hình chung.
+4. Hướng dẫn setup từ môi trường sạch, seed demo và cách chạy.
+5. Chức năng danh mục và chi nhánh: từng UC của TV1.
+6. Chức năng tài khoản/thành viên: từng UC của TV2.
+7. Chức năng giỏ/đặt/thanh toán/vận hành/realtime/báo cáo: từng UC của TV3.
+8. Ghép nhánh và kiểm thử xuyên suốt, kết quả và hạn chế thực tế.
+9. Phụ lục nhật ký prompt AI và kiểm kê hình/code/commit.
 
 Mỗi UC trình bày mục tiêu → kiến trúc → activity → hướng dẫn code từng bước → hình source có diễn giải → hình UI → setup/test → vai trò AI. Không chỉ gom ảnh hoặc danh sách prompt mà thiếu hướng dẫn xây dựng.
 
@@ -56,7 +57,7 @@ Sơ đồ do AI gợi ý bằng Mermaid vẫn cần ghi prompt thật nếu đư
 
 1. Chốt commit tích hợp và yêu cầu mỗi thành viên bàn giao hồ sơ UC/prompt/ảnh thực.
 2. Nhóm trưởng rà placeholders, kiểm link, số hình, nguồn code và kết quả test.
-3. Tạo một bản Markdown tổng hợp theo mục lục trên, với đường dẫn ảnh hợp lệ; chuyển các Mermaid thành PNG/SVG trước khi chuyển Word.
+3. Tạo một bản Markdown tổng hợp theo mục lục đã đánh số lại và nhóm theo vai trò ở trên, với đường dẫn ảnh hợp lệ; chuyển các Mermaid thành PNG/SVG trước khi chuyển Word.
 4. Chọn công cụ chuyển Markdown → DOCX hoặc dàn trong Word. Nếu dùng Pandoc, cần cài thực và tạo file tổng hợp trước; lệnh mẫu dưới đây chưa được chạy trong lượt soạn hồ sơ này.
 5. Mở DOCX hoặc render để kiểm mọi trang: ảnh/code rõ, caption đúng, bảng không bị cắt, mục lục/số trang hợp lệ, font tiếng Việt chuẩn.
 6. Sửa bản nguồn và xuất lại đến khi đạt yêu cầu; giao cả DOCX và nguồn/hình cho nhóm.
@@ -70,10 +71,14 @@ Không kỳ vọng Pandoc tự render Mermaid. Không dùng lệnh mẫu làm ch
 
 ## 6. Checklist nghiệm thu hồ sơ
 
-- [ ] Đủ 28 UC P0: 9 catalog + 9 identity + 10 order/notification/report.
+- [ ] Đủ 55 UC P0 theo USE_CASES hiện tại, cộng 3 UC Shipper nếu triển khai phần thêm; phân công và báo cáo theo actor/role.
 - [ ] Mỗi UC có đủ sáu phần giảng viên yêu cầu, gồm setup và prompt thật.
 - [ ] Các hình thiết kế/mockup và ảnh thực được ghi nhãn, không lẫn bằng chứng.
 - [ ] Báo cáo giữ các chức năng đặc tả và chọn chi nhánh thủ công, không tính khoảng cách.
 - [ ] Version/code/branch/commit và kết quả test có thể tra lại.
 - [ ] Không còn placeholder trong phần nộp; phần chưa làm ghi rõ hạn chế.
 - [ ] DOCX được mở/render và kiểm layout, hình, bảng, caption và tiếng Việt.
+
+## Bổ sung theo quy định cuối kỳ
+
+Đối chiếu từng chức năng Guest/User/Vendor/Manager/Admin và Shipper phần thêm với QUY_DINH_VA_CAU_HINH_CHUNG. Chú ý OTP email, top20, cart database, COD+VNPAY, like/view/review/comment50ký tự/ảnh/video, promo/commission/carrier và trả–hoàn. Phần đã làm phải có code/test/hình/commit, phần chưa làm ghi rõ. Thang điểm 10 tương đương100: quản lý1, ba tầng0.5, logic/security6, UI1, sáng tạo1, báo cáo0.5; chưa có deadline/link nộp. Một template Bootstrap, config properties main, MySQL riêng.
