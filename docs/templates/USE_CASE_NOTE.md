@@ -72,3 +72,7 @@ Prompt liên quan: [ID/link]. AI hỗ trợ phần nào: [điền]. Nhóm chỉn
 - [ ] Setup và testcase được chạy thực, có kết quả và commit.
 - [ ] Prompt nguyên văn/response/đánh giá nhóm được liên kết.
 - [ ] Reviewer/ngày/commit được điền, không còn placeholder ở phần nộp.
+
+## Đối chiếu quy định cuối kỳ
+
+Ghi actor/role, owner/shop/scope/purchase eligibility và tiêu chí điểm liên quan. Đọc QUY_DINH_VA_CAU_HINH_CHUNG và schema/UC phiên bản hiện tại. Config trực tiếp application properties; không chép secret vào hồ sơ. OTP email/Vendor quyền User/COD+online/coupon/returns thuộc bắt buộc khi UC liên quan; Shipper ghi phần thêm.
