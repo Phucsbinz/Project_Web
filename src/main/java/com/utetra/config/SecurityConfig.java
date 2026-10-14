@@ -7,19 +7,27 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.context.NullSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
+import org.springframework.security.web.session.DisableEncodeUrlFilter;
 
 @Configuration @EnableMethodSecurity
 public class SecurityConfig {
     @Bean public Clock clock() { return Clock.systemUTC(); }
     @Bean public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
     @Bean public SecurityFilterChain securityFilterChain(HttpSecurity http,JwtAuthenticationFilter jwt) throws Exception {
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        // JWT is authenticated on every request. Do not treat each request (including
+        // assets) as a new login and rotate the CSRF cookie behind the rendered page.
+        // Authentication is reconstructed from JWT, never restored from an HTTP session.
+        // The identity login/logout service must rotate CSRF at those actual boundaries.
+        http.sessionManagement(session -> session.disable())
+            .securityContext(context -> context.securityContextRepository(new NullSecurityContextRepository()))
+            .addFilterBefore(new DisableEncodeUrlFilter(),SecurityContextHolderFilter.class)
             .requestCache(cache -> cache.disable())
             .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .authorizeHttpRequests(auth -> auth

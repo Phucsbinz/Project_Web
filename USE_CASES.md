@@ -119,7 +119,7 @@ BR-13: App commission là phần shop trả hệ thống, tách discount khách/
 
 Mã trạng thái xử lý: NEW → CONFIRMED (đã xác nhận/đang pha chế) → PICKED_UP → DELIVERING → DELIVERED. User được hủy NEW; Vendor/Manager/Admin có thể hủy trước DELIVERED khi có lý do và khả năng hoàn khoản đã trả. Không bỏ trạng thái hoặc sửa ngược tùy ý.
 
-Sau DELIVERED, trong cửa sổ return cấu hình (đề xuất 48 giờ, cần chốt nghiệp vụ trà sữa): RETURN_REQUESTED → RETURN_APPROVED → RETURNED → REFUNDED. Từ chối request có lý do trở về DELIVERED; ghi lịch sử. Có trường waive_physical_return cho đồ uống lỗi đã được duyệt bằng chứng. Bản cơ bản hoàn cả đơn, không triển khai partial refund trước khi có schema/logic mới.
+Sau DELIVERED, trong cửa sổ return cấu hình **3 giờ kể từ delivered_at** (người dùng chốt ngày 14/10/2026; đúng mốc 3 giờ đã hết hạn): RETURN_REQUESTED → RETURN_APPROVED → RETURNED → REFUNDED. Từ chối request có lý do trở về DELIVERED; ghi lịch sử. Có trường waive_physical_return cho đồ uống lỗi đã được duyệt bằng chứng. Bản cơ bản hoàn cả đơn, không triển khai partial refund trước khi có schema/logic mới.
 
 Payment status độc lập: UNPAID, PENDING, PAID, FAILED, CANCELLED, REFUND_PENDING, REFUNDED. COD thu đủ mới PAID và DELIVERED trong một transaction. VNPAY có thể PAID khi đơn còn NEW; Vendor chỉ confirm prepaid order sau xác nhận IPN. Hủy đơn PAID phải tạo REFUND_PENDING, không giả là chưa trả. Giao dịch online thất bại/timeout phải có retry/reconcile/expiry và giữ audit.
 
