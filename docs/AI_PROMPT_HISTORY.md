@@ -397,3 +397,39 @@ có 1 file md ghi vào prompt á
 ```
 
 Kết quả của nhóm prompt: môi trường càiJDK21/Maven/proxy; kiểm tra danh mục55P0+3P1, bổ sung58hồ sơ và3hướng dẫn nhánh, sửaSiteMesh, buildWAR và16testđạt. Nghiệp vụUC/ảnh thật/DOCX/provider vẫn chưa triển khai hoặc kiểm chứng. Xem [BASELINE_AI_LOG](BASELINE_AI_LOG.md) và [BASELINE_VERIFICATION](BASELINE_VERIFICATION.md). Commit bổ sung đầu f11b6af; các commit tiếp theo tra bằng Git log. Đồng bộ cục bộ không đồng nghĩa GitHub đã push.
+
+## Xác nhận đồng bộ và yêu cầu push — 14/10/2026
+
+Nhánh liên quan: main và các feature/integration kế thừa nền chung. Giữ nguyên prompt; không tự gán giờ gửi.
+
+### CLOUD-MAIN-014
+
+```text
+ụa cloud tôi có chặn gì đâu
+```
+
+### CLOUD-MAIN-015
+
+```text
+kệ cái đó đi xem cấu hình đồng bộ chưa
+```
+
+### CLOUD-MAIN-016
+
+```text
+oke chưa đầy đủ use case cho project chưa để chốt bắt đầu phân công
+```
+
+### CLOUD-MAIN-017
+
+```text
+giờ làm sao để commit những thay đổi của b lên
+```
+
+### CLOUD-MAIN-018
+
+```text
+push các nhánh lên GitHub đi
+```
+
+Kết quả trước push: cấu hình/tree local của ba feature và integration khớp main; danh mục55P0+3P1 đầy đủ để phân công. Người dùng yêu cầu bỏ qua việc điều tra mạngTiDB trong lượt này và cho phép push cả năm nhánhGitHub. Fetch trước push xác nhận remote không có commit mới cần ghép; không force-push. Kết quả push phải xác minh remote bằng công cụ trước khi báo hoàn tất.
