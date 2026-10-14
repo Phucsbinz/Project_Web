@@ -1,71 +1,81 @@
-# UTETra — Hướng dẫn setup chung và ghi kết quả thực tế
+# UTETra — Hướng dẫn chạy baseline chung
 
-> Trạng thái: khung hướng dẫn trước khi dựng B0. Repository tại lúc soạn bộ tài liệu chưa có mã nguồn Spring Boot/pom/Wrapper. Các lệnh build/chạy dưới đây là mục tiêu cần xác minh sau B0, không phải kết quả đã chạy thành công.
+## 1. Bộ phiên bản và cấu hình thật
 
-## 1. Thông tin môi trường cần ghi
+Java 21; Boot 3.5.13; Maven Wrapper 3.9.16; WAR utetra; package com.utetra. Đọc pom.xml và src/main/resources/application.properties, application-mysql.properties. Cấu hình ghi trực tiếp và được theo dõi Git theo yêu cầu nhóm; không import .env. Mật khẩu chỉ tại file cấu hình cần thiết, không sao chép vào báo cáo/prompt/log.
 
-| Thành phần | Yêu cầu theo baseline | Phiên bản thực/đường dẫn/kết quả |
-| --- | --- | --- |
-| OS/IDE | Windows hoặc môi trường nhóm chọn | [CẦN BỔ SUNG] |
-| JDK | Java 21 | [CẦN BỔ SUNG] |
-| Build | Maven Wrapper dùng chung | [CẦN BỔ SUNG] |
-| Database chính | SQL Server; database/tài khoản được tạo trước | [CẦN BỔ SUNG] |
-| Database kiểm thử | MySQL, PostgreSQL theo profile riêng | [CẦN BỔ SUNG] |
-| Dịch vụ ảnh | Cloudinary của nhóm | [CẦN BỔ SUNG — không điền secret] |
-| Email | SMTP test và cấu hình gửi thật khi cần | [CẦN BỔ SUNG] |
-| Baseline | Commit main dùng để setup | [CẦN BỔ SUNG] |
+MySQL Connector nối TiDB Cloud cổng 4000, database riêng utetra_db, sslMode=VERIFY_IDENTITY. Database đã tạo riêng; không đổi hoặc migration project_idv. TLS dùng truststore JDK; không hạ xuống useSSL=false/trust-all khi gặp lỗi kết nối cloud. JPA validate và Flyway chỉ chạy migration version mới.
 
-## 2. Lấy mã và chọn nhánh
-
-Clone từ URL repository thật do nhóm cung cấp; không bịa URL. `git switch <nhanh-duoc-giao>` rồi `git merge main` sau khi B0 hoàn thành. Kiểm tra hướng dẫn ở gốc nhánh, hồ sơ module và contract. Điền URL repo/commit/tag ở bản báo cáo; không đưa credential vào URL.
-
-## 3. Biến môi trường chung
-
-| Biến | Nội dung | Owner/phạm vi |
-| --- | --- | --- |
-| SPRING_PROFILES_ACTIVE | sqlserver hoặc mysql hoặc postgresql, chọn đúng một | B0 |
-| DB_URL, DB_USERNAME, DB_PASSWORD | URL JDBC/tài khoản tương ứng database đã tạo | B0 |
-| JWT_SECRET, JWT_ISSUER, JWT_AUDIENCE | Theo cấu hình Security/JWT chung | TV2 |
-| CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET | Tài khoản ảnh của nhóm; secret chỉ local/secret store | TV1 |
-| MAIL_HOST, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, MAIL_FROM | SMTP reset mật khẩu | TV2 |
-| APP_BASE_URL | Địa chỉ website thực đang chạy | B0/TV2 |
-| APP_TIME_ZONE | Asia/Ho_Chi_Minh | B0 |
-
-Không thêm biến tính khoảng cách/Maps API. Phí giao đọc store_delivery_areas theo đặc tả, không tự thay bằng phí cố định. Biến phải được ánh xạ thực trong application config. Không commit file .env/password/key, không chụp secret trong hình setup.
-
-## 4. Database và migration
-
-1. Tạo database và tài khoản đủ quyền theo hệ quản trị được chọn.
-2. Chọn profile và URL JDBC đúng; đảm bảo service DB đang chạy, port và quyền truy cập hợp lệ.
-3. Flyway áp dụng migration của dialect; ddl-auto=validate; không để mỗi người tự tạo schema khác bằng update.
-4. Chỉ bật seed demo ở môi trường thử. Seed đủ ba vai trò, hai Customer, Staff hai chi nhánh, danh mục/món/size/topping/khu vực, tình trạng bán và đơn/ledger mẫu nhất quán.
-5. Ghi lệnh thực, thứ tự migration, kết quả và lỗi sửa được. Kiểm thử các dialect còn lại trước khi xác nhận hỗ trợ ba CSDL.
-
-## 5. Build và chạy sau B0
+## 2. Lấy main và chạy
 
 ```powershell
-$env:SPRING_PROFILES_ACTIVE = 'sqlserver'
-# Thiết lập các biến local còn lại bằng giá trị của môi trường mình.
+git switch main
+java -version
+.\mvnw.cmd -v
 .\mvnw.cmd clean verify
 java -jar target/utetra.war
 ```
 
-Tên WAR phụ thuộc finalName=utetra đã chốt. Điền port/context path/URL truy cập thực sau khi chạy; không mặc định chúng đã được cấu hình. Kiểm tra trang JSP qua SiteMesh ở bản WAR, không chỉ IDE. Local HTTP cần cookie Secure theo profile local; triển khai dùng HTTPS/WSS theo tài liệu bảo mật.
+PATH/JAVA_HOME phải trỏ Java21, không Java17 mặc định máy hiện tại. Nếu cần trên máy đang làm:
 
-## 6. Setup và demo theo nhánh
+```powershell
+$env:JAVA_HOME='D:/java/.tools/jdk21/jdk-21.0.12.1+1'
+$env:Path=$env:JAVA_HOME+'/bin;'+$env:Path
+```
 
-| Nhánh | Điều kiện riêng | Luồng chạy để kiểm chứng |
+Máy khác điền JDK21 của máy mình; không tự sửa pom thành Java17/26. Mở http://localhost:8080/; health JSON /api/system/health. Trang home hiện chỉ kiểm chứng JSP/JSTL/SiteMesh/Bootstrap và ghi rõ tính năng còn chờ feature. /auth/login là màn hình thông tin, chưa luồng đăng nhập/OTP thật; không có tài khoản demo tự tạo.
+
+## 3. Schema và test
+
+V1 hiện thực roles/users/auth_sessions, seed 5 role; flyway_schema_history là bảng kỹ thuật. Không tạo 43 bảng bằng Hibernate update; chúng là thiết kế để triển khai migration tiếp theo. Thứ tự/owner/FK theo DATABASE_DESIGN. Main chốt migration, không mỗi nhánh tạo V2 khác nhau.
+
+Test profile test dùng H2 isolated, create-drop chỉ database in-memory để thử JWT/role/CSRF/session; không trỏ test create-drop lên cloud. Migration/JPA/TLS kiểm chứng bằng WAR trên MySQL/TiDB thật; bằng chứng trong BASELINE_VERIFICATION.md.
+
+## 4. Cấu hình provider
+
+| Nhóm properties | Cần điền/bật | Trạng thái |
 | --- | --- | --- |
-| catalog-sales | Cloudinary, data catalog và chi nhánh/khu vực, quyền Admin/Staff | CRUD món/upload → menu → chọn size/topping/chi nhánh |
-| identity-membership | JWT, session/reset schema, SMTP test, tài khoản phân công | Đăng ký → đăng nhập → refresh/reset → địa chỉ → kiểm tra quyền/điểm |
-| order-payment | Hai module trước hoặc contract mock trong test, dữ liệu giá/quyền/điểm | Giỏ → checkout COD → xử lý → thu tiền → realtime/điểm/báo cáo |
+| security.jwt.* | Đã có key ngẫu nhiên, issuer/audience/15m/7d; không tự thay khác giữa nhánh | Hạ tầng ký/verify; login/refresh nghiệp vụ cần feature |
+| app.otp.* và spring.mail.* | SMTP/from/auth/TLS, enabled; OTP HMAC/TTL5m/5attempts/60s theo contract | Chưa có SMTP thật; OTP nghiệp vụ chưa code |
+| cloudinary.* | cloud-name/api-key/api-secret; enabled=true khi có credentials | Bean/adapter có kiểm ảnh, hiện disabled |
+| payment.vnpay.* | tmn-code/hash-secret/return URL/IPN HTTPS công khai; enabled | Chưa merchant credentials/handler; không báo payment thành công |
+| features.shipper.enabled | Bật khi có module assignment/permission/test | Phần thêm, hiện false |
 
-Mỗi người bổ sung hướng dẫn cụ thể tại IMPLEMENTATION của mình và file riêng nếu dài. Contract mock chỉ hỗ trợ test module, không dùng làm bằng chứng demo ứng dụng tích hợp.
+Không lấy credentials mẫu trong PDF để dùng thật. Provider disabled không nghĩa là tích hợp đã hoàn tất. Cloudinary baseline hỗ trợ ảnh JPEG/PNG5MB; feature phải mở rộng video đúng kiểm MIME/signature/20MB cho comments, và cleanup theo commit/rollback. Chỉ mở IPN khi có handler verify; CSRF exception giới hạn callback thật, không disable toàn app.
 
-## 7. Nhật ký setup và xử lý lỗi
+## 5. Lỗi cấu hình đã gặp và cách giữ nhất quán
 
-| Ngày/người | Commit/profile | Lệnh/thao tác thực | Kết quả | Lỗi và cách sửa | Hình/log minh chứng |
+Java default17 không build release21 → đặt JAVA_HOME. PowerShell truyền Maven -D có dấu chấm phải quote tham số. SiteMesh 3.2.2 mặc định thêm prefix `/WEB-INF/decorators/`. Main map các đường dẫn đầy đủ `/WEB-INF/views/layouts/*.jsp`, nên phải `builder.setDecoratorPrefix("")` trước mapping. Bản sửa này loại đường dẫn ghép sai gây 404/500; vẫn giữ dispatcher REQUEST/ASYNC/ERROR và firewall nghiêm ngặt với request ngoài. API/assets/ws/payments loại khỏi decorator; filter JWT đăng ký một lần trong chain, bean servlet registration disabled.
+
+Các lỗi DNS/TLS/TiDB/credentials phải kiểm cấu hình trước, không đổi DB khác. Nếu 8080 đã dùng, đổi server.port trực tiếp chung hoặc dùng --server.port khi chạy thử và ghi rõ; không để thành viên tự đổi source main không review.
+
+## 6. Setup theo module và nhật ký
+
+Catalog cần Cloudinary/catalog/store/promo seed; Identity cần SMTP/OTP/session/address/community/loyalty; Order cần contract giá/quyền/điểm/promo và merchant sandbox/carrier/commission. Mỗi branch có hướng dẫn riêng và UC note.
+
+| Ngày/người | Commit/profile | Lệnh/URL/dữ liệu | Kết quả thật | Lỗi/cách sửa | Hình/log |
 | --- | --- | --- | --- | --- | --- |
-| [điền] | [điền] | [điền] | [chưa chạy/qua/lỗi] | [điền] | [điền] |
+| [điền] | [điền] | [điền] | [điền] | [điền] | [điền] |
 
-Trước bàn giao chạy từ môi trường sạch, thực hiện backup/restore test và kiểm chứng không thiếu secret/config ngoài tài liệu. Báo cáo nêu rõ CSDL đã kiểm thử, phiên bản và môi trường thực tế.
+## 7. Linux và cloud
+
+Cần JDK 21 đầy đủ, không chỉ JRE; `java -version` và `javac -version` cùng nền 21. Wrapper không cần chmod file tracked: dùng `bash mvnw`. Nếu thư mục người dùng chỉ đọc, đặt Maven cache trong `/workspace`.
+
+```bash
+cd /workspace/Project_Web
+export JAVA_HOME=/workspace/onboarding-utetra/jdk21
+export PATH="$JAVA_HOME/bin:$PATH"
+export MAVEN_USER_HOME=/workspace/.m2
+export MAVEN_OPTS="${MAVEN_OPTS:-} -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts"
+bash mvnw -s /workspace/onboarding-utetra/settings.xml -B -ntp -Dmaven.repo.local=/workspace/.m2/repository verify
+```
+
+Các đường dẫn trên là của môi trường cloud đã chuẩn bị; máy khác dùng JDK/cache của máy mình. `settings.xml` ngoài checkout được tạo từ HTTPS_PROXY của máy bởi install_script trong cấu hình Codex; không lưu thông tin proxy/credential vào Git. Dùng truststore hệ thống có CA môi trường, không tắt TLS. install_script cài JDK với SHA-256 kiểm từ Oracle và tạo settings/cache, start_skill ghi bước khởi động; chúng là cấu hình Codex, không tự push lên GitHub.
+
+Smoke test isolated với H2, giữ nguyên file properties tracked:
+
+```bash
+bash mvnw -s /workspace/onboarding-utetra/settings.xml -B -ntp -Dmaven.repo.local=/workspace/.m2/repository spring-boot:run -Dspring-boot.run.useTestClasspath=true -Dspring-boot.run.profiles=test '-Dspring-boot.run.arguments=--server.port=8081 --spring.config.additional-location=file:./src/test/resources/'
+```
+
+Kiểm HTTP nội bộ: home/login 200 với layout render, health 200 JSON UTETra/UP, Bootstrap 200 CSS, admin không xác thực 401. H2 disposable không chạy migration MySQL và không chứng minh TiDB. TiDB cần DNS và TCP native đến host trong application-mysql.properties cổng 4000; cloud hiện lỗi DNS, probe HTTPS CONNECT nhận 403. Không sửa DB hoặc hạ TLS để vượt lỗi mạng. Sau khi mạng hỗ trợ, chạy WAR với profile mysql và kiểm Flyway/JPA/TLS thật.
