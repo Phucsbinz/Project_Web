@@ -24,10 +24,21 @@ git commit -m "feat(order): implement checkout and payment flow"
 git push -u origin feature/order-payment
 ```
 
-Repo chưa có remote origin trong lúc dựng nền; chỉ nhánh local chưa đủ điểm minh chứng GitHub. Nhóm cung cấp URL private repository rồi cấu hình remote/push các nhánh. Không bịa link PR hoặc lịch sử của thành viên.
+Repository đã có origin GitHub Phucsbinz/Project_Web và đủ ba feature cùng integration/utetra. Kiểm tra ngày 14/10/2026 cho thấy các nhánh remote vẫn ở đặc tả cũ 28 UC và chưa nhận commit baseline main. Bản bổ sung hiện tại đồng bộ các nhánh cục bộ; GitHub chỉ thay đổi khi chủ repository yêu cầu push/PR. Không bịa link PR hoặc lịch sử của thành viên.
 
 Tích hợp: integration lấy main → catalog → identity → order; resolve cùng chủ file, kiểm giá/store/promo → checkout, quyền/OTP/address → đơn, payment/refund → điểm/quota/commission/report, realtime scope và responsive. Chạy ma trận 55 UC bắt buộc + phần thêm bật; phần chưa code ghi rõ. Merge về main sau review, rồi feature lấy main tiếp. Không force-push/reset làm mất công việc.
 
 | UC/role | Người/nhánh | Commit/PR | Công việc thật | Test/minh chứng | Reviewer/ngày | Trạng thái |
 | --- | --- | --- | --- | --- | --- | --- |
 | [điền] | [điền] | [điền] | [điền] | [điền] | [điền] | [điền] |
+
+## Quy trình cập nhật nền chung
+
+Main giữ cả ba BRANCH_*.md để phạm vi UC và cấu hình được cập nhật cùng nhau. Danh mục chuẩn hiện tại: catalog 18 P0, identity 16 P0, order 21 P0 + 3 Shipper P1; tổng 55 P0 + 3 P1. Mọi mã đều có owner và hồ sơ trong docs/features. Nhóm chưa điền tên thành viên/reviewer; không tự gán người thật.
+
+1. Review thay đổi chung trên main: pom/config/security/layout/contract/migration và hướng dẫn UC.
+2. Build/test main; kiểm HTTP home/login/health/assets và quyền. TiDB/Flyway/TLS kiểm riêng khi có mạng native đến DB.
+3. Trong từng feature, merge main; giữ commit chức năng riêng. Khi BRANCH_*.md cũ xung đột, lấy hướng dẫn hiện hành đã chốt trên main và ghi lại phần riêng còn phù hợp.
+4. Kiểm 55+3 mã UC, owner/hồ sơ và tree nền chung với main. Test phần riêng khi nhánh có code mới.
+5. Integration nhận main và ghép feature theo contract; chạy test xuyên suốt khi có nghiệp vụ. Không coi merge hồ sơ là triển khai UC.
+6. Sau khi được yêu cầu push, kiểm remote mới nhất và push bình thường; không force-push/reset để bỏ commit của bạn trong nhóm.

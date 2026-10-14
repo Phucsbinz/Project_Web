@@ -71,3 +71,13 @@ Ghi chú trước cho biết kết nối TLS tới TiDB thành công, Flyway ch�
 11. Hỏi mô hình; được giải thích MVC ở tầng trình bày trong kiến trúc 3 tầng.
 12. Yêu cầu tiếp tục, sau đó yêu cầu tạo file Markdown bàn giao cho agent mới. File này là bản bàn giao đó.
 
+
+## Bổ sung từ phiên cloud — 14/10/2026
+
+Người dùng xác nhận main là nền/cấu hình chung cho ba feature, yêu cầu kiểm toàn bộ tài liệu và bổ sung phạm vi UC trước đồng bộ. Danh mục main có 55 P0 + 3 Shipper P1; cả 58 hồ sơ có đặc tả đầu vào/tiền-hậu điều kiện/luồng/lỗi/quyền/data/route/test dự kiến và sơ đồ hoạt động. Chức năng thương mại vẫn chưa triển khai; hình/test/prompt/commit UC thực chưa được tạo thay bằng chứng.
+
+Ba BRANCH_*.md hiện được quản lý trên main và thay hướng dẫn 28 UC cũ. Scope: catalog 18 P0, identity 16 P0, order 21 P0+3 P1. Remote GitHub có đủ các nhánh nhưng vẫn ở commit cũ tại thời điểm kiểm; đồng bộ cục bộ không tự đồng bộ GitHub. Không push hoặc force-push khi chưa được yêu cầu.
+
+SiteMesh 3.2.2 default decorator prefix gây đường dẫn /WEB-INF/decorators//WEB-INF/views/layouts/...; sửa bằng setDecoratorPrefix("") vì mappings là servlet path đầy đủ. BaselineViewTest dùng Tomcat thật kiểm JSP home/login và API/assets không bị decorate. Xem BASELINE_VERIFICATION cho kết quả lượt mới.
+
+Cloud dùng /workspace/Project_Web, JDK21 và Maven cache/settings ngoài checkout tại /workspace/onboarding-utetra và /workspace/.m2. Các lệnh Windows/PID trước đây là lịch sử, không dùng PID cũ để dừng process cloud. TiDB runtime cloud chưa kết nối do DNS/native egress; không đổi DB, V1 hoặc TLS. SMTP/Cloudinary/VNPAY chưa kiểm thật và còn disabled.

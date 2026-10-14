@@ -45,7 +45,7 @@ Không lấy credentials mẫu trong PDF để dùng thật. Provider disabled k
 
 ## 5. Lỗi cấu hình đã gặp và cách giữ nhất quán
 
-Java default17 không build release21 → đặt JAVA_HOME. PowerShell truyền Maven -D có dấu chấm phải quote tham số. SiteMesh 3.2.2 forward decorator có URL nội bộ bị StrictHttpFirewall chặn → giới hạn Security dispatcher REQUEST/ASYNC/ERROR trong properties; request ngoài vẫn qua firewall, không cho phép malicious // toàn cục. API/assets/ws/payments loại khỏi decorator; filter JWT đăng ký một lần trong chain, bean servlet registration disabled.
+Java default17 không build release21 → đặt JAVA_HOME. PowerShell truyền Maven -D có dấu chấm phải quote tham số. SiteMesh 3.2.2 mặc định thêm prefix `/WEB-INF/decorators/`. Main map các đường dẫn đầy đủ `/WEB-INF/views/layouts/*.jsp`, nên phải `builder.setDecoratorPrefix("")` trước mapping. Bản sửa này loại đường dẫn ghép sai gây 404/500; vẫn giữ dispatcher REQUEST/ASYNC/ERROR và firewall nghiêm ngặt với request ngoài. API/assets/ws/payments loại khỏi decorator; filter JWT đăng ký một lần trong chain, bean servlet registration disabled.
 
 Các lỗi DNS/TLS/TiDB/credentials phải kiểm cấu hình trước, không đổi DB khác. Nếu 8080 đã dùng, đổi server.port trực tiếp chung hoặc dùng --server.port khi chạy thử và ghi rõ; không để thành viên tự đổi source main không review.
 
@@ -56,3 +56,26 @@ Catalog cần Cloudinary/catalog/store/promo seed; Identity cần SMTP/OTP/sessi
 | Ngày/người | Commit/profile | Lệnh/URL/dữ liệu | Kết quả thật | Lỗi/cách sửa | Hình/log |
 | --- | --- | --- | --- | --- | --- |
 | [điền] | [điền] | [điền] | [điền] | [điền] | [điền] |
+
+## 7. Linux và cloud
+
+Cần JDK 21 đầy đủ, không chỉ JRE; `java -version` và `javac -version` cùng nền 21. Wrapper không cần chmod file tracked: dùng `bash mvnw`. Nếu thư mục người dùng chỉ đọc, đặt Maven cache trong `/workspace`.
+
+```bash
+cd /workspace/Project_Web
+export JAVA_HOME=/workspace/onboarding-utetra/jdk21
+export PATH="$JAVA_HOME/bin:$PATH"
+export MAVEN_USER_HOME=/workspace/.m2
+export MAVEN_OPTS="${MAVEN_OPTS:-} -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts"
+bash mvnw -s /workspace/onboarding-utetra/settings.xml -B -ntp -Dmaven.repo.local=/workspace/.m2/repository verify
+```
+
+Các đường dẫn trên là của môi trường cloud đã chuẩn bị; máy khác dùng JDK/cache của máy mình. `settings.xml` ngoài checkout được tạo từ HTTPS_PROXY của máy bởi install_script trong cấu hình Codex; không lưu thông tin proxy/credential vào Git. Dùng truststore hệ thống có CA môi trường, không tắt TLS. install_script cài JDK với SHA-256 kiểm từ Oracle và tạo settings/cache, start_skill ghi bước khởi động; chúng là cấu hình Codex, không tự push lên GitHub.
+
+Smoke test isolated với H2, giữ nguyên file properties tracked:
+
+```bash
+bash mvnw -s /workspace/onboarding-utetra/settings.xml -B -ntp -Dmaven.repo.local=/workspace/.m2/repository spring-boot:run -Dspring-boot.run.useTestClasspath=true -Dspring-boot.run.profiles=test '-Dspring-boot.run.arguments=--server.port=8081 --spring.config.additional-location=file:./src/test/resources/'
+```
+
+Kiểm HTTP nội bộ: home/login 200 với layout render, health 200 JSON UTETra/UP, Bootstrap 200 CSS, admin không xác thực 401. H2 disposable không chạy migration MySQL và không chứng minh TiDB. TiDB cần DNS và TCP native đến host trong application-mysql.properties cổng 4000; cloud hiện lỗi DNS, probe HTTPS CONNECT nhận 403. Không sửa DB hoặc hạ TLS để vượt lỗi mạng. Sau khi mạng hỗ trợ, chạy WAR với profile mysql và kiểm Flyway/JPA/TLS thật.

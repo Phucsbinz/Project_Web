@@ -42,3 +42,7 @@ Chỉ main chốt pom/config/layout/contracts/migration. Feature đề xuất đ
 | Ngày | Main commit | Cấu hình/contract đổi | Nhánh affected | Reviewer | Đồng bộ |
 | --- | --- | --- | --- | --- | --- |
 | 13/10/2026 | [điền commit sau chốt] | Baseline MySQL/TiDB, teacher roles/OTP/VNPAY/return/promo | Cả ba | [điền] | [điền] |
+
+## Bổ sung nền chung 14/10/2026
+
+SiteMeshConfig đặt decorator prefix rỗng trước mapping servlet path đầy đủ; tránh mặc định /WEB-INF/decorators/ ghép trùng đường dẫn. BaselineViewTest kiểm HTTP thật qua embedded Tomcat/JSP/SiteMesh; test security MockMvc riêng vẫn giữ nguyên. Ba BRANCH_*.md là file chung để scope và cấu hình cập nhật cùng main. 58 hồ sơ UC là đặc tả, chưa phải nghiệp vụ chạy; migration mới và contract cụ thể phải review trên main.

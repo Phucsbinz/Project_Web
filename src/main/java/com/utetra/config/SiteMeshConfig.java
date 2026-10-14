@@ -11,6 +11,9 @@ import org.springframework.context.annotation.Configuration;
 public class SiteMeshConfig {
     public static class LayoutFilter extends ConfigurableSiteMeshFilter {
         @Override protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
+            // These mappings are full servlet paths; SiteMesh 3.2.2 otherwise
+            // prepends /WEB-INF/decorators/ to every decorator path.
+            builder.setDecoratorPrefix("");
             builder.addDecoratorPath("/*", "/WEB-INF/views/layouts/client.jsp")
                 .addDecoratorPath("/auth/*", "/WEB-INF/views/layouts/auth.jsp")
                 .addDecoratorPath("/vendor/*", "/WEB-INF/views/layouts/vendor.jsp")

@@ -15,13 +15,13 @@
 
 1. Thông tin đề tài/thành viên, mục tiêu, bảng phân công use case/role/nhánh và minh chứng GitHub.
 2. Khảo sát hiện trạng thực theo SURVEY_SYSTEM_ANALYSIS, phân tích actor/use case/sequence/ERD; mẫu DOCX là tham khảo.
-2. Kiến trúc toàn ứng dụng, công nghệ, dữ liệu và cấu hình chung.
-3. Hướng dẫn setup từ môi trường sạch, seed demo và cách chạy.
-4. Chức năng danh mục và chi nhánh: từng UC của TV1.
-5. Chức năng tài khoản/thành viên: từng UC của TV2.
-6. Chức năng giỏ/đặt/thanh toán/vận hành/realtime/báo cáo: từng UC của TV3.
-7. Ghép nhánh và kiểm thử xuyên suốt, kết quả và hạn chế thực tế.
-8. Phụ lục nhật ký prompt AI và kiểm kê hình/code/commit.
+3. Kiến trúc toàn ứng dụng, công nghệ, dữ liệu và cấu hình chung.
+4. Hướng dẫn setup từ môi trường sạch, seed demo và cách chạy.
+5. Chức năng danh mục và chi nhánh: từng UC của TV1.
+6. Chức năng tài khoản/thành viên: từng UC của TV2.
+7. Chức năng giỏ/đặt/thanh toán/vận hành/realtime/báo cáo: từng UC của TV3.
+8. Ghép nhánh và kiểm thử xuyên suốt, kết quả và hạn chế thực tế.
+9. Phụ lục nhật ký prompt AI và kiểm kê hình/code/commit.
 
 Mỗi UC trình bày mục tiêu → kiến trúc → activity → hướng dẫn code từng bước → hình source có diễn giải → hình UI → setup/test → vai trò AI. Không chỉ gom ảnh hoặc danh sách prompt mà thiếu hướng dẫn xây dựng.
 

@@ -271,3 +271,19 @@ tiếp tục đi
 ## Đính chính hiện trạng cuối lượt cấu hình
 
 Các ghi chú trước nói chưa có code là lịch sử tại thời điểm đó. Lượt này đã dựng nền Spring Boot/WAR/JSP/Security/JPA/MySQL/STOMP/Media adapter và kiểm thử riêng, xem BASELINE_VERIFICATION và COURSE_CONFIG_MAPPING. Các chức năng thương mại vẫn chờ feature, không coi mọi UC đã hoàn tất. Database project_idv chỉ xuất hiện trong yêu cầu ban đầu, sau đó đã chuyển sang utetra_db theo yêu cầu mới.
+
+## P-REQ-022 — Đọc ngữ cảnh và kiểm nền chung trên cloud
+
+Ngày ghi: 14/10/2026. Các prompt liên quan được giữ nguyên dưới đây; thiếu thời gian gửi chính xác thì không tự gán.
+
+```text
+bạn đọc đầy đủ file md với file ngữ cảnh đi để hiểu tôi đã làm những gì và làm được gì
+nhánh main sẽ là cấu hình chung rồi sẽ đồng bộ vào các nhánh nhóm các chức năng để bạn tôi dùng chung cấu hình thay vì mỗi người 1 cái
+xem cấu hình oke chưa bạn xem folder tài liệu cấu hình đi đọc hết các file
+đọc rồi xem cấu hình hiện tại đúng theo hướng dẫn cấu hình đó chưa
+và bạn xem các chức năng hiện tại đã đồng bộ cho project này chưa ý là các nhánh branch đầy đủ cho project chưa rồi mới đồng bộ cấu hình main qua các nhánh
+ý là đầy đủ use case chưa
+bổ sung tất cả đi
+```
+
+Kết quả: đối chiếu danh mục 55 P0+3 P1, hồ sơ/module và nhánh GitHub; bổ sung đặc tả 58 UC và ba hướng dẫn nhánh trên nền chung; sửa decorator prefix SiteMesh với test HTTP thực. Các ô người/reviewer/hình/code/test UC chưa có bằng chứng vẫn giữ trạng thái chưa thực hiện. Cloud build/test không thay kiểm migration TiDB. Không đẩy lên GitHub trong lượt bổ sung này.

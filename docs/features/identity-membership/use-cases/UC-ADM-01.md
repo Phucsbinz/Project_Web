@@ -1,16 +1,83 @@
 # UC-ADM-01 — Tìm/quản lý user và phân quyền
 
-> Hồ sơ UC-ADM-01, actor Admin, nhánh feature/identity-membership; bắt buộc. Chưa triển khai. Nghiệm thu: Toàn hệ thống, khóa/revoke, phân công Manager, giữ Admin cuối cùng. Sao chép sang `docs/features/<module>/use-cases/<UC-ID>.md`; điều chỉnh link tương đối theo vị trí mới. Mỗi UC làm từ đầu đến cuối theo đặc tả, không bỏ các luồng lỗi.
+> Actor: Admin. Owner: feature/identity-membership. P0 bắt buộc. Đặc tả thiết kế; chưa có code, ảnh chạy hoặc test nghiệp vụ của UC này.
+
+## Đặc tả chức năng
+
+Mục tiêu và điều kiện nghiệm thu: Toàn hệ thống, khóa/revoke, phân công Manager, giữ Admin cuối cùng.
+
+Nguồn: [Danh mục và BR](../../../../USE_CASES.md), [từ điển dữ liệu](../../../../DATABASE_DESIGN.md), [quy định chung](../../../QUY_DINH_VA_CAU_HINH_CHUNG.md). Nền và contract: [COMMON_BASELINE](../../../COMMON_BASELINE.md).
+
+- Kích hoạt: actor chọn chức năng tìm/quản lý user và phân quyền trên giao diện hoặc gọi route tương ứng.
+- Tiền điều kiện: nền main đã đồng bộ; bảng cần dùng có migration đã review; dữ liệu tham chiếu tồn tại. Public chỉ đọc dữ liệu được duyệt; thao tác bảo vệ cần tài khoản active/verified, phiên hợp lệ và đúng phạm vi.
+- Đầu vào: userId, role, active, manager assignments, version. ID và số tiền từ client không thay thế kiểm quyền/tính toán phía server.
+- Dữ liệu: `users, roles, store_memberships, auth_sessions, audit_logs`. Ngoài ba bảng identity V1, đây là các bảng cần triển khai, chưa được xem là đã có.
+- Contract dự kiến: `AuthorizationService/UserService`; route dự kiến: `/admin/users`. Chốt DTO/signature và migration trên main trước khi code; không tự tạo Service trùng chức năng module khác.
+- Hậu điều kiện thành công: đạt điều kiện nghiệm thu nêu trên; trạng thái và dữ liệu nhất quán, trả DTO/view đã escape. GET không thay đổi dữ liệu nghiệp vụ; ghi nhiều bảng phải có transaction và kiểm quyền trước ghi.
+- Hậu điều kiện thất bại: không ghi dở/mất dữ liệu; lỗi validation/quyền/version rõ ràng; provider thất bại có pending/retry hoặc lỗi thật, không giả thành công.
+
+### Luồng chính
+
+1. Kiểm Admin.
+2. validate role/membership.
+3. khóa/đổi quyền/phân công.
+4. revoke affected sessions.
+5. audit.
+
+### Sơ đồ hoạt động dự kiến
+
+```mermaid
+flowchart TD
+    Start([Bắt đầu]) --> Permission{Đúng điều kiện và quyền?}
+    Permission -->|Không| Denied[Từ chối; giữ dữ liệu]
+    Permission -->|Có| S1
+    S1["Kiểm Admin"]
+    S1 --> S2
+    S2["validate role/membership"]
+    S2 --> S3
+    S3["khóa/đổi quyền/phân công"]
+    S3 --> S4
+    S4["revoke affected sessions"]
+    S4 --> S5
+    S5["audit"]
+    S5 --> Result([Trả kết quả])
+    Denied --> Result
+```
+
+Sơ đồ mô tả luồng thiết kế; các nhánh lỗi/cạnh tranh cụ thể ở mục tiếp theo. Cập nhật theo code thực và xuất ảnh khi lập báo cáo.
+
+### Luồng thay thế, lỗi và cạnh tranh
+
+Giữ Admin hoạt động cuối cùng dưới khóa; invalid role/scope; stale version; tránh mass assignment. Request thay đổi phải có CSRF; dùng version/unique/locking theo schema khi ghi. Event ra ngoài transaction chỉ phát sau commit; không đưa credential, OTP rõ, token hoặc password vào log/DTO.
+
+### Kiểm thử nghiệm thu cần thực hiện
+
+| Case | Mong đợi | Kết quả hiện tại |
+| --- | --- | --- |
+| Luồng chính với userId, role, active, manager assignments, version hợp lệ | Toàn hệ thống, khóa/revoke, phân công Manager, giữ Admin cuối cùng | Chưa chạy — UC chưa triển khai |
+| Input hoặc tham chiếu không hợp lệ | Lỗi rõ ràng, không ghi dở | Chưa chạy |
+| Actor/owner/scope không hợp lệ | 401/403 hoặc 404 theo contract, không lộ dữ liệu | Chưa chạy |
+| Tình huống đặc thù: Giữ Admin hoạt động cuối cùng dưới khóa; invalid role/scope; stale version; tránh mass assignment | Tuân thủ luồng lỗi và tính nhất quán nêu trên | Chưa chạy |
+
+### Triển khai theo ba tầng
+
+1. Chốt DTO và các bảng `users, roles, store_memberships, auth_sessions, audit_logs`; nhóm trưởng đặt version migration duy nhất trên main, giữ nguyên V1 đã áp dụng.
+2. Entity/Repository ánh xạ FK/unique/version và query scoped; map DTO trong Service khi `open-in-view=false`.
+3. `AuthorizationService/UserService` xử lý luồng chính, validation/quyền/transaction và các lỗi đặc thù ở trên.
+4. Controller cho `/admin/users` nhận DTO, principal và CSRF; JSP dùng Bootstrap/layout chung, hiển thị loading/empty/error.
+5. Viết và chạy các case nghiệm thu; bổ sung code path/symbol/commit và ảnh chạy thật vào các mục hồ sơ bên dưới.
+
+Các ô minh chứng bên dưới được điền khi có kết quả thực; không dùng đặc tả hoặc sơ đồ dự kiến làm bằng chứng chức năng hoàn thành.
 
 ## 1. Phạm vi và người thực hiện
 
 | Mục | Nội dung |
 | --- | --- |
-| UC/nhánh/người | [điền] |
-| Vai trò và quyền dữ liệu | [điền] |
+| UC/nhánh/người | UC-ADM-01 / feature/identity-membership / TV2; tên cá nhân chưa phân công |
+| Vai trò và quyền dữ liệu | Admin; lấy identity từ principal, kiểm owner/shop/membership/assignment tại Service |
 | Baseline main/commit implementation | [điền] |
-| Quy tắc BR và bảng dữ liệu | [điền, theo đặc tả] |
-| Trạng thái/ngày | [chưa làm/đang làm/đã kiểm chứng] |
+| Quy tắc BR và bảng dữ liệu | users, roles, store_memberships, auth_sessions, audit_logs; theo USE_CASES.md và DATABASE_DESIGN.md |
+| Trạng thái/ngày | Đặc tả bổ sung 14/10/2026; chức năng chưa triển khai |
 
 Mục tiêu: [điền]. Tiền điều kiện/kích hoạt: [điền]. Đầu vào/đầu ra/hậu điều kiện: [điền]. Luồng chính, luồng lỗi, cạnh tranh và quyền: [điền].
 
@@ -42,7 +109,7 @@ Thêm văn bản giải thích đủ để người khác xây lại chức năn
 | --- | --- | --- | --- | --- |
 | [MOD-UC-CODE-01] | [điền] | [điền] | [điền] | [điền] |
 
-Chụp code thật, đánh dấu validation/quyền/dữ liệu/transaction và giải thích dưới hình. Chèn ảnh bằng `![caption](path-to-image.png)` sau khi ảnh có thật; không tạo link ảnh giả chỉ để hoàn thành checklist.
+Chụp code thật, đánh dấu validation/quyền/dữ liệu/transaction và giải thích dưới hình. Chỉ chèn đường dẫn ảnh sau khi ảnh có thật; không tạo link ảnh giả chỉ để hoàn thành checklist.
 
 ## 5. Hình diễn giải giao diện
 
