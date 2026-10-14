@@ -1,21 +1,9 @@
-# Nhánh main — Nền tảng chung UTETra
+# Main — Nền cấu hình UTETra
 
-Main giữ cấu hình/baseline dùng chung và bản tích hợp đã qua kiểm chứng. Khởi tạo hiện tại là tài liệu, chưa có ứng dụng Spring Boot chạy được.
+Đọc docs/QUY_DINH_VA_CAU_HINH_CHUNG.md trước, rồi PROJECT_PLAN, DATABASE_DESIGN, USE_CASES, docs/README, COMMON_BASELINE, SETUP và BASELINE_VERIFICATION.
 
-Đọc theo thứ tự: PROJECT_PLAN.md → DATABASE_DESIGN.md → USE_CASES.md → docs/README.md → docs/COMMON_BASELINE.md → docs/SETUP.md → docs/BRANCH_WORKFLOW.md.
+Main đã có mã nền Java21/Boot3.5.13/WAR/JSP/JSTL/SiteMesh/Bootstrap/JPA/MySQL/TiDB/JWT/Security/STOMP/Cloudinary adapter, Maven Wrapper và V1 identity. Main giữ cấu hình trực tiếp properties được Git theo dõi; database riêng utetra_db, không sửa project_idv. Provider chưa có credential tắt và ghi rõ. Nền kiểm chứng không phải các chức năng thương mại đã xong.
 
-Người phụ trách B0: nhóm trưởng, các thành viên review. Dựng Java 21/Boot 3.5.x/WAR/JSP/JSTL/SiteMesh/Bootstrap/JPA, ba profile DB, config mẫu không secret, layout/route, contract và migration theo 26 bảng. Khóa phiên bản cụ thể trong pom; không để từng nhánh tự khởi tạo project riêng.
+Ba nhánh catalog-sales/identity-membership/order-payment làm UC trọn luồng theo actor/owner bảng USE_CASES. Vendor quyền User, Manager shop-scope, Admin toàn app, Shipper phần thêm. Không giới hạn lại COD-only/3role/link-reset hoặc tự bỏ tính năng thầy. Integration ghép và review; các nhánh lấy main mới trước làm.
 
-Nhánh chức năng nhận cả dữ liệu/logic/controller/JSP/test/hồ sơ của use case: feature/catalog-sales (TV1), feature/identity-membership (TV2), feature/order-payment (TV3). integration/utetra ghép chúng trước khi đưa bản ổn định về main.
-
-## Hồ sơ B0 cần nhóm ghi
-
-| Công việc | File/commit thực | Cấu hình/chọn version | Lệnh/kết quả | Hình minh chứng | Prompt/reviewer |
-| --- | --- | --- | --- | --- | --- |
-| Maven/WAR/dependencies | [điền] | [điền] | [chưa chạy] | [điền] | [điền] |
-| JSP/JSTL/SiteMesh/layout | [điền] | [điền] | [chưa chạy] | [điền] | [điền] |
-| Profile DB/migration/seed | [điền] | [điền] | [chưa chạy] | [điền] | [điền] |
-| Contract/security/socket config | [điền] | [điền] | [chưa chạy] | [điền] | [điền] |
-| Setup và smoke test chung | [điền] | [điền] | [chưa chạy] | [điền] | [điền] |
-
-Giữ nhật ký yêu cầu tại docs/AI_PROMPT_HISTORY.md và ghi prompt B0 thực dùng vào file mới docs/BASELINE_AI_LOG.md theo mẫu prompt. Chỉ cập nhật docs/SETUP thành “đã chạy” khi có log/ảnh thực. Phần khoảng cách đã loại khỏi phạm vi; các chức năng khác giữ theo đặc tả.
+Prompt khởi tạo/quy định/cấu hình của người dùng được ghi AI_PROMPT_HISTORY; công việc baseline/test/sửa lỗi ở BASELINE_AI_LOG. Nhóm điền tên/reviewer/PR/commit/tiến độ thật, không bịa kết quả.

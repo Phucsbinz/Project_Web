@@ -99,3 +99,301 @@ bạn nhớ mỗi nhánh làm file md giải thích công việc mỗi nhánh v�
 | P-REQ-007 | AI_PROMPT_HISTORY và AI_LOG của module | Ghi thêm prompt AI đã sử dụng thật và phần nhóm đánh giá/chỉnh sửa |
 
 Sau khi tạo nhánh, commit Git là bằng chứng file tồn tại, không phải bằng chứng tính năng đã chạy. Người tổng hợp điền hash commit cuối và kết quả kiểm tra vào hồ sơ tích hợp, không thay prompt nguyên văn.
+
+## P-REQ-009 — Quy định cuối kỳ đầy đủ
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn:**
+
+```text
+3. Nội dung:
+
+a. Khảo sát hiện trạng và phân tích thiết kế hệ thống
+
+https://utexlms.hcmute.edu.vn/pluginfile.php/1976452/mod_page/content/17/KhaoSat_PhanTichHeThong.docx
+
+b. Tiến hành phân công nhiệm vụ từng thành viên code theo các chức năng theo User+Guest; Vendor, Manager, Admin,Shipper tương ứng trong bước a. Sử dụng 01 template Boostrap để làm giao diện đẹp.
+
+- Chức năng chung: tìm kiếm và lọc sản phẩm, đăng ký tài khoản có gửi mã OTP kích hoạt qua Email, đăng nhập, đăng xuất, quên mật khẩu có gửi mã OTP kích hoạt qua Email. Mật khẩu phải được mã hóa. Nếu dùng Spring boot thì dùng Spring Security.
+
+Guest: Giao diện Trang chủ (hiển thị sản phẩm bán trên 10 sản phẩm của các shop (sắp xếp theo thứ tự từ lớn đến nhỏ)
+User: Giao diện trang chủ, trang sản phẩm theo danh mục, 20 (sản phẩm mới, bán chạy, đánh giá, yêu thích) nhất được phân trang (hoặc lazy loading), trang profile user (có quản lý địa chỉ nhận hàng khác nhau nếu làm đề tài về Bán hàng), trang chi tiết sản phẩm, giỏ hàng được lưu trên database, thanh toán(COD, VNPAY hoặc MOMO), quản lý lịch sử mua hàng theo trạng thái (đơn hàng mới, đã xác nhận, đang giao, đã giao, hủy, trả hàng- hoàn tiền), thích sản phẩm, sản phẩm đã xem, đánh giá sản phẩm đã mua, bình luận (text (tối thiểu 50 ký tự), hình ảnh/video) sản phẩm đã mua, chọn mã giảm giá,...
+Vendor (Seller): có các quyền của User và thêm các chức năng: đăng ký shop, quản lý trang chủ shop, quản lý sản phẩm của mình, quản lý đơn hàng của shop theo trạng thái (đơn hàng mới, đã xác nhận, đã lấy hàng, đang giao, đã giao, hủy, trả hàng- hoàn tiền), tạo chương trình khuyến mãi, quản lý doanh thu của shop.
+Manager: Quản lý từng cửa hàng: tìm kiếm và quản lý user, quản lý sản phẩm của từng shop, Quản lý doanh mục, quản lý chiết khấu app cho các shop, quản lý chương trình khuyến mãi (giảm % sản phẩm, giảm phí vận chuyển), quản lý nhà vận chuyển (tên nhà vận chuyển, phí vận chuyển)..
+Admin: tìm kiếm và quản lý user, quản lý sản phẩm của từng shop, Quản lý doanh mục, quản lý chiết khấu app cho các shop, quản lý chương trình khuyến mãi (giảm % sản phẩm, giảm phí vận chuyển), quản lý nhà vận chuyển (tên nhà vận chuyển, phí vận chuyển).
+Shipper (phần thêm): Quản lý đơn hàng được phân công đi giao, thống kê đơn hàng được phân công giao.
+c. Các đề tài không phải bán hàng thì sẽ có role: Guest, User, Manager, Admin. các chức năng cho từng role sẽ thảo luận với giáo viên để quyết định.
+
+d. Viết báo cáo mà mình được phân công ứng với vai trò từng User+Guest; Vendor, Admin, shipper theo từng thành viên trong nhóm.
+
+
+e. Tiêu chí chấm điểm: thang điểm 100 và quy đổi sang thang điểm 10
+
+Quản lý, phân công nhiệm vụ các thành viên và có quá trình commit Github: 1 điểm
+Đúng cấu trúc project theo mô hình 3 tầng: 0.5 điểm
+Đúng và đầy đủ tính logic, validation, security,.. của các chức năng từng role: 6 điểm
+Giao diện đẹp, dễ sử dụng và Responsive: 1 điểm
+Các chức năng sáng tạo: đối với đề tài bán hàng (ví dụ: thanh toán qua ví điện tử, JWT, Phiếu giảm giá, websocket...) các đề tài khác với các chức năng tương đương (websocket): 1 điểm. 
+Khả năng báo cáo và trả lời câu hỏi: 0.5 điểm
+f. Thời gian:
+
+Nộp báo cáo cuối kỳ: (link nộp báo cáo xem trong mục cuối kỳ)
+Báo cáo cuối kỳ: . bạn đọc đầy đủ các quy định này rồi ghi nhớ nha rồi cấu hình đầy đủ lại cho project này cho các file md đã soạn
+```
+
+**Kết quả/đính chính:** Mở rộng đặc tả theo yêu cầu thầy; 55 UC bắt buộc và 3 Shipper thêm, vai trò/OTP/payment/promo/return, thang điểm và hồ sơ.
+
+## P-REQ-010 — Mẫu khảo sát tham khảo
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn:**
+
+```text
+d:\WEBCUOIKI\KhaoSat_PhanTichHeThong.docx file khao sat này nha
+đọc qua đi nó như kiểu tham khảo
+```
+
+**Kết quả/đính chính:** Đọc nội dung DOCX làm nguồn bố cục, không copy schema/nhận xét cũ.
+
+## P-REQ-011 — Nhắc quy định
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn:**
+
+```text
+nhớ đọc cái quy định tôi gửi nha
+```
+
+**Kết quả/đính chính:** Quy định cuối kỳ là nguồn ưu tiên, không chỉ sửa tên công nghệ.
+
+## P-REQ-012 — Cấu hình thật theo tài liệu và MySQL
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn:**
+
+```text
+Xây dựng website chuỗi bán trà sữa UTETra bằng Spring boot + JSP/JSTL + Decorator Sitemesh + Bootstrap + JPA + SQLServer/MySQL/ postgreSQL+JWT+websocket+Cloudairy. bạn cấu hình những cái này nha db ở đây mình dùng mysql bạn đọc tài liệu thầy tôi hướng dẫn các cấu hình cho các công cụ liệt kê ở trên rồi cấu hình cho project này đi d:\WEBCUOIKI\TAI_LIEU_CAU_HINH_PROJECT_CUOI_KI
+```
+
+**Kết quả/đính chính:** Dựng baseline trên main, chọn MySQL/TiDB thay mặc định SQL Server, đọc hướng dẫn tổng hợp và PDF liên quan.
+
+## P-REQ-013 — Lưu prompt đầy đủ
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn:**
+
+```text
+nhớ note đầy đủ prompt của tôi
+```
+
+**Kết quả/đính chính:** Append nhật ký các tin nhắn mới, không bịa prompt code/hình của thành viên.
+
+## P-REQ-014 — Thông số MySQL được cung cấp
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn (chỉ che mật khẩu):**
+
+```text
+MYSQL_HOST=gateway01.ap-southeast-1.prod.aws.tidbcloud.com
+MYSQL_PORT=4000
+MYSQL_USER=2jPqt359jgP7bfX.root
+MYSQL_PASSWORD=[ĐÃ CHE MẬT KHẨU]
+MYSQL_DATABASE=project_idv
+cấu honhf mysql đây nha
+```
+
+**Kết quả/đính chính:** Bản ghi che đúng giá trị password; cấu hình ban đầu được điều chỉnh theo P-REQ-017 để dùng database UTETra riêng, không sửa project_idv.
+
+## P-REQ-015 — Cấu hình trực tiếp và không ignore
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn:**
+
+```text
+bạn bỏ nó khỏi cấu hình env đi tương tự mấy cái khác nữa cái này project private tôi và bạn tôi biết thấy được nên khỏi chặn ignore mấy cái cấu hình nha
+```
+
+**Kết quả/đính chính:** Bỏ .env/import và ignore config, lưu application properties theo yêu cầu repo private; không sao chép password ra nhật ký/ảnh/UI.
+
+## P-REQ-016 — File tổng hợp quy định và cấu hình
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn:**
+
+```text
+bạn soạn luôn 1 file md tổng hợp các quy định hay cấu hình thầy tôi yêu cầu mà tôi đã gửi bạn để các bạn tôi có thẻ đọc và nắm bắt nha
+```
+
+**Kết quả/đính chính:** Tạo docs/QUY_DINH_VA_CAU_HINH_CHUNG.md làm tài liệu đầu tiên cho nhóm/AI.
+
+## P-REQ-017 — Database mới riêng UTETra
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn:**
+
+```text
+ê bạn tạo cái db mới nha sửa cái này đi cái này là cấu hình trong project khác sài chung MYSQL_DATABASE=project_idv
+```
+
+**Kết quả/đính chính:** Tạo utetra_db qua TLS, cấu hình vào DB mới; không sửa DB project khác.
+
+## P-REQ-018 — Đọc bài giảng cấu hình
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn:**
+
+```text
+nhớ đọc các file tài liệu tôi gửi nha thầy tôi có hướng dẫn cấu hình hay chỉ dẫn á
+```
+
+**Kết quả/đính chính:** Trích PDF read-only và đọc phần Security/JWT/MVC/JSP/JPA/AJAX/Cloudinary liên quan; lưu bảng đối chiếu nguồn/config.
+
+## P-REQ-019 — Hỏi model AI
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn:**
+
+```text
+bạn dùng mô hình nào á
+```
+
+**Kết quả/đính chính:** Trả lời về trợ lý, sau đó người dùng làm rõ muốn hỏi mô hình kiến trúc project. Không suy đoán mã model cụ thể.
+
+## P-REQ-020 — Làm rõ MVC và ba tầng
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn:**
+
+```text
+ý mô hình cho project này mvc hay sao
+```
+
+**Kết quả/đính chính:** Giải thích Spring MVC trong Presentation + Service business + Repository/JPA data access, đúng ba tầng.
+
+## P-REQ-021 — Tiếp tục sau ngắt
+
+**Ngày ghi:** 13/10/2026; thời gian gửi chính xác không tự gán. **Nội dung nguyên văn:**
+
+```text
+tiếp tục đi
+```
+
+**Kết quả/đính chính:** Kiểm tra file/tiến trình sau ngắt và tiếp tục build/test/docs từ hiện trạng, không lặp tạo database khác.
+
+## Đính chính hiện trạng cuối lượt cấu hình
+
+Các ghi chú trước nói chưa có code là lịch sử tại thời điểm đó. Lượt này đã dựng nền Spring Boot/WAR/JSP/Security/JPA/MySQL/STOMP/Media adapter và kiểm thử riêng, xem BASELINE_VERIFICATION và COURSE_CONFIG_MAPPING. Các chức năng thương mại vẫn chờ feature, không coi mọi UC đã hoàn tất. Database project_idv chỉ xuất hiện trong yêu cầu ban đầu, sau đó đã chuyển sang utetra_db theo yêu cầu mới.
+
+## P-REQ-022 — Đọc ngữ cảnh và kiểm nền chung trên cloud
+
+Ngày ghi: 14/10/2026. Các prompt liên quan được giữ nguyên dưới đây; thiếu thời gian gửi chính xác thì không tự gán.
+
+```text
+bạn đọc đầy đủ file md với file ngữ cảnh đi để hiểu tôi đã làm những gì và làm được gì
+nhánh main sẽ là cấu hình chung rồi sẽ đồng bộ vào các nhánh nhóm các chức năng để bạn tôi dùng chung cấu hình thay vì mỗi người 1 cái
+xem cấu hình oke chưa bạn xem folder tài liệu cấu hình đi đọc hết các file
+đọc rồi xem cấu hình hiện tại đúng theo hướng dẫn cấu hình đó chưa
+và bạn xem các chức năng hiện tại đã đồng bộ cho project này chưa ý là các nhánh branch đầy đủ cho project chưa rồi mới đồng bộ cấu hình main qua các nhánh
+ý là đầy đủ use case chưa
+bổ sung tất cả đi
+```
+
+Kết quả: đối chiếu danh mục 55 P0+3 P1, hồ sơ/module và nhánh GitHub; bổ sung đặc tả 58 UC và ba hướng dẫn nhánh trên nền chung; sửa decorator prefix SiteMesh với test HTTP thực. Các ô người/reviewer/hình/code/test UC chưa có bằng chứng vẫn giữ trạng thái chưa thực hiện. Cloud build/test không thay kiểm migration TiDB. Không đẩy lên GitHub trong lượt bổ sung này.
+
+## Phiên cloud — nhánh main, 14/10/2026
+
+Nguồn: các tin nhắn người dùng trong phiên này; giữ nguyên câu chữ. Nhánh liên quan: main (nền/cấu hình/đặc tả/phân công chung), các feature kế thừa khi merge. Công cụ: Codex; giờ gửi/model cụ thể không có đủ dữ liệu thì không tự gán. File này là nguồn prompt tập trung; AI_LOG từng nhánh lưu kết quả và liên kết ID tương ứng.
+
+### CLOUD-MAIN-001
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+Sử dụng $cloud-environment-onboarding:setup để thiết lập môi trường đám mây này
+```
+
+### CLOUD-MAIN-002
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+bạn đọc đầy đủ file md với file ngữ cảnh đi để hiểu tôi đã làm những gì và làm được gì
+```
+
+### CLOUD-MAIN-003
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+ụa cái bạn làm và sửa này nó sẽ được commit vô hay github hay sao tại thấy bạn làm trên cloud gì nè
+```
+
+### CLOUD-MAIN-004
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+ví dụ thay đổi thì bạn sẽ lưu sao á
+```
+
+### CLOUD-MAIN-005
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+bạn hiểu hết ngữ cảnh đang làm chưa
+```
+
+### CLOUD-MAIN-006
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+nhánh main sẽ là cấu hình chung rồi sẽ đồng bộ vào các nhánh nhóm các chức năng để bạn tôi dùng chung cấu hình thay vì mỗi người 1 cái
+```
+
+### CLOUD-MAIN-007
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+xem cấu hình oke chưa bạn xem folder tài liệu cấu hình đi đọc hết các file
+```
+
+### CLOUD-MAIN-008
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+đọc rồi xem cấu hình hiện tại đúng theo hướng dẫn cấu hình đó chưa
+```
+
+### CLOUD-MAIN-009
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+và bạn xem các chức năng hiện tại đã đồng bộ cho project này chưa ý là các nhánh branch đầy đủ cho project chưa rồi mới đồng bộ cấu hình main qua các nhánh
+```
+
+### CLOUD-MAIN-010
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+ý là đầy đủ use case chưa
+```
+
+### CLOUD-MAIN-011
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+bổ sung tất cả đi
+```
+
+### CLOUD-MAIN-012
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+à nhớ các prompt của tôi thì note vào prompt của nhánh đó nha
+```
+
+### CLOUD-MAIN-013
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+có 1 file md ghi vào prompt á
+```
+
+Kết quả của nhóm prompt: môi trường càiJDK21/Maven/proxy; kiểm tra danh mục55P0+3P1, bổ sung58hồ sơ và3hướng dẫn nhánh, sửaSiteMesh, buildWAR và16testđạt. Nghiệp vụUC/ảnh thật/DOCX/provider vẫn chưa triển khai hoặc kiểm chứng. Xem [BASELINE_AI_LOG](BASELINE_AI_LOG.md) và [BASELINE_VERIFICATION](BASELINE_VERIFICATION.md). Commit bổ sung đầu f11b6af; các commit tiếp theo tra bằng Git log. Đồng bộ cục bộ không đồng nghĩa GitHub đã push.

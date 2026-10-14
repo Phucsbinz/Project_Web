@@ -1,127 +1,102 @@
-# Nhánh feature/identity-membership — Tài khoản và thành viên
+# feature/identity-membership — OTP, tài khoản, tương tác và thành viên
 
-## 1. Thông tin nhận việc
+> Cập nhật theo quy định thầy ngày 13/10/2026. Người phụ trách TV2: [điền tên]. Baseline main/commit: [điền]. Đây là hướng dẫn công việc, không xác nhận mọi UC đã code.
 
-| Mục | Giá trị |
-| --- | --- |
-| Người phụ trách | [CẦN BỔ SUNG] — TV2 |
-| Nhánh | feature/identity-membership |
-| Baseline/commit | [CẦN BỔ SUNG] |
-| Use case | UC-AUTH-01–05; UC-USER-01–03; UC-ADMIN-01 |
-| Trạng thái | Chưa lập trình; hướng dẫn và sơ đồ thiết kế ban đầu |
-| Nhật ký AI | [AI_LOG.md](AI_LOG.md) |
+## 1. Các file phải đọc và cấu hình
 
-Đọc đặc tả gốc, [baseline](../../COMMON_BASELINE.md), [setup](../../SETUP.md) và hướng dẫn ở gốc nhánh. Nhánh này làm luồng danh tính từ đăng ký đến sử dụng tài khoản/thành viên, gồm UI, nghiệp vụ và dữ liệu; không chỉ viết bộ lọc JWT.
+Đọc QUY_DINH_VA_CAU_HINH_CHUNG, PROJECT_PLAN, DATABASE_DESIGN, USE_CASES, docs/README, COMMON_BASELINE, SETUP và file hướng dẫn ở gốc nhánh. Java21/Boot3.5.13/WAR/JSP/JSTL/SiteMesh3.2.2/Bootstrap5.3.3/MavenWrapper/MySQL utetra_db/JPA/Flyway theo main; không .env, không tự đổi pom/profile/migration/secret. Một template Shop Homepage chung; Vendor có quyền User, Manager theo scope, Admin global.
 
-## 2. Công việc theo use case
+## 2. Use case, role và công việc
 
-| UC | Công việc trọn luồng | Minh chứng |
-| --- | --- | --- |
-| AUTH-01 | Validate/chuẩn hóa username/email → BCrypt → tạo Customer và account điểm → form đăng ký | Thành công, trùng định danh, password không hợp lệ |
-| AUTH-02 | Authentication → session DB → JWT/cookie → điều hướng role → hợp nhất giỏ qua contract TV3 | Login từng role, sai mật khẩu, tài khoản khóa |
-| AUTH-03 | POST có CSRF → revoke session → xóa đúng cookie → ngắt socket | JWT phiên cũ không dùng được |
-| AUTH-04 | Token reset hash/một lần/hạn 15 phút → SMTP → form reset → thu hồi phiên | Email giả lập, token hết hạn/đã dùng, phản hồi không lộ email |
-| AUTH-05 | Khóa session → kiểm hash/hạn → xoay refresh → JWT mới | Token cũ bị từ chối, tab đồng thời không refresh lặp |
-| USER-01 | Hồ sơ của mình → avatar MediaService → đổi password/revoke | Profile, upload lỗi, account người khác bị chặn |
-| USER-02 | CRUD địa chỉ thuộc user → mặc định trong transaction → UI | Một default, không lộ địa chỉ người khác, đơn cũ giữ snapshot |
-| USER-03 | Account/ledger → tính hạng → UI số dư/lịch sử; service điểm dùng cho đơn | Redeem/refund/earn đúng một lần, số dư/hạng khớp |
-| ADMIN-01 | Quản lý user/role/khóa → assignment chi nhánh → revoke/audit → admin JSP | Staff A không có quyền B, giữ Admin hoạt động cuối cùng |
+| Mã | Chức năng | Actor | Module owner | Phạm vi | Kết quả kiểm chứng cần đạt |
+| --- | --- | --- | --- | --- | --- |
+| UC-AUTH-01 | Đăng ký tài khoản | Guest | identity-membership | P0 bắt buộc | Tạo User chưa xác minh, BCrypt và gửi OTP email |
+| UC-AUTH-02 | Kích hoạt bằng OTP | Guest | identity-membership | P0 bắt buộc | OTP đúng/hạn/một lần mới ghi email_verified_at |
+| UC-AUTH-03 | Đăng nhập | Guest | identity-membership | P0 bắt buộc | Chỉ tài khoản hoạt động đã xác minh; tạo phiên và JWT |
+| UC-AUTH-04 | Đăng xuất | Người đăng nhập | identity-membership | P0 bắt buộc | Thu hồi phiên, xóa cookie đúng path, ngắt socket |
+| UC-AUTH-05 | Quên mật khẩu gửi OTP | Guest | identity-membership | P0 bắt buộc | Phản hồi chung, OTP reset riêng mục đích, giới hạn gửi |
+| UC-AUTH-06 | Đặt lại mật khẩu bằng OTP | Guest | identity-membership | P0 bắt buộc | Xác minh rồi đổi BCrypt, dùng challenge một lần, thu hồi mọi phiên |
+| UC-AUTH-07 | Làm mới phiên | Người đăng nhập | identity-membership | P0 bắt buộc | Khóa và xoay refresh hash, không kéo dài hạn tuyệt đối |
+| UC-USER-01 | Profile, avatar và đổi mật khẩu | Người đăng nhập | identity-membership | P0 bắt buộc | Chỉ hồ sơ mình; Cloudinary; đổi mật khẩu thu hồi phiên |
+| UC-USER-02 | Nhiều địa chỉ nhận hàng | User, Vendor | identity-membership | P0 bắt buộc | CRUD của mình, tối đa một mặc định, snapshot đơn không đổi |
+| UC-USER-03 | Thích/bỏ thích sản phẩm | User, Vendor | identity-membership | P0 bắt buộc | Unique user/product, danh sách yêu thích và số thích đúng |
+| UC-USER-04 | Sản phẩm đã xem | User, Vendor | identity-membership | P0 bắt buộc | Upsert lần xem, danh sách gần nhất của mình |
+| UC-USER-05 | Đánh giá sản phẩm đã mua | User, Vendor | identity-membership | P0 bắt buộc | Đơn đã giao và trả tiền, sao 1–5, không đánh giá trùng order_item |
+| UC-USER-06 | Bình luận text, ảnh/video | User, Vendor | identity-membership | P0 bắt buộc | Đã mua; text 50–2000 ký tự sau trim; media kiểm nội dung/kích thước |
+| UC-USER-07 | Điểm và hạng thành viên | User, Vendor | identity-membership | P0 bắt buộc | Ledger trừ/hoàn/cộng/thu hồi điểm đúng một lần, hạng và số dư nhất quán |
+| UC-MGR-01 | Tìm/quản lý user | Manager | identity-membership | P0 bắt buộc | Phạm vi user liên quan shop được giao, không tự cấp Admin |
+| UC-ADM-01 | Tìm/quản lý user và phân quyền | Admin | identity-membership | P0 bắt buộc | Toàn hệ thống, khóa/revoke, phân công Manager, giữ Admin cuối cùng |
 
-Ghi mỗi mã đầy đủ UC-AUTH/UC-USER/UC-ADMIN vào hồ sơ UC riêng. Điểm thưởng hỗ trợ bán hàng; không phát triển cơ chế tính điểm khác BR-13–16.
+Mỗi UC do một người làm đủ Entity/Repo/DTO → Service → Controller → JSP/JS → kiểm thử → hồ sơ. Viết báo cáo tách phần actor/role của từng UC, không chỉ tên module. Chọn chi nhánh thủ công; không loại các chức năng OTP/voucher/refund/review/carrier của thầy.
 
-## 3. Cấu hình, schema và contract
+## 3. Schema, contract và phụ thuộc
 
-- Dùng Spring Security 6.x theo Boot BOM, JWT và cookie + CSRF; chưa có version JWT library chính xác thì chốt qua B0, không tự sửa pom.
-- Owner 9 bảng: roles, users, staff_store_assignments, auth_sessions, password_reset_tokens, user_addresses, loyalty_accounts, loyalty_transactions, audit_logs. Migration theo main, đủ ba dialect.
-- Biến JWT_SECRET/ISSUER/AUDIENCE và MAIL_HOST/PORT/USERNAME/PASSWORD/FROM; APP_BASE_URL để link reset nội bộ. Không commit token/secret/email người thật.
-- Access JWT 15 phút, refresh tối đa 7 ngày; session được kiểm tra mỗi request, token hash lưu DB, refresh xoay nguyên tử. BCrypt theo giới hạn password trong USE_CASES.md.
-- Route /auth/**, /account/**, /admin/users/**; JSP auth/client/admin dùng decorator chung. Sửa SecurityConfig qua review baseline main.
-- Cung cấp CurrentUser/AuthorizationService, AddressService, LoyaltyService và AuditService. Avatar dùng MediaService TV1; thu hồi quyền/session phối hợp socket TV3.
-- LoyaltyService tham gia transaction checkout/chuyển trạng thái của TV3, không tự tạo đơn/thu tiền, không dùng REQUIRES_NEW để tách commit điểm khỏi đơn.
+Owner các bảng: roles, users, auth_sessions, otp_challenges, store_memberships, user_addresses, loyalty_accounts, loyalty_transactions, audit_logs, product_favorites, product_views, reviews, review_media, product_comments, comment_media. Chỉ V1 identity đã có trong baseline; bảng khác theo schema thiết kế và migration main mới, không tự tạo cấu trúc khác.
 
-## 4. Thứ tự thực hiện
+Contract: AuthService, OtpService, AddressService, AuthorizationService, LoyaltyService, AuditService. Phụ thuộc: SMTP/OTP/JWT/session; MediaService từ TV1; purchase eligibility/đơn và transaction points từ TV3. Signature/DTO/error/transaction/locking phải chốt trên main trước khi ghép; mock chỉ trong test. Không viết lại giá/điểm/auth/payment service của owner khác.
 
-1. Đồng bộ main/B0; chốt principal, role enum, DTO và service signature.
-2. Entity/Repo/DTO và migration theo schema; seed roles và user demo có hash thật; không cấp role theo request đăng ký.
-3. Auth session/JWT/CSRF/refresh/logout; giữ route và cookie nhất quán, không disable security để các nhánh khác chạy.
-4. Đăng ký/login/reset/logout JSP; SMTP test và tình huống lỗi; phối hợp callback hợp nhất giỏ với TV3.
-5. Hồ sơ/địa chỉ/avatar; kiểm quyền sở hữu và unique địa chỉ mặc định.
-6. User/admin/assignment/audit; quyền chi nhánh cho catalog/orders/socket.
-7. Account/ledger/hạng; contract test trừ/hoàn/cộng điểm với transaction đơn.
-8. Test JWT sai/hết hạn/revoked, CSRF, reset/refresh lặp, điểm cạnh tranh và quyền; hoàn thiện hình/prompt/hướng dẫn chạy.
+## 4. Thứ tự thực hiện từng UC
 
-## 5. Hình thiết kế ban đầu
+1. Merge main, ghi baseline/role/UC, đọc tiền điều kiện/BR/acceptance và dependency.
+2. Chốt activity/sequence và schema/DTO/permission; đề xuất migration vào main.
+3. Entity/Repository/query/DTO → Service validation/quyền/transaction/idempotency.
+4. Controller route/error/CSRF → JSP/Bootstrap/JS loading/empty/error theo cùng template.
+5. Chạy test luồng chính/lỗi/quyền/cạnh tranh/callback/media theo UC; đọc kết quả thật.
+6. Ghi code path/symbol/commit, chụp code có chú giải và UI chạy thật; xuất sơ đồ có nguồn.
+7. Điền setup/demo/data/profile, prompt nguyên văn/response/nhóm sửa/test; review/commit.
 
-Sơ đồ là thiết kế dự kiến. Kiểm tra với code thực rồi lưu nguồn `.mmd` và ảnh xuất trong assets của UC.
+## 5. Kiến trúc dự kiến của module
 
 ```mermaid
 flowchart LR
-    JSP[Auth / Profile / Admin JSP] --> C[Identity Controllers]
-    C --> S[Auth / User / Address Services]
-    S --> DB[(Users / Sessions / Addresses)]
-    S --> Mail[SMTP]
-    S --> Media[MediaService từ TV1]
-    Sec[Security / JWT / CSRF] --> C
-    Sec --> Perm[AuthorizationService]
-    Order[OrderService từ TV3] --> Loyalty[LoyaltyService cùng transaction]
-    Loyalty --> Ledger[(Accounts / Transactions)]
-    S --> Audit[AuditService]
+    UI[JSP / Bootstrap theo role] --> C[Controller / DTO / CSRF]
+    C --> S[Service / quyền / validation / transaction]
+    S --> R[JPA Repository]
+    R --> DB[(MySQL utetra_db)]
+    S --> Common[Contract main và module khác]
+    S --> Provider[Provider cần thiết theo UC]
 ```
 
-```mermaid
-flowchart TD
-    A[POST đăng nhập và CSRF] --> B{CSRF và form hợp lệ?}
-    B -->|Không| E[Trả lỗi]
-    B -->|Có| C{Mật khẩu đúng và tài khoản hoạt động?}
-    C -->|Không| D[Thông báo chung, giới hạn số lần thử]
-    C -->|Có| F[Tạo phiên và hash refresh token]
-    F --> G[Cấp JWT, cookie bảo vệ]
-    G --> H{Vai trò?}
-    H -->|Customer| I[Hợp nhất giỏ qua contract rồi về trang khách]
-    H -->|Staff| J[Trang xử lý đơn chi nhánh]
-    H -->|Admin| K[Dashboard]
-```
+Sơ đồ này là khung kiến trúc dự kiến. Mỗi UC phải có activity/sequence riêng từ code thực và xuất ảnh PNG/SVG; không dùng một hình generic thay tất cả UC trong báo cáo cuối.
 
-Mỗi UC reset, refresh, ledger, địa chỉ, assignment phải có activity riêng khi thực hiện, không dùng sơ đồ login thay cho tất cả.
+## 6. Chỗ ghi minh chứng và tiến độ
 
-## 6. Hồ sơ code, UI và setup
+| UC/role | Path/symbol/commit | Activity/sequence/ảnh code/UI | Config/setup/data | Prompt/response | Test/reviewer/trạng thái |
+| --- | --- | --- | --- | --- | --- |
+| UC-AUTH-01 / Guest | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-AUTH-02 / Guest | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-AUTH-03 / Guest | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-AUTH-04 / Người đăng nhập | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-AUTH-05 / Guest | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-AUTH-06 / Guest | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-AUTH-07 / Người đăng nhập | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-USER-01 / Người đăng nhập | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-USER-02 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-USER-03 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-USER-04 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-USER-05 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-USER-06 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-USER-07 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-MGR-01 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-ADM-01 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
 
-| Nhóm UC | Code thực cần diễn giải | UI/hình minh chứng | File/commit/kết quả |
-| --- | --- | --- | --- |
-| AUTH-01–05 | PasswordEncoder, JWT validation, session revoke/rotation, CSRF, reset hash | Forms auth, lỗi login, email reset giả lập | [CẦN BỔ SUNG từng UC] |
-| USER-01–02 | Owner check, avatar compensation, default-address constraint | Profile/avatar/address + lỗi quyền/upload | [CẦN BỔ SUNG từng UC] |
-| USER-03 | Transaction khóa account, unique(order,type), floor và tier | Số dư, lịch sử điểm, hạng; dữ liệu trước/sau | [CẦN BỔ SUNG] |
-| ADMIN-01 | Phân công/role/revoke, bảo vệ Admin cuối cùng | User list/form/assignments, lỗi sai chi nhánh | [CẦN BỔ SUNG] |
+Ghi setup thực và thao tác demo theo role; lỗi/vấn đề còn lại ở cuối từng UC note. Không chụp secret/config password vào báo cáo. Phản hồi dài lưu ai-responses/<ID>.md; ảnh/source lưu assets/<UC-ID>. Không bịa test pass hoặc ảnh chạy.
 
-Setup riêng: JWT/SMTP test/account seed, schema session/reset/loyalty; data hai Customer và Staff hai chi nhánh. Ghi cách test reset thật qua mail test, cách chạy login các vai trò và cách đối chiếu ledger với đơn. Screenshot không hiển thị secret, password hash hoặc cookie token.
-
-## 7. Prompt gợi ý — chưa sử dụng
+## 7. Prompt mẫu — chưa sử dụng
 
 ```text
-Đọc UC-AUTH-02/03/05 và baseline UTETra. Trên feature/identity-membership,
-xây xác thực JSP bằng JWT cookie và session DB, CSRF, refresh rotation,
-logout revoke và phân quyền Service. Giữ stack/schema/profile của main.
-Giải thích code theo request lifecycle; kiểm thử token sai/hết hạn/revoked,
-refresh dùng lại và CSRF. Ghi nhật ký prompt, hình và kết quả thực.
+Đọc toàn bộ quy định/baseline UTETra và hướng dẫn nhánh hiện tại.
+Triển khai <UC-ID> từ Entity/Repo/DTO tới Service/Controller/JSP/test.
+Giữ MySQL utetra_db, stack và contract main. Actor/scope/OTP/payment/media
+phải đúng đặc tả; không tự bỏ chức năng hoặc đổi framework.
+Ghi prompt thật, phản hồi, code/ảnh/setup/commit, phần nhóm sửa và kiểm chứng
+vào AI_LOG và hồ sơ UC. Sơ đồ dự kiến và ảnh UI thật phải phân biệt.
 ```
 
-```text
-Đọc BR-13–16, bảng loyalty_accounts/loyalty_transactions và contract OrderService.
-Thiết kế LoyaltyService tham gia cùng transaction đơn, chống redeem/refund/earn
-lặp bằng unique(order_id,type). Không tạo luồng thanh toán riêng.
-Vẽ activity ledger, ghi quyền sở hữu và test cạnh tranh/rollback với nhánh TV3.
-```
+## 8. Checklist bàn giao
 
-## 8. Tiến độ và bàn giao
-
-| UC | Code/test | Kiến trúc/activity | Code/UI images | Setup | Prompt thật | Review/commit |
-| --- | --- | --- | --- | --- | --- | --- |
-| 9 UC được giao, tách mỗi UC thành một dòng khi làm | Chưa | Chưa kiểm chứng | Chưa | Chưa | Chưa | [điền] |
-
-- [ ] Tất cả UC tài khoản/thành viên đủ luồng chính và lỗi.
-- [ ] JWT/cookie/CSRF, SMTP và schema theo main; không lệch token/session contract.
-- [ ] Nhánh khác dùng được quyền, địa chỉ, ảnh/audit và service điểm như đã chốt.
-- [ ] Điểm rollback cùng đơn, hạng đúng, không ledger trùng/điểm âm.
-- [ ] Hình/prompt/code/UI có caption, nguồn và commit thực.
-
-Lỗi còn lại và phối hợp TV1/TV3: [CẦN BỔ SUNG].
+- [ ] Đủ UC/role được giao; cả luồng chính/lỗi và quyền dữ liệu.
+- [ ] Cấu hình/DDL/DTO/contract đúng main; provider thiếu ghi rõ.
+- [ ] Có kiến trúc/activity/sequence, hình code/UI chú giải, setup và test thật.
+- [ ] Prompt nguyên văn/response/nhóm sửa/commit/reviewer đầy đủ.
+- [ ] Ghép integration cùng owner dependency; kiểm chức năng chung theo thang điểm.

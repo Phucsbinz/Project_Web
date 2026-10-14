@@ -1,0 +1,6 @@
+:root{--ute-tea:#214e3b;--ute-cream:#f7f4ed;--ute-accent:#d4a373}
+body{background:var(--ute-cream);color:#27352e;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.navbar-brand{font-weight:800;letter-spacing:.03em;color:var(--ute-tea)}
+.hero{background:var(--ute-tea);color:#fff}.site-footer{color:#58665f}
+.btn-primary{--bs-btn-bg:var(--ute-tea);--bs-btn-border-color:var(--ute-tea);--bs-btn-hover-bg:#183c2d;--bs-btn-hover-border-color:#183c2d}
+:focus-visible{outline:3px solid var(--ute-accent);outline-offset:3px}
