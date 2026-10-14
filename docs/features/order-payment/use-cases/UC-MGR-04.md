@@ -1,6 +1,6 @@
 # UC-MGR-04 — Chiết khấu app cho shop
 
-> Actor: Manager. Owner: feature/order-payment. P0 bắt buộc. Đặc tả thiết kế; chưa có code, ảnh chạy hoặc test nghiệp vụ của UC này.
+> Actor: Manager. Owner: feature/order-payment. P0 bắt buộc. Đặc tả ban đầu được giữ để đối chiếu; kết quả triển khai và kiểm chứng thực tế ở phần hồ sơ bên dưới.
 
 ## Đặc tả chức năng
 
@@ -50,7 +50,7 @@ Sơ đồ mô tả luồng thiết kế; các nhánh lỗi/cạnh tranh cụ th�
 
 Manager không đổi policy toàn app; đơn cũ/net giữ nguyên; version conflict; phân biệt commission và customer discount. Request thay đổi phải có CSRF; dùng version/unique/locking theo schema khi ghi. Event ra ngoài transaction chỉ phát sau commit; không đưa credential, OTP rõ, token hoặc password vào log/DTO.
 
-### Kiểm thử nghiệm thu cần thực hiện
+### Kế hoạch nghiệm thu ban đầu (không phải kết quả chạy)
 
 | Case | Mong đợi | Kết quả hiện tại |
 | --- | --- | --- |
@@ -69,73 +69,29 @@ Manager không đổi policy toàn app; đơn cũ/net giữ nguyên; version con
 
 Các ô minh chứng bên dưới được điền khi có kết quả thực; không dùng đặc tả hoặc sơ đồ dự kiến làm bằng chứng chức năng hoàn thành.
 
-## 1. Phạm vi và người thực hiện
+## 1. Hồ sơ triển khai ngày 14/10/2026
 
-| Mục | Nội dung |
-| --- | --- |
-| UC/nhánh/người | UC-MGR-04 / feature/order-payment / TV3; tên cá nhân chưa phân công |
-| Vai trò và quyền dữ liệu | Manager; lấy identity từ principal, kiểm owner/shop/membership/assignment tại Service |
-| Baseline main/commit implementation | [điền] |
-| Quy tắc BR và bảng dữ liệu | commission_policies, stores, store_settlements, orders; theo USE_CASES.md và DATABASE_DESIGN.md |
-| Trạng thái/ngày | Đặc tả bổ sung 14/10/2026; chức năng chưa triển khai |
+- Nhánh: `feature/order-payment`; baseline trước triển khai: `bb700d1`; commit code: `29aac50`. Người/reviewer trong nhóm chưa được cung cấp, không tự gán tên.
+- Trạng thái: **Đã có code và kiểm chứng với dữ liệu test; chờ review/ghép các module phụ thuộc**.
+- Prompt: [ORD-AI-001 đến ORD-AI-008](../../../AI_PROMPT_HISTORY.md#ord-ai-001); [phản hồi và sửa lỗi](../AI_LOG.md).
+- Quy tắc thực hiện: Manager chỉ shop membership active; 0–100%, tối đa hai chữ số thập phân; policy mới, không sửa snapshot đơn cũ; audit.
 
-Mục tiêu: [điền]. Tiền điều kiện/kích hoạt: [điền]. Đầu vào/đầu ra/hậu điều kiện: [điền]. Luồng chính, luồng lỗi, cạnh tranh và quyền: [điền].
+## 2. Code và hướng dẫn theo ba tầng
 
-## 2. Kiến trúc và sơ đồ hoạt động
+1. [V2 order-payment](../../../../src/main/resources/db/migration/mysql/V2__order_payment.sql) tạo các bảng thuộc nhánh; [schema đề xuất](../SCHEMA_PROPOSAL.md) giải thích phần phụ thuộc không tự migrate. Entity và `OrderDataRepository` map bảng/unique/version; `CommerceReferenceRepository` đọc contract catalog/identity.
+2. Service: `OperationsService.commission`. [OperationsService](../../../../src/main/java/com/utetra/order/service/OperationsService.java) Service kiểm identity/scope và ràng buộc trước ghi; các mutation DB sử dụng transaction READ_COMMITTED, row locks và unique/version. Nhánh lỗi rollback dữ liệu, thông báo được lưu cùng transaction; gửi socket sau commit.
+3. Controller: `OperationsController`; route thực: `/manager/order-tools/commissions`. Lấy actor từ principal, không nhận userId/role/số tiền quyết định từ client. DTO validation và CSRF cho mutation.
+4. View: `src/main/webapp/WEB-INF/views/order/tools.jsp`; `orders.js` gọi endpoint JSON/multipart, hiển thị lỗi bằng textContent và dùng layout/Bootstrap chung. Dữ liệu JSP escape bằng c:out. Giao diện/endpoint dựa cùng Service để giữ quy tắc khi gọi ngoài trình duyệt.
+5. Kiểm thử có thể chạy lại bằng [SETUP](../SETUP.md). Tên case thực: `commissionUpdatesDoNotRewriteOrdersAndReportsNeverLeakScope`. [VERIFICATION](../VERIFICATION.md) phân biệt Maven/H2, MySQL, Playwright và provider thật chưa chạy.
 
-| Mã hình | Loại | Nguồn Mermaid/PlantUML | PNG/SVG xuất | Caption và giải thích | Prompt/commit | Trạng thái |
-| --- | --- | --- | --- | --- | --- | --- |
-| [MOD-UC-ARCH-01] | Kiến trúc | [path] | [path] | [điền] | [điền] | [dự kiến/kiểm chứng] |
-| [MOD-UC-ACT-01] | Activity | [path] | [path] | [điền] | [điền] | [dự kiến/kiểm chứng] |
+## 3. Sơ đồ và minh chứng
 
-Giải thích thành phần, chiều dữ liệu và ranh giới transaction; activity có start/end, quyết định và nhánh lỗi. Ghi điểm khác giữa thiết kế AI đề xuất và triển khai thực.
+Activity Mermaid ở phần đặc tả là nguồn thiết kế ban đầu; kiểm tra các nhánh lỗi/quyền theo Service và test ở mục 2. [Sơ đồ module](../assets/order-architecture.svg) và [nguồn Graphviz](../assets/order-architecture.dot) chỉ mô tả ranh giới ba tầng/transaction thực, không thay activity riêng của từng UC trong báo cáo cuối kỳ.
 
-## 3. Hướng dẫn xây dựng từng bước
+Ảnh riêng cho UC này chưa chụp; xem ảnh luồng liên quan trong [VERIFICATION](../VERIFICATION.md). Không coi ảnh/sơ đồ thiết kế là screenshot chạy.
 
-| Bước | File/symbol tạo hoặc sửa | Công việc và lý do | Input/output | Dependency | Prompt/commit |
-| --- | --- | --- | --- | --- | --- |
-| 1 — Dữ liệu/migration | [điền] | [schema, FK/UQ/CHECK] | [điền] | [điền] | [điền] |
-| 2 — Entity/Repo/DTO | [điền] | [mapping/query/validation] | [điền] | [điền] | [điền] |
-| 3 — Service | [điền] | [quyền, nghiệp vụ, transaction] | [điền] | [điền] | [điền] |
-| 4 — Controller | [điền] | [route, lỗi, PRG/JSON] | [điền] | [điền] | [điền] |
-| 5 — JSP/JS | [điền] | [form/list/error/loading] | [điền] | [điền] | [điền] |
-| 6 — Kiểm thử | [điền] | [case quan trọng] | [điền] | [điền] | [điền] |
+## 4. Setup, giới hạn và bàn giao
 
-Thêm văn bản giải thích đủ để người khác xây lại chức năng theo các bước, không chỉ bảng tên class. Đoạn code trọng tâm trong fenced block dùng code thực, nêu path/symbol/commit để tra lại; không chép toàn dự án vào báo cáo.
+Đọc [SETUP](../SETUP.md) về dữ liệu catalog/address/identity/session/loyalty/audit cần ghép. VNPAY hoãn; Cloudinary chưa cấu hình/test provider thật. Shipper cần `features.shipper.enabled=true`. Test fixtures chỉ dành cho H2 in-memory hoặc DB MySQL localhost `utetra_order_*` có opt-in, không chạy reset/seed trên utetra_db.
 
-## 4. Hình diễn giải source code
-
-| Hình | File/symbol/commit | Dòng hoặc đoạn trọng tâm | Callout 1/2/3 | Ý nghĩa/kiểm chứng |
-| --- | --- | --- | --- | --- |
-| [MOD-UC-CODE-01] | [điền] | [điền] | [điền] | [điền] |
-
-Chụp code thật, đánh dấu validation/quyền/dữ liệu/transaction và giải thích dưới hình. Chỉ chèn đường dẫn ảnh sau khi ảnh có thật; không tạo link ảnh giả chỉ để hoàn thành checklist.
-
-## 5. Hình diễn giải giao diện
-
-| Hình | Trang/vai trò/dữ liệu test | Thao tác và trạng thái | Ảnh thực/mockup | Caption/commit |
-| --- | --- | --- | --- | --- |
-| [MOD-UC-UI-01] | [điền] | [luồng chính] | [điền] | [điền] |
-| [MOD-UC-UI-02] | [điền] | [lỗi/rỗng/quyền] | [điền] | [điền] |
-
-Giải thích các vùng giao diện, lựa chọn và kết quả. Mockup phải ghi rõ chưa triển khai; báo cáo nghiệm thu cần screenshot ứng dụng chạy.
-
-## 6. Setup và dữ liệu demo
-
-Baseline/version/profile: [điền]. Biến config cần thêm và nơi ánh xạ: [điền, không secret]. Migration/seed: [điền]. Lệnh build/chạy/test thực: [điền]. URL/role/thao tác demo: [điền]. Lỗi setup và cách sửa: [điền].
-
-## 7. Kiểm thử và đánh giá AI
-
-| Case | Input/quyền/tình huống | Mong đợi | Kết quả thực | Lệnh/log/ảnh/commit |
-| --- | --- | --- | --- | --- |
-| [điền] | [điền] | [điền] | [chưa chạy/qua/lỗi] | [điền] |
-
-Prompt liên quan: [ID/link]. AI hỗ trợ phần nào: [điền]. Nhóm chỉnh/sửa/bỏ gì và vì sao: [điền]. Cách xác minh source/hình/cấu hình: [điền]. Hạn chế/lỗi chưa giải quyết: [điền].
-
-## 8. Checklist kết thúc
-
-- [ ] Đúng use case, schema, cấu hình và contract main.
-- [ ] Có hướng dẫn từng bước, hình kiến trúc/activity/code/UI với caption và nguồn.
-- [ ] Setup và testcase được chạy thực, có kết quả và commit.
-- [ ] Prompt nguyên văn/response/đánh giá nhóm được liên kết.
-- [ ] Reviewer/ngày/commit được điền, không còn placeholder ở phần nộp.
+Review schema/version migration và contract cross-module trên integration trước khi ghép main; lần này chỉ thay feature/order-payment. DOCX, ảnh source có callout, sơ đồ activity xuất riêng và reviewer cá nhân cần nhóm hoàn thiện khi nộp báo cáo; không ghi đã có nếu chưa làm.
