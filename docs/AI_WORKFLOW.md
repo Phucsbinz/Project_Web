@@ -24,6 +24,8 @@ Quy trình: đọc → ghi prompt → xác định flow/BR/schema/quyền → ac
 
 Hình AI/mockup/diagram thiết kế ghi rõ nguồn/prompt và chưa triển khai. Hình source/UI để nghiệm thu lấy ứng dụng thật và code đúng commit, có callout/caption. Prompt gợi ý chưa gửi không tính đã dùng; model/thời gian không biết thì ghi không rõ. Không hiển thị password/OTP/token/private key dù config repo private được phép theo dõi.
 
-## Nơi lưu prompt theo nhánh
+## Nơi lưu prompt tập trung và liên kết nhánh
 
-Yêu cầu người dùng ngày14/10/2026: “à nhớ các prompt của tôi thì note vào prompt của nhánh đó nha”. Prompt sửa nền/cấu hình/contract/phân công chung ghi nguyên văn trong docs/BASELINE_AI_LOG.md trên main; nhật ký yêu cầu chung có thể liên kết nguồn này. Prompt triển khaiUC của feature ghi nguyên văn trong docs/features/<module>/AI_LOG.md của feature đó và liên kết hồ sơUC. Prompt tích hợp liên kết nhật ký nguồn và ghi công việc integration riêng. Không tự chuyển prompt mẫu hoặc prompt kế thừa thành “đã dùng codeUC”; không ghi secret/time/model suy đoán.
+Theo người dùng ngày14/10/2026, dùng file đã có docs/AI_PROMPT_HISTORY.md làm nguồn prompt nguyên văn tập trung. Mỗi bản ghi có ID, nhánh, UC/phạm vi, nội dung nguyên văn và nguồn kết quả. Prompt main ghi nhánhmain; prompt feature ghi đúng feature/UC. docs/BASELINE_AI_LOG.md và docs/features/<module>/AI_LOG.md lưu phản hồi/file/nhóm sửa/test/commit và dẫn ID trong AI_PROMPT_HISTORY; không lập một nhật ký prompt nguyên văn khác thay file đã chọn.
+
+Prompt mẫu chưa gửi không tính là đã dùng. Prompt nền kế thừa không tính là thành viên đã codeUC. Không ghi secret hoặc giờ/model suy đoán; chỉ append/đính chính lịch sử.

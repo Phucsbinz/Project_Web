@@ -287,3 +287,113 @@ bổ sung tất cả đi
 ```
 
 Kết quả: đối chiếu danh mục 55 P0+3 P1, hồ sơ/module và nhánh GitHub; bổ sung đặc tả 58 UC và ba hướng dẫn nhánh trên nền chung; sửa decorator prefix SiteMesh với test HTTP thực. Các ô người/reviewer/hình/code/test UC chưa có bằng chứng vẫn giữ trạng thái chưa thực hiện. Cloud build/test không thay kiểm migration TiDB. Không đẩy lên GitHub trong lượt bổ sung này.
+
+## Phiên cloud — nhánh main, 14/10/2026
+
+Nguồn: các tin nhắn người dùng trong phiên này; giữ nguyên câu chữ. Nhánh liên quan: main (nền/cấu hình/đặc tả/phân công chung), các feature kế thừa khi merge. Công cụ: Codex; giờ gửi/model cụ thể không có đủ dữ liệu thì không tự gán. File này là nguồn prompt tập trung; AI_LOG từng nhánh lưu kết quả và liên kết ID tương ứng.
+
+### CLOUD-MAIN-001
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+Sử dụng $cloud-environment-onboarding:setup để thiết lập môi trường đám mây này
+```
+
+### CLOUD-MAIN-002
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+bạn đọc đầy đủ file md với file ngữ cảnh đi để hiểu tôi đã làm những gì và làm được gì
+```
+
+### CLOUD-MAIN-003
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+ụa cái bạn làm và sửa này nó sẽ được commit vô hay github hay sao tại thấy bạn làm trên cloud gì nè
+```
+
+### CLOUD-MAIN-004
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+ví dụ thay đổi thì bạn sẽ lưu sao á
+```
+
+### CLOUD-MAIN-005
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+bạn hiểu hết ngữ cảnh đang làm chưa
+```
+
+### CLOUD-MAIN-006
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+nhánh main sẽ là cấu hình chung rồi sẽ đồng bộ vào các nhánh nhóm các chức năng để bạn tôi dùng chung cấu hình thay vì mỗi người 1 cái
+```
+
+### CLOUD-MAIN-007
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+xem cấu hình oke chưa bạn xem folder tài liệu cấu hình đi đọc hết các file
+```
+
+### CLOUD-MAIN-008
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+đọc rồi xem cấu hình hiện tại đúng theo hướng dẫn cấu hình đó chưa
+```
+
+### CLOUD-MAIN-009
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+và bạn xem các chức năng hiện tại đã đồng bộ cho project này chưa ý là các nhánh branch đầy đủ cho project chưa rồi mới đồng bộ cấu hình main qua các nhánh
+```
+
+### CLOUD-MAIN-010
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+ý là đầy đủ use case chưa
+```
+
+### CLOUD-MAIN-011
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+bổ sung tất cả đi
+```
+
+### CLOUD-MAIN-012
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+à nhớ các prompt của tôi thì note vào prompt của nhánh đó nha
+```
+
+### CLOUD-MAIN-013
+
+Nhánh: main; phạm vi: nền chung/cloud và tổ chức nhánh.
+
+```text
+có 1 file md ghi vào prompt á
+```
+
+Kết quả của nhóm prompt: môi trường càiJDK21/Maven/proxy; kiểm tra danh mục55P0+3P1, bổ sung58hồ sơ và3hướng dẫn nhánh, sửaSiteMesh, buildWAR và16testđạt. Nghiệp vụUC/ảnh thật/DOCX/provider vẫn chưa triển khai hoặc kiểm chứng. Xem [BASELINE_AI_LOG](BASELINE_AI_LOG.md) và [BASELINE_VERIFICATION](BASELINE_VERIFICATION.md). Commit bổ sung đầu f11b6af; các commit tiếp theo tra bằng Git log. Đồng bộ cục bộ không đồng nghĩa GitHub đã push.
