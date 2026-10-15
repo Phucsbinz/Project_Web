@@ -13,7 +13,7 @@
 <nav class="navbar navbar-expand-lg bg-white border-bottom mb-4" aria-label="Điều hướng chính"><div class="container">
 <a class="navbar-brand" href="<c:url value='/'/>">UTETra</a>
 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Mở menu"><span class="navbar-toggler-icon"></span></button>
-<div class="collapse navbar-collapse" id="mainNav"><span class="navbar-text ms-lg-auto">Khách hàng</span></div>
+<div class="collapse navbar-collapse" id="mainNav"><div class="navbar-nav ms-lg-auto"><a class="nav-link" href="<c:url value='/menu'/>">Thực đơn</a><a class="nav-link" href="<c:url value='/stores'/>">Chi nhánh</a><a class="nav-link" href="<c:url value='/account/shop-registration'/>">Đăng ký shop</a><a class="nav-link" href="<c:url value='/auth/login'/>">Tài khoản</a></div></div>
 </div></nav>
 <main class="container pb-5"><sitemesh:write property="body"/></main>
 <footer class="site-footer border-top py-4 bg-white"><div class="container small">UTETra · Website chuỗi trà sữa · Spring MVC và kiến trúc 3 tầng</div></footer>

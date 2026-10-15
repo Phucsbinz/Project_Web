@@ -1,6 +1,15 @@
 # UC-MGR-07 — Quản lý cửa hàng
 
-> Actor: Manager. Owner: feature/catalog-sales. P0 bắt buộc. Đặc tả thiết kế; chưa có code, ảnh chạy hoặc test nghiệp vụ của UC này.
+> Actor: Manager. Owner: feature/catalog-sales. P0 bắt buộc. Đặc tả gốc; mã nguồn và kiểm thử bổ sung ngày 15/10/2026. Trạng thái nghiệm thu xem mục triển khai bên dưới.
+
+
+## Triển khai thực ngày 15/10/2026
+
+- Code: `StoreService.update / review / state`; Entity/Repository tại `src/main/java/com/utetra/entity/catalog` và `repository/catalog`.
+- Giao diện: `/manager/stores`; JSP tại `src/main/webapp/WEB-INF/views/catalog`, JS tại `src/main/resources/static/assets/js/catalog*.js`.
+- Test liên quan: `scopePolicyUsesDbOwnershipAndMembership; approvalPromotesBuyerAndRejectsReplay`. Test H2/MockMvc/Tomcat; mapping này không khẳng định đã kiểm mọi nhánh lỗi riêng của UC trên TiDB.
+- [Hướng dẫn, contract, transaction, setup và giới hạn](../RUNBOOK.md); [DDL đề xuất cho main](../proposals/catalog-sales.sql); [prompt thực CAT-AI-001](../AI_LOG.md).
+- Chưa có commit/reviewer hoặc nghiệm thu cloud/provider thật. Những bảng testcase/ảnh/checklist dự kiến giữ bên dưới là hồ sơ gốc, không tự đánh dấu đạt toàn bộ.
 
 ## Đặc tả chức năng
 
@@ -74,7 +83,7 @@ Các ô minh chứng bên dưới được điền khi có kết quả thực; k
 | Vai trò và quyền dữ liệu | Manager; lấy identity từ principal, kiểm owner/shop/membership/assignment tại Service |
 | Baseline main/commit implementation | [điền] |
 | Quy tắc BR và bảng dữ liệu | stores, store_registration_requests, store_memberships, users, auth_sessions; theo USE_CASES.md và DATABASE_DESIGN.md |
-| Trạng thái/ngày | Đặc tả bổ sung 14/10/2026; chức năng chưa triển khai |
+| Trạng thái/ngày | Có mã nguồn 15/10/2026; H2/Tomcat đã kiểm; chờ tích hợp/TiDB/reviewer |
 
 Mục tiêu: [điền]. Tiền điều kiện/kích hoạt: [điền]. Đầu vào/đầu ra/hậu điều kiện: [điền]. Luồng chính, luồng lỗi, cạnh tranh và quyền: [điền].
 

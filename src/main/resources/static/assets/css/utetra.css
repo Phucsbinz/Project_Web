@@ -4,3 +4,4 @@ body{background:var(--ute-cream);color:#27352e;font-family:system-ui,-apple-syst
 .hero{background:var(--ute-tea);color:#fff}.site-footer{color:#58665f}
 .btn-primary{--bs-btn-bg:var(--ute-tea);--bs-btn-border-color:var(--ute-tea);--bs-btn-hover-bg:#183c2d;--bs-btn-hover-border-color:#183c2d}
 :focus-visible{outline:3px solid var(--ute-accent);outline-offset:3px}
+.catalog-hero{background:#dceadd;color:#163b2b}.catalog-placeholder{display:grid;place-items:center;min-height:220px;background:#e5ddd0;color:#214e3b;font-size:2rem;font-weight:800}.catalog-photo{height:220px;object-fit:cover}.catalog-banner{max-height:320px;object-fit:cover}.catalog-workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,1fr);gap:1.5rem}@media(max-width:900px){.catalog-workspace{grid-template-columns:1fr}}

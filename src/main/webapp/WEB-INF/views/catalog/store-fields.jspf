@@ -1,0 +1,6 @@
+<div><label class="form-label" for="shop-name">Tên shop</label><input class="form-control" id="shop-name" name="name" maxlength="150" required></div>
+<div><label class="form-label" for="shop-slug">Đường dẫn (chữ thường không dấu, dấu gạch nối)</label><input class="form-control" id="shop-slug" name="slug" maxlength="150" pattern="[a-z0-9]+(-[a-z0-9]+)*" required></div>
+<div><label class="form-label" for="shop-address">Địa chỉ</label><input class="form-control" id="shop-address" name="address" maxlength="500" required></div>
+<div><label class="form-label" for="shop-phone">Điện thoại</label><input class="form-control" id="shop-phone" name="phone" maxlength="20" required></div>
+<div><label class="form-label" for="shop-description">Giới thiệu</label><textarea class="form-control" id="shop-description" name="description" maxlength="4000"></textarea></div>
+<div class="row"><div class="col"><label class="form-label" for="shop-open">Mở cửa</label><input class="form-control" id="shop-open" name="openTime" type="time" value="08:00" required></div><div class="col"><label class="form-label" for="shop-close">Đóng cửa</label><input class="form-control" id="shop-close" name="closeTime" type="time" value="22:00" required></div></div>
