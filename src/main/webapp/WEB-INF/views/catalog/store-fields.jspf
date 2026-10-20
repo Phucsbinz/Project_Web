@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8" %>
 <div><label class="form-label" for="shop-name">Tên shop</label><input class="form-control" id="shop-name" name="name" maxlength="150" required></div>
 <div><label class="form-label" for="shop-slug">Đường dẫn (chữ thường không dấu, dấu gạch nối)</label><input class="form-control" id="shop-slug" name="slug" maxlength="150" pattern="[a-z0-9]+(-[a-z0-9]+)*" required></div>
 <div><label class="form-label" for="shop-address">Địa chỉ</label><input class="form-control" id="shop-address" name="address" maxlength="500" required></div>

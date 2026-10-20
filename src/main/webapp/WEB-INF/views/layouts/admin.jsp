@@ -2,21 +2,47 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html><html lang="vi"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="_csrf" content="<c:out value='${_csrf.token}'/>">
-<meta name="_csrf_header" content="<c:out value='${_csrf.headerName}'/>">
-<meta name="app-context" content="${pageContext.request.contextPath}">
+<meta name="theme-color" content="#173c32"><meta name="description" content="UTETra — Chọn chi nhánh, tìm vị trà yêu thích và tự tay chọn size, đường, đá, topping cho ly trà của bạn.">
+<meta name="_csrf" content="<c:out value='${_csrf.token}'/>"><meta name="_csrf_header" content="<c:out value='${_csrf.headerName}'/>"><meta name="app-context" content="${pageContext.request.contextPath}">
 <title><sitemesh:write property="title"/></title>
-<link rel="stylesheet" href="<c:url value='/assets/vendor/bootstrap/bootstrap.min.css'/>">
-<link rel="stylesheet" href="<c:url value='/assets/css/utetra.css'/>">
-<sitemesh:write property="head"/>
-</head><body>
-<nav class="navbar navbar-expand-lg bg-white border-bottom mb-4" aria-label="Điều hướng chính"><div class="container">
-<a class="navbar-brand" href="<c:url value='/'/>">UTETra</a>
+<link rel="icon" type="image/svg+xml" href="<c:url value='/assets/images/utetra-mark.svg'/>">
+<link rel="stylesheet" href="<c:url value='/assets/vendor/bootstrap/bootstrap.min.css'/>"><link rel="stylesheet" href="<c:url value='/assets/css/utetra.css'/>">
+<sitemesh:write property="head"/></head><body class="${workspace ? 'is-workspace' : 'is-storefront'}">
+<svg xmlns="http://www.w3.org/2000/svg" class="icon-library" aria-hidden="true"><defs>
+<symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4C9 2 3 7 5 14c2 7 13 7 15-10Z"/><path d="m4 21 11-12M9 15l-1-5m5 1 4 1"/></symbol>
+<symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+<symbol id="i-store" viewBox="0 0 24 24"><path d="M3 10h18l-2-7H5l-2 7Zm2 0v11h14V10M9 21v-7h6v7M3 10c0 4 5 4 5 0 0 4 8 4 8 0 0 4 5 4 5 0"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M20 4c-3-3-7-1-8 2C10-1 0 2 3 10c2 4 9 10 9 10s7-6 9-10c1-2 1-4-1-6Z"/></symbol>
+</defs></svg>
+<div class="announcement"><div class="container"><span>Trà ngon, theo cách của bạn.</span><span class="announcement-end">Một chút trà. Một ngày vui.</span></div></div>
+<header class="site-header"><nav class="navbar navbar-expand-lg" aria-label="Điều hướng chính"><div class="container">
+<a class="navbar-brand" href="<c:url value='/'/>"><span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#i-leaf"/></svg></span>UTETra</a>
 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Mở menu"><span class="navbar-toggler-icon"></span></button>
-<div class="collapse navbar-collapse" id="mainNav"><span class="navbar-text ms-lg-auto">Quản trị hệ thống</span></div>
-</div></nav>
-<main class="container pb-5"><sitemesh:write property="body"/></main>
-<footer class="site-footer border-top py-4 bg-white"><div class="container small">UTETra · Website chuỗi trà sữa · Spring MVC và kiến trúc 3 tầng</div></footer>
-<script src="<c:url value='/assets/vendor/bootstrap/bootstrap.bundle.min.js'/>"></script>
-<script src="<c:url value='/assets/js/utetra.js'/>"></script>
+<div class="collapse navbar-collapse" id="mainNav"><div class="navbar-nav main-links mx-lg-auto">
+<a class="nav-link ${currentPath == '/' ? 'active' : ''}" href="<c:url value='/'/>">Trang chủ</a><a class="nav-link ${currentPath == '/menu' ? 'active' : ''}" href="<c:url value='/menu'/>">Thực đơn</a><a class="nav-link ${currentPath.startsWith('/stores') ? 'active' : ''}" href="<c:url value='/stores'/>">Cửa hàng</a>
+</div><div class="nav-actions">
+<c:if test="${currentRole == 'GUEST' || currentRole == 'ROLE_USER' || currentRole == 'ROLE_VENDOR'}"><a class="nav-icon" href="<c:url value='/cart'/>"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg><span>Giỏ hàng</span></a></c:if>
+<c:choose><c:when test="${currentRole != 'GUEST'}"><div class="dropdown"><button class="btn account-trigger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>Tài khoản</button><ul class="dropdown-menu dropdown-menu-end">
+<li><a class="dropdown-item" href="<c:url value='/account/profile'/>">Tài khoản của tôi</a></li>
+<c:if test="${currentRole == 'ROLE_USER' || currentRole == 'ROLE_VENDOR'}"><li><a class="dropdown-item" href="<c:url value='/orders'/>">Đơn mua của tôi</a></li><li><a class="dropdown-item" href="<c:url value='/favorites'/>">Món yêu thích</a></li><li><a class="dropdown-item" href="<c:url value='/account/loyalty'/>">Điểm thành viên</a></li><li><a class="dropdown-item" href="<c:url value='/account/shop-registration'/>">Đăng ký cửa hàng</a></li></c:if>
+<c:if test="${currentRole == 'ROLE_ADMIN'}"><li><a class="dropdown-item" href="<c:url value='/admin/products'/>">Quản trị hệ thống</a></li></c:if><c:if test="${currentRole == 'ROLE_MANAGER'}"><li><a class="dropdown-item" href="<c:url value='/manager/products'/>">Quản lý chi nhánh</a></li></c:if><c:if test="${currentRole == 'ROLE_VENDOR'}"><li><a class="dropdown-item" href="<c:url value='/vendor/products'/>">Quản lý cửa hàng</a></li></c:if>
+<c:if test="${currentRole == 'ROLE_SHIPPER'}"><li><a class="dropdown-item" href="<c:url value='/shipper/orders'/>">Công việc giao hàng</a></li></c:if><li><a class="dropdown-item" href="<c:url value='/notifications'/>">Thông báo</a></li><li><hr class="dropdown-divider"></li><li><button class="dropdown-item text-danger" data-site-logout>Đăng xuất</button></li></ul></div></c:when><c:otherwise><a class="btn btn-primary nav-login" href="<c:url value='/auth/login'/>">Đăng nhập <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a></c:otherwise></c:choose>
+</div></div></div></nav></header>
+<a class="skip-link" href="#main-content">Đến nội dung chính</a>
+<div class="page-frame ${workspace ? 'workspace-frame container' : ''}">
+<c:if test="${workspace}"><aside class="workspace-sidebar" aria-label="Điều hướng quản lý"><p class="eyebrow">UTETRA WORKSPACE</p><h2>${currentRole == 'ROLE_ADMIN' ? 'Quản trị hệ thống' : currentRole == 'ROLE_MANAGER' ? 'Quản lý chi nhánh' : currentRole == 'ROLE_SHIPPER' ? 'Giao hàng của bạn' : 'Cửa hàng của bạn'}</h2><c:set var="roleRoot" value="${currentRole == 'ROLE_ADMIN' ? '/admin' : currentRole == 'ROLE_MANAGER' ? '/manager' : currentRole == 'ROLE_SHIPPER' ? '/shipper' : '/vendor'}"/>
+<c:choose><c:when test="${currentRole == 'ROLE_SHIPPER'}"><a href="<c:url value='/shipper/orders'/>">Đơn giao của tôi</a><a href="<c:url value='/shipper/reports'/>">Thống kê giao hàng</a></c:when><c:otherwise><a href="<c:url value='${roleRoot}/products'/>"><svg class="icon"><use href="#i-grid"/></svg>Sản phẩm</a>
+<a href="<c:url value='${roleRoot}/orders'/>"><svg class="icon"><use href="#i-bag"/></svg>Đơn hàng</a>
+<a href="<c:url value='${roleRoot}/promotions'/>"><svg class="icon"><use href="#i-heart"/></svg>Khuyến mãi</a>
+<a href="<c:url value='${currentRole == "ROLE_VENDOR" ? "/vendor/shop" : roleRoot.concat("/stores")}'/>"><svg class="icon"><use href="#i-store"/></svg>Cửa hàng</a>
+<c:if test="${currentRole == 'ROLE_ADMIN' || currentRole == 'ROLE_MANAGER'}"><a href="<c:url value='${roleRoot}/categories'/>">Danh mục &amp; topping</a><a href="<c:url value='${roleRoot}/users'/>">Người dùng</a><a href="<c:url value='${roleRoot}/order-tools'/>">Vận chuyển &amp; hoa hồng</a><a href="<c:url value='${roleRoot}/reports'/>">Báo cáo doanh thu</a></c:if>
+<c:if test="${currentRole == 'ROLE_VENDOR'}"><a href="<c:url value='/vendor/revenue'/>">Báo cáo doanh thu</a></c:if></c:otherwise></c:choose><div class="sidebar-note"><svg class="icon"><use href="#i-leaf"/></svg><p>Mỗi đơn hàng là một trải nghiệm đáng chăm chút.</p><a href="<c:url value='/menu'/>">Xem cửa hàng <span aria-hidden="true">↗</span></a></div></aside></c:if>
+<main id="main-content" class="${workspace ? 'workspace-main' : 'container page-main'}"><sitemesh:write property="body"/></main></div>
+<footer class="site-footer"><div class="container"><div class="footer-main"><div class="footer-brand"><a href="<c:url value='/'/>" class="footer-logo">UTETra<span>®</span></a><p>Thêm chút trà,<br>thêm chút <em>thảnh thơi.</em></p><span>Một chiếc hẹn nhỏ cho ngày bận rộn.</span></div><div><h2>Khám phá UTETra</h2><a href="<c:url value='/menu'/>">Thực đơn</a><a href="<c:url value='/stores'/>">Hệ thống cửa hàng</a><a href="<c:url value='/account/shop-registration'/>">Trở thành đối tác</a></div><div><h2>Góc của bạn</h2><a href="<c:url value='/account/profile'/>">Tài khoản</a><a href="<c:url value='/orders'/>">Theo dõi đơn hàng</a><a href="<c:url value='/account/loyalty'/>">Thành viên UTETra</a></div><div class="footer-note"><span class="footer-flower" aria-hidden="true">✳</span><p>Chọn vị bạn thích.<br>Chúng mình lo phần còn lại.</p><a href="<c:url value='/menu'/>">Tìm ly trà của bạn <span aria-hidden="true">↗</span></a></div></div><div class="footer-bottom"><span>© 2026 UTETra. Trà ngon mỗi ngày.</span><span>Được tạo nên cho những người yêu trà.</span><a href="#" data-back-top>Về đầu trang ↑</a></div></div></footer>
+<div id="site-toast" class="site-toast" role="status" aria-live="polite" hidden></div>
+<script src="<c:url value='/assets/vendor/bootstrap/bootstrap.bundle.min.js'/>"></script><script src="<c:url value='/assets/js/utetra.js'/>"></script><script src="<c:url value='/assets/js/site-ui.js'/>" defer></script>
 </body></html>

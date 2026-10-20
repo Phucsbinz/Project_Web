@@ -1,0 +1,6 @@
+# Copy to .local/mail.properties at the repository root and fill in locally.
+# This example contains no credentials. Do not commit the completed file.
+app.mail.enabled=true
+app.mail.from=your-address@gmail.com
+spring.mail.username=your-address@gmail.com
+spring.mail.password=REPLACE_WITH_16_LETTER_GMAIL_APP_PASSWORD

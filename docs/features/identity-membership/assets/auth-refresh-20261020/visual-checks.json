@@ -1,0 +1,107 @@
+{
+  "renderMode": "actual compiled JSP snapshots; resource-limited host",
+  "checks": [
+    {
+      "route": "login",
+      "width": 1440,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "register",
+      "width": 1440,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "forgot",
+      "width": 1440,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "otp",
+      "width": 1440,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "reset",
+      "width": 1440,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "login",
+      "width": 390,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "register",
+      "width": 390,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "forgot",
+      "width": 390,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "otp",
+      "width": 390,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "reset",
+      "width": 390,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "login",
+      "width": 320,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "register",
+      "width": 320,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "forgot",
+      "width": 320,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "otp",
+      "width": 320,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "route": "reset",
+      "width": 320,
+      "actualRenderedJsp": true,
+      "noOverflow": true
+    },
+    {
+      "flow": "register → automatic OTP page → invalid/short OTP rejected → resend → verified account",
+      "apiMode": "test-only fixtures",
+      "passed": true
+    },
+    {
+      "flow": "forgot → automatic reset OTP page → one-use grant → new password validation → success",
+      "apiMode": "test-only fixtures",
+      "passed": true
+    }
+  ],
+  "javascriptErrors": [],
+  "clientFlowApiMode": "test-only isolated fixtures; backend OTP covered by integration tests"
+}

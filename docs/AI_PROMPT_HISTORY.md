@@ -512,3 +512,98 @@ push lên nhánh đi
 ```
 
 Người dùng cho phép push feature/order-payment; không mở rộng sang main hoặc các nhánh của thành viên khác. Kết quả xác nhận remote ghi ở AI_LOG của nhánh.
+# IDN-AI-001 — Triển khai identity-membership — 17/10/2026
+
+Nhánh: `feature/identity-membership`. Phạm vi: 16 UC AUTH/USER/MGR-01/ADM-01. Người gửi: chủ workspace, tên cá nhân chưa cung cấp. Công cụ: Codex. Nguồn kết quả: [phản hồi và source/test](features/identity-membership/ai-responses/IDN-AI-001.md), [AI_LOG](features/identity-membership/AI_LOG.md).
+
+Prompt nguyên văn:
+
+```text
+e:\Nam3\WEB\Project_Web bạn hãy đọc toàn bộ file md có trong project nó bao gồm hết những thông tin cần thiết, việc của tôi là làm việc trên nhánh feature/identity-membership thì bạn hãy đọc hết các file md để thực hiện toàn bộ những việc cần làm trong nhánh của tôi nhé nếu chưa thì hãy pull code từ git main về sau đó chuyển sang nhánh của tôi để làm việc
+```
+
+Tin nhắn trong lúc triển khai, giữ nguyên văn: `Ư`. Không suy diễn thành thay đổi phạm vi hoặc cho phép push.
+
+## IDN-AI-002 — Rà toàn bộ validation và chạy demo — 20/10/2026
+
+Nhánh: `feature/identity-membership`, 16 UC. Người gửi: chủ workspace; tên cá nhân chưa cung cấp. Công cụ: Codex. Kết quả: [VALIDATION_REVIEW_20261020](features/identity-membership/VALIDATION_REVIEW_20261020.md), [phản hồi](features/identity-membership/ai-responses/IDN-AI-002.md).
+
+Prompt nguyên văn:
+
+```text
+hãy đọc 1 lần nữa và check hết các validation nha, rồi chạy demo
+```
+
+
+## IDN-AI-003 — Ghép UI và chạy database thật — 20/10/2026
+
+Nhánh: `feature/identity-membership`. Người dùng cho phép merge các nhánh, tích hợp UI và xóa demo; không yêu cầu push.
+
+```text
+ròi oke bạn hãy merge thêm các nhánh khác để lấy UI về nha, và tích hợp với việc nãy giờ bạn làm, tài khoản mật khẩu thì phải lấy từ database nhá, UI phải match với nhau và bạn xóa mấy cái demo đi nha làm như 1 web thực thụ á
+```
+
+Kết quả: [INTEGRATION_20261020](features/identity-membership/INTEGRATION_20261020.md).
+
+
+## IDN-AI-004 — Bổ sung tài khoản trong database — 20/10/2026
+
+Nhánh: feature/identity-membership. Prompt nguyên văn:
+
+> bạn tự bổ sung tài khoản đồ đi, tài khoản giống thật nhất nha
+
+Kết quả: [ACCOUNTS_20261020](features/identity-membership/ACCOUNTS_20261020.md). Credential chỉ lưu cục bộ trong .local, không ghi vào Git. Không push.
+
+
+## IDN-AI-005 — Đơn giản mật khẩu và nâng cấp toàn bộ UI — 20/10/2026
+
+Nhánh: feature/identity-membership. Prompt nguyên văn:
+
+```text
+mật khẩu đang bị khó quá bạn hãy để nó đơn giản thôi nhé, và cập nhật lại toàn bộ UI của web giùm tôi, bạn hãy làm nó vip pro nhất có thể và xịn xò nhất đối với 1 web bán trà sửa có tích hợp những yêu cầu của đồ án nhé
+```
+
+Các tin nhắn tiếp tục trong cùng phạm vi: `tiếp tục đi`, `làm tiếp đi`.
+
+Kết quả: [UI_REDESIGN_20261020](features/identity-membership/UI_REDESIGN_20261020.md). Credential không đưa lên Git. Không push.
+
+
+## IDN-AI-006 — Gọn giao diện và luồng OTP, cấu hình Gmail — 20/10/2026
+
+Nhánh: feature/identity-membership. Prompt và bổ sung:
+
+```text
+& 'e:\Nam3\WEB\image copy.png' mấy cái format cho việc chưa có tài khoản rồi kích hoạt otp đồ á nó đang bị rối kìa kiểu xấu á, hãy chỉnh lại nha
+và email để gửi otp kích hoạt tài khoản thì bạn hãy dùng mail này để gửi cho các mail khác luxiphot123456@gmail.com
+hãy chỉnh không riêng gì ở trang đăng nhập mà ở các trang khác luôn nha
+với lại cái kích hoạt tài khoản bằng otp nó đang bị thừa ấy, bạn chỉ cần có cái tạo tại khoản rồi gửi otp xác thực đồ là được, cả quên mật khẩu lẫn phục hồi gì đó cũng cần otp nhé
+```
+
+Người dùng đã cung cấp Mật khẩu ứng dụng Gmail trong hội thoại; giá trị bí mật được lược bỏ khỏi tài liệu và chỉ lưu trong cấu hình cục bộ bị Git bỏ qua.
+
+Kết quả: [AUTH_FLOW_20261020](features/identity-membership/AUTH_FLOW_20261020.md). Đã cấu hình và kiểm tra Gmail thật, sửa đồng bộ 5 trang và luồng OTP. Không push.
+
+
+## IDN-AI-007 — OTP và email thương hiệu — 20/10/2026
+
+Prompt nguyên văn:
+
+```text
+nhập đúng otp chỉ mới 10s thôi mà nó thông báo lỗi rồi với lại bạn hãy làm cái thông báo bên mail nó xịn xíu á
+```
+
+Kết quả: [OTP_MAIL_20261020](features/identity-membership/OTP_MAIL_20261020.md). Chưa tái hiện được lỗi cụ thể của người dùng; đã kiểm chứng mã đúng sau 10 giây trên TiDB, cải thiện xử lý copy và lỗi, nâng cấp email HTML. Không push.
+
+## IDN-AI-008 — Bàn giao nhánh identify và SMTP — 20/10/2026
+
+Prompt nguyên văn:
+
+```text
+oke hãy push code lên nhánh identify của tôi đi, nhớ là có cả phương thức gửi mail nữa nha để khi bạn tôi pull về thì mail đó vẫn có thể sử dụng được
+```
+
+Bàn giao toàn bộ thay đổi identity/UI/tích hợp đang có lên nhánh `identify`.
+Có code gửi OTP, template mail, mẫu cấu hình và script nhập App Password riêng
+cho từng máy. Xem [MAIL_SETUP](features/identity-membership/MAIL_SETUP.md).
+Không đưa `.local/mail.properties` hay App Password vào Git. Kết quả kiểm chứng
+và commit bàn giao được ghi trong AI_LOG của identity.

@@ -1,0 +1,806 @@
+{
+  "mode": "read-only-snapshots-of-real-mysql-responses",
+  "checks": [
+    {
+      "scope": "guest",
+      "route": "/",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/menu",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/stores",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/login",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/register",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/forgot",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/otp",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/reset",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/cart",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/account/profile",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/notifications",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/products",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/stores",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/promotions",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/orders",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/users",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/order-tools",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/reports",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/categories",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/toppings",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/account/profile",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/notifications",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/products",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/stores",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/promotions",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/orders",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/users",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/order-tools",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/reports",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/categories",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/toppings",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/account/profile",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/notifications",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/products",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/shop",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/promotions",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/orders",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/revenue",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/account/profile",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/notifications",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/account/addresses",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/account/loyalty",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/favorites",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/viewed",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/reviews",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/comments",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/orders",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/account/shop-registration",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/cart",
+      "viewport": 1440,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "interaction": "show/hide password",
+      "viewport": 1440,
+      "passed": true
+    },
+    {
+      "scope": "guest",
+      "route": "/",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/menu",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/stores",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/login",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/register",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/forgot",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/otp",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/reset",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "guest",
+      "route": "/cart",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/account/profile",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/notifications",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/products",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/stores",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/promotions",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/orders",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/users",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/order-tools",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/reports",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/categories",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/toppings",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/account/profile",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/notifications",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/products",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/stores",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/promotions",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/orders",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/users",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/order-tools",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/reports",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/categories",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/toppings",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/account/profile",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/notifications",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/products",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/shop",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/promotions",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/orders",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/revenue",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/account/profile",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/notifications",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/account/addresses",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/account/loyalty",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/favorites",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/viewed",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/reviews",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/comments",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/orders",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/account/shop-registration",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "scope": "user",
+      "route": "/cart",
+      "viewport": 390,
+      "renderedActualHtml": true,
+      "overflow": false,
+      "brokenImages": false
+    },
+    {
+      "interaction": "mobile navigation",
+      "passed": true
+    },
+    {
+      "interaction": "show/hide password",
+      "viewport": 390,
+      "passed": true
+    }
+  ],
+  "javascriptErrors": [],
+  "uncapturedRequests": [],
+  "credentialsIncluded": false
+}

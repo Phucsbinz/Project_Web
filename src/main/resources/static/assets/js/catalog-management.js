@@ -8,7 +8,8 @@
   const form = document.querySelector('#management-form');
   const list = document.querySelector('#management-list');
   const message = document.querySelector('#management-message');
-  let section = 'stores', editing = null, shopList = [], categories = [], toppings = [], productList = [], loading = false;
+  const routeSection = location.pathname.split('/').filter(Boolean).pop();
+  let section = ['stores','products','categories','toppings','promotions'].includes(routeSection) ? routeSection : 'stores', editing = null, shopList = [], categories = [], toppings = [], productList = [], loading = false;
   const labels = {stores:'Shop',products:'Sản phẩm',categories:'Danh mục',toppings:'Topping',promotions:'Khuyến mãi',areas:'Khu vực giao',stock:'Topping tại shop',memberships:'Phân công Manager'};
   const specs = {
     stores:[['name','Tên shop'],['slug','Đường dẫn'],['address','Địa chỉ'],['phone','Điện thoại'],['description','Giới thiệu','textarea'],['openTime','Mở cửa','time'],['closeTime','Đóng cửa','time'],['acceptingOrders','Nhận đơn','checkbox']],
@@ -77,7 +78,25 @@
     await request('/stores/' + item.id + '/review','POST',{decision,note,version:item.version,commissionPolicyId}); await reload(); notice('Đã xử lý hồ sơ.');
   }
   async function refresh() {
+    document.querySelectorAll('[data-catalog-tab]').forEach(tab => {
+      const active = tab.dataset.catalogTab === section;
+      tab.classList.toggle('btn-primary', active); tab.classList.toggle('btn-outline-dark', !active);
+      tab.setAttribute('aria-pressed', String(active));
+    });
     list.replaceChildren(el('p','Đang tải…'));
+    const storeRequired = ['products','areas','stock','memberships'].includes(section) || (section === 'promotions' && app.dataset.role !== 'admin');
+    if (app.dataset.role === 'admin' && select.options[0]?.value === '') select.options[0].textContent = section === 'promotions' ? 'Toàn hệ thống (khuyến mãi)' : 'Chọn cửa hàng để quản lý';
+    if (storeRequired && !select.value) {
+      document.querySelector('#catalog-list-title').textContent = labels[section];
+      const empty = el('div',undefined,'empty-state');
+      empty.append(el('h3','Bắt đầu từ một cửa hàng.'),el('p',shopList.length ? 'Chọn cửa hàng ở phía trên để xem và quản lý dữ liệu.' : 'Chưa có cửa hàng trong phạm vi của bạn. Khi cửa hàng được duyệt hoặc phân công, dữ liệu sẽ xuất hiện tại đây.'));
+      if(app.dataset.role === 'vendor') {const link=el('a','Đăng ký cửa hàng','btn btn-primary');link.href=context+'/account/shop-registration';empty.append(link);}
+      else empty.append(button('Xem cửa hàng',async()=>{section='stores';await refresh();}));
+      list.replaceChildren(empty); form.replaceChildren(el('p','Chọn cửa hàng trước khi tạo hoặc cập nhật dữ liệu.','small text-secondary'));
+      document.querySelector('#catalog-form-title').textContent = 'Sẵn sàng cho cửa hàng của bạn';
+      document.querySelector('#image-panel').hidden = true;
+      return;
+    }
     try {
       let data = [];
       if(section === 'stores') data = shopList;
@@ -107,6 +126,7 @@
     const previous = select.value; shopList = await request('/stores'); select.replaceChildren();
     if(app.dataset.role === 'admin') { const o = el('option','Toàn hệ thống (khuyến mãi)'); o.value = ''; select.append(o); }
     shopList.forEach(s => { const o = el('option',s.name + ' · ' + s.status); o.value = s.id; select.append(o); });
+    if(!select.options.length) {const o=el('option','Chưa có cửa hàng được phân công');o.value='';select.append(o);}
     if([...select.options].some(o => o.value === previous)) select.value = previous;
     const lookups = await fetch(context + '/products/lookups').then(r => r.ok ? r.json() : {categories:[]}); categories = lookups.categories;
     toppings = await request('/toppings');
@@ -132,7 +152,7 @@
     } catch(error) { notice(error.message,true); } finally { save.disabled = false; loading = false; }
   });
   const tabs = app.dataset.role === 'vendor' ? ['stores','products','promotions','areas','stock'] : ['stores','products','categories','toppings','promotions','areas','stock',...(app.dataset.role === 'admin' ? ['memberships'] : [])];
-  tabs.forEach(tab => document.querySelector('#catalog-tabs').append(button(labels[tab],async () => { section = tab; await refresh(); })));
+  tabs.forEach(tab => {const item = button(labels[tab],async () => { section = tab; await refresh(); }); item.dataset.catalogTab = tab; document.querySelector('#catalog-tabs').append(item);});
   select.addEventListener('change',async () => { try { productList = select.value ? await request('/products?storeId=' + select.value) : []; await refresh(); } catch(error) { notice(error.message,true); } });
   document.querySelector('#catalog-reload').onclick = () => reload().catch(error => notice(error.message,true));
   document.querySelector('#catalog-image').addEventListener('submit',async event => {

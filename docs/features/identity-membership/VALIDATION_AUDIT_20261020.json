@@ -1,0 +1,662 @@
+{
+  "date": "2026-10-20",
+  "branch": "feature/identity-membership",
+  "markdown_count": 94,
+  "markdown": [
+    {
+      "path": "USE_CASES.md",
+      "lines": 181,
+      "sha256": "b2b16832e515a2ea7159bb31a71557d23239295d3f62b475f8a8d7f24be604d8"
+    },
+    {
+      "path": "TAI_LIEU_CAU_HINH_PROJECT_CUOI_KI/HUONG_DAN_CAU_HINH_TONG_HOP.md",
+      "lines": 1127,
+      "sha256": "3ece42d62e2cf4a65baaffac7e8de574bc5f462de77853313e71e71becbcec92"
+    },
+    {
+      "path": "DATABASE_DESIGN.md",
+      "lines": 807,
+      "sha256": "44db3adf2cd2fdd5659f82e9c33576d306b5cffbd7a2c054be2b5b43ac528c3b"
+    },
+    {
+      "path": "BRANCH_ORDER_PAYMENT.md",
+      "lines": 57,
+      "sha256": "9c2300d6a157e3443b34c7bc69652e5a40ae00c29d5b9919405632bf40e0f1a8"
+    },
+    {
+      "path": "BRANCH_IDENTITY_MEMBERSHIP.md",
+      "lines": 49,
+      "sha256": "04dd07d69c166ac54f7f6d1a3102f4ab4a3035adff4e3b3b9dcff9341b05d039"
+    },
+    {
+      "path": "BRANCH_CATALOG_SALES.md",
+      "lines": 51,
+      "sha256": "4261f130f29974f5e9faa73002a4d7325d99169433e57d175c441f980a7e95a0"
+    },
+    {
+      "path": "AGENT_HANDOFF.md",
+      "lines": 83,
+      "sha256": "f2e1f151fcd83227ecbd051e9997c5143da11ee9f9f2b1553b9d1abda4e0abc0"
+    },
+    {
+      "path": "PROJECT_PLAN.md",
+      "lines": 79,
+      "sha256": "0ad009b79d0abd2d00dcc492e64e70ea468346e24c57b0210f018e53c333586b"
+    },
+    {
+      "path": "MAIN_BRANCH.md",
+      "lines": 9,
+      "sha256": "71164318fa613db1819c13a40eca37a9e0cdc331380646141f6c594aff7d6478"
+    },
+    {
+      "path": "INTEGRATION_BRANCH.md",
+      "lines": 35,
+      "sha256": "1404b8a01dbf383534a398cc091a9f8dbfa055f864d705fda9c9b47829f94ed2"
+    },
+    {
+      "path": "docs/templates/USE_CASE_NOTE.md",
+      "lines": 78,
+      "sha256": "516b1555d2a71443225569cdf17de1519379909f5706ae1997aeb7fa29ce95c4"
+    },
+    {
+      "path": "docs/templates/PROMPT_ENTRY.md",
+      "lines": 30,
+      "sha256": "909532969ababe7d3b58d9ce1cf9e99e908b26e0b615b4cc8969c888a6fa08a5"
+    },
+    {
+      "path": "docs/SURVEY_SYSTEM_ANALYSIS.md",
+      "lines": 29,
+      "sha256": "47d9ee2c2841c074330a0026421ee570358ac139166f0709f17696300a5d4f37"
+    },
+    {
+      "path": "docs/SETUP.md",
+      "lines": 81,
+      "sha256": "5510e852e5a2357b533a47364fd5f47f9d5b14f664bc9371210616550464b080"
+    },
+    {
+      "path": "docs/REPORT_ASSEMBLY.md",
+      "lines": 84,
+      "sha256": "83ef5d9a289bc24ff1e85ad1d4d960fe48189cebaf5c877f75ba7085c0756067"
+    },
+    {
+      "path": "docs/README.md",
+      "lines": 29,
+      "sha256": "c8521fff54563f9f14b94bb5587a9a8fbdf9a12442cc9875ef55cca5e296c8c3"
+    },
+    {
+      "path": "docs/QUY_DINH_VA_CAU_HINH_CHUNG.md",
+      "lines": 140,
+      "sha256": "ff51eb97ba603b801e9ab11af4986a83a5f49dd9f85f8b99936763d3ef3a83b7"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-VND-07.md",
+      "lines": 141,
+      "sha256": "421d2a7ee9729696e6b7055e83aa9d171063d6bf19613aedff7fe77be27862e3"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-VND-06.md",
+      "lines": 138,
+      "sha256": "85f73367b0b82c479b24195dea73d0827a6b90efcbf67c60d0bd0ab97ca70e9f"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-VND-04.md",
+      "lines": 138,
+      "sha256": "07bb7ae52659795495f0c882faf658853fc454bb84b756b096300715b0d40dff"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-SHP-03.md",
+      "lines": 138,
+      "sha256": "8576b4994d8bd47417cdead3f24622db46a83fccab953c13b17c78cc50f2e262"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-SHP-02.md",
+      "lines": 138,
+      "sha256": "8f20ec4dec52bff86597440ace8bdca915114bf56a88b3ead7e6e48cbf098228"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-SHP-01.md",
+      "lines": 135,
+      "sha256": "79341d4f1af6a3500066b36457d5ce7a108d5638a941601972ffa49b73621d78"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-10.md",
+      "lines": 138,
+      "sha256": "ed2deba8df7563c9b2043f901ce9f5d156a0c72fcb15bbdc67fc9f12c3ec67b6"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-09.md",
+      "lines": 147,
+      "sha256": "286c97f49e39f691d483e20f9cc474bf9f76a0d47da22e98ecad3f9a51d634f7"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-08.md",
+      "lines": 141,
+      "sha256": "9089b2da64bbaa248133979afe1a574bd74cc48d45d349140c383cde2d350754"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-07.md",
+      "lines": 135,
+      "sha256": "dc932ba71fb8de2f7b58fce2cabf11dd8941b34b113a6a1440b4f22286f612b9"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-06.md",
+      "lines": 144,
+      "sha256": "e536f69997686132088ce869e35448234e4488b65f007faf724c4268f2625646"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-05.md",
+      "lines": 138,
+      "sha256": "74cbf169a3f0982c34f4953accd8b2a9860c0fa40e1ccbc8cd0308cc31e1a33c"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-04.md",
+      "lines": 138,
+      "sha256": "08acfb66b8fc7dcb32e8974fc0be140b75d04352ef7565ead834a6c1b611a7a3"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-03.md",
+      "lines": 144,
+      "sha256": "80e616b6c4b9b321fbf630f2f17faa28c9afcbfde77f99731e7dee51f28c3164"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-02.md",
+      "lines": 138,
+      "sha256": "e53c38ea4844a570e1caef8e278e58a6a876bf4a221d30d66fa2b4f9ea6bd8dd"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-01.md",
+      "lines": 138,
+      "sha256": "5d690c7a165c6c1b02dcae6d9822cec961e0863d7839672891725092c446acc9"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-MGR-09.md",
+      "lines": 138,
+      "sha256": "d247c9a0304262883561f0f6edb3f2e8c9f534d7c646e523381b4f193e0598bd"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-MGR-08.md",
+      "lines": 141,
+      "sha256": "09b954c624a7ff3719923beb908e69a7b7c4fd4e83efc136472274c6b2fecb17"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-MGR-06.md",
+      "lines": 138,
+      "sha256": "4d613bf3550aed53e505aa750bf0d49b83b72f8db0d63eb1afd1f133b74cd4f9"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-MGR-04.md",
+      "lines": 141,
+      "sha256": "ef304e0822e070bf25e4adb9bdcae878f9fe9bc8b6da23698e44045e5e258d19"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ADM-09.md",
+      "lines": 138,
+      "sha256": "8cbe987bdf98de20b7af5d998249410adcc489c5b7823e1a4d1014e3f5b14004"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ADM-08.md",
+      "lines": 141,
+      "sha256": "1887040ff80e9afac97178db80dbff16d99babea7685748ac5e17d0fdfb36be4"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ADM-06.md",
+      "lines": 138,
+      "sha256": "459cad8e10035c251570fd491ef208a01536367509d71928e7668a5ab7115458"
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ADM-04.md",
+      "lines": 141,
+      "sha256": "20ae80f9a5906c53c8802c743c9ad4e0abb337538f76ee9bbf916d7cdf0f445e"
+    },
+    {
+      "path": "docs/features/order-payment/IMPLEMENTATION.md",
+      "lines": 118,
+      "sha256": "fd71f04b37ca821ee5a3d9eb7a4cde6a70818066bdbd775d157b4b39f1c95636"
+    },
+    {
+      "path": "docs/features/order-payment/AI_LOG.md",
+      "lines": 21,
+      "sha256": "b6f8e72dc38293fc4ca93ae2a8bf4e3259d1c3cff0f773aecc68a9cae6c23953"
+    },
+    {
+      "path": "docs/features/identity-membership/VERIFICATION.md",
+      "lines": 44,
+      "sha256": "cbdb87ca42bcb68805e99ba67d2d24aa0a03608f78c5ab8a08bd845b7e4b2c87"
+    },
+    {
+      "path": "docs/features/identity-membership/VALIDATION_REVIEW_20261020.md",
+      "lines": 54,
+      "sha256": "cc74a6928261a497298f3fc01cebc1f7fe63628fcedbaf80bbff704771cc784a"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-07.md",
+      "lines": 160,
+      "sha256": "ee2257fa5fb8ed014e21ca0d18afabc94eb8307a40bcc2a4f186b4d17907ff0a"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-06.md",
+      "lines": 169,
+      "sha256": "0865b56ade61689c0ad1646ff011fc2938e0f20ae4af6868dae7eb1cd055a2ae"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-05.md",
+      "lines": 163,
+      "sha256": "6b6eff93dd88e47e3057b824bb365e85fb137565cee69465dceeba4e51f314a4"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-04.md",
+      "lines": 160,
+      "sha256": "643172bc878b99f03807ff4c25f8df3e5c2c18dcae76470737e51e460da636fb"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-03.md",
+      "lines": 160,
+      "sha256": "9d5d514eabd7e65da1d6faf96c10247b53cc92af8990e25e863ae7806f6e6c9e"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-02.md",
+      "lines": 166,
+      "sha256": "d67bd92c9fc58e7fa63e96315facd623b754be9f3d549aeea5919dbaeccb9b06"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-01.md",
+      "lines": 163,
+      "sha256": "46b78ad8262053be0b68b009c0d93462817f9aaf2115882592c976377b0af8b1"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-MGR-01.md",
+      "lines": 163,
+      "sha256": "fefca0f3f25ee59a724dac2f6ab5b84c50bdab57284dc76904e3b615256a1282"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-07.md",
+      "lines": 163,
+      "sha256": "49550ec5a5f0884cfeeb14dc649fd1663ddd548e3365487112f75beb3e034758"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-06.md",
+      "lines": 163,
+      "sha256": "198fe13048d31fe8d1f02d9420a5ef8edb0dd02a01dfc3b269fd6acb818c1a6e"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-05.md",
+      "lines": 166,
+      "sha256": "bf584d05adfe5a41f04c4a09dc13349d2e530efeaf5bc3fff1dd5dbaf5df1938"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-04.md",
+      "lines": 163,
+      "sha256": "1f3fd36f982a10b8665fe23151a5740c46dbaf5ca8fd7cde90ebcc3da06e5c4e"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-03.md",
+      "lines": 166,
+      "sha256": "4d42516e1f265457c2554312cc89d5213220092e95e07b0899b8482236cc99a2"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-02.md",
+      "lines": 163,
+      "sha256": "f5045a68ee8211b15046e5301855fab2f0d16fb933cd2eb964b96a4e02038b19"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-01.md",
+      "lines": 166,
+      "sha256": "5899b2f624aa60e93c556a1bcf4691445b4c910b8c4fb3c2771a0798ed628525"
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-ADM-01.md",
+      "lines": 166,
+      "sha256": "9f81918032080379ce5bbc34eef48036e263e3ee4de43753c51d40379efb54e3"
+    },
+    {
+      "path": "docs/features/identity-membership/RUNBOOK.md",
+      "lines": 73,
+      "sha256": "d0557c68d6ed3740a684018aa31d928e32cbacb1423d7a4b9dccfac842d8f167"
+    },
+    {
+      "path": "docs/features/identity-membership/IMPLEMENTATION.md",
+      "lines": 114,
+      "sha256": "edddb2ebf311b8e4db25dbad16a24bf57e12300e24382c799f277209e2256cfc"
+    },
+    {
+      "path": "docs/features/identity-membership/CONTRACT_REVIEW.md",
+      "lines": 15,
+      "sha256": "cb6cf0b779bf2fa3673258f1d57cb7c5705f903145afbeefa3ab298267c17df5"
+    },
+    {
+      "path": "docs/features/identity-membership/AI_LOG.md",
+      "lines": 28,
+      "sha256": "3d31c5e202e861209a4c5e5b35b3b329a390840cc09d43434093c1751c7cb66c"
+    },
+    {
+      "path": "docs/features/identity-membership/ai-responses/IDN-AI-002.md",
+      "lines": 9,
+      "sha256": "71a261cacf42ffc883243d036f4eeaf861b9c04b5fa776739e2305ff6fce8be8"
+    },
+    {
+      "path": "docs/features/identity-membership/ai-responses/IDN-AI-001.md",
+      "lines": 11,
+      "sha256": "34d95ef7ba0d15cbbc991e0e6a70cb567c2d37aa584c4561a9109f1d310eb4e1"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-VND-05.md",
+      "lines": 138,
+      "sha256": "4998de1136ed3dce90ba33053b0811aaeaa59938968964d1dfff35dc96f11357"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-VND-03.md",
+      "lines": 138,
+      "sha256": "8d18e98dd85a89e0f231749be79fc61493250992cb38cca504da93427b9df225"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-VND-02.md",
+      "lines": 141,
+      "sha256": "2952eb8183509da495eff43392676dcb7c14720c74fdf8ab1c72e2c8023a767a"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-VND-01.md",
+      "lines": 141,
+      "sha256": "5a61ff99f5701651cdf4cf48470db2dceb17a9bc5ff5db543ab055ba8ae02f3c"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-MGR-07.md",
+      "lines": 138,
+      "sha256": "694fa0d1b350de005f39ade5993ee6ea6d401fb738733c8f5fd1efcc046b83fd"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-MGR-05.md",
+      "lines": 141,
+      "sha256": "777c444ab7a2198c0e7635ec4c1ee965957910d954ec28a612ee36d18a914a3a"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-MGR-03.md",
+      "lines": 138,
+      "sha256": "c01b268142ec5ba01e1f7ac12dfa9fa7708f95d2eeafcd73c8fd938d46b4b9ff"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-MGR-02.md",
+      "lines": 138,
+      "sha256": "dd25161c276c76983829b3888cb15a88dde3ec994b3f244eb67bd49fa5c213bc"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-CAT-06.md",
+      "lines": 138,
+      "sha256": "1da23fe07e3a231c6d8b26a4bc262d32f3e63deb8cd9763b8479cb559f2f16b6"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-CAT-05.md",
+      "lines": 141,
+      "sha256": "7cd5996951ef0c2d29fb82cc9be6503cfee9c319176a67ed9caa06b1bb7bb748"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-CAT-04.md",
+      "lines": 138,
+      "sha256": "fd3965fce9aff839f7a3553a8800bace7e9996a9ecb6046171c2a1c12cd754e8"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-CAT-03.md",
+      "lines": 138,
+      "sha256": "3478d629b82382901f54e69271409c53d63ce053c394ecbf7d90f7036350b1f6"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-CAT-02.md",
+      "lines": 138,
+      "sha256": "8a4be08757421345e11eca971fb35824059dbd4651bbc1934ef58248d20ba572"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-CAT-01.md",
+      "lines": 141,
+      "sha256": "cc970511c417ff1277f37c688ef6974d3f3a99fe6416830da0827d4d2c4daca8"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-ADM-07.md",
+      "lines": 138,
+      "sha256": "5348cab82009e0139153fac4b28c90f80d3911ee54342fa5c40e84ef664090ae"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-ADM-05.md",
+      "lines": 141,
+      "sha256": "7270964cda98de36e1c8b2c15ef45df3831ea07fddfd050422fc5f3953f0257a"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-ADM-03.md",
+      "lines": 138,
+      "sha256": "91b016fd323c76ba22f41b3e76bd7bcea3075a43515847e8b6d99157773546d2"
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-ADM-02.md",
+      "lines": 138,
+      "sha256": "a6865354260c3b5748b4df5ea59f3b02e197f92f63e605139ae0f0b4e97e4b74"
+    },
+    {
+      "path": "docs/features/catalog-sales/IMPLEMENTATION.md",
+      "lines": 106,
+      "sha256": "b82d7d40413aa15de3c8107bea5e61e68404c73353e02a6d190ef8095e433f9c"
+    },
+    {
+      "path": "docs/features/catalog-sales/AI_LOG.md",
+      "lines": 21,
+      "sha256": "6a2966d2c5c5f73a1ae2ec09ef6956e4d0cb676fc03c2dfb10316503e113edd5"
+    },
+    {
+      "path": "docs/COURSE_CONFIG_MAPPING.md",
+      "lines": 42,
+      "sha256": "d48b611612b155d2d749d99f93c4236fd4dee2a8ddb209d85025802b344a7924"
+    },
+    {
+      "path": "docs/COMMON_BASELINE.md",
+      "lines": 48,
+      "sha256": "3173db7744844ecb96b6511412bb58d5821dc2007ec6f7285734b16d5b74afb5"
+    },
+    {
+      "path": "docs/BRANCH_WORKFLOW.md",
+      "lines": 44,
+      "sha256": "3a70163472d8b88cec8affe74cb7b1e839848945b7353ae8db3c1baf607cc3db"
+    },
+    {
+      "path": "docs/BASELINE_VERIFICATION.md",
+      "lines": 45,
+      "sha256": "7b6980281e0815b883bb33b6d6526477987ae02d721bc048ca84d2c42a98e7d6"
+    },
+    {
+      "path": "docs/BASELINE_AI_LOG.md",
+      "lines": 32,
+      "sha256": "4116c916d6a4fb71ff1863605371251b785d6398a3528eaa2ce67c64da70961b"
+    },
+    {
+      "path": "docs/AI_WORKFLOW.md",
+      "lines": 31,
+      "sha256": "2e3b679b7c5db9b5fb94d0c1f8f003d89f2822295f0c4460bcf8d0812f7bb85f"
+    },
+    {
+      "path": "docs/AI_PROMPT_HISTORY.md",
+      "lines": 456,
+      "sha256": "3663ae32e3721e789668e6cd7b41dd63c4e4b47b6e53121f9e2fc31be05ee9ca"
+    }
+  ],
+  "surefire": [
+    {
+      "name": "com.utetra.BaselineSecurityTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "9.337",
+      "timestamp": "0"
+    },
+    {
+      "name": "com.utetra.BaselineViewTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "5.086",
+      "timestamp": "0"
+    },
+    {
+      "name": "com.utetra.identity.IdentityIntegrationTest",
+      "tests": "33",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "14.024",
+      "timestamp": "0"
+    },
+    {
+      "name": "com.utetra.identity.IdentityMigrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.051",
+      "timestamp": "0"
+    },
+    {
+      "name": "com.utetra.identity.IdentitySocketLifecycleTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.207",
+      "timestamp": "0"
+    },
+    {
+      "name": "com.utetra.identity.IdentityViewTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "3.872",
+      "timestamp": "0"
+    },
+    {
+      "name": "com.utetra.security.JwtServiceTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.012",
+      "timestamp": "0"
+    },
+    {
+      "name": "com.utetra.service.SessionIdentityServiceTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.123",
+      "timestamp": "0"
+    }
+  ],
+  "browser": {
+    "checks": [
+      {
+        "check": "client rejects password over 72 UTF-8 bytes before POST",
+        "status": "passed"
+      },
+      {
+        "check": "client rejects phone containing only separators",
+        "status": "passed"
+      },
+      {
+        "check": "API rejects missing version",
+        "status": "passed",
+        "http": 400
+      },
+      {
+        "check": "API rejects fractional version",
+        "status": "passed",
+        "http": 400
+      },
+      {
+        "check": "API rejects invalid phone",
+        "status": "passed",
+        "http": 400
+      },
+      {
+        "check": "API rejects negative product ID",
+        "status": "passed",
+        "http": 400
+      },
+      {
+        "check": "address invalid phone blocks submit",
+        "status": "passed"
+      },
+      {
+        "check": "correcting invalid phone permits save",
+        "status": "passed"
+      },
+      {
+        "check": "client rejects 49-character comment",
+        "status": "passed"
+      },
+      {
+        "check": "50-character comment is saved",
+        "status": "passed"
+      },
+      {
+        "check": "API accepts 50 Unicode codepoints",
+        "status": "passed",
+        "http": 200
+      },
+      {
+        "check": "XSS text is stored as data",
+        "status": "passed",
+        "http": 200
+      },
+      {
+        "check": "XSS text is escaped when rendered",
+        "status": "passed"
+      },
+      {
+        "check": "API independently rejects 49-character comment",
+        "status": "passed",
+        "http": 400
+      },
+      {
+        "check": "API rejects zero-star review",
+        "status": "passed",
+        "http": 400
+      },
+      {
+        "check": "eligible purchased product can be reviewed",
+        "status": "passed",
+        "http": 200
+      },
+      {
+        "check": "duplicate review is rejected",
+        "status": "passed",
+        "http": 409
+      },
+      {
+        "check": "fake PNG rejected before disabled provider",
+        "status": "passed",
+        "http": 400
+      },
+      {
+        "check": "other user cannot use buyer purchase evidence",
+        "status": "passed",
+        "http": 404
+      },
+      {
+        "check": "Vendor cannot use Admin routes",
+        "status": "passed",
+        "http": 403
+      },
+      {
+        "check": "Admin assignment requires explicit active flag",
+        "status": "passed",
+        "http": 400
+      },
+      {
+        "check": "logout removes JWT and refresh cookies",
+        "status": "passed"
+      },
+      {
+        "check": "no browser JavaScript exceptions",
+        "status": "passed"
+      }
+    ],
+    "browser_errors": []
+  }
+}

@@ -1,6 +1,6 @@
 # UC-USER-02 — Nhiều địa chỉ nhận hàng
 
-> Actor: User, Vendor. Owner: feature/identity-membership. P0 bắt buộc. Đặc tả thiết kế; chưa có code, ảnh chạy hoặc test nghiệp vụ của UC này.
+> Actor: User, Vendor. Owner: feature/identity-membership. P0 bắt buộc. Đặc tả ban đầu; code/test và ảnh thực được cập nhật ngày 17/10/2026 ở cuối hồ sơ.
 
 ## Đặc tả chức năng
 
@@ -77,7 +77,7 @@ Các ô minh chứng bên dưới được điền khi có kết quả thực; k
 | Vai trò và quyền dữ liệu | User, Vendor; lấy identity từ principal, kiểm owner/shop/membership/assignment tại Service |
 | Baseline main/commit implementation | [điền] |
 | Quy tắc BR và bảng dữ liệu | users, user_addresses, orders; theo USE_CASES.md và DATABASE_DESIGN.md |
-| Trạng thái/ngày | Đặc tả bổ sung 14/10/2026; chức năng chưa triển khai |
+| Trạng thái/ngày | Đặc tả 14/10/2026; code/test cập nhật 17/10/2026, xem phần cuối |
 
 Mục tiêu: [điền]. Tiền điều kiện/kích hoạt: [điền]. Đầu vào/đầu ra/hậu điều kiện: [điền]. Luồng chính, luồng lỗi, cạnh tranh và quyền: [điền].
 
@@ -139,3 +139,28 @@ Prompt liên quan: [ID/link]. AI hỗ trợ phần nào: [điền]. Nhóm chỉn
 - [ ] Setup và testcase được chạy thực, có kết quả và commit.
 - [ ] Prompt nguyên văn/response/đánh giá nhóm được liên kết.
 - [ ] Reviewer/ngày/commit được điền, không còn placeholder ở phần nộp.
+
+
+
+
+## Cập nhật triển khai — 17/10/2026
+
+Baseline sau đồng bộ: `8a18438`. Code hiện chưa commit/push theo yêu cầu phiên này; chưa có reviewer do nhóm xác nhận. Các bảng tiêu chí “chưa chạy” phía trên là hồ sơ thiết kế lịch sử; kết quả thực hiện hành ở phần này và [VERIFICATION](../VERIFICATION.md).
+
+Luồng code thực: Kiểm User/Vendor và owner; khóa User; CRUD địa chỉ và tối đa một mặc định; trả snapshot riêng cho Order.
+
+1. Entity metadata tại `src/main/java/com/utetra/identity/entity`, giữ User/Role/AuthSession nền. Migration `V2026101701__identity_membership.sql` không sửa V1; FK liên module là đề xuất riêng chờ main review.
+2. `IdentityRepository` dùng EntityManager/native projections và generated keys trên cùng Hibernate connection; Service giữ validation, current principal, transaction và row lock. Không đưa SQL vào Controller/JSP.
+3. Source trọng tâm: `src/main/java/com/utetra/identity/AccountService.java` → `saveAddress`. DTO đầu vào ở `IdentityForms`; controller tương ứng không trả Entity hoặc secret.
+4. View `WEB-INF/views/identity/page.jsp` (login ở `auth/login.jsp`) và `assets/js/identity.js`: CSRF, loading, lỗi/rỗng, paging và textContent. Các đường dẫn route thực xem [RUNBOOK](../RUNBOOK.md).
+5. Test đã chạy: `addressesAreOwnedAndHaveOneDefault; concurrentDefaultAddressWritesSerialize` trong `IdentityIntegrationTest` hoặc lớp test được ghi tên. Ảnh UI dùng dữ liệu giả lập H2, không chứng minh SMTP/Cloudinary/TiDB hoặc checkout tích hợp.
+
+![Activity từ code hiện tại](../assets/UC-USER-02/activity.svg)
+
+Nguồn sơ đồ có thể sửa: [activity.mmd](../assets/UC-USER-02/activity.mmd). Các nhánh lỗi và ranh giới transaction cụ thể xem source/test; đây là diagram code, không phải ảnh chạy provider.
+
+![Đoạn source thực và chú giải](../assets/UC-USER-02/code.png)
+
+Ảnh giao diện: [màn hình thật từ fixture H2](../assets/browser/addresses-desktop.png)
+
+Setup/demo: [RUNBOOK](../RUNBOOK.md). Prompt thật: `IDN-AI-001` trong [AI_PROMPT_HISTORY](../../../AI_PROMPT_HISTORY.md); phản hồi và nhóm review tại [AI_LOG](../AI_LOG.md). Chưa có commit chức năng hoặc reviewer; phần phụ thuộc cần ghép thật được ghi trong CONTRACT_REVIEW và VERIFICATION.

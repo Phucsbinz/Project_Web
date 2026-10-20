@@ -122,3 +122,8 @@ vào AI_LOG và hồ sơ UC. Sơ đồ dự kiến và ảnh UI thật phải ph
 20 UC bắt buộc có code và 3 UC Shipper có code khi bật flag; UC-ORD-06 hoãn theo người dùng. [SETUP](SETUP.md) ghi phụ thuộc, [VERIFICATION](VERIFICATION.md) ghi kết quả thật và ảnh. Trả hàng trong **3 giờ**, hoàn **cả đơn**, không sửa nhánh của thành viên khác. Bản cấu hình Security trên feature sửa CSRF rotation cho JWT và chống URL jsessionid; cần review chung khi integration nhận nhánh.
 
 Chưa tuyên bố toàn project đã chạy production: catalog/identity chưa có business implementation ở baseline này; gateway, ảnh Cloudinary thật và review/ghép main còn cần phối hợp. Commit/push chỉ feature/order-payment theo ORD-AI-008.
+
+
+## Cập nhật tích hợp 20/10/2026
+
+Nhánh identity đã ghép UI/schema/service với module này theo IDN-AI-003. Xem [kết quả và giới hạn hiện tại](../identity-membership/INTEGRATION_20261020.md); các ghi chú chưa tích hợp phía trên là lịch sử của nhánh gốc.

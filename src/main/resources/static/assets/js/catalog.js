@@ -21,7 +21,7 @@
     ['variantId','quantity','sugarLevel','iceLevel'].forEach(key => data[key] = Number(data[key]));
     data.toppingIds = new FormData(drink).getAll('toppingIds').map(Number);
     button.disabled = true; result.textContent = 'Đang tính giá…';
-    try { const quote = await send('/products/' + drink.dataset.product + '/quote', data); result.textContent = 'Giá lựa chọn: ' + new Intl.NumberFormat('vi-VN').format(quote.total) + ' đ'; }
+    try { const quote = await send('/products/' + drink.dataset.product + '/quote', data); await send('/cart/items', {variantId:data.variantId,sugar:data.sugarLevel,ice:data.iceLevel,toppingIds:data.toppingIds,quantity:data.quantity,note:''}); result.textContent = 'Đã thêm vào giỏ hàng · ' + new Intl.NumberFormat('vi-VN').format(quote.total) + ' đ'; }
     catch(error) { result.textContent = error.message; } finally { button.disabled = false; }
   });
   const registration = document.querySelector('#registration-form');

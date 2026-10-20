@@ -104,3 +104,8 @@ vào AI_LOG và hồ sơ UC. Sơ đồ dự kiến và ảnh UI thật phải ph
 - [ ] Có kiến trúc/activity/sequence, hình code/UI chú giải, setup và test thật.
 - [ ] Prompt nguyên văn/response/nhóm sửa/commit/reviewer đầy đủ.
 - [ ] Ghép integration cùng owner dependency; kiểm chức năng chung theo thang điểm.
+
+
+## Cập nhật tích hợp 20/10/2026
+
+Nhánh identity đã ghép UI/schema/service với module này theo IDN-AI-003. Xem [kết quả và giới hạn hiện tại](../identity-membership/INTEGRATION_20261020.md); các ghi chú chưa tích hợp phía trên là lịch sử của nhánh gốc.

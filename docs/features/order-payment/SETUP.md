@@ -44,27 +44,9 @@ Cloudinary giữ disabled nếu chưa có cấu hình thật. Yêu cầu trả c
 
 Security của nhánh dùng NullSecurityContextRepository: mỗi request xác thực JWT, không khôi phục authentication từ JSESSIONID. Bỏ SessionManagementFilter vì filter xem JWT mỗi request như login mới và xoay CSRF liên tục; giữ DisableEncodeUrlFilter, CookieCsrfTokenRepository và XOR CSRF. Filter order 0 materialize cookie trước SiteMesh order 1. Guest vẫn dùng HTTP session cho giỏ. Owner identity phải xoay CSRF tại login/logout thực; login/OTP không được triển khai trong nhánh này.
 
-## Demo trình duyệt riêng (không nằm trong WAR)
+## Chạy website sau tích hợp
 
-Sau build, tạo classpath test:
-
-```bash
-bash mvnw -B -ntp dependency:build-classpath \
-  -Dmdep.includeScope=test -Dmdep.outputFile=/tmp/order-test-classpath
-java -cp "target/test-classes:target/classes:$(cat /tmp/order-test-classpath)" \
-  com.utetra.order.OrderSmokeHarness --server.port=8082 \
-  --spring.profiles.active=test --features.shipper.enabled=true
-```
-
-Chờ marker TEST_BROWSER_FIXTURES_READY. Harness cố định đồng hồ 14/10/2026 03:00 UTC, tạo dữ liệu test và token riêng trong /tmp mode 600; không in token. Không đóng gói helper/test vào WAR.
-
-Cài Playwright và Chromium cho môi trường test; bản đã kiểm chứng Playwright 1.62.0 và /usr/bin/chromium. Chạy ở terminal khác:
-
-```bash
-python -u src/test/browser/order-smoke.py
-```
-
-Script lấy token file riêng từ harness, thao tác UI và chụp ảnh vào docs/features/order-payment/assets. Có thể đặt ORDER_BROWSER_BASE_URL, ORDER_BROWSER_TOKENS_FILE, ORDER_BROWSER_CHROMIUM để đổi máy test. Bắt đầu từ harness mới mỗi lần vì checkout sẽ xóa giỏ. Sau demo dừng process test và xóa token file riêng.
+Theo IDN-AI-003, runnable demo/harness và script đăng nhập test đã gỡ. Chạy WAR mysql bằng `python tools/start_web.py`; không seed user/order vào DB thật. Xem [báo cáo tích hợp](../identity-membership/INTEGRATION_20261020.md). Test fixtures trong JUnit vẫn chỉ dùng database isolated.
 
 ## MySQL native riêng
 

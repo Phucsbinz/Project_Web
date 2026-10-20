@@ -1,0 +1,13 @@
+flowchart TD
+  Start([Bắt đầu]) --> Permission{Input, phiên và quyền hợp lệ?}
+  Permission -->|Không| Deny[Từ chối, không ghi dở]
+  Permission -->|Có| S0
+  S0["Kiểm phiên hiện tại"]
+  S0 --> S1
+  S1["kiểm version khi sửa hồ sơ"]
+  S1 --> S2
+  S2["upload avatar và bù rollback"]
+  S2 --> S3
+  S3["đổi mật khẩu và revoke"]
+  S3 --> End([Trả DTO/View])
+  Deny --> End

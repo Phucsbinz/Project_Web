@@ -1,0 +1,13 @@
+flowchart TD
+  Start([Bắt đầu]) --> Permission{Input, phiên và quyền hợp lệ?}
+  Permission -->|Không| Deny[Từ chối, không ghi dở]
+  Permission -->|Có| S0
+  S0["Chuẩn hóa username/email"]
+  S0 --> S1
+  S1["kiểm unique và giới hạn BCrypt"]
+  S1 --> S2
+  S2["tạo User chưa verified"]
+  S2 --> S3
+  S3["lưu HMAC và gửi SMTP"]
+  S3 --> End([Trả DTO/View])
+  Deny --> End

@@ -45,6 +45,7 @@ public class CommerceReferenceRepository {
   }
 
   public static Instant instant(Object value) {
+    if (value instanceof java.time.OffsetDateTime d) return d.toInstant();
     if (value instanceof java.sql.Timestamp t) return t.toInstant();
     if (value instanceof LocalDateTime d) return d.toInstant(ZoneOffset.UTC);
     if (value instanceof Instant i) return i;

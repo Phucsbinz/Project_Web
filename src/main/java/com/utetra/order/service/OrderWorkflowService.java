@@ -509,6 +509,7 @@ public class OrderWorkflowService {
     refund.createdAt = clock.instant();
     refund.completedAt = clock.instant();
     data.save(refund);
+    o.paymentStatus = "REFUNDED";
     loyalty.record(o.userId, id, "REFUND", o.pointsUsed);
     loyalty.record(o.userId, id, "REVERSAL", o.pointsEarned);
     promos.status(id, "RELEASED");

@@ -48,7 +48,7 @@ class CatalogIntegrationTest {
     @Autowired ObjectMapper mapper;
     final UtetraPrincipal admin=principal(101,"ADMIN"),vendor=principal(102,"VENDOR"),other=principal(103,"VENDOR"),manager=principal(104,"MANAGER"),buyer=principal(105,"USER");
     Long storeId,categoryId,toppingId;
-    static UtetraPrincipal principal(long id,String role) { return new UtetraPrincipal(id,1L,"ROLE_"+role,Instant.now().plusSeconds(3600)); }
+    static UtetraPrincipal principal(long id,String role) { return new UtetraPrincipal(id,id,"ROLE_"+role,Instant.now().plusSeconds(3600)); }
     static BigDecimal money(long x) { return BigDecimal.valueOf(x); }
     @BeforeAll static void prerequisite(@Autowired JdbcTemplate jdbc) {
         jdbc.execute("create table if not exists commission_policies(id bigint primary key,name varchar(100),rate_percent decimal(5,2),is_active boolean,created_at timestamp,updated_at timestamp,version bigint)");
@@ -61,7 +61,8 @@ class CatalogIntegrationTest {
     @BeforeEach void setup() {
         for(String role:List.of("ADMIN","VENDOR","MANAGER","USER")) jdbc.update("insert into roles(name) select ? where not exists (select 1 from roles where name=?)","ROLE_"+role,"ROLE_"+role);
         for(var p:List.of(admin,vendor,other,manager,buyer)) jdbc.update("insert into users(id,role_id,username,email,password_hash,full_name,is_active,email_verified_at,created_at,updated_at,version) values(?,(select id from roles where name=?),?,?,?,'Test',true,current_timestamp,current_timestamp,current_timestamp,0)",p.userId(),p.role(),"catalog"+p.userId(),"catalog"+p.userId()+"@example.test","not-a-login-password");
-        jdbc.update("merge into commission_policies key(id) values(1,'Test policy',5,true,current_timestamp,current_timestamp,0)");
+        for(var p:List.of(admin,vendor,other,manager,buyer)) jdbc.update("insert into auth_sessions(id,user_id,refresh_token_hash,created_at,expires_at,version) values(?,?,?,?,?,0)",p.sessionId(),p.userId(),String.format("%064d",p.userId()),clock.instant(),clock.instant().plusSeconds(86400));
+        jdbc.update("merge into commission_policies(id,name,rate_percent,is_active,created_at,updated_at,version) key(id) values(1,'Test policy',5,true,current_timestamp,current_timestamp,0)");
         storeId=stores.register(buyer,shop("shop-test",0,false)).id();
         stores.review(admin,storeId,new Decision("APPROVED","Đủ điều kiện",0,1L)); em.flush(); em.clear();
         stores.update(admin,storeId,shop("shop-test",storeRepo.findById(storeId).orElseThrow().getVersion(),true));
@@ -146,10 +147,15 @@ class CatalogIntegrationTest {
     }
     @Test void actualRankingExcludesUnpaidAndRefundedAndPagesTopTwenty() {
         var p=product(); Long v=p.variants().getFirst().id();
-        jdbc.update("insert into orders values(1,'DELIVERED','PAID'),(2,'NEW','PAID'),(3,'DELIVERED','REFUNDED'),(4,'DELIVERED','UNPAID')");
-        jdbc.update("insert into order_items values(1,1,?,11),(2,2,?,1000),(3,3,?,1000),(4,4,?,1000)",v,v,v,v);
-        jdbc.update("insert into reviews values(1,?,5,'VISIBLE'),(2,?,1,'HIDDEN')",p.id(),p.id());
-        jdbc.update("insert into product_favorites values(1,?,103)",p.id());
+        String[] statuses={"DELIVERED","NEW","DELIVERED","DELIVERED"};
+        String[] payments={"PAID","PAID","REFUNDED","UNPAID"};
+        for(int n=1;n<=4;n++) {
+            TestRows.insert(jdbc,"orders",Map.of("id",n,"status",statuses[n-1],"payment_status",payments[n-1]));
+            TestRows.insert(jdbc,"order_items",Map.of("id",n,"order_id",n,"variant_id",v,"quantity",n==1?11:1000));
+        }
+        TestRows.insert(jdbc,"reviews",Map.of("id",1,"product_id",p.id(),"order_item_id",1,"stars",5,"status","VISIBLE"));
+        TestRows.insert(jdbc,"reviews",Map.of("id",2,"product_id",p.id(),"order_item_id",2,"stars",1,"status","HIDDEN"));
+        TestRows.insert(jdbc,"product_favorites",Map.of("id",1,"product_id",p.id(),"user_id",103));
         var ranked=catalog.search("",null,null,null,null,"sold",0,12,true,false);
         assertThat(ranked.total()).isEqualTo(1); assertThat(ranked.items().getFirst().soldUnits()).isEqualTo(11);
         assertThat(ranked.items().getFirst().rating()).isEqualByComparingTo("5");
