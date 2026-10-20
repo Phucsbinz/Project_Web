@@ -1,0 +1,19 @@
+digraph OrderArchitecture {
+  rankdir=LR;
+  graph [label="feature/order-payment · code ngày 14/10/2026", labelloc=t, fontname="DejaVu Sans", bgcolor="white"];
+  node [shape=box, style="rounded,filled", fillcolor="#eef4ff", fontname="DejaVu Sans"];
+  edge [fontname="DejaVu Sans", fontsize=10];
+  ui [label="JSP / Bootstrap / orders.js\nUser · Vendor · Manager · Admin · Shipper"];
+  web [label="Controllers / DTO\nJWT principal · CSRF · validation"];
+  service [label="Cart / Checkout / Workflow / Operations\nQuyền · quote · trạng thái · tiền\nTransaction READ_COMMITTED / locks"];
+  repo [label="OrderDataRepository / JPA\n19 bảng order-payment"];
+  refs [label="CommerceReferenceRepository\nOrderLoyaltyBridge\nAdapter catalog / identity", fillcolor="#fff5dd"];
+  db [label="MySQL / TiDB\nV1 identity + V2 order\nSchema ngoài module chờ ghép", shape=cylinder];
+  event [label="OrderSupport.event\nThông báo SQL trong transaction\nSTOMP sau commit", fillcolor="#eaf8ee"];
+  socket [label="OrderSocketGuard / /ws\nPhiên / shop scope hiện hành\nReconnect + SQL polling"];
+  media [label="ReturnEvidenceService → MediaService\nCloudinary ngoài transaction\nProvider thật chưa kiểm chứng", fillcolor="#fff5dd"];
+  ui -> web -> service -> repo -> db;
+  service -> refs -> db;
+  service -> event -> socket -> ui;
+  service -> media;
+}

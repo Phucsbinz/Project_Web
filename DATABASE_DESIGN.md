@@ -610,10 +610,15 @@ UQ(promotion_id,product_id); chỉ eligible product cùng scope; không link = t
 | user_id | BIGINT FK users |
 | status | VARCHAR(20) |
 | discount_snapshot | MONEY |
+| funded_by_snapshot | VARCHAR(10) |
+| promotion_kind_snapshot | VARCHAR(20) |
+| promotion_name_snapshot | VARCHAR(150) |
 | created_at | UTC |
 | released_at | UTC? |
 
 UQ(promotion_id,order_id); RESERVED/USED/RELEASED; quota khóa, cancel/refund release theo policy.
+
+Bổ sung của feature/order-payment: snapshot nguồn APP/SHOP, loại và tên promo để thay chương trình sau checkout không đổi chứng cứ tài chính đơn cũ; chờ review schema chung trước merge main.
 
 ### 3.36. `commission_policies` — P0, owner `order-payment`
 

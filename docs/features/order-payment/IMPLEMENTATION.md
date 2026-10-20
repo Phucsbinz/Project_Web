@@ -1,6 +1,6 @@
 # feature/order-payment — Bán hàng, thanh toán và vận hành mọi role
 
-> Cập nhật theo quy định thầy ngày 13/10/2026. Người phụ trách TV3: [điền tên]. Baseline main/commit: [điền]. Đây là hướng dẫn công việc, không xác nhận mọi UC đã code.
+> Cập nhật theo quy định thầy ngày 13/10/2026. Người phụ trách TV3: [điền tên]. Baseline trước code: bb700d1; commit implementation: 29aac50. Code của nhánh đã được bổ sung; trạng thái thực tại mục 6. VNPAY hoãn theo người dùng, các phụ thuộc cần review trên integration.
 
 ## 1. Các file phải đọc và cấu hình
 
@@ -39,9 +39,9 @@ Mỗi UC do một người làm đủ Entity/Repo/DTO → Service → Controller
 
 ## 3. Schema, contract và phụ thuộc
 
-Owner các bảng: carts, cart_items, cart_item_toppings, orders, order_items, order_item_toppings, order_status_history, notifications, coupon_redemptions, commission_policies, carriers, carrier_area_rates, payment_transactions, payment_callback_events, return_requests, refund_transactions, store_settlements, delivery_assignments, delivery_events. Chỉ V1 identity đã có trong baseline; bảng khác theo schema thiết kế và migration main mới, không tự tạo cấu trúc khác.
+Owner các bảng: carts, cart_items, cart_item_toppings, orders, order_items, order_item_toppings, order_status_history, notifications, coupon_redemptions, commission_policies, carriers, carrier_area_rates, payment_transactions, payment_callback_events, return_requests, refund_transactions, store_settlements, delivery_assignments, delivery_events. V1 identity giữ nguyên; V2__order_payment chỉ tạo 19 bảng thuộc nhánh, theo DATABASE_DESIGN. FK module khác chờ review migration chung, xem SCHEMA_PROPOSAL. Không tự chạy DDL tạo bảng của nhánh khác.
 
-Contract: CartService, OrderService, PaymentService, RefundService, ReportService, NotificationService. Phụ thuộc: Giá/store/promo TV1, quyền/address/loyalty/audit TV2; COD + VNPAY, carrier/commission/settlement, STOMP và Shipper thêm. Signature/DTO/error/transaction/locking phải chốt trên main trước khi ghép; mock chỉ trong test. Không viết lại giá/điểm/auth/payment service của owner khác.
+Lớp thực hiện: CartService/GuestCartService, CheckoutService, OrderWorkflowService, OperationsService, OrderPromotionService, OrderSupport, ReturnEvidenceService. Tên contract dự kiến vẫn cần thống nhất với owner trên integration. Phụ thuộc: Giá/store/promo TV1, quyền/address/loyalty/audit TV2; COD + VNPAY, carrier/commission/settlement, STOMP và Shipper thêm. Signature/DTO/error/transaction/locking phải chốt trên main trước khi ghép; mock chỉ trong test. Không viết lại giá/điểm/auth/payment service của owner khác.
 
 ## 4. Thứ tự thực hiện từng UC
 
@@ -69,32 +69,32 @@ Sơ đồ này là khung kiến trúc dự kiến. Mỗi UC phải có activity/
 
 ## 6. Chỗ ghi minh chứng và tiến độ
 
-| UC/role | Path/symbol/commit | Activity/sequence/ảnh code/UI | Config/setup/data | Prompt/response | Test/reviewer/trạng thái |
-| --- | --- | --- | --- | --- | --- |
-| UC-ORD-01 / Guest, User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ORD-02 / Guest, User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ORD-03 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ORD-04 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ORD-05 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ORD-06 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ORD-07 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ORD-08 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ORD-09 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ORD-10 / Người đăng nhập | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-VND-04 / Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-VND-06 / Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-VND-07 / Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-MGR-04 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-MGR-06 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-MGR-08 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-MGR-09 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ADM-04 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ADM-06 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ADM-08 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ADM-09 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-SHP-01 / Shipper | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-SHP-02 / Shipper | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-SHP-03 / Shipper | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC | Symbol thực | Kiểm chứng | Trạng thái |
+| --- | --- | --- | --- |
+| [UC-ORD-01](use-cases/UC-ORD-01.md) | `CartService.add / GuestCartService.add` | `cartGroupsOnlyIdenticalOptionsAndEnforcesLimits` | Có code/test; chờ review integration |
+| [UC-ORD-02](use-cases/UC-ORD-02.md) | `CartService.change / merge / clear; GuestCartService.change` | `guestMergeIsAtomicAndIdempotent` | Có code/test; chờ review integration |
+| [UC-ORD-03](use-cases/UC-ORD-03.md) | `CheckoutService.quote / checkout` | `checkoutSnapshotsPricesAndRejectsChangedQuote; simultaneousCheckoutWithSameKeyCreatesOnlyOneOrder` | Có code/test; chờ review integration |
+| [UC-ORD-04](use-cases/UC-ORD-04.md) | `OrderPromotionService.discount / reserve / status` | `promotionLastSlotCannotBeOversold; promotionFundingIsSnapshottedAndCannotChangeOldOrders` | Có code/test; chờ review integration |
+| [UC-ORD-05](use-cases/UC-ORD-05.md) | `CheckoutService.checkout; OrderWorkflowService.transition` | `codRequiresEveryTransitionAndCashBeforeDelivery` | Có code/test; chờ review integration |
+| [UC-ORD-06](use-cases/UC-ORD-06.md) | `Hoãn theo ORD-AI-002` | `Chưa kiểm chứng gateway` | Hoãn VNPAY theo ORD-AI-002 |
+| [UC-ORD-07](use-cases/UC-ORD-07.md) | `OrderWorkflowService.list / read` | `scopedOperationsAndCurrentAssignmentsBlockOtherUsers; browserPagesUseRealJspAndCsrfRejectsForgedMutations` | Có code/test; chờ review integration |
+| [UC-ORD-08](use-cases/UC-ORD-08.md) | `OrderWorkflowService.cancel` | `cancelRestoresRedeemedPointsAndRetainsCartSnapshot; rejectedReturnCannotBeSubmittedAgainAndCancelledAssignmentLosesAccess` | Có code/test; chờ review integration |
+| [UC-ORD-09](use-cases/UC-ORD-09.md) | `OrderWorkflowService.requestReturn / refundCash; ReturnEvidenceService.submit` | `returnWindowIsExactlyThreeHoursAndRefundReversesPointsOnce; returnsAtThreeHoursAreRejected; rejectedReturnCannotBeSubmittedAgainAndCancelledAssignmentLosesAccess` | Có code/test; chờ review integration |
+| [UC-ORD-10](use-cases/UC-ORD-10.md) | `OrderSupport.event; OrderSocketGuard; OperationsService.notifications / readNotification` | `carrierRatesRequireStoreScopeAndNotificationsRequireOwner; OrderSocketGuardTest; OrderEventDeliveryTest` | Có code/test; chờ review integration |
+| [UC-VND-04](use-cases/UC-VND-04.md) | `OrderWorkflowService.list / transition / assign` | `codRequiresEveryTransitionAndCashBeforeDelivery; reassignmentRevokesPreviousShipperAndLogsFailure` | Có code/test; chờ review integration |
+| [UC-VND-06](use-cases/UC-VND-06.md) | `OperationsService.revenue` | `reportUsesActualRefundDateAndScopedNet; commissionUpdatesDoNotRewriteOrdersAndReportsNeverLeakScope` | Có code/test; chờ review integration |
+| [UC-VND-07](use-cases/UC-VND-07.md) | `OrderWorkflowService.reviewReturn / receiveReturn / refundCash` | `rejectsReturnWithoutEvidenceOrPhysicalAcceptanceAndTracksPointDebt` | Có code/test; chờ review integration |
+| [UC-MGR-04](use-cases/UC-MGR-04.md) | `OperationsService.commission` | `commissionUpdatesDoNotRewriteOrdersAndReportsNeverLeakScope` | Có code/test; chờ review integration |
+| [UC-MGR-06](use-cases/UC-MGR-06.md) | `OperationsService.carriers / rate` | `carrierRatesRequireStoreScopeAndNotificationsRequireOwner` | Có code/test; chờ review integration |
+| [UC-MGR-08](use-cases/UC-MGR-08.md) | `OrderWorkflowService.list / transition / reviewReturn / refundCash` | `scopedOperationsAndCurrentAssignmentsBlockOtherUsers; rejectsReturnWithoutEvidenceOrPhysicalAcceptanceAndTracksPointDebt` | Có code/test; chờ review integration |
+| [UC-MGR-09](use-cases/UC-MGR-09.md) | `OperationsService.revenue` | `commissionUpdatesDoNotRewriteOrdersAndReportsNeverLeakScope; operatorPagesRenderAndExposeOnlyTheirStore` | Có code/test; chờ review integration |
+| [UC-ADM-04](use-cases/UC-ADM-04.md) | `OperationsService.commission / globalCommission` | `commissionUpdatesDoNotRewriteOrdersAndReportsNeverLeakScope` | Có code/test; chờ review integration |
+| [UC-ADM-06](use-cases/UC-ADM-06.md) | `OperationsService.carrier / rate` | `carrierRatesRequireStoreScopeAndNotificationsRequireOwner; operatorPagesRenderAndExposeOnlyTheirStore` | Có code/test; chờ review integration |
+| [UC-ADM-08](use-cases/UC-ADM-08.md) | `OrderWorkflowService.list / read / reviewReturn / refundCash` | `codRequiresEveryTransitionAndCashBeforeDelivery; returnWindowIsExactlyThreeHoursAndRefundReversesPointsOnce` | Có code/test; chờ review integration |
+| [UC-ADM-09](use-cases/UC-ADM-09.md) | `OperationsService.revenue` | `reportUsesActualRefundDateAndScopedNet; operatorPagesRenderAndExposeOnlyTheirStore` | Có code/test; chờ review integration |
+| [UC-SHP-01](use-cases/UC-SHP-01.md) | `OrderWorkflowService.list / readable / assign` | `reassignmentRevokesPreviousShipperAndLogsFailure; shipperCanReadCompletedAssignmentButCannotChangeDeliveredOrder` | Có code/test; chờ review integration |
+| [UC-SHP-02](use-cases/UC-SHP-02.md) | `OrderWorkflowService.transition / deliveryFailure` | `reassignmentRevokesPreviousShipperAndLogsFailure; codRequiresEveryTransitionAndCashBeforeDelivery` | Có code/test; chờ review integration |
+| [UC-SHP-03](use-cases/UC-SHP-03.md) | `OperationsService.shipperReport` | `scopedOperationsAndCurrentAssignmentsBlockOtherUsers; operatorPagesRenderAndExposeOnlyTheirStore` | Có code/test; chờ review integration |
 
 Ghi setup thực và thao tác demo theo role; lỗi/vấn đề còn lại ở cuối từng UC note. Không chụp secret/config password vào báo cáo. Phản hồi dài lưu ai-responses/<ID>.md; ảnh/source lưu assets/<UC-ID>. Không bịa test pass hoặc ảnh chạy.
 
@@ -116,3 +116,9 @@ vào AI_LOG và hồ sơ UC. Sơ đồ dự kiến và ảnh UI thật phải ph
 - [ ] Có kiến trúc/activity/sequence, hình code/UI chú giải, setup và test thật.
 - [ ] Prompt nguyên văn/response/nhóm sửa/commit/reviewer đầy đủ.
 - [ ] Ghép integration cùng owner dependency; kiểm chức năng chung theo thang điểm.
+
+## 9. Kết quả triển khai hiện tại
+
+20 UC bắt buộc có code và 3 UC Shipper có code khi bật flag; UC-ORD-06 hoãn theo người dùng. [SETUP](SETUP.md) ghi phụ thuộc, [VERIFICATION](VERIFICATION.md) ghi kết quả thật và ảnh. Trả hàng trong **3 giờ**, hoàn **cả đơn**, không sửa nhánh của thành viên khác. Bản cấu hình Security trên feature sửa CSRF rotation cho JWT và chống URL jsessionid; cần review chung khi integration nhận nhánh.
+
+Chưa tuyên bố toàn project đã chạy production: catalog/identity chưa có business implementation ở baseline này; gateway, ảnh Cloudinary thật và review/ghép main còn cần phối hợp. Commit/push chỉ feature/order-payment theo ORD-AI-008.

@@ -441,3 +441,74 @@ Prompt nguyên văn:
 > thực hiện tạo danh mục , shop , sản phẩm , khuyến mãi , các yêu cầu trong file md và yêu cầu của nhánh này
 
 Phản hồi, code, kiểm chứng và giới hạn: [AI_LOG catalog](features/catalog-sales/AI_LOG.md), [RUNBOOK](features/catalog-sales/RUNBOOK.md). Không commit/push hoặc tự áp migration cloud.
+## Triển khai order-payment — 14/10/2026
+
+Các câu trả lời ORD-AI-002 và ORD-AI-003 đến từ câu hỏi cấu hình trong cuộc trò chuyện. Quyết định mới nhất ORD-AI-004 thay cửa sổ 48 giờ bằng 3 giờ; hoàn cả đơn giữ nguyên. Chỉ làm tại feature/order-payment; VNPAY hoãn theo người dùng.
+
+### ORD-AI-001
+
+Nhánh: `feature/order-payment`; phạm vi: Triển khai đầy đủ phạm vi nhánh.
+
+```text
+`feature/order-payment`  bạn chuyển sang nhánh này và làm đầy đủ hết chức năng trong nhánh này cần thông tin hay cấu hình gì thì nói nhớ là dựa trên cấu hình chung đã biuld và các quy định nữa nha làm đầy đủ
+```
+
+### ORD-AI-002
+
+Nhánh: `feature/order-payment`; phạm vi: Trả lời câu hỏi merchant VNPAY.
+
+```text
+cái thanh toán ngân hàng thì từ từ đi b
+```
+
+### ORD-AI-003
+
+Nhánh: `feature/order-payment`; phạm vi: Quyết định trả hàng ban đầu, đã được thay thế bởi ORD-AI-004.
+
+```text
+Giữ 48 giờ, hoàn cả đơn
+```
+
+### ORD-AI-004
+
+Nhánh: `feature/order-payment`; phạm vi: Quyết định hiện hành: cửa sổ trả hàng 3 giờ.
+
+```text
+trả hàng 3 tiếng thôi bạn
+```
+
+### ORD-AI-005
+
+Nhánh: `feature/order-payment`; phạm vi: Giới hạn thay đổi Git.
+
+```text
+chỉ làm cho nhánh feature của mình thôi nha
+```
+
+### ORD-AI-006
+
+Nhánh: `feature/order-payment`; phạm vi: Yêu cầu báo tiến độ.
+
+```text
+nãy giờ bạn code được gì rồi'
+```
+
+### ORD-AI-007
+
+Nhánh: `feature/order-payment`; phạm vi: Tiếp tục hoàn thiện và kiểm tra ràng buộc.
+
+```text
+làm tiếp đi làm hoàn chỉnh đầy đủ các ràng buộc
+```
+
+Kết quả và các sửa lỗi thực tế: [AI_LOG của nhánh](features/order-payment/AI_LOG.md), [triển khai](features/order-payment/IMPLEMENTATION.md), [setup](features/order-payment/SETUP.md). Không merge hoặc push sang main/nhánh khác trong lượt triển khai này.
+
+### ORD-AI-008
+
+Nhánh: `feature/order-payment`; phạm vi: commit và push công việc lên đúng nhánh GitHub.
+
+```text
+push lên nhánh đi
+```
+
+Người dùng cho phép push feature/order-payment; không mở rộng sang main hoặc các nhánh của thành viên khác. Kết quả xác nhận remote ghi ở AI_LOG của nhánh.
