@@ -433,3 +433,11 @@ push các nhánh lên GitHub đi
 ```
 
 Kết quả trước push: cấu hình/tree local của ba feature và integration khớp main; danh mục55P0+3P1 đầy đủ để phân công. Người dùng yêu cầu bỏ qua việc điều tra mạngTiDB trong lượt này và cho phép push cả năm nhánhGitHub. Fetch trước push xác nhận remote không có commit mới cần ghép; không force-push. Kết quả push phải xác minh remote bằng công cụ trước khi báo hoàn tất.
+
+## CAT-AI-001 — 15/10/2026 — feature/catalog-sales
+
+Prompt nguyên văn:
+
+> thực hiện tạo danh mục , shop , sản phẩm , khuyến mãi , các yêu cầu trong file md và yêu cầu của nhánh này
+
+Phản hồi, code, kiểm chứng và giới hạn: [AI_LOG catalog](features/catalog-sales/AI_LOG.md), [RUNBOOK](features/catalog-sales/RUNBOOK.md). Không commit/push hoặc tự áp migration cloud.
