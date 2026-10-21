@@ -1,0 +1,13 @@
+flowchart TD
+  Start([Bắt đầu]) --> Permission{Input, phiên và quyền hợp lệ?}
+  Permission -->|Không| Deny[Từ chối, không ghi dở]
+  Permission -->|Có| S0
+  S0["Kiểm đã mua đúng product/item"]
+  S0 --> S1
+  S1["trim 50–2000 codepoints"]
+  S1 --> S2
+  S2["validate JPEG/PNG/MP4 và upload"]
+  S2 --> S3
+  S3["lưu rồi hiển thị textContent"]
+  S3 --> End([Trả DTO/View])
+  Deny --> End

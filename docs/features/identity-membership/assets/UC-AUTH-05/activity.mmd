@@ -1,0 +1,13 @@
+flowchart TD
+  Start([Bắt đầu]) --> Permission{Input, phiên và quyền hợp lệ?}
+  Permission -->|Không| Deny[Từ chối, không ghi dở]
+  Permission -->|Có| S0
+  S0["Giới hạn IP/email/cooldown"]
+  S0 --> S1
+  S1["challenge PASSWORD_RESET kể cả email không tồn tại"]
+  S1 --> S2
+  S2["gửi SMTP"]
+  S2 --> S3
+  S3["trả phản hồi chung"]
+  S3 --> End([Trả DTO/View])
+  Deny --> End

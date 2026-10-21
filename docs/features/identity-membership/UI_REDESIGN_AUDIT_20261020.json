@@ -1,0 +1,188 @@
+{
+  "date": "2026-10-20",
+  "branch": "feature/identity-membership",
+  "testSuites": [
+    {
+      "name": "com.utetra.BaselineSecurityTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.BaselineViewTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.CatalogIntegrationTest",
+      "tests": "14",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.CatalogSchemaProposalTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.CatalogViewTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.identity.IdentityIntegrationTest",
+      "tests": "33",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.identity.IdentityMigrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.identity.IdentitySocketLifecycleTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.identity.IdentityViewTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.IntegratedMigrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.order.OrderCommerceIntegrationTest",
+      "tests": "24",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.order.service.OrderEventDeliveryTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.order.service.OrderSocketGuardTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.order.service.ReturnEvidenceServiceTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.security.JwtServiceTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.service.CatalogMediaServiceTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.service.SessionIdentityServiceTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "testTotals": {
+    "tests": 110,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "javascriptSyntaxChecks": 7,
+  "liveHttpChecks": 65,
+  "visualMode": "read-only-snapshots-of-real-mysql-responses",
+  "visualChecks": 101,
+  "javascriptErrors": [],
+  "brandAssets": [
+    {
+      "path": "src/main/resources/static/assets/images/utetra-mark.svg",
+      "bytes": 245,
+      "sha256": "8245e4d8ab4148428ba1886cf9d25e36db2adede41aa5feed92830e0b8fd68f2"
+    },
+    {
+      "path": "src/main/resources/static/assets/images/utetra-tea-ritual.png",
+      "bytes": 2456324,
+      "sha256": "70412a180a6f9fb45bd25cf9b304027612fc1a5891986476d41eebf95b1e5d59"
+    },
+    {
+      "path": "src/main/resources/static/assets/images/utetra-tea-ritual.webp",
+      "bytes": 274896,
+      "sha256": "b79e6064bdb7807bb5fc3433639f16cfc63f2ac9a4b0b28d28fcf09436ec127c"
+    }
+  ],
+  "passwordUpdatedAccounts": 8,
+  "credentialsIncluded": false,
+  "noProductionDemoSeeds": true,
+  "finalRuntime": {
+    "mode": "mysql",
+    "url": "http://localhost:8080",
+    "ready": true,
+    "checks": [
+      {
+        "path": "/",
+        "status": 200,
+        "bytes": 10567
+      },
+      {
+        "path": "/auth/login",
+        "status": 200,
+        "bytes": 7107
+      },
+      {
+        "path": "/assets/js/catalog-management.js",
+        "status": 200,
+        "bytes": 16980
+      },
+      {
+        "path": "/assets/css/utetra.css",
+        "status": 200,
+        "bytes": 35530
+      },
+      {
+        "path": "/assets/images/utetra-tea-ritual.webp",
+        "status": 200,
+        "bytes": 274896
+      }
+    ]
+  }
+}

@@ -63,22 +63,22 @@ Sơ đồ này là khung kiến trúc dự kiến. Mỗi UC phải có activity/
 
 | UC/role | Path/symbol/commit | Activity/sequence/ảnh code/UI | Config/setup/data | Prompt/response | Test/reviewer/trạng thái |
 | --- | --- | --- | --- | --- | --- |
-| UC-AUTH-01 / Guest | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-AUTH-02 / Guest | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-AUTH-03 / Guest | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-AUTH-04 / Người đăng nhập | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-AUTH-05 / Guest | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-AUTH-06 / Guest | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-AUTH-07 / Người đăng nhập | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-USER-01 / Người đăng nhập | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-USER-02 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-USER-03 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-USER-04 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-USER-05 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-USER-06 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-USER-07 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-MGR-01 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ADM-01 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-AUTH-01 / Guest | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-AUTH-02 / Guest | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-AUTH-03 / Guest | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-AUTH-04 / Người đăng nhập | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-AUTH-05 / Guest | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-AUTH-06 / Guest | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-AUTH-07 / Người đăng nhập | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-USER-01 / Người đăng nhập | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-USER-02 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-USER-03 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-USER-04 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-USER-05 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-USER-06 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-USER-07 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-MGR-01 / Manager | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
+| UC-ADM-01 / Admin | [điền] | [chưa có] | [điền] | [điền] | Đã có code/test H2; chờ nghiệm thu provider/integration |
 
 Ghi setup thực và thao tác demo theo role; lỗi/vấn đề còn lại ở cuối từng UC note. Không chụp secret/config password vào báo cáo. Phản hồi dài lưu ai-responses/<ID>.md; ảnh/source lưu assets/<UC-ID>. Không bịa test pass hoặc ảnh chạy.
 
@@ -100,3 +100,35 @@ vào AI_LOG và hồ sơ UC. Sơ đồ dự kiến và ảnh UI thật phải ph
 - [ ] Có kiến trúc/activity/sequence, hình code/UI chú giải, setup và test thật.
 - [ ] Prompt nguyên văn/response/nhóm sửa/commit/reviewer đầy đủ.
 - [ ] Ghép integration cùng owner dependency; kiểm chức năng chung theo thang điểm.
+
+## 9. Cập nhật triển khai 17/10/2026
+
+Đã merge origin/main trên feature/identity-membership, baseline 8a18438; có code cho đủ 16 UC. Module ở src/main/java/com/utetra/identity có 12 Entity metadata mới, repository JPA/native projection, DTO, Service/Controller, audit và policy membership; JSP/JS dùng template chung. Thêm migration timestamp, không sửa V1 hoặc datasource.
+
+Kết quả hiện hành: [VERIFICATION](VERIFICATION.md) — verify 42 test đạt và WAR; Playwright 16 check đạt. Hướng dẫn setup/demo/route/contract: [RUNBOOK](RUNBOOK.md). Main cần review [CONTRACT_REVIEW](CONTRACT_REVIEW.md) và FK liên module. Chưa kiểm SMTP/upload Cloudinary/TiDB/checkout-refund thật, chưa có reviewer và chưa commit/push source. Checklist nghiệm thu provider và tích hợp ở trên chưa đánh dấu hoàn tất vì chưa có bằng chứng thật.
+
+Mỗi hồ sơ UC có phần cập nhật 17/10: flow từ code, code path/method, test thực, diagram nguồn Mermaid/SVG, ảnh đoạn source có chú giải và ảnh UI fixture H2. Mẫu test/placeholder lịch sử phía trên được giữ để đối chiếu thiết kế, không được dùng để phủ nhận hoặc thay bằng chứng hiện tại. Prompt IDN-AI-001 và phản hồi được liên kết trong AI_LOG và AI_PROMPT_HISTORY.
+
+## 10. Rà validation và chạy demo 20/10/2026
+
+Đọc lại các tài liệu, kiểm từ DTO/form tới Service/API/database và sửa phone, version bắt buộc, strict JSON, Unicode, reset grant anonymous/resend, upload decode và snapshot điểm. Thêm migration validation theo version mới, không đổi V1. 53 test đạt; 23 check trình duyệt đạt. Chi tiết/ma trận lỗi và hướng dẫn demo: [VALIDATION_REVIEW_20261020](VALIDATION_REVIEW_20261020.md). Kết quả 42 test ở phần 17/10 giữ làm lịch sử.
+
+
+## Tích hợp thực tế 20/10/2026 — IDN-AI-003
+
+Đã merge catalog-sales/order-payment vào identity, thống nhất UI/quyền/ledger và chạy WAR với TiDB thật. Các giới hạn H2/demo/integration của các phần lịch sử phía trên được thay bằng trạng thái hiện tại tại [INTEGRATION_20261020](INTEGRATION_20261020.md). Không push.
+
+
+## Cập nhật IDN-AI-005 — UI và tài khoản
+
+Đã nâng cấp layout/ảnh thương hiệu, trang chủ, menu, sản phẩm, cửa hàng, auth/account và các màn hình mua hàng/quản lý; mật khẩu 8 tài khoản khởi tạo được đổi sang dạng dễ nhớ, BCrypt và revoke session cũ. Xem [báo cáo thiết kế/kiểm chứng](UI_REDESIGN_20261020.md), [audit](UI_REDESIGN_AUDIT_20261020.json). Mật khẩu hiện hành ở .local/TAI_KHOAN_UTETRA.md, không ghi vào Git.
+
+
+## IDN-AI-006 — Tài khoản và Gmail OTP
+
+Đã thay thế liên kết kích hoạt riêng bằng luồng tự chuyển sau đăng ký; quên/đặt lại mật khẩu bắt buộc OTP. Đồng bộ UI 5 trang. Gmail người gửi luxiphot123456@gmail.com đã bật và kiểm tra gửi thật; cấu hình bí mật chỉ ở .local/mail.properties, Git bỏ qua. Xem [báo cáo và bằng chứng kiểm tra](AUTH_FLOW_20261020.md). Thông tin này thay thế trạng thái SMTP chưa cấu hình trong các báo cáo cũ.
+
+
+## IDN-AI-007 — OTP và email
+
+Xem [điều tra, thay đổi và kiểm chứng](OTP_MAIL_20261020.md). Đã thêm email HTML + plain UTF-8, giữ TTL 5 phút; xử lý dán OTP và phân biệt thông báo hết hạn/đã dùng sau khi mã khớp. 39 tests đạt. Tái hiện trên TiDB: mã đúng được chấp nhận sau 10 giây; chưa tái hiện lỗi cụ thể từ người dùng.

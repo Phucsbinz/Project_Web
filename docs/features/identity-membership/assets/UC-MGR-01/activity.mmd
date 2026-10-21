@@ -1,0 +1,13 @@
+flowchart TD
+  Start([Bắt đầu]) --> Permission{Input, phiên và quyền hợp lệ?}
+  Permission -->|Không| Deny[Từ chối, không ghi dở]
+  Permission -->|Có| S0
+  S0["Kiểm Manager hiện tại"]
+  S0 --> S1
+  S1["scope membership và customer/owner shop"]
+  S1 --> S2
+  S2["chỉ đổi active của User/Vendor"]
+  S2 --> S3
+  S3["revoke và audit"]
+  S3 --> End([Trả DTO/View])
+  Deny --> End

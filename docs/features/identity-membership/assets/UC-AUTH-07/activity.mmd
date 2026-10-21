@@ -1,0 +1,13 @@
+flowchart TD
+  Start([Bắt đầu]) --> Permission{Input, phiên và quyền hợp lệ?}
+  Permission -->|Không| Deny[Từ chối, không ghi dở]
+  Permission -->|Có| S0
+  S0["Khóa User rồi session"]
+  S0 --> S1
+  S1["kiểm hash/hạn tuyệt đối/active"]
+  S1 --> S2
+  S2["xoay hash"]
+  S2 --> S3
+  S3["ký JWT mới"]
+  S3 --> End([Trả DTO/View])
+  Deny --> End

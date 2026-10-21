@@ -1,0 +1,396 @@
+{
+  "mode": "live-mysql-http",
+  "checks": [
+    {
+      "scope": "guest",
+      "route": "/",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "guest",
+      "route": "/menu",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "guest",
+      "route": "/stores",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/login",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/register",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/forgot",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/otp",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "guest",
+      "route": "/auth/reset",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "guest",
+      "route": "/cart",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "admin",
+      "route": "/account/profile",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "admin",
+      "route": "/notifications",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/products",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/stores",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/promotions",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/orders",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/users",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/order-tools",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/reports",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/categories",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/toppings",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "admin",
+      "loginFromDatabase": true,
+      "profileFromDatabase": true,
+      "roleScope": true
+    },
+    {
+      "scope": "manager",
+      "route": "/account/profile",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "manager",
+      "route": "/notifications",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/products",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/stores",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/promotions",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/orders",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/users",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/order-tools",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/reports",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/categories",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/toppings",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "manager",
+      "loginFromDatabase": true,
+      "profileFromDatabase": true,
+      "roleScope": true
+    },
+    {
+      "scope": "vendor",
+      "route": "/account/profile",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "vendor",
+      "route": "/notifications",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/products",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/shop",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/promotions",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/orders",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "vendor",
+      "route": "/vendor/revenue",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "vendor",
+      "loginFromDatabase": true,
+      "profileFromDatabase": true,
+      "roleScope": true
+    },
+    {
+      "scope": "user",
+      "route": "/account/profile",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "user",
+      "route": "/notifications",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "user",
+      "route": "/account/addresses",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "user",
+      "route": "/account/loyalty",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "user",
+      "route": "/favorites",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "user",
+      "route": "/viewed",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "user",
+      "route": "/reviews",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "user",
+      "route": "/comments",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "user",
+      "route": "/orders",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "user",
+      "route": "/account/shop-registration",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "user",
+      "route": "/cart",
+      "status": 200,
+      "jspRendered": true
+    },
+    {
+      "scope": "user",
+      "loginFromDatabase": true,
+      "profileFromDatabase": true,
+      "roleScope": true
+    },
+    {
+      "email": "minh.quan@utetra.example",
+      "login": "passed",
+      "profile": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "hoang.nam@utetra.example",
+      "login": "passed",
+      "profile": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "thao.linh@utetra.example",
+      "login": "passed",
+      "profile": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "ngoc.anh@utetra.example",
+      "login": "passed",
+      "profile": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "duc.huy@utetra.example",
+      "login": "passed",
+      "profile": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "bao.tran@utetra.example",
+      "login": "passed",
+      "profile": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "gia.han@utetra.example",
+      "login": "passed",
+      "profile": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "tuan.kiet@utetra.example",
+      "login": "passed",
+      "profile": "passed",
+      "logout": "passed"
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/users",
+      "status": 200,
+      "phase": "final-ui"
+    },
+    {
+      "scope": "admin",
+      "route": "/admin/users/data",
+      "status": 200,
+      "phase": "final-ui"
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/users",
+      "status": 200,
+      "phase": "final-ui"
+    },
+    {
+      "scope": "manager",
+      "route": "/manager/users/data",
+      "status": 200,
+      "phase": "final-ui"
+    }
+  ],
+  "credentialsIncluded": false
+}

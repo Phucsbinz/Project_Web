@@ -1,0 +1,13 @@
+flowchart TD
+  Start([Bắt đầu]) --> Permission{Input, phiên và quyền hợp lệ?}
+  Permission -->|Không| Deny[Từ chối, không ghi dở]
+  Permission -->|Có| S0
+  S0["Thu hồi sid hoặc refresh hợp lệ"]
+  S0 --> S1
+  S1["xóa cả hai cookie đúng path"]
+  S1 --> S2
+  S2["scheduler ngắt idle socket"]
+  S2 --> S3
+  S3["chuyển đăng nhập"]
+  S3 --> End([Trả DTO/View])
+  Deny --> End

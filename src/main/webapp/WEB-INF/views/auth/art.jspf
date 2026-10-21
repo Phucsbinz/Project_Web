@@ -1,0 +1,2 @@
+<aside class="auth-art"><img src="<c:url value='/assets/images/utetra-tea-ritual.webp'/>" alt="Hương vị trà và một khoảng nghỉ cùng UTETra" width="1536" height="1024"><div class="auth-art-top"><span class="eyebrow">YOUR DAILY DOSE OF JOY</span><h2>Vị trà thân quen.<br><em>Niềm vui trở lại.</em></h2></div><div class="auth-art-bottom"><p>Một tài khoản, những vị trà yêu thích và thật nhiều khoảng nghỉ đáng nhớ.</p><span>CHÀO MỪNG ĐẾN NHÀ UTETRA</span></div></aside>
+<%@ page pageEncoding="UTF-8" %>

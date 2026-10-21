@@ -1,6 +1,7 @@
 package com.utetra.config;
 
 import com.utetra.security.JwtAuthenticationFilter;
+import com.utetra.security.CsrfTokenMaterializationFilter;
 import jakarta.servlet.DispatcherType;
 import java.time.Clock;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -29,7 +30,8 @@ public class SecurityConfig {
             .securityContext(context -> context.securityContextRepository(new NullSecurityContextRepository()))
             .addFilterBefore(new DisableEncodeUrlFilter(),SecurityContextHolderFilter.class)
             .requestCache(cache -> cache.disable())
-            .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+            .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .sessionAuthenticationStrategy(new org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy()))
             .authorizeHttpRequests(auth -> auth
                 .dispatcherTypeMatchers(DispatcherType.FORWARD,DispatcherType.ERROR).permitAll()
                 .requestMatchers("/","/menu","/products/**","/stores/**","/assets/**","/auth/**","/error","/api/system/health").permitAll()
@@ -37,7 +39,7 @@ public class SecurityConfig {
                 .requestMatchers("/manager/**","/api/manager/**").hasAnyRole("MANAGER","ADMIN")
                 .requestMatchers("/vendor/**","/api/vendor/**").hasRole("VENDOR")
                 .requestMatchers("/shipper/**","/api/shipper/**").hasRole("SHIPPER")
-                .requestMatchers("/account/profile","/account/password").authenticated()
+                .requestMatchers("/account/profile","/account/profile/**","/account/password").authenticated()
                 .requestMatchers("/cart/**").permitAll()
                 .requestMatchers("/checkout/**","/orders/**","/account/**","/favorites/**","/viewed/**","/reviews/**","/comments/**","/api/buyer/**").hasAnyRole("USER","VENDOR")
                 .anyRequest().authenticated())
@@ -47,7 +49,8 @@ public class SecurityConfig {
                     res.getWriter().write("{\"error\":\"UNAUTHORIZED\"}");
                 } else res.sendRedirect(req.getContextPath()+"/auth/login");
             }))
-            .addFilterBefore(jwt,UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwt,UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(new CsrfTokenMaterializationFilter(),org.springframework.security.web.access.intercept.AuthorizationFilter.class);
         return http.build();
     }
     @Bean public FilterRegistrationBean<JwtAuthenticationFilter> jwtFilterRegistration(JwtAuthenticationFilter filter) {

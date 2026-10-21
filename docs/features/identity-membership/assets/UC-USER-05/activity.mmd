@@ -1,0 +1,13 @@
+flowchart TD
+  Start([Bắt đầu]) --> Permission{Input, phiên và quyền hợp lệ?}
+  Permission -->|Không| Deny[Từ chối, không ghi dở]
+  Permission -->|Có| S0
+  S0["Kiểm order item own DELIVERED+PAID"]
+  S0 --> S1
+  S1["sao 1–5 và unique item"]
+  S1 --> S2
+  S2["lưu review/media"]
+  S2 --> S3
+  S3["public rating loại HIDDEN"]
+  S3 --> End([Trả DTO/View])
+  Deny --> End

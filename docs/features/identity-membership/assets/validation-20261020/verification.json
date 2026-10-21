@@ -1,0 +1,111 @@
+{
+  "checks": [
+    {
+      "check": "client rejects password over 72 UTF-8 bytes before POST",
+      "status": "passed"
+    },
+    {
+      "check": "client rejects phone containing only separators",
+      "status": "passed"
+    },
+    {
+      "check": "API rejects missing version",
+      "status": "passed",
+      "http": 400
+    },
+    {
+      "check": "API rejects fractional version",
+      "status": "passed",
+      "http": 400
+    },
+    {
+      "check": "API rejects invalid phone",
+      "status": "passed",
+      "http": 400
+    },
+    {
+      "check": "API rejects negative product ID",
+      "status": "passed",
+      "http": 400
+    },
+    {
+      "check": "address invalid phone blocks submit",
+      "status": "passed"
+    },
+    {
+      "check": "correcting invalid phone permits save",
+      "status": "passed"
+    },
+    {
+      "check": "client rejects 49-character comment",
+      "status": "passed"
+    },
+    {
+      "check": "50-character comment is saved",
+      "status": "passed"
+    },
+    {
+      "check": "API accepts 50 Unicode codepoints",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "check": "XSS text is stored as data",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "check": "XSS text is escaped when rendered",
+      "status": "passed"
+    },
+    {
+      "check": "API independently rejects 49-character comment",
+      "status": "passed",
+      "http": 400
+    },
+    {
+      "check": "API rejects zero-star review",
+      "status": "passed",
+      "http": 400
+    },
+    {
+      "check": "eligible purchased product can be reviewed",
+      "status": "passed",
+      "http": 200
+    },
+    {
+      "check": "duplicate review is rejected",
+      "status": "passed",
+      "http": 409
+    },
+    {
+      "check": "fake PNG rejected before disabled provider",
+      "status": "passed",
+      "http": 400
+    },
+    {
+      "check": "other user cannot use buyer purchase evidence",
+      "status": "passed",
+      "http": 404
+    },
+    {
+      "check": "Vendor cannot use Admin routes",
+      "status": "passed",
+      "http": 403
+    },
+    {
+      "check": "Admin assignment requires explicit active flag",
+      "status": "passed",
+      "http": 400
+    },
+    {
+      "check": "logout removes JWT and refresh cookies",
+      "status": "passed"
+    },
+    {
+      "check": "no browser JavaScript exceptions",
+      "status": "passed"
+    }
+  ],
+  "browser_errors": []
+}

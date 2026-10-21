@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<!DOCTYPE html><html lang="vi"><head><title>Đăng nhập UTETra</title></head><body>
-<section class="card border-0 shadow-sm mx-auto my-4" style="max-width:32rem"><div class="card-body p-4">
-<h1 class="h3">Đăng nhập UTETra</h1>
-<p class="text-secondary">Giao diện và luồng đăng nhập, đăng ký, OTP sẽ được hoàn thiện trên nhánh tài khoản.</p>
-<div class="alert alert-warning mb-0">Hiện tại chưa cấp tài khoản demo hoặc token qua trang này.</div>
-</div></section></body></html>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<!DOCTYPE html><html lang="vi"><head><title>Đăng nhập UTETra</title><script defer src="<c:url value='/assets/js/identity.js'/>"></script></head><body>
+<div class="auth-layout"><%@ include file="art.jspf" %>
+<section id="identity" data-page="/auth/login" class="card border-0"><div class="card-body"><span class="auth-welcome">RẤT VUI ĐƯỢC GẶP LẠI BẠN</span><h1>Đăng nhập UTETra</h1><p class="auth-intro">Ly trà yêu thích, địa chỉ quen thuộc và điểm thành viên — tất cả đang đợi bạn.</p><div id="identity-message" class="alert d-none" role="status" aria-live="polite"></div>
+<form data-endpoint="/auth/login"><label for="email" class="form-label">Email của bạn</label><input id="email" name="email" type="email" required maxlength="254" autocomplete="username" class="form-control mb-3" placeholder="Nhập email đã đăng ký" aria-label="Email"><div class="auth-field-heading"><label for="password" class="form-label">Mật khẩu</label><a class="auth-text-link" href="<c:url value='/auth/forgot'/>">Quên mật khẩu?</a></div><div class="password-field mb-4"><input id="password" name="password" type="password" required maxlength="72" autocomplete="current-password" class="form-control" placeholder="Nhập mật khẩu của bạn"><button class="password-toggle" type="button" data-toggle-password="password" aria-label="Hiện mật khẩu" aria-pressed="false">Hiện</button></div><button class="btn btn-primary w-100" type="submit">Đăng nhập <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></form>
+<p class="auth-switch">Chưa có tài khoản? <a href="<c:url value='/auth/register'/>">Tạo tài khoản</a></p></div></section></div></body></html>

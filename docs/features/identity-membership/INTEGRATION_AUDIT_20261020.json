@@ -1,0 +1,705 @@
+{
+  "date": "2026-10-20",
+  "mode": "mysql",
+  "testSuites": [
+    {
+      "name": "com.utetra.BaselineSecurityTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.BaselineViewTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.CatalogIntegrationTest",
+      "tests": "14",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.CatalogSchemaProposalTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.CatalogViewTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.identity.IdentityIntegrationTest",
+      "tests": "33",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.identity.IdentityMigrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.identity.IdentitySocketLifecycleTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.identity.IdentityViewTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.IntegratedMigrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.order.OrderCommerceIntegrationTest",
+      "tests": "24",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.order.service.OrderEventDeliveryTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.order.service.OrderSocketGuardTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.order.service.ReturnEvidenceServiceTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.security.JwtServiceTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.service.CatalogMediaServiceTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.utetra.service.SessionIdentityServiceTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "totals": {
+    "tests": 110,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "warContainsTestDemos": false,
+  "markdownInventory": [
+    {
+      "path": "AGENT_HANDOFF.md",
+      "sha256": "f2e1f151fcd83227ecbd051e9997c5143da11ee9f9f2b1553b9d1abda4e0abc0",
+      "bytes": 9773
+    },
+    {
+      "path": "BRANCH_IDENTITY_MEMBERSHIP.md",
+      "sha256": "04dd07d69c166ac54f7f6d1a3102f4ab4a3035adff4e3b3b9dcff9341b05d039",
+      "bytes": 4407
+    },
+    {
+      "path": "BRANCH_CATALOG_SALES.md",
+      "sha256": "4261f130f29974f5e9faa73002a4d7325d99169433e57d175c441f980a7e95a0",
+      "bytes": 4475
+    },
+    {
+      "path": "INTEGRATION_BRANCH.md",
+      "sha256": "1404b8a01dbf383534a398cc091a9f8dbfa055f864d705fda9c9b47829f94ed2",
+      "bytes": 3747
+    },
+    {
+      "path": "USE_CASES.md",
+      "sha256": "0efb72b571d11966ddf0fcd3f6a92bcd7617d23350e44084c840b45c09344d39",
+      "bytes": 23295
+    },
+    {
+      "path": "docs/BASELINE_AI_LOG.md",
+      "sha256": "4116c916d6a4fb71ff1863605371251b785d6398a3528eaa2ce67c64da70961b",
+      "bytes": 3902
+    },
+    {
+      "path": "docs/AI_WORKFLOW.md",
+      "sha256": "2e3b679b7c5db9b5fb94d0c1f8f003d89f2822295f0c4460bcf8d0812f7bb85f",
+      "bytes": 2986
+    },
+    {
+      "path": "docs/AI_PROMPT_HISTORY.md",
+      "sha256": "07a2dc5d9400d1f2bb385d12723ee261a56994878ae816a512e20bebe6a91e07",
+      "bytes": 29931
+    },
+    {
+      "path": "DATABASE_DESIGN.md",
+      "sha256": "d9b82add10686764cabbbbb9329e81940a7438e58882bf2bb2178e57796b402d",
+      "bytes": 29278
+    },
+    {
+      "path": "BRANCH_ORDER_PAYMENT.md",
+      "sha256": "9c2300d6a157e3443b34c7bc69652e5a40ae00c29d5b9919405632bf40e0f1a8",
+      "bytes": 4864
+    },
+    {
+      "path": "docs/COMMON_BASELINE.md",
+      "sha256": "3173db7744844ecb96b6511412bb58d5821dc2007ec6f7285734b16d5b74afb5",
+      "bytes": 5734
+    },
+    {
+      "path": "docs/BRANCH_WORKFLOW.md",
+      "sha256": "3a70163472d8b88cec8affe74cb7b1e839848945b7353ae8db3c1baf607cc3db",
+      "bytes": 4269
+    },
+    {
+      "path": "docs/BASELINE_VERIFICATION.md",
+      "sha256": "7b6980281e0815b883bb33b6d6526477987ae02d721bc048ca84d2c42a98e7d6",
+      "bytes": 4227
+    },
+    {
+      "path": "docs/COURSE_CONFIG_MAPPING.md",
+      "sha256": "d48b611612b155d2d749d99f93c4236fd4dee2a8ddb209d85025802b344a7924",
+      "bytes": 4966
+    },
+    {
+      "path": "docs/QUY_DINH_VA_CAU_HINH_CHUNG.md",
+      "sha256": "ff51eb97ba603b801e9ab11af4986a83a5f49dd9f85f8b99936763d3ef3a83b7",
+      "bytes": 14395
+    },
+    {
+      "path": "PROJECT_PLAN.md",
+      "sha256": "0ad009b79d0abd2d00dcc492e64e70ea468346e24c57b0210f018e53c333586b",
+      "bytes": 6979
+    },
+    {
+      "path": "MAIN_BRANCH.md",
+      "sha256": "71164318fa613db1819c13a40eca37a9e0cdc331380646141f6c594aff7d6478",
+      "bytes": 1225
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "c8521fff54563f9f14b94bb5587a9a8fbdf9a12442cc9875ef55cca5e296c8c3",
+      "bytes": 2848
+    },
+    {
+      "path": "docs/templates/USE_CASE_NOTE.md",
+      "sha256": "516b1555d2a71443225569cdf17de1519379909f5706ae1997aeb7fa29ce95c4",
+      "bytes": 5276
+    },
+    {
+      "path": "docs/templates/PROMPT_ENTRY.md",
+      "sha256": "909532969ababe7d3b58d9ce1cf9e99e908b26e0b615b4cc8969c888a6fa08a5",
+      "bytes": 1873
+    },
+    {
+      "path": "docs/SETUP.md",
+      "sha256": "5510e852e5a2357b533a47364fd5f47f9d5b14f664bc9371210616550464b080",
+      "bytes": 7073
+    },
+    {
+      "path": "docs/REPORT_ASSEMBLY.md",
+      "sha256": "83ef5d9a289bc24ff1e85ad1d4d960fe48189cebaf5c877f75ba7085c0756067",
+      "bytes": 6342
+    },
+    {
+      "path": "docs/SURVEY_SYSTEM_ANALYSIS.md",
+      "sha256": "47d9ee2c2841c074330a0026421ee570358ac139166f0709f17696300a5d4f37",
+      "bytes": 3177
+    },
+    {
+      "path": "TAI_LIEU_CAU_HINH_PROJECT_CUOI_KI/HUONG_DAN_CAU_HINH_TONG_HOP.md",
+      "sha256": "3ece42d62e2cf4a65baaffac7e8de574bc5f462de77853313e71e71becbcec92",
+      "bytes": 64370
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-VND-05.md",
+      "sha256": "b10c1a1268fcff9bfb94322ca853850f433c39b686358d5cd2df7f4072dcdeff",
+      "bytes": 10677
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-VND-03.md",
+      "sha256": "2b77069ac54b5e03a39b3c2cc0b0074a539db7a5e5982963dd8e642d4984c2bb",
+      "bytes": 10850
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-VND-02.md",
+      "sha256": "27b851d9ae7803d21a7dfd432970ec282c0c56bde285ef0d36b4309a10c60166",
+      "bytes": 10718
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-VND-01.md",
+      "sha256": "16da18e16a75e0e296c66ca15aa33339f6bc9972878c37a18fbefec19fc74b6b",
+      "bytes": 10850
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-MGR-07.md",
+      "sha256": "2f2513f953a0fb73092de231c6523ed9353398d4ff900e7ab2591274180b21aa",
+      "bytes": 10852
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-MGR-05.md",
+      "sha256": "52c551eb355186424633b742611ad3df171f367d02f3018243937b7e8eb12772",
+      "bytes": 10665
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-MGR-03.md",
+      "sha256": "b953deb2498d63d159840ed7239df27c5e9b75e4f0e0d51bbc5118df53ef85e2",
+      "bytes": 10669
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-MGR-02.md",
+      "sha256": "af4e3e723e551cbf5a8daf875ad818602f295e704c0cda80adcf0c1ff5d8b8ec",
+      "bytes": 10531
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-CAT-06.md",
+      "sha256": "aef771b304ba0cec0b1c99b8608a63e6518d92f6aa0fb3f7c87c405aca9f6d42",
+      "bytes": 11000
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-CAT-05.md",
+      "sha256": "c42894bf69dfe0354ae6ab9bcc6bddc1f5eb0b23391653d3684e76fa3f19d786",
+      "bytes": 11202
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-CAT-04.md",
+      "sha256": "9566a01275975a860feddb8f7d305a5d273c64d85d5bbc1ec67f8d302ca6489d",
+      "bytes": 10789
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-CAT-03.md",
+      "sha256": "09b44154b94b5486e2320075ff8f5fa81770a6a9be111663db437362364adb91",
+      "bytes": 11023
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-CAT-02.md",
+      "sha256": "2443e4845febfbca6a40145bff7ce3acb96fd1f77c4e9a9d6e16e9c9454f831a",
+      "bytes": 10953
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-CAT-01.md",
+      "sha256": "c6ce87bc2b50c5cb341cfa1dbf0627daacc20c7293d7525425445f9628be6760",
+      "bytes": 10845
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-ADM-07.md",
+      "sha256": "70c7b784caf6c85103bb28f2c0ab3a2d0d2e144bc532caea33461c8d6e17b24d",
+      "bytes": 11050
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-ADM-05.md",
+      "sha256": "18010bd61de9544b692708d5759df07235f6e645b313b855da52144a6fb5e574",
+      "bytes": 10892
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-ADM-03.md",
+      "sha256": "b5e0787b5881c4c7ec07e6889602d765179525933ac7d1d0ef976f4594094e36",
+      "bytes": 10853
+    },
+    {
+      "path": "docs/features/catalog-sales/use-cases/UC-ADM-02.md",
+      "sha256": "eefe91caf474d787d4804e04b063bcacd897c26d44879b78593f212a61a2160b",
+      "bytes": 10802
+    },
+    {
+      "path": "docs/features/catalog-sales/RUNBOOK.md",
+      "sha256": "6dca742ee5dbdd2766ef0789143ab4d2df135709102854690c0b544bda1ccac9",
+      "bytes": 15333
+    },
+    {
+      "path": "docs/features/catalog-sales/IMPLEMENTATION.md",
+      "sha256": "c15b9b5c7815e60dc3bcbaf015dfc59b0b847b5c6e41d5f73146abc9c02d0709",
+      "bytes": 10632
+    },
+    {
+      "path": "docs/features/catalog-sales/AI_LOG.md",
+      "sha256": "531f25fa30232a882af1b233da132fb18033eb9b5f47865055749d3dc6187bea",
+      "bytes": 3958
+    },
+    {
+      "path": "docs/features/order-payment/VERIFICATION.md",
+      "sha256": "0c2bd02f97608d640b01f440f8cf60770f78f61f150952ef08e438ae85ceda97",
+      "bytes": 4978
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-VND-07.md",
+      "sha256": "601572d3991c60d6ac9954180eff62f6fa6183a3de1748d3fa77421c216bbc74",
+      "bytes": 8744
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-VND-06.md",
+      "sha256": "1aa4727a53022f4ccfa70e1a9b4173da24cebdd8efe5b86aa16e1ea8c7bf1a3c",
+      "bytes": 8513
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-VND-04.md",
+      "sha256": "fad464357c0253c50621edd5e0947c4e77949232f8be3656f8ce46f699ef6cc0",
+      "bytes": 8713
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-SHP-03.md",
+      "sha256": "95be8d08b2d6dcab2746bed07eb47140e127db5c1587c77cc0d5414479dd2700",
+      "bytes": 8584
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-SHP-02.md",
+      "sha256": "b8483c5e5a2c0c2f480559372a9d263bb7dbb18c015c512a8901778ff6e9399f",
+      "bytes": 8785
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-SHP-01.md",
+      "sha256": "2c11cfaa96a8e90c9ad5d5708db6328af68baa91a7eb2eba93614a59c2c94ab4",
+      "bytes": 8463
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-10.md",
+      "sha256": "9f4f9268a2b071458a8b40d0645225b32dcc30cb364101b119221687ea3ef78f",
+      "bytes": 9059
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-09.md",
+      "sha256": "0a2134d825f612b0d6d32c22af7b6e873cf464da6c19eb3cd8622b6058a25521",
+      "bytes": 9484
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-08.md",
+      "sha256": "ec0d1c0f7b257fa893248a83783cdd88d667c57026dbbb87c0fc11337857ce8a",
+      "bytes": 8897
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-07.md",
+      "sha256": "93f2786a90aac3367de9146c789967dd6c8a20bc180dc9e839e625865edce5a9",
+      "bytes": 8748
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-06.md",
+      "sha256": "cf73c3a875633f8d70c9d86292720b46860214743b1189a8bb1be32d380451c3",
+      "bytes": 8749
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-05.md",
+      "sha256": "ee8d6041ba982ea5ffc7bff39bbc842e82d0d7bf8c37e4d8678a781d2634ea6f",
+      "bytes": 8942
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-04.md",
+      "sha256": "39df72782abb0b7a67999c1c05904db65649c76b01a07aa0c6a3ca11014293f1",
+      "bytes": 8764
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-03.md",
+      "sha256": "17a305a526b01beda19fd74ed2d250cc57cd87b827ac4327afc2289da55032e5",
+      "bytes": 9081
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-02.md",
+      "sha256": "2831b699bfec5fedfd0172d197d3786b32ec289f80bcd59ace64ffecbfde2acb",
+      "bytes": 8645
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ORD-01.md",
+      "sha256": "5e5e76b0ac22bdf0b54e816ac670ba52b1a566692acdb5a1d32fa1525cd70b36",
+      "bytes": 8609
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-MGR-09.md",
+      "sha256": "a7d839e2f1d86b0811f24a55aaa06ae89b283667e33788461415ae1c45b9bdb4",
+      "bytes": 8633
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-MGR-08.md",
+      "sha256": "8e628f48eec2d3d78ab76e66fb9c0dbecf1a523f708c7c80aa992256359e4290",
+      "bytes": 8757
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-MGR-06.md",
+      "sha256": "8805494671a5a05ae5a10234bffa0216d5c449a5b0f6de6250e2d55fbcc5821e",
+      "bytes": 8665
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-MGR-04.md",
+      "sha256": "c961469572a2a3af4667b0a84fffe1f033bc3b90e3b765444415f3212125cfdf",
+      "bytes": 8616
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ADM-09.md",
+      "sha256": "a9a31cff3c2a48bfd00a23a87d1f7aa1c69c3ffc64edf0ea709cf01902147821",
+      "bytes": 8674
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ADM-08.md",
+      "sha256": "c68cc4f30b42256fd9c67ddc2fdb4ed92a13f2911223897a54f5f5fce9dc812b",
+      "bytes": 8752
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ADM-06.md",
+      "sha256": "a19d635edf3162cfad38c841c71712c8a008fda48242e477d68fdb30933cd833",
+      "bytes": 8647
+    },
+    {
+      "path": "docs/features/order-payment/use-cases/UC-ADM-04.md",
+      "sha256": "e268696fa66311e960ad398bb77ab95defb22e646fb1c87367df7f87afeeca78",
+      "bytes": 8664
+    },
+    {
+      "path": "docs/features/order-payment/SETUP.md",
+      "sha256": "c541a0fa6ff9a384618f8e46767fffa37d0f9c175f99fc6906b9c4d16be70377",
+      "bytes": 7114
+    },
+    {
+      "path": "docs/features/order-payment/SCHEMA_PROPOSAL.md",
+      "sha256": "72a8b49134166f53246e5a839f3779f55738fd076c36ff025f582b59816f543f",
+      "bytes": 1746
+    },
+    {
+      "path": "docs/features/order-payment/IMPLEMENTATION.md",
+      "sha256": "70b50e73c10e8a935196b6f1b2996d6fc356b7542f779d837847709a8e7ad355",
+      "bytes": 15754
+    },
+    {
+      "path": "docs/features/order-payment/AI_LOG.md",
+      "sha256": "776e7e005fb7c751ab100e8f8c36a268c55d4f65a40671ccddac4c5a4041e3f6",
+      "bytes": 6483
+    },
+    {
+      "path": "docs/features/identity-membership/VERIFICATION.md",
+      "sha256": "fe1b2d02b5b64ff81557664bb1cb3ef1c2dd6a448422ef5afb22e96ebaa9969d",
+      "bytes": 5858
+    },
+    {
+      "path": "docs/features/identity-membership/VALIDATION_REVIEW_20261020.md",
+      "sha256": "6720933b1450fab8c5fd47b16aa5a677f1d2a3ec6500a81aa2fe6cfef019dbc7",
+      "bytes": 6247
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-07.md",
+      "sha256": "ee2257fa5fb8ed014e21ca0d18afabc94eb8307a40bcc2a4f186b4d17907ff0a",
+      "bytes": 12468
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-06.md",
+      "sha256": "0865b56ade61689c0ad1646ff011fc2938e0f20ae4af6868dae7eb1cd055a2ae",
+      "bytes": 12405
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-05.md",
+      "sha256": "6b6eff93dd88e47e3057b824bb365e85fb137565cee69465dceeba4e51f314a4",
+      "bytes": 12283
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-04.md",
+      "sha256": "643172bc878b99f03807ff4c25f8df3e5c2c18dcae76470737e51e460da636fb",
+      "bytes": 11919
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-03.md",
+      "sha256": "9d5d514eabd7e65da1d6faf96c10247b53cc92af8990e25e863ae7806f6e6c9e",
+      "bytes": 12007
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-02.md",
+      "sha256": "d67bd92c9fc58e7fa63e96315facd623b754be9f3d549aeea5919dbaeccb9b06",
+      "bytes": 12225
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-USER-01.md",
+      "sha256": "46b78ad8262053be0b68b009c0d93462817f9aaf2115882592c976377b0af8b1",
+      "bytes": 12418
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-MGR-01.md",
+      "sha256": "fefca0f3f25ee59a724dac2f6ab5b84c50bdab57284dc76904e3b615256a1282",
+      "bytes": 12347
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-07.md",
+      "sha256": "49550ec5a5f0884cfeeb14dc649fd1663ddd548e3365487112f75beb3e034758",
+      "bytes": 12098
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-06.md",
+      "sha256": "198fe13048d31fe8d1f02d9420a5ef8edb0dd02a01dfc3b269fd6acb818c1a6e",
+      "bytes": 12265
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-05.md",
+      "sha256": "bf584d05adfe5a41f04c4a09dc13349d2e530efeaf5bc3fff1dd5dbaf5df1938",
+      "bytes": 12101
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-04.md",
+      "sha256": "1f3fd36f982a10b8665fe23151a5740c46dbaf5ca8fd7cde90ebcc3da06e5c4e",
+      "bytes": 11975
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-03.md",
+      "sha256": "4d42516e1f265457c2554312cc89d5213220092e95e07b0899b8482236cc99a2",
+      "bytes": 12118
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-02.md",
+      "sha256": "f5045a68ee8211b15046e5301855fab2f0d16fb933cd2eb964b96a4e02038b19",
+      "bytes": 12076
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-AUTH-01.md",
+      "sha256": "5899b2f624aa60e93c556a1bcf4691445b4c910b8c4fb3c2771a0798ed628525",
+      "bytes": 12208
+    },
+    {
+      "path": "docs/features/identity-membership/use-cases/UC-ADM-01.md",
+      "sha256": "9f81918032080379ce5bbc34eef48036e263e3ee4de43753c51d40379efb54e3",
+      "bytes": 12337
+    },
+    {
+      "path": "docs/features/identity-membership/RUNBOOK.md",
+      "sha256": "1de80c4dd8a05cb114b32daf932c05ca974797b24349585a34a4480dd68cb3ba",
+      "bytes": 7409
+    },
+    {
+      "path": "docs/features/identity-membership/INTEGRATION_20261020.md",
+      "sha256": "784e3a462d671c2f2e09fb2ca526f900682cbefa9d46466940530a4174be76d8",
+      "bytes": 6155
+    },
+    {
+      "path": "docs/features/identity-membership/IMPLEMENTATION.md",
+      "sha256": "eaa442040d15e9510bb8c55fe178009ef1e7cc96fb906397ad2fbfd2bade1def",
+      "bytes": 12366
+    },
+    {
+      "path": "docs/features/identity-membership/CONTRACT_REVIEW.md",
+      "sha256": "e5887e455fdf6ed1d1419e60d74bbc827c85667b78419be9f2273a98601f1f90",
+      "bytes": 2674
+    },
+    {
+      "path": "docs/features/identity-membership/AI_LOG.md",
+      "sha256": "ab63f86a123e75a69191632aa7ad71303887198e050c50608c8729538af3ee66",
+      "bytes": 3549
+    },
+    {
+      "path": "docs/features/identity-membership/ai-responses/IDN-AI-002.md",
+      "sha256": "b2c162e2015700ee15cde3a4576fe04c25a9c74b6307f078374d0a9cb097a5d2",
+      "bytes": 1620
+    },
+    {
+      "path": "docs/features/identity-membership/ai-responses/IDN-AI-001.md",
+      "sha256": "0e18a034efec478ff26fac050e9f70b834a9ab633fb9d9dac0a58a4df6cc4913",
+      "bytes": 1792
+    }
+  ],
+  "limitations": [
+    "SMTP not configured; no production users",
+    "TiDB SQL CHECK feature disabled globally; not changed",
+    "No real Cloudinary upload acceptance test; VNPAY disabled"
+  ],
+  "browser": {
+    "baseUrl": "http://localhost:8080",
+    "mode": "mysql-no-seeding",
+    "checks": [
+      {
+        "route": "/",
+        "status": 200,
+        "viewport": "desktop"
+      },
+      {
+        "route": "/menu",
+        "status": 200,
+        "viewport": "desktop"
+      },
+      {
+        "route": "/stores",
+        "status": 200,
+        "viewport": "desktop"
+      },
+      {
+        "route": "/auth/login",
+        "status": 200,
+        "viewport": "desktop"
+      },
+      {
+        "route": "/auth/register",
+        "status": 200,
+        "viewport": "desktop"
+      },
+      {
+        "route": "/auth/forgot",
+        "status": 200,
+        "viewport": "desktop"
+      },
+      {
+        "route": "/cart",
+        "status": 200,
+        "viewport": "desktop"
+      },
+      {
+        "route": "/menu",
+        "viewport": "mobile",
+        "overflow": false
+      },
+      {
+        "route": "/auth/login",
+        "viewport": "mobile",
+        "overflow": false
+      },
+      {
+        "route": "/auth/register",
+        "viewport": "mobile",
+        "overflow": false
+      },
+      {
+        "route": "/cart",
+        "viewport": "mobile",
+        "overflow": false
+      },
+      {
+        "route": "POST /auth/login",
+        "nonexistentAccount": 401,
+        "authCookieIssued": false
+      },
+      {
+        "route": "POST /auth/login",
+        "missingCsrf": 403
+      }
+    ],
+    "javascriptErrors": []
+  }
+}

@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html><html lang="vi"><head><title>Đặt hàng COD</title></head><body>
 <jsp:include page="nav.jsp"/>
-<h1 class="h3">Xác nhận đơn hàng</h1><div id="order-message" hidden role="alert"></div>
+<span class="eyebrow">THE LAST STEP TO A GOOD SIP</span><h1 class="h3">Xác nhận đơn hàng</h1><div id="order-message" hidden role="alert"></div>
 <form id="checkout-form" class="card card-body gap-3">
 <label>Địa chỉ nhận hàng<select name="addressId" class="form-select" required><option value="">Chọn địa chỉ</option><c:forEach items="${choices.addresses}" var="a"><option value="${a.id}"><c:out value="${a.recipient_name}"/> — <c:out value="${a.address_detail}"/></option></c:forEach></select></label>
 <label>Khu vực giao<select name="areaId" class="form-select" required><option value="">Chọn khu vực</option><c:forEach items="${choices.areas}" var="a"><option value="${a.id}"><c:out value="${a.name}"/></option></c:forEach></select></label>

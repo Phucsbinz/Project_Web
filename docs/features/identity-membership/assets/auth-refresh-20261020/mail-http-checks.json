@@ -1,0 +1,45 @@
+{
+  "smtp": {
+    "host": "smtp.gmail.com",
+    "port": 587,
+    "tls": true,
+    "authentication": true,
+    "emailSent": false
+  },
+  "http": [
+    {
+      "route": "/auth/login",
+      "status": 200,
+      "compiledJsp": true
+    },
+    {
+      "route": "/auth/register",
+      "status": 200,
+      "compiledJsp": true
+    },
+    {
+      "route": "/auth/forgot",
+      "status": 200,
+      "compiledJsp": true
+    },
+    {
+      "route": "/auth/otp",
+      "status": 200,
+      "compiledJsp": true
+    },
+    {
+      "route": "/auth/reset",
+      "status": 200,
+      "compiledJsp": true
+    },
+    {
+      "route": "POST /auth/forgot",
+      "status": 200,
+      "realGmailSubmission": true,
+      "recipient": "sender own mailbox",
+      "message": "Nếu tài khoản đủ điều kiện, email OTP sẽ được gửi. Vui lòng kiểm tra hộp thư."
+    }
+  ],
+  "secretsIncluded": false,
+  "inboxDeliveryVerified": false
+}
