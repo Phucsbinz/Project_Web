@@ -53,11 +53,12 @@ public class CommerceReferenceRepository {
   }
 
   public Map<String, Object> user(long userId, boolean lock) {
+    // Match identity's lock contract: lock the user row, not the shared roles row.
+    if (lock) one("select id from users where id=? for update", userId);
     var row =
         one(
             "select u.id,u.is_active,u.email_verified_at,r.name role_name from users u join roles r"
-                + " on r.id=u.role_id where u.id=?"
-                + (lock ? " for update" : ""),
+                + " on r.id=u.role_id where u.id=?",
             userId);
     if (!flag(row, "is_active") || row.get("email_verified_at") == null)
       throw OrderProblem.forbidden();
@@ -81,7 +82,7 @@ public class CommerceReferenceRepository {
     if (actor.is("MANAGER"))
       return !list(
               "select id from store_memberships where user_id=? and store_id=? and is_active=true"
-                  + " and member_role='MANAGER'",
+                  + " and member_role in ('MANAGER','CATALOG_ADMIN')",
               actor.userId(),
               storeId)
           .isEmpty();
@@ -96,7 +97,8 @@ public class CommerceReferenceRepository {
   public Map<String, Object> saleVariant(long variantId, boolean lock, Clock clock) {
     String sql =
         "select v.id variant_id,v.product_id,v.size_name,v.extra_price,p.store_id,p.name"
-            + " product_name,p.base_price,p.is_active product_active,p.is_available,v.is_active"
+            + " product_name,p.base_price,p.is_active product_active,p.is_available,"
+            + " (select c.is_active from categories c where c.id=p.category_id) category_active,v.is_active"
             + " variant_active from product_variants v join products p on p.id=v.product_id where"
             + " v.id=?";
     var v = one(sql, variantId);
@@ -109,6 +111,7 @@ public class CommerceReferenceRepository {
         throw OrderProblem.conflict("Món đã chuyển cấu hình cửa hàng; hãy tải lại.");
     }
     if (!flag(v, "product_active")
+        || !flag(v, "category_active")
         || !flag(v, "variant_active")
         || !flag(v, "is_available")
         || !"ACTIVE".equals(s.get("status"))
@@ -153,7 +156,7 @@ public class CommerceReferenceRepository {
     for (var r :
         list(
             "select user_id from store_memberships where store_id=? and is_active=true and"
-                + " member_role='MANAGER'",
+                + " member_role in ('MANAGER','CATALOG_ADMIN')",
             store)) ids.add(number(r, "user_id"));
     return List.copyOf(ids);
   }

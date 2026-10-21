@@ -44,7 +44,9 @@ public class SecurityConfig {
                 .requestMatchers("/checkout/**","/orders/**","/account/**","/favorites/**","/viewed/**","/reviews/**","/comments/**","/api/buyer/**").hasAnyRole("USER","VENDOR")
                 .anyRequest().authenticated())
             .exceptionHandling(errors -> errors.authenticationEntryPoint((req,res,ex) -> {
-                if (req.getRequestURI().startsWith(req.getContextPath()+"/api/") || req.getRequestURI().equals(req.getContextPath()+"/ws")) {
+                String accept=req.getHeader("Accept");
+                if (req.getRequestURI().startsWith(req.getContextPath()+"/api/") || req.getRequestURI().equals(req.getContextPath()+"/ws")
+                    || accept!=null && accept.contains("application/json")) {
                     res.setStatus(401); res.setContentType("application/json;charset=UTF-8");
                     res.getWriter().write("{\"error\":\"UNAUTHORIZED\"}");
                 } else res.sendRedirect(req.getContextPath()+"/auth/login");

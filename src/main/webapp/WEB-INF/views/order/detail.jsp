@@ -30,5 +30,5 @@ on('refund',()=>orders.action(base+'/refund',{evidence:document.getElementById('
 on('failure',()=>orders.action(base+'/failure',{status:'DELIVERY_FAILED',version,reason:document.getElementById('failure-reason').value,cashCollected:false}));
 on('assign',()=>orders.action(base+'/assignment',{shipperId:Number(document.getElementById('shipper-id').value),version}));
 // Poll authoritative state when no realtime subscription is available.
-let polling=setInterval(async()=>{try{const r=await fetch((document.querySelector('meta[name="app-context"]')?.content||'')+base+'/data');if(r.status===401||r.status===403){clearInterval(polling);return;}if(r.ok){const current=await r.json();if(current.version!==version){clearInterval(polling);orders.message('Đơn đã thay đổi. Tải lại để xem trạng thái mới.');}}}catch(e){}},15000);
+let polling=setInterval(async()=>{try{const r=await fetch((document.querySelector('meta[name="app-context"]')?.content||'')+base+'/data',{headers:{Accept:'application/json'},cache:'no-store'});if(r.status===401||r.status===403){clearInterval(polling);orders.message('Phiên hoặc quyền truy cập đã thay đổi. Vui lòng đăng nhập lại.',true);return;}if(r.ok){const current=await r.json();if(current.version!==version){clearInterval(polling);orders.message('Đơn đã thay đổi. Tải lại để xem trạng thái mới.');}}}catch(e){}},15000);
 </script></body></html>

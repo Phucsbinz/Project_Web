@@ -24,7 +24,7 @@
   function el(tag, text, cls) { const e = document.createElement(tag); if(text !== undefined) e.textContent = text; if(cls) e.className = cls; return e; }
   function notice(text, error = false) { message.textContent = text; message.className = 'alert ' + (error ? 'alert-danger' : 'alert-success'); }
   async function request(path, method = 'GET', data) {
-    const headers = {};
+    const headers = {Accept: 'application/json'};
     if(method !== 'GET') {
       const response = await fetch(context + '/products/csrf', {cache:'no-store'});
       if(!response.ok) throw new Error('Không thể xác minh phiên. Hãy tải lại trang.');

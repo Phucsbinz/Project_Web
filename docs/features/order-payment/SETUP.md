@@ -1,5 +1,7 @@
 # Chạy và bàn giao feature/order-payment
 
+> Mới nhất 21/10: order đã ghép catalog/identify, dùng auth, ledger và schema chung. Đọc [contract, lệnh Windows và kiểm chứng tích hợp](INTEGRATION_20261021.md) trước; các mô tả baseline ban đầu bên dưới là lịch sử.
+
 Nhánh triển khai: `feature/order-payment`, baseline trước code `bb700d1`. Giữ Java 21, Maven Wrapper 3.9.16, Boot 3.5.13 WAR/JSP/JSTL/SiteMesh/Bootstrap, JPA và cấu hình MySQL theo main. Không đổi pom, datasource cloud, secret hoặc profile production để demo.
 
 ## Build và kiểm thử
@@ -52,7 +54,7 @@ Theo IDN-AI-003, runnable demo/harness và script đăng nhập test đã gỡ. 
 
 Dùng DB **localhost** tên utetra_order_* riêng, không dùng utetra_db hay DB project khác. Bind datasource URL/user/password trong process test (không commit secret test), driver MySQL, dialect MySQL, ddl-auto=validate, flyway.enabled=true, locations=classpath:db/migration/mysql; thêm ORDER_MYSQL_TEST_ALLOW_RESET=true. Chạy `-Dtest=OrderCommerceIntegrationTest test`. Fixture xóa dữ liệu của DB test này giữa case; không chạy chung với dữ liệu cần giữ.
 
-`MySqlMigrationSmoke` nhận ORDER_MYSQL_TEST_URL và ORDER_MYSQL_TEST_PASSWORD của DB MySQL disposable mới, chạy V1+V2, replay 0 và JPA validate; kiểm TLS cipher. Test đã dùng MySQL 8.4 cổng localhost 13306, sslMode=VERIFY_CA với CA của container, không tắt TLS. Production TiDB vẫn VERIFY_IDENTITY như baseline.
+`MySqlMigrationSmoke` nhận ORDER_MYSQL_TEST_URL và ORDER_MYSQL_TEST_PASSWORD của DB MySQL disposable mới, chỉ cho localhost/utetra_order_*, chạy toàn bộ migration hiện có, replay 0 và JPA validate ba module; kiểm TLS cipher. Kết quả MySQL 8.4 cổng localhost 13306 của phiên đầu chỉ gồm V1+V2, chưa chạy lại helper disposable sau merge. Production TiDB vẫn VERIFY_IDENTITY.
 
 ## Routes và thao tác demo
 

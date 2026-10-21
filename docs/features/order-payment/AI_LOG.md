@@ -1,5 +1,11 @@
 # ORD — Nhật ký AI của nhánh feature/order-payment
 
+## ORD-AI-011 — Đồng bộ catalog/identity — 21/10/2026
+
+Prompt nguyên văn: `hoàn chỉnh phần code bên nhánh order của tôi và xem code của cách nhánh chức năng khác rồi chình cho đồng bộ`.
+
+Đọc catalog 812e26e và identify 78facd2; lưu sửa media thành 5882d52 rồi merge identify bằng 28e8c18. Đồng bộ ledger, khóa user, scope, danh mục tắt, JSON và validation số. Sửa helper Java để dùng JDK 21/Maven Wrapper trên máy thành viên. Thêm 5 test HTTP contract; clean verify 130 tests đạt, WAR mysql validate 6 migration không chạy mới và 7 URL trả 200. Phát hiện class policy dư trong WAR cũ, xử lý bằng clean build. Đã dừng process kiểm chứng. [Kết quả/giới hạn/lệnh](INTEGRATION_20261021.md); không ghi secret và không push sang nhánh thành viên khác.
+
 ## ORD-AI-010 — Rà bổ sung trên máy Windows
 
 Prompt nguyên văn: `xem còn thiếu sót gì thì làm đi`.

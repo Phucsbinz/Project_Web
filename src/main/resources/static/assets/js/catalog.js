@@ -2,13 +2,14 @@
 (() => {
   const context = document.querySelector('meta[name="app-context"]')?.content || '';
   async function send(path, data, method = 'POST') {
-    const headers = {'Content-Type': 'application/json'};
+    const headers = {'Content-Type': 'application/json', Accept: 'application/json'};
     const csrfResponse = await fetch(context + '/products/csrf', {cache:'no-store'});
     if (!csrfResponse.ok) throw new Error('Không thể xác minh phiên. Hãy tải lại trang.');
     const csrf = await csrfResponse.json(); headers[csrf.headerName] = csrf.token;
     const response = await fetch(context + path, {method, headers, body: JSON.stringify(data)});
+    if (response.status === 401 || response.redirected) throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
     const value = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(value.message || value.detail || (response.status === 403 ? 'Không có quyền hoặc phiên đã hết hạn. Hãy tải lại trang.' : 'Không thể xử lý yêu cầu. Kiểm tra dữ liệu và thử lại.'));
+    if (!response.ok) throw new Error(value.error || value.message || value.detail || (response.status === 403 ? 'Không có quyền hoặc phiên đã hết hạn. Hãy tải lại trang.' : 'Không thể xử lý yêu cầu. Kiểm tra dữ liệu và thử lại.'));
     return value;
   }
   document.querySelectorAll('.catalog-page').forEach(button => button.addEventListener('click', () => {

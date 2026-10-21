@@ -293,6 +293,131 @@ class OrderCommerceIntegrationTest {
           VENDOR, id, new Transition(state, version(id), "", state.equals("DELIVERED")));
   }
 
+  private void rememberCookies(Map<String, String> cookies, HttpHeaders headers) {
+    for (String value : headers.getOrEmpty(HttpHeaders.SET_COOKIE)) {
+      String[] pair = value.split(";", 2)[0].split("=", 2);
+      cookies.put(pair[0], pair.length == 2 ? pair[1] : "");
+    }
+  }
+
+  private HttpHeaders browserHeaders(Map<String, String> cookies) {
+    var headers = new HttpHeaders();
+    headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+    if (!cookies.isEmpty()) headers.set(HttpHeaders.COOKIE, cookies.entrySet().stream()
+        .map(entry -> entry.getKey() + "=" + entry.getValue()).collect(java.util.stream.Collectors.joining("; ")));
+    return headers;
+  }
+
+  private ResponseEntity<Map> browserPost(String path, Object body, Map<String, String> cookies) {
+    var csrf = http.exchange("/products/csrf", HttpMethod.GET,
+        new HttpEntity<>(browserHeaders(cookies)), Map.class);
+    assertThat(csrf.getStatusCode()).isEqualTo(HttpStatus.OK);
+    rememberCookies(cookies, csrf.getHeaders());
+    var headers = browserHeaders(cookies);
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set(csrf.getBody().get("headerName").toString(), csrf.getBody().get("token").toString());
+    var response = http.exchange(path, HttpMethod.POST, new HttpEntity<>(body, headers), Map.class);
+    rememberCookies(cookies, response.getHeaders());
+    return response;
+  }
+
+  @Test
+  void realLoginCatalogGuestMergeCodAndRefundUseTheSameIdentityLedger() {
+    Map<String, String> cookies = new LinkedHashMap<>();
+    var preview = browserPost("/products/1/quote", Map.of("variantId", 1, "sugarLevel", 50,
+        "iceLevel", 50, "toppingIds", List.of(1), "quantity", 2), cookies);
+    assertThat(preview.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(new BigDecimal(preview.getBody().get("total").toString())).isEqualByComparingTo("80000");
+    assertThat(browserPost("/cart/items", item(2), cookies).getStatusCode()).isEqualTo(HttpStatus.OK);
+    var login = browserPost("/auth/login",
+        Map.of("email", "u1@test.invalid", "password", "Only-test-user-password"), cookies);
+    assertThat(login.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(cookies).containsKey("UTETRA_JWT");
+    assertThat(browserPost("/cart/merge", Map.of(), cookies).getStatusCode()).isEqualTo(HttpStatus.OK);
+    String key = UUID.randomUUID().toString();
+    var quote = browserPost("/checkout/quote", request(key, "", 2, null), cookies);
+    assertThat(quote.getStatusCode()).isEqualTo(HttpStatus.OK);
+    var created = browserPost("/checkout", request(key, quote.getBody().get("hash").toString(), 2, null), cookies);
+    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.OK);
+    long order = id(created.getBody());
+    assertThat(jdbc.queryForObject("select balance from loyalty_accounts where user_id=1", Integer.class)).isEqualTo(98);
+    delivered(order);
+    var purchases = http.exchange("/reviews/purchases", HttpMethod.GET,
+        new HttpEntity<>(browserHeaders(cookies)), List.class);
+    assertThat(purchases.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(purchases.getBody()).hasSize(1);
+    var summary = http.exchange("/account/loyalty/data", HttpMethod.GET,
+        new HttpEntity<>(browserHeaders(cookies)), Map.class);
+    assertThat(summary.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(((Number) summary.getBody().get("balance")).intValue()).isEqualTo(105);
+    assertThat(browserPost("/orders/" + order + "/returns", Map.of("reason", "Wrong drink"), cookies)
+        .getStatusCode()).isEqualTo(HttpStatus.OK);
+    workflow.reviewReturn(VENDOR, order, new Decision(true, true, "Quality problem", version(order)));
+    workflow.refundCash(VENDOR, order, new RefundInput("Actual cash refunded by vendor", version(order)));
+    var refunded = http.exchange("/orders/" + order + "/data", HttpMethod.GET,
+        new HttpEntity<>(browserHeaders(cookies)), Map.class);
+    assertThat(refunded.getBody()).containsEntry("status", "REFUNDED");
+    assertThat(jdbc.queryForObject("select balance from loyalty_accounts where user_id=1", Integer.class)).isEqualTo(100);
+    assertThat(jdbc.queryForList("select type from loyalty_transactions where order_id=?", String.class, order))
+        .containsExactlyInAnyOrder("REDEEM", "EARN", "REFUND", "REVERSAL");
+  }
+
+  @Test
+  void revokedLoginReturnsJson401ForOrderRequestsAndRedirectsOnlyHtmlPages() throws Exception {
+    Map<String, String> cookies = new LinkedHashMap<>();
+    assertThat(browserPost("/auth/login", Map.of("email", "u1@test.invalid",
+        "password", "Only-test-user-password"), cookies).getStatusCode()).isEqualTo(HttpStatus.OK);
+    jdbc.update("update auth_sessions set revoked_at=? where user_id=1", time.instant());
+    var json = http.exchange("/orders/data", HttpMethod.GET,
+        new HttpEntity<>(browserHeaders(cookies)), Map.class);
+    assertThat(json.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    assertThat(json.getBody()).containsEntry("error", "UNAUTHORIZED");
+    // Inspect the redirect itself rather than the login HTML followed by RestTemplate.
+    try (var browser = java.net.http.HttpClient.newBuilder()
+        .followRedirects(java.net.http.HttpClient.Redirect.NEVER).build()) {
+      var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create(http.getRootUri() + "/orders"))
+          .header("Accept", "text/html").header("Cookie", browserHeaders(cookies).getFirst(HttpHeaders.COOKIE))
+          .GET().build();
+      var page = browser.send(request, java.net.http.HttpResponse.BodyHandlers.discarding());
+      assertThat(page.statusCode()).isEqualTo(302);
+      assertThat(page.headers().firstValue("Location").orElseThrow()).endsWith("/auth/login");
+    }
+  }
+
+  @Test
+  void orderJsonNeverTruncatesDecimalOrCoercesStringIdsAndQuantities() {
+    Map<String, String> cookies = new LinkedHashMap<>();
+    for (String raw : List.of(
+        "{\"variantId\":1.9,\"sugar\":50,\"ice\":50,\"quantity\":1}",
+        "{\"variantId\":\"1\",\"sugar\":50,\"ice\":50,\"quantity\":1}",
+        "{\"variantId\":1,\"sugar\":50,\"ice\":50,\"quantity\":1.9}")) {
+      assertThat(browserPost("/cart/items", raw, cookies).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    assertThat(jdbc.queryForObject("select count(*) from cart_items", Integer.class)).isZero();
+  }
+
+  @Test
+  void disabledCatalogCategoryCannotBeBoughtThroughAnOldCart() {
+    carts.add(BUYER, item(1));
+    jdbc.update("update categories set is_active=false where id=1");
+    assertThatThrownBy(() -> carts.add(BUYER, item(1))).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(() -> checkout.quote(BUYER, request(UUID.randomUUID().toString(), "", 0, null)))
+        .isInstanceOf(OrderProblem.class);
+    assertThat(jdbc.queryForObject("select count(*) from orders", Integer.class)).isZero();
+  }
+
+  @Test
+  void catalogAdminMembershipUsesTheSameScopedPolicyForOrdersAndNotifications() {
+    long order = id(create(0));
+    jdbc.update("update store_memberships set member_role='CATALOG_ADMIN' where user_id=3");
+    assertThat(workflow.read(MANAGER, order)).containsEntry("status", "NEW");
+    assertThat(operations.stores(MANAGER)).hasSize(1);
+    workflow.transition(MANAGER, order, new Transition("CONFIRMED", version(order), "", false));
+    assertThat(operations.notifications(MANAGER, 0)).isNotEmpty();
+    assertThatThrownBy(() -> operations.commission(MANAGER, new CommissionInput(2, BigDecimal.TEN)))
+        .isInstanceOf(OrderProblem.class);
+  }
+
   @Test
   void cartGroupsOnlyIdenticalOptionsAndEnforcesLimits() {
     carts.add(BUYER, item(2));

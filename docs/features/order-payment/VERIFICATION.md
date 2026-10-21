@@ -1,5 +1,7 @@
 # Kiểm chứng order-payment — 14/10/2026
 
+> Mới nhất 21/10/2026: đồng bộ catalog/identify vào order; **clean verify đạt 130 tests**, WAR khởi động trên TiDB, validate 6 migration không chạy mới, 7 URL đều HTTP 200. [Kết quả và giới hạn tích hợp](INTEGRATION_20261021.md). Số liệu 51/62 tests bên dưới thuộc phiên trước merge.
+
 Kết quả dưới đây dùng dữ liệu test riêng, không phải giao dịch ngân hàng/Cloudinary hay dữ liệu TiDB production. Scope đã code: 20 UC bắt buộc + 3 Shipper có flag; UC-ORD-06 hoãn theo người dùng. [IMPLEMENTATION](IMPLEMENTATION.md) ánh xạ từng UC → symbol/test; [SETUP](SETUP.md) có cách chạy lại.
 
 ## Maven / WAR

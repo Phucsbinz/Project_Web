@@ -119,6 +119,8 @@ vào AI_LOG và hồ sơ UC. Sơ đồ dự kiến và ảnh UI thật phải ph
 
 ## 9. Kết quả triển khai hiện tại
 
+**Cập nhật 21/10:** đã ghép identify 78facd2 (chứa catalog 812e26e), thống nhất ledger, auth/JSON, scope và danh mục ngừng bán. Clean verify 130 tests đạt; WAR validate schema và chạy trên TiDB. Xem [bàn giao tích hợp](INTEGRATION_20261021.md). VNPAY vẫn hoãn, Shipper có flag, chưa coi kiểm thử isolated là giao dịch production.
+
 20 UC bắt buộc có code và 3 UC Shipper có code khi bật flag; UC-ORD-06 hoãn theo người dùng. [SETUP](SETUP.md) ghi phụ thuộc, [VERIFICATION](VERIFICATION.md) ghi kết quả thật và ảnh. Trả hàng trong **3 giờ**, hoàn **cả đơn**, không sửa nhánh của thành viên khác. Bản cấu hình Security trên feature sửa CSRF rotation cho JWT và chống URL jsessionid; cần review chung khi integration nhận nhánh.
 
 Đã đưa code catalog/identity từ nhánh identify vào nhánh order để kiểm chứng tích hợp. Cloudinary đã bật và kiểm upload/xóa ảnh thật; kiểm tra JPEG/PNG, file hỏng, kích thước/dung lượng và kết quả xóa được giữ lại. Kết quả 62 tests là kiểm chứng trước merge; xem VERIFICATION.md để biết kết quả tích hợp mới nhất. VNPAY vẫn hoãn; chưa mặc định toàn bộ luồng production đã nghiệm thu.

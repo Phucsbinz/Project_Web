@@ -3,9 +3,12 @@ window.orders = {
   async send(path, value) {
     const context = document.querySelector('meta[name="app-context"]')?.content || '';
     const multipart = value instanceof FormData;
-    const response = await fetch(context + path, {method: 'POST', headers: {...(multipart ? {} : {'Content-Type': 'application/json'}), ...utetra.csrfHeaders()}, body: multipart ? value : JSON.stringify(value)});
-    const result = response.headers.get('Content-Type')?.includes('application/json') ? await response.json() : {};
-    if (!response.ok) throw new Error(result.error || 'Thao tác thất bại. Hãy tải lại dữ liệu.');
+    const response = await fetch(context + path, {method: 'POST', headers: {Accept: 'application/json', ...(multipart ? {} : {'Content-Type': 'application/json'}), ...utetra.csrfHeaders()}, body: multipart ? value : JSON.stringify(value)});
+    if (response.status === 401 || response.redirected) throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại và kiểm tra đơn trước khi thử lại.');
+    const json = response.headers.get('Content-Type')?.includes('application/json');
+    const result = json ? await response.json() : {};
+    if (!response.ok) throw new Error(result.error || result.message || 'Thao tác thất bại. Hãy tải lại dữ liệu.');
+    if (!json) throw new Error('Phản hồi không hợp lệ. Hãy kiểm tra trạng thái đơn trước khi thử lại.');
     return result;
   },
   message(text, error = false) {

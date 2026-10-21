@@ -1,5 +1,18 @@
 # UTETra — Nhật ký yêu cầu và prompt AI của cuộc trò chuyện khởi tạo
 
+## ORD-AI-011 — Pull các nhánh và đồng bộ order — 21/10/2026
+
+Prompt nguyên văn tiếp nối:
+
+```text
+ụa mà quy định project này là vừa api vừa server render à
+pull code về
+pull đầy đủ các nhánh về
+hoàn chỉnh phần code bên nhánh order của tôi và xem code của cách nhánh chức năng khác rồi chình cho đồng bộ
+```
+
+Đã giải thích JSP server render và endpoint JSON trong cùng ứng dụng MVC 3 tầng; cập nhật đủ 6 nhánh local, đọc catalog/identify và ghép vào order. Giữ sửa media, chỉnh contract ledger/quyền/catalog/JSON; clean verify 130 tests, WAR TiDB validate 6 migration không chạy mới và 7 URL HTTP 200. [Bàn giao và giới hạn](features/order-payment/INTEGRATION_20261021.md).
+
 ## 1. Nguồn và cách ghi
 
 Ghi ngày 13/10/2026, từ các tin nhắn người dùng còn hiển thị trong cuộc trò chuyện này. Thời điểm chính xác của từng tin nhắn/model không có đủ dữ liệu nên không tự gán. Nội dung bên dưới giữ nguyên câu chữ, lỗi gõ và đường dẫn như người dùng gửi; tin nhắn cấu hình môi trường tự động không tính là prompt nghiệp vụ.
