@@ -69,4 +69,28 @@ class ReturnEvidenceServiceTest {
         .isInstanceOf(OrderProblem.class);
     verify(workflow, never()).requestReturnWithEvidence(any(), anyLong(), anyString(), any());
   }
+
+  @Test
+  void invalidImageGivesValidationErrorWithoutCreatingReturn() {
+    when(media.uploadImage(image)).thenThrow(new IllegalArgumentException("Bad MIME"));
+    assertThatThrownBy(() -> new ReturnEvidenceService(workflow, media, true)
+        .submit(buyer, 1, "Reason", image))
+        .isInstanceOfSatisfying(OrderProblem.class, problem -> {
+          assertThat(problem.status()).isEqualTo(org.springframework.http.HttpStatus.BAD_REQUEST);
+          assertThat(problem.getMessage()).contains("JPEG/PNG", "5 MB");
+        });
+    verify(workflow, never()).requestReturnWithEvidence(any(), anyLong(), anyString(), any());
+  }
+
+  @Test
+  void failedCleanupPreservesOriginalFailureForReconciliation() {
+    when(media.uploadImage(image)).thenReturn(asset);
+    var failure = OrderProblem.conflict("Window expired during upload");
+    var cleanup = new IllegalStateException("Provider rejected deletion");
+    when(workflow.requestReturnWithEvidence(buyer, 1, "Reason", asset)).thenThrow(failure);
+    doThrow(cleanup).when(media).deleteOwnedAsset(asset.publicId());
+    assertThatThrownBy(() -> new ReturnEvidenceService(workflow, media, true)
+        .submit(buyer, 1, "Reason", image)).isSameAs(failure);
+    assertThat(failure.getSuppressed()).containsExactly(cleanup);
+  }
 }

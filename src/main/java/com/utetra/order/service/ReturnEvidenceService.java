@@ -36,6 +36,9 @@ public class ReturnEvidenceService {
     MediaUploadResult uploaded;
     try {
       uploaded = media.uploadImage(image);
+    } catch (IllegalArgumentException failure) {
+      throw OrderProblem.invalid(
+          "Ảnh không hợp lệ. Chọn ảnh JPEG/PNG đọc được, tối đa 5 MB và 6000 px mỗi chiều.");
     } catch (IllegalStateException failure) {
       throw new OrderProblem(
           HttpStatus.SERVICE_UNAVAILABLE,

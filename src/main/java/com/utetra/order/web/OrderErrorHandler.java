@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestControllerAdvice(basePackages = "com.utetra.order.web")
 public class OrderErrorHandler {
+  @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+  public ResponseEntity<?> uploadTooLarge(Exception e) {
+    return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+        .body(Map.of("error", "Ảnh chứng cứ vượt quá dung lượng cho phép. Chọn ảnh JPEG/PNG tối đa 5 MB."));
+  }
+
   @ExceptionHandler(OrderProblem.class)
   public ResponseEntity<?> problem(OrderProblem e) {
     return ResponseEntity.status(e.status()).body(Map.of("error", e.getMessage()));

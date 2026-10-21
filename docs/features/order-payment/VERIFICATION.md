@@ -38,7 +38,14 @@ Luồng kiểm: cart → quote 95.000đ → tạo COD → WebSocket STOMP queue 
 
 - Catalog/identity business code và schema ngoài module: adapter đã test theo DATABASE_DESIGN, nhưng integration với implementation thật của owner chưa chạy. Không sửa/push nhánh owner để giả hoàn thành toàn project.
 - VNPAY merchant/Return/IPN và bank refund: hoãn theo ORD-AI-002; checkout hiện COD, không fake PAID từ redirect.
-- Cloudinary thật: chưa có cấu hình; reason-only dùng được. Test upload/cleanup hiện mock MediaService; nếu cleanup thật lỗi cần đối soát asset thủ công, chưa có durable retry worker.
+- Cloudinary thật: đã cấu hình tài khoản chung và kiểm upload/xóa một ảnh PNG thử thành công ngày 14/10/2026. Không lưu khóa trong tài liệu. Kiểm này không chạy database hay toàn bộ luồng trả hàng production; lỗi cleanup vẫn cần đối soát thủ công, chưa có durable retry worker.
 - Shipper flag production vẫn false theo baseline; bật rõ khi nhóm dùng phần thêm. Assignment hiện tại unique theo order; lịch sử đổi người nằm trong DeliveryEvent, báo cáo assignment theo bản hiện lưu.
 - FK ngoài module và version migration cần review trước deploy integration; login/logout identity phải xoay CSRF ở ranh giới xác thực thực.
 - Reviewer cá nhân, DOCX, ảnh source có callout và sơ đồ activity xuất riêng theo từng UC cần nhóm hoàn thiện; sơ đồ module SVG không thay toàn bộ hồ sơ nộp.
+
+## Kiểm chứng bổ sung tại máy Windows — 14/10/2026
+
+- Maven Wrapper, JDK 21.0.12.1: `verify` đạt **62 tests, 0 failures, 0 errors**, đóng gói/repackage `target/utetra.war` thành công. Gồm 9 case adapter Cloudinary và 7 case ReturnEvidenceService: PNG/JPEG hợp lệ, GIF giả MIME, MIME không khớp, file hỏng, vượt 5 MB/6000 px, phản hồi xóa lỗi/rỗng, scope folder và cleanup thất bại không che lỗi gốc.
+- Provider thật: upload PNG 2×2 pixel qua CloudinaryMediaService thành công, xóa ngay thành công; không phát sinh bản ghi database. Helper tạm ở `.local/CloudinarySmoke.java`, không nằm trong Git/WAR.
+- Cấu hình đã push riêng lên main, feature/catalog-sales, feature/identity-membership, feature/order-payment và integration/utetra. Commit cấu hình trên order: `daf5979`.
+- Các sửa lỗi adapter, phản hồi validation và UI ảnh trả hàng đang ở local; chưa nằm trong commit cấu hình trên. Smoke provider được chạy lại sau sửa bộ kiểm tra ảnh và đạt upload/xóa. `git diff --check` đạt. Không chạy lại kiểm thử MySQL/TiDB hoặc full browser trong lượt này.

@@ -505,3 +505,35 @@ push lên nhánh đi
 ```
 
 Người dùng cho phép push feature/order-payment; không mở rộng sang main hoặc các nhánh của thành viên khác. Kết quả xác nhận remote ghi ở AI_LOG của nhánh.
+
+### ORD-AI-009 — Rà nhánh order, cấu hình Cloudinary và đồng bộ cấu hình chung
+
+Các prompt tiếp nối trong phiên Windows, theo thứ tự:
+
+```text
+bạn pull code các nhánh về đi
+tôi đã thêm khá nhiều vào nhánh order á nhánh đó sẽ do tôi làm còn các nhánh khác của thành viên khác
+pull về xem trước đi đừng có sửa hay tạo gì
+```
+
+Sau đó người dùng gửi hướng dẫn Cloudinary/Shipper/COD/VNPAY và yêu cầu:
+
+```text
+bạn xem tại nhánh của tôi còn thiếu gì cần sửa gì thì sửa đi
+ụa đã pull về chưa
+s không thấy gì
+[Thông tin tài khoản Cloudinary được cung cấp; khóa không sao chép vào nhật ký]
+bạn cấu hình đi +
+provider
+bạn push phần cấu hình đó cho các nhánh khác sài chung  nha
+```
+
+Đã pull feature/order-payment tới 887d539, cấu hình Cloudinary bằng thông tin người dùng cung cấp và push riêng file application.properties lên 5 nhánh. Các sửa lỗi order được kiểm thử local; 55 tests đạt và upload/xóa PNG thật đạt. Không ghép code order sang nhánh thành viên khác. Chi tiết tại docs/features/order-payment/VERIFICATION.md.
+
+### ORD-AI-010 — Tiếp tục rà và sửa thiếu sót nhánh order
+
+```text
+xem còn thiếu sót gì thì làm đi
+```
+
+Rà các service/controller/JSP của order; bổ sung kiểm tra nội dung ảnh, feedback UI/API và kiểm kết quả xóa provider. Verify đạt 62 tests, build WAR thành công; smoke upload/xóa Cloudinary thật chạy lại đạt. Sửa code ở local feature/order-payment, không ghép sang nhánh thành viên khác. Chờ integration catalog/identity và kiểm chứng TiDB nghiệp vụ; VNPAY tiếp tục hoãn.

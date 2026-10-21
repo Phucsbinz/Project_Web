@@ -1,5 +1,12 @@
 # ORD — Nhật ký AI của nhánh feature/order-payment
 
+## ORD-AI-010 — Rà bổ sung trên máy Windows
+
+Prompt nguyên văn: `xem còn thiếu sót gì thì làm đi`.
+
+Đã rà code giỏ/checkout/COD, quyền operator/shipper, trả hàng và media; sửa kiểm tra nội dung ảnh JPEG/PNG khớp MIME, ảnh hỏng/vượt giới hạn, phản hồi validation tiếng Việt và kiểm kết quả xóa Cloudinary. UI kiểm lý do/định dạng/dung lượng trước gửi; server vẫn kiểm độc lập. Thêm regression tests cho file giả MIME, hỏng, quá kích thước/dung lượng, provider delete lỗi và cleanup không che lỗi gốc. Maven Wrapper/JDK 21: verify đạt 62 tests, WAR thành công; upload/xóa PNG thật đạt. Chưa chạy lại full browser/native DB; chưa push các sửa code này. Chi tiết ở VERIFICATION.md; không đưa secret vào nhật ký.
+
+
 Trạng thái khởi tạo hồ sơ (trước triển khai): chưa có prompt triển khai thật từ thành viên. Yêu cầu khởi tạo hồ sơ đã ghi tại [AI_PROMPT_HISTORY](../../AI_PROMPT_HISTORY.md).
 
 Ghi mọi prompt thực dùng cho 21 UC P0 và 3 UC Shipper P1 của order-payment theo IMPLEMENTATION hiện tại: giỏ/checkout/COD/transaction/socket/report, sửa lỗi, sơ đồ, ảnh diễn giải code/UI, setup và review. Dùng [mẫu prompt](../../templates/PROMPT_ENTRY.md), ID ORD-AI-001... Lưu response/code/nguồn hình/ảnh, cách nhóm sửa, testcase và commit. Không ghi QR gateway đã tích hợp hoặc test đã qua nếu chưa thực hiện.
