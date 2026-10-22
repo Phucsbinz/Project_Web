@@ -1,5 +1,7 @@
 # UTETra — Hồ sơ và cấu hình chung của nhóm
 
+**Giao diện chung:** đọc [SHARED_UI](SHARED_UI.md) và AGENTS.md. Toàn project dùng duy nhất layouts/app.jsp; agent các nhánh không tạo layout theo role/module.
+
 > Cập nhật 13/10/2026 theo toàn bộ quy định mới của giảng viên. Đọc đầu tiên [QUY_DINH_VA_CAU_HINH_CHUNG.md](QUY_DINH_VA_CAU_HINH_CHUNG.md).
 
 ## 1. Bộ tài liệu chính
