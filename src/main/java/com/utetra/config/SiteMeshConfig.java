@@ -14,12 +14,7 @@ public class SiteMeshConfig {
             // These mappings are full servlet paths; SiteMesh 3.2.2 otherwise
             // prepends /WEB-INF/decorators/ to every decorator path.
             builder.setDecoratorPrefix("");
-            builder.addDecoratorPath("/*", "/WEB-INF/views/layouts/client.jsp")
-                .addDecoratorPath("/auth/*", "/WEB-INF/views/layouts/auth.jsp")
-                .addDecoratorPath("/vendor/*", "/WEB-INF/views/layouts/vendor.jsp")
-                .addDecoratorPath("/manager/*", "/WEB-INF/views/layouts/manager.jsp")
-                .addDecoratorPath("/admin/*", "/WEB-INF/views/layouts/admin.jsp")
-                .addDecoratorPath("/shipper/*", "/WEB-INF/views/layouts/shipper.jsp")
+            builder.addDecoratorPath("/*", "/WEB-INF/views/layouts/app.jsp")
                 .addExcludedPath("/api/*").addExcludedPath("/assets/*")
                 .addExcludedPath("/ws").addExcludedPath("/ws/*")
                 .addExcludedPath("/payments/*").addExcludedPath("/error");
