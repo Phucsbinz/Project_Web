@@ -2,6 +2,7 @@
 
 Nhánh `identify`: xem [thiết lập gửi mail sau khi pull](features/identity-membership/MAIL_SETUP.md)
 và [runbook identity](features/identity-membership/RUNBOOK.md).
+**Giao diện chung:** đọc [SHARED_UI](SHARED_UI.md) và AGENTS.md. Toàn project dùng duy nhất layouts/app.jsp; agent các nhánh không tạo layout theo role/module.
 
 > Cập nhật 13/10/2026 theo toàn bộ quy định mới của giảng viên. Đọc đầu tiên [QUY_DINH_VA_CAU_HINH_CHUNG.md](QUY_DINH_VA_CAU_HINH_CHUNG.md).
 

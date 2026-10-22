@@ -1,0 +1,17 @@
+# Shared UI v1: Git paths only; no credentials, database or business code.
+AGENTS.md
+docs/SHARED_UI.md
+docs/SHARED_UI_FILES.txt
+docs/UI_PROMPT_HISTORY.md
+tools/check_shared_ui.py
+src/main/java/com/utetra/config/SiteMeshConfig.java
+src/main/java/com/utetra/controller/NavigationAdvice.java
+src/main/webapp/WEB-INF/views/layouts/app.jsp
+src/main/resources/static/assets/css/utetra.css
+src/main/resources/static/assets/js/utetra.js
+src/main/resources/static/assets/js/site-ui.js
+src/main/resources/static/assets/vendor/bootstrap/bootstrap.min.css
+src/main/resources/static/assets/vendor/bootstrap/bootstrap.bundle.min.js
+src/main/resources/static/assets/images/utetra-mark.svg
+src/main/resources/static/assets/images/utetra-tea-ritual.webp
+src/main/resources/static/assets/images/utetra-tea-ritual.png
