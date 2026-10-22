@@ -1,5 +1,9 @@
 # UTETra — Nhật ký yêu cầu và prompt AI của cuộc trò chuyện khởi tạo
 
+## UI-AI-001 — Layout thống nhất toàn bộ nhánh — 22/10/2026
+
+Hai prompt nguyên văn được lưu tại [UI_PROMPT_HISTORY](UI_PROMPT_HISTORY.md): yêu cầu kiểm tra frontend lệch giữa thành viên, rồi chuẩn hóa duy nhất một layout chung và viết Markdown cho agent biết dùng/chỉnh cấu hình. Đã tạo nguồn main riêng, đồng bộ 16 file UI vào 6 nhánh local, không trộn nghiệp vụ. Main 16 tests, order tích hợp 130 tests, catalog riêng 37 tests đều đạt clean verify và build WAR. [Kiểm chứng và trạng thái remote](SHARED_UI_VERIFICATION_20261022.md). Chưa push các nhánh.
+
 ## ORD-AI-011 — Pull các nhánh và đồng bộ order — 21/10/2026
 
 Prompt nguyên văn tiếp nối:
