@@ -1,6 +1,6 @@
 # feature/catalog-sales — Danh mục, shop Vendor và khuyến mãi
 
-> Cập nhật theo quy định thầy ngày 13/10/2026. Người phụ trách TV1: [điền tên]. Baseline main/commit: [điền]. Đây là hướng dẫn công việc, không xác nhận mọi UC đã code.
+> Cập nhật theo quy định thầy ngày 13/10/2026. Người phụ trách TV1: [điền tên]. Baseline main/commit: [điền]. Hướng dẫn gốc; trạng thái mới ngày 15/10/2026 tại [RUNBOOK](RUNBOOK.md). Đã có code cho 18 UC, kiểm H2/Tomcat; chưa nghiệm thu cloud/tích hợp.
 
 ## 1. Các file phải đọc và cấu hình
 
@@ -33,7 +33,7 @@ Mỗi UC do một người làm đủ Entity/Repo/DTO → Service → Controller
 
 ## 3. Schema, contract và phụ thuộc
 
-Owner các bảng: stores, store_delivery_areas, categories, products, product_variants, toppings, product_toppings, store_toppings, store_registration_requests, promotions, promotion_products. Chỉ V1 identity đã có trong baseline; bảng khác theo schema thiết kế và migration main mới, không tự tạo cấu trúc khác.
+Owner các bảng: stores, store_delivery_areas, categories, products, product_variants, toppings, product_toppings, store_toppings, store_registration_requests, promotions, promotion_products. V1 identity giữ nguyên. Entity nghiệp vụ đã thêm; DDL tại proposals/catalog-sales.sql chờ main review/đặt version. Chưa áp dụng cloud; xem RUNBOOK về prerequisite và các điểm schema cần chốt.
 
 Contract: CatalogService, StoreService, PromotionService, MediaService. Phụ thuộc: Cloudinary + catalog/store/promo; dùng Authorization/StoreAccessPolicy/Audit từ TV2, giao quote/eligibility/quota contract cho TV3. Signature/DTO/error/transaction/locking phải chốt trên main trước khi ghép; mock chỉ trong test. Không viết lại giá/điểm/auth/payment service của owner khác.
 
@@ -65,24 +65,24 @@ Sơ đồ này là khung kiến trúc dự kiến. Mỗi UC phải có activity/
 
 | UC/role | Path/symbol/commit | Activity/sequence/ảnh code/UI | Config/setup/data | Prompt/response | Test/reviewer/trạng thái |
 | --- | --- | --- | --- | --- | --- |
-| UC-CAT-01 / Guest | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-CAT-02 / Mọi người | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-CAT-03 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-CAT-04 / Mọi người | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-CAT-05 / Mọi người | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-CAT-06 / Mọi người | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-VND-01 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-VND-02 / Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-VND-03 / Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-VND-05 / Vendor | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-MGR-02 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-MGR-03 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-MGR-05 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-MGR-07 / Manager | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ADM-02 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ADM-03 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ADM-05 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
-| UC-ADM-07 / Admin | [điền] | [chưa có] | [điền] | [điền] | Chưa triển khai |
+| UC-CAT-01 / Guest | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-CAT-02 / Mọi người | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-CAT-03 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-CAT-04 / Mọi người | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-CAT-05 / Mọi người | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-CAT-06 / Mọi người | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-VND-01 / User, Vendor | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-VND-02 / Vendor | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-VND-03 / Vendor | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-VND-05 / Vendor | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-MGR-02 / Manager | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-MGR-03 / Manager | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-MGR-05 / Manager | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-MGR-07 / Manager | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-ADM-02 / Admin | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-ADM-03 / Admin | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-ADM-05 / Admin | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
+| UC-ADM-07 / Admin | [điền] | [chưa có] | [điền] | [điền] | Có code; xem RUNBOOK, chờ tích hợp/TiDB |
 
 Ghi setup thực và thao tác demo theo role; lỗi/vấn đề còn lại ở cuối từng UC note. Không chụp secret/config password vào báo cáo. Phản hồi dài lưu ai-responses/<ID>.md; ảnh/source lưu assets/<UC-ID>. Không bịa test pass hoặc ảnh chạy.
 
@@ -104,3 +104,8 @@ vào AI_LOG và hồ sơ UC. Sơ đồ dự kiến và ảnh UI thật phải ph
 - [ ] Có kiến trúc/activity/sequence, hình code/UI chú giải, setup và test thật.
 - [ ] Prompt nguyên văn/response/nhóm sửa/commit/reviewer đầy đủ.
 - [ ] Ghép integration cùng owner dependency; kiểm chức năng chung theo thang điểm.
+
+
+## Cập nhật tích hợp 20/10/2026
+
+Nhánh identity đã ghép UI/schema/service với module này theo IDN-AI-003. Xem [kết quả và giới hạn hiện tại](../identity-membership/INTEGRATION_20261020.md); các ghi chú chưa tích hợp phía trên là lịch sử của nhánh gốc.

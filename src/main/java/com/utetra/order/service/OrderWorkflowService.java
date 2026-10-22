@@ -1,0 +1,601 @@
+package com.utetra.order.service;
+
+import com.utetra.order.dto.OrderRequests.*;
+import com.utetra.order.entity.*;
+import com.utetra.order.port.OrderLoyaltyBridge;
+import com.utetra.order.repository.*;
+import java.math.*;
+import java.time.*;
+import java.util.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class OrderWorkflowService {
+  private final OrderDataRepository data;
+  private final CommerceReferenceRepository refs;
+  private final OrderSupport support;
+  private final OrderLoyaltyBridge loyalty;
+  private final OrderPromotionService promos;
+  private final Clock clock;
+  private final Duration returnWindow;
+  private final boolean shipperEnabled;
+
+  public OrderWorkflowService(
+      OrderDataRepository data,
+      CommerceReferenceRepository refs,
+      OrderSupport support,
+      OrderLoyaltyBridge loyalty,
+      OrderPromotionService promos,
+      Clock clock,
+      @Value("${order.return-window:3h}") Duration returnWindow,
+      @Value("${features.shipper.enabled:false}") boolean shipperEnabled) {
+    this.data = data;
+    this.refs = refs;
+    this.support = support;
+    this.loyalty = loyalty;
+    this.promos = promos;
+    this.clock = clock;
+    this.returnWindow = returnWindow;
+    this.shipperEnabled = shipperEnabled;
+  }
+
+  public void shipper(Actor actor) {
+    refs.requireCurrent(actor, false);
+    if (!shipperEnabled || !actor.is("SHIPPER")) throw OrderProblem.forbidden();
+  }
+
+  private boolean assigned(Actor actor, long order) {
+    return !data.query(
+            DeliveryAssignment.class,
+            "where e.orderId=:order and e.shipperId=:user and e.status='ACTIVE'",
+            Map.of("order", order, "user", actor.userId()),
+            false,
+            1)
+        .isEmpty();
+  }
+
+  public void readable(Actor actor, Order o) {
+    refs.requireCurrent(actor, false);
+    if (actor.buyer() && o.userId == actor.userId()) return;
+    if (refs.operates(actor, o.storeId)) return;
+    if (shipperEnabled
+        && actor.is("SHIPPER")
+        && !data.query(
+                DeliveryAssignment.class,
+                "where e.orderId=:order and e.shipperId=:user and e.status in"
+                    + " ('ACTIVE','COMPLETED')",
+                Map.of("order", o.id, "user", actor.userId()),
+                false,
+                1)
+            .isEmpty()) return;
+    throw OrderProblem.missing();
+  }
+
+  @Transactional(readOnly = true)
+  public Map<String, Object> read(Actor actor, long id) {
+    Order o = data.require(Order.class, id, false);
+    readable(actor, o);
+    Map<String, Object> result = new LinkedHashMap<>(support.view(o));
+    result.put("recipientName", o.recipientName);
+    result.put("recipientPhone", o.recipientPhone);
+    result.put("deliveryAddress", o.deliveryAddress);
+    result.put("carrierName", o.carrierName);
+    result.put("note", o.note == null ? "" : o.note);
+    result.put(
+        "items",
+        data.items(o.id).stream()
+            .map(
+                i ->
+                    Map.of(
+                        "id",
+                        i.id,
+                        "name",
+                        i.productName,
+                        "size",
+                        i.sizeName,
+                        "quantity",
+                        i.quantity,
+                        "sugar",
+                        i.sugarLevel,
+                        "ice",
+                        i.iceLevel,
+                        "note",
+                        i.note,
+                        "total",
+                        i.lineTotal,
+                        "toppings",
+                        data.toppings(i.id).stream()
+                            .map(t -> Map.of("name", t.toppingName, "price", t.unitPrice))
+                            .toList()))
+            .toList());
+    result.put(
+        "history",
+        data
+            .query(
+                OrderStatusHistory.class,
+                "where e.orderId=:order order by e.createdAt,e.id",
+                Map.of("order", o.id),
+                false,
+                200)
+            .stream()
+            .map(
+                h ->
+                    Map.of(
+                        "status",
+                        h.toStatus,
+                        "type",
+                        h.eventType,
+                        "createdAt",
+                        h.createdAt.toString(),
+                        "reason",
+                        h.reason == null ? "" : h.reason))
+            .toList());
+    result.put(
+        "returns",
+        data
+            .query(ReturnRequest.class, "where e.orderId=:order", Map.of("order", o.id), false, 1)
+            .stream()
+            .map(
+                r ->
+                    Map.of(
+                        "id",
+                        r.id,
+                        "reason",
+                        r.reason,
+                        "decisionReason",
+                        r.decisionReason == null ? "" : r.decisionReason,
+                        "status",
+                        r.status,
+                        "waivePhysicalReturn",
+                        r.waivePhysicalReturn,
+                        "evidenceUrl",
+                        r.evidenceUrl == null ? "" : r.evidenceUrl))
+            .toList());
+    return result;
+  }
+
+  @Transactional(readOnly = true)
+  public List<Map<String, Object>> list(
+      Actor actor, String mode, String status, int page, int size) {
+    refs.requireCurrent(actor, false);
+    if (page < 0 || page > 499 || size < 1 || size > 50)
+      throw OrderProblem.invalid("Phân trang không hợp lệ.");
+    String where;
+    Map<String, Object> params = new HashMap<>();
+    if ("buyer".equals(mode)) {
+      support.buyer(actor);
+      where = "where e.userId=:user";
+      params.put("user", actor.userId());
+    } else if ("shipper".equals(mode)) {
+      shipper(actor);
+      List<Long> ids =
+          data
+              .query(
+                  DeliveryAssignment.class,
+                  "where e.shipperId=:user and e.status in ('ACTIVE','COMPLETED')",
+                  Map.of("user", actor.userId()),
+                  false,
+                  10000)
+              .stream()
+              .map(a -> a.orderId)
+              .toList();
+      if (ids.isEmpty()) return List.of();
+      where = "where e.id in :ids";
+      params.put("ids", ids);
+    } else {
+      if (!actor.is("ADMIN") && !actor.is("MANAGER") && !actor.is("VENDOR"))
+        throw OrderProblem.forbidden();
+      var ids =
+          refs.list("select id from stores").stream()
+              .map(s -> CommerceReferenceRepository.number(s, "id"))
+              .filter(id -> refs.operates(actor, id))
+              .toList();
+      if (ids.isEmpty()) return List.of();
+      where = "where e.storeId in :ids";
+      params.put("ids", ids);
+    }
+    if (status != null && !status.isBlank()) {
+      if (!Set.of(
+              "NEW",
+              "CONFIRMED",
+              "PICKED_UP",
+              "DELIVERING",
+              "DELIVERED",
+              "CANCELLED",
+              "RETURN_REQUESTED",
+              "RETURN_APPROVED",
+              "RETURNED",
+              "REFUNDED")
+          .contains(status)) throw OrderProblem.invalid("Trạng thái không hợp lệ.");
+      where += " and e.status=:status";
+      params.put("status", status);
+    }
+    return data
+        .query(
+            Order.class,
+            where + " order by e.createdAt desc,e.id desc",
+            params,
+            false,
+            Math.min(10000, (page + 1) * size))
+        .stream()
+        .skip((long) page * size)
+        .map(support::view)
+        .toList();
+  }
+
+  private void version(Order o, long version) {
+    if (o.version != version)
+      throw OrderProblem.conflict("Đơn đã thay đổi; hãy tải lại trước khi thao tác.");
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public Map<String, Object> transition(Actor actor, long id, Transition request) {
+    refs.requireCurrent(actor, false);
+    Order o = data.require(Order.class, id, true);
+    version(o, request.version());
+    boolean shipping = actor.is("SHIPPER");
+    if (shipping) {
+      shipper(actor);
+      if (!assigned(actor, id)) throw OrderProblem.forbidden();
+    } else refs.requireOperator(actor, o.storeId);
+    List<String> states = List.of("NEW", "CONFIRMED", "PICKED_UP", "DELIVERING", "DELIVERED");
+    int position = states.indexOf(o.status);
+    if (position < 0
+        || position == states.size() - 1
+        || !states.get(position + 1).equals(request.status())
+        || shipping && position < 1)
+      throw OrderProblem.conflict("Không được bỏ bước hoặc đảo trạng thái đơn.");
+    if ("VNPAY".equals(o.paymentMethod) && !"PAID".equals(o.paymentStatus))
+      throw OrderProblem.conflict("Chưa xác nhận thanh toán trực tuyến.");
+    String from = o.status;
+    o.status = request.status();
+    o.updatedAt = clock.instant();
+    if ("DELIVERED".equals(o.status)) {
+      if ("COD".equals(o.paymentMethod)) {
+        if (!request.cashCollected())
+          throw OrderProblem.invalid("Cần xác nhận đã thu đủ tiền COD.");
+        o.paymentStatus = "PAID";
+        o.paidAt = clock.instant();
+        o.paymentConfirmedBy = actor.userId();
+        var p =
+            data.query(
+                    PaymentTransaction.class,
+                    "where e.orderId=:order and e.provider='COD'",
+                    Map.of("order", id),
+                    true,
+                    1)
+                .getFirst();
+        p.status = "SUCCEEDED";
+        p.paidAt = o.paidAt;
+        p.updatedAt = clock.instant();
+      }
+      if (!"PAID".equals(o.paymentStatus)) throw OrderProblem.conflict("Đơn chưa trả đủ tiền.");
+      o.deliveredAt = clock.instant();
+      BigDecimal goods = o.subtotal.subtract(o.productDiscount).subtract(o.pointsDiscount);
+      o.pointsEarned = goods.divide(new BigDecimal("10000"), 0, RoundingMode.DOWN).intValueExact();
+      loyalty.record(o.userId, o.id, "EARN", o.pointsEarned);
+      promos.status(o.id, "USED");
+      StoreSettlement s = new StoreSettlement();
+      s.orderId = o.id;
+      s.storeId = o.storeId;
+      s.goodsNet = goods;
+      s.commissionRate = o.commissionRate;
+      s.commissionAmount = o.commissionAmount;
+      s.shippingNet = o.shippingGross.subtract(o.shippingDiscount);
+      s.storeNet = o.storeNet;
+      s.updatedAt = clock.instant();
+      data.save(s);
+      var assignments =
+          data.query(
+              DeliveryAssignment.class, "where e.orderId=:order", Map.of("order", id), true, 1);
+      for (var a : assignments) {
+        a.status = "COMPLETED";
+        a.completedAt = clock.instant();
+      }
+    }
+    if (shipping) {
+      DeliveryEvent ev = new DeliveryEvent();
+      ev.assignmentId =
+          data.query(
+                  DeliveryAssignment.class, "where e.orderId=:order", Map.of("order", id), false, 1)
+              .getFirst()
+              .id;
+      ev.actorId = actor.userId();
+      ev.type = o.status;
+      ev.note = OrderSupport.note(request.reason(), 500);
+      ev.createdAt = clock.instant();
+      data.save(ev);
+    }
+    support.audit(actor, "ORDER_TRANSITION", id);
+    support.event(o, actor, from, "TRANSITION", request.reason());
+    return support.view(o);
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public Map<String, Object> cancel(Actor actor, long id, long version, String reason) {
+    refs.requireCurrent(actor, false);
+    Order o = data.require(Order.class, id, true);
+    version(o, version);
+    boolean owner = actor.buyer() && o.userId == actor.userId();
+    boolean operator = refs.operates(actor, o.storeId);
+    if (!owner && !operator) throw OrderProblem.forbidden();
+    if (owner && !operator && !"NEW".equals(o.status)
+        || !Set.of("NEW", "CONFIRMED", "PICKED_UP", "DELIVERING").contains(o.status))
+      throw OrderProblem.conflict("Đơn không còn trong thời điểm cho phép hủy.");
+    if ("PAID".equals(o.paymentStatus))
+      throw OrderProblem.conflict(
+          "Đơn trả trước cần quy trình hoàn ngân hàng; tích hợp này đang được hoãn.");
+    String from = o.status;
+    o.status = "CANCELLED";
+    o.paymentStatus = "CANCELLED";
+    o.cancelReason = OrderSupport.required(reason, 500);
+    o.cancelledAt = clock.instant();
+    o.updatedAt = clock.instant();
+    loyalty.record(o.userId, id, "REFUND", o.pointsUsed);
+    promos.status(id, "RELEASED");
+    for (var assignment :
+        data.query(
+            DeliveryAssignment.class,
+            "where e.orderId=:order and e.status='ACTIVE'",
+            Map.of("order", id),
+            true,
+            1)) {
+      assignment.status = "CANCELLED";
+    }
+    for (var p :
+        data.query(
+            PaymentTransaction.class, "where e.orderId=:order", Map.of("order", id), true, 20)) {
+      p.status = "FAILED";
+      p.updatedAt = clock.instant();
+    }
+    support.audit(actor, "ORDER_CANCEL", id);
+    support.event(o, actor, from, "CANCELLED", reason);
+    return support.view(o);
+  }
+
+  @Transactional(readOnly = true)
+  public void validateReturnEligibility(Actor actor, long id) {
+    support.buyer(actor);
+    Order o = data.require(Order.class, id, false);
+    if (o.userId != actor.userId()) throw OrderProblem.missing();
+    if (!"DELIVERED".equals(o.status)
+        || !"PAID".equals(o.paymentStatus)
+        || o.deliveredAt == null
+        || !clock.instant().isBefore(o.deliveredAt.plus(returnWindow)))
+      throw OrderProblem.conflict(
+          "Chỉ yêu cầu trả hàng trong 3 tiếng sau giao thành công và thanh toán.");
+    requireNoPreviousReturn(id);
+  }
+
+  private void requireNoPreviousReturn(long id) {
+    if (!data.query(ReturnRequest.class, "where e.orderId=:order", Map.of("order", id), false, 1)
+        .isEmpty())
+      throw OrderProblem.conflict(
+          "Mỗi đơn chỉ có một yêu cầu trả hàng; xem kết quả và lý do quyết định đã ghi.");
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public Map<String, Object> requestReturn(Actor actor, long id, String reason) {
+    return requestReturnWithEvidence(actor, id, reason, null);
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public Map<String, Object> requestReturnWithEvidence(
+      Actor actor, long id, String reason, com.utetra.dto.MediaUploadResult evidence) {
+    support.buyer(actor);
+    Order o = data.require(Order.class, id, true);
+    if (o.userId != actor.userId()) throw OrderProblem.missing();
+    if (!"DELIVERED".equals(o.status)
+        || !"PAID".equals(o.paymentStatus)
+        || o.deliveredAt == null
+        || !clock.instant().isBefore(o.deliveredAt.plus(returnWindow)))
+      throw OrderProblem.conflict(
+          "Chỉ yêu cầu trả hàng trong 3 tiếng sau giao thành công và thanh toán.");
+    requireNoPreviousReturn(id);
+    ReturnRequest r = new ReturnRequest();
+    r.orderId = id;
+    r.requestedBy = actor.userId();
+    r.reason = OrderSupport.required(reason, 2000);
+    if (evidence != null) {
+      r.evidenceUrl = evidence.secureUrl();
+      r.evidencePublicId = evidence.publicId();
+    }
+    r.status = "REQUESTED";
+    r.waivePhysicalReturn = false;
+    r.createdAt = clock.instant();
+    r.updatedAt = clock.instant();
+    data.save(r);
+    String from = o.status;
+    o.status = "RETURN_REQUESTED";
+    o.updatedAt = clock.instant();
+    support.event(o, actor, from, "RETURN_REQUESTED", "");
+    return support.view(o);
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public Map<String, Object> reviewReturn(Actor actor, long id, Decision request) {
+    Order o = data.require(Order.class, id, true);
+    refs.requireOperator(actor, o.storeId);
+    version(o, request.version());
+    if (!"RETURN_REQUESTED".equals(o.status))
+      throw OrderProblem.conflict("Không có yêu cầu đang chờ xử lý.");
+    ReturnRequest r =
+        data.query(ReturnRequest.class, "where e.orderId=:order", Map.of("order", id), true, 1)
+            .getFirst();
+    r.reviewedBy = actor.userId();
+    r.decisionReason = OrderSupport.required(request.reason(), 1000);
+    r.waivePhysicalReturn = request.waivePhysicalReturn();
+    r.status = request.approve() ? "APPROVED" : "REJECTED";
+    r.updatedAt = clock.instant();
+    String from = o.status;
+    o.status = request.approve() ? "RETURN_APPROVED" : "DELIVERED";
+    o.updatedAt = clock.instant();
+    support.audit(actor, "RETURN_REVIEW", id);
+    support.event(
+        o,
+        actor,
+        from,
+        "RETURN_REVIEW",
+        request.reason().substring(0, Math.min(500, request.reason().length())));
+    return support.view(o);
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public Map<String, Object> receiveReturn(Actor actor, long id, long version) {
+    Order o = data.require(Order.class, id, true);
+    refs.requireOperator(actor, o.storeId);
+    version(o, version);
+    if (!"RETURN_APPROVED".equals(o.status))
+      throw OrderProblem.conflict("Yêu cầu chưa được duyệt.");
+    ReturnRequest r =
+        data.query(ReturnRequest.class, "where e.orderId=:order", Map.of("order", id), true, 1)
+            .getFirst();
+    r.status = "RECEIVED";
+    r.updatedAt = clock.instant();
+    String from = o.status;
+    o.status = "RETURNED";
+    o.updatedAt = clock.instant();
+    support.event(o, actor, from, "RETURNED", "");
+    return support.view(o);
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public Map<String, Object> refundCash(Actor actor, long id, RefundInput request) {
+    Order o = data.require(Order.class, id, true);
+    refs.requireOperator(actor, o.storeId);
+    version(o, request.version());
+    ReturnRequest r =
+        data
+            .query(ReturnRequest.class, "where e.orderId=:order", Map.of("order", id), true, 1)
+            .stream()
+            .findFirst()
+            .orElseThrow(OrderProblem::missing);
+    if (!"COD".equals(o.paymentMethod)
+        || !"PAID".equals(o.paymentStatus)
+        || !("RETURNED".equals(o.status)
+            || "RETURN_APPROVED".equals(o.status) && r.waivePhysicalReturn))
+      throw OrderProblem.conflict("Chưa đủ điều kiện hoàn COD cả đơn.");
+    PaymentTransaction p =
+        data.query(
+                PaymentTransaction.class,
+                "where e.orderId=:order and e.status='SUCCEEDED'",
+                Map.of("order", id),
+                true,
+                1)
+            .getFirst();
+    if (p.amount.compareTo(o.finalAmount) != 0)
+      throw OrderProblem.conflict(
+          "Khoản thu không khớp tổng đơn; cần đối soát trước khi hoàn tiền.");
+    if (!data.query(
+            RefundTransaction.class,
+            "where e.orderId=:order and e.status='SUCCEEDED'",
+            Map.of("order", id),
+            false,
+            1)
+        .isEmpty()) throw OrderProblem.conflict("Đơn đã được hoàn tiền.");
+    RefundTransaction refund = new RefundTransaction();
+    refund.orderId = id;
+    refund.paymentId = p.id;
+    refund.returnRequestId = r.id;
+    refund.refundRef = "RF-" + UUID.randomUUID();
+    refund.amount = o.finalAmount;
+    refund.status = "SUCCEEDED";
+    refund.reason = r.reason;
+    refund.evidenceRef = OrderSupport.required(request.evidence(), 500);
+    refund.approvedBy = actor.userId();
+    refund.createdAt = clock.instant();
+    refund.completedAt = clock.instant();
+    data.save(refund);
+    o.paymentStatus = "REFUNDED";
+    loyalty.record(o.userId, id, "REFUND", o.pointsUsed);
+    loyalty.record(o.userId, id, "REVERSAL", o.pointsEarned);
+    promos.status(id, "RELEASED");
+    StoreSettlement s =
+        data.query(StoreSettlement.class, "where e.orderId=:order", Map.of("order", id), true, 1)
+            .getFirst();
+    s.refundedGoods = s.goodsNet;
+    s.refundedShipping = s.shippingNet;
+    s.commissionReversed = s.commissionAmount;
+    s.updatedAt = clock.instant();
+    r.status = "REFUNDED";
+    r.updatedAt = clock.instant();
+    String from = o.status;
+    o.status = "REFUNDED";
+    o.paymentStatus = "REFUNDED";
+    o.updatedAt = clock.instant();
+    support.audit(actor, "CASH_REFUND", id);
+    support.event(o, actor, from, "REFUNDED", "");
+    return support.view(o);
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public Map<String, Object> deliveryFailure(Actor actor, long id, long version, String reason) {
+    shipper(actor);
+    Order o = data.require(Order.class, id, true);
+    version(o, version);
+    if (!assigned(actor, id)) throw OrderProblem.forbidden();
+    if (!Set.of("PICKED_UP", "DELIVERING").contains(o.status))
+      throw OrderProblem.conflict("Chỉ báo giao thất bại trong quá trình giao.");
+    String detail = OrderSupport.required(reason, 500);
+    DeliveryAssignment a =
+        data.query(DeliveryAssignment.class, "where e.orderId=:order", Map.of("order", id), true, 1)
+            .getFirst();
+    DeliveryEvent ev = new DeliveryEvent();
+    ev.assignmentId = a.id;
+    ev.actorId = actor.userId();
+    ev.type = "FAILED";
+    ev.note = detail;
+    ev.createdAt = clock.instant();
+    data.save(ev);
+    o.updatedAt =
+        clock.instant().isAfter(o.updatedAt) ? clock.instant() : o.updatedAt.plusNanos(1000);
+    support.event(o, actor, o.status, "DELIVERY_FAILED", detail);
+    return support.view(o);
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public void assign(Actor actor, long id, Assignment request) {
+    if (!shipperEnabled) throw OrderProblem.forbidden();
+    Order o = data.require(Order.class, id, true);
+    refs.requireOperator(actor, o.storeId);
+    version(o, request.version());
+    if (!Set.of("NEW", "CONFIRMED", "PICKED_UP", "DELIVERING").contains(o.status))
+      throw OrderProblem.conflict("Đơn không thể phân công.");
+    if (!"ROLE_SHIPPER".equals(refs.user(request.shipperId(), true).get("role_name")))
+      throw OrderProblem.invalid("Người nhận không phải Shipper hoạt động.");
+    DeliveryAssignment a =
+        data
+            .query(DeliveryAssignment.class, "where e.orderId=:order", Map.of("order", id), true, 1)
+            .stream()
+            .findFirst()
+            .orElse(null);
+    boolean fresh = a == null;
+    Long previous = fresh ? null : a.shipperId;
+    if (fresh) {
+      a = new DeliveryAssignment();
+      a.orderId = id;
+    }
+    a.shipperId = request.shipperId();
+    a.assignedBy = actor.userId();
+    a.status = "ACTIVE";
+    a.assignedAt = clock.instant();
+    a.completedAt = null;
+    if (fresh) data.save(a);
+    data.flush();
+    DeliveryEvent assignedEvent = new DeliveryEvent();
+    assignedEvent.assignmentId = a.id;
+    assignedEvent.actorId = actor.userId();
+    assignedEvent.type = fresh ? "ASSIGNED" : "REASSIGNED";
+    assignedEvent.note = "shipper:" + (previous == null ? "none" : previous) + "->" + a.shipperId;
+    assignedEvent.createdAt = clock.instant();
+    data.save(assignedEvent);
+    String from = o.status;
+    o.updatedAt =
+        clock.instant().isAfter(o.updatedAt) ? clock.instant() : o.updatedAt.plusNanos(1000);
+    support.audit(actor, "SHIPPER_ASSIGN", id);
+    support.event(o, actor, from, "ASSIGNED", "");
+  }
+}

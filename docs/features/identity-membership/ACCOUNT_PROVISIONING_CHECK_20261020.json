@@ -1,0 +1,72 @@
+{
+  "database": "utetra_db",
+  "accountCount": 8,
+  "checks": [
+    {
+      "email": "minh.quan@utetra.example",
+      "role": "ROLE_ADMIN",
+      "login": "passed",
+      "profileFromDatabase": "passed",
+      "roleScope": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "hoang.nam@utetra.example",
+      "role": "ROLE_MANAGER",
+      "login": "passed",
+      "profileFromDatabase": "passed",
+      "roleScope": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "thao.linh@utetra.example",
+      "role": "ROLE_VENDOR",
+      "login": "passed",
+      "profileFromDatabase": "passed",
+      "roleScope": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "ngoc.anh@utetra.example",
+      "role": "ROLE_USER",
+      "login": "passed",
+      "profileFromDatabase": "passed",
+      "roleScope": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "duc.huy@utetra.example",
+      "role": "ROLE_USER",
+      "login": "passed",
+      "profileFromDatabase": "passed",
+      "roleScope": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "bao.tran@utetra.example",
+      "role": "ROLE_USER",
+      "login": "passed",
+      "profileFromDatabase": "passed",
+      "roleScope": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "gia.han@utetra.example",
+      "role": "ROLE_USER",
+      "login": "passed",
+      "profileFromDatabase": "passed",
+      "roleScope": "passed",
+      "logout": "passed"
+    },
+    {
+      "email": "tuan.kiet@utetra.example",
+      "role": "ROLE_USER",
+      "login": "passed",
+      "profileFromDatabase": "passed",
+      "roleScope": "passed",
+      "logout": "passed"
+    }
+  ],
+  "javascriptErrors": [],
+  "passwordsOrTokensIncluded": false
+}

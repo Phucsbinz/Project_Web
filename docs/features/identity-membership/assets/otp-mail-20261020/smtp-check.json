@@ -1,0 +1,9 @@
+{
+  "route": "POST /auth/otp/send",
+  "status": 200,
+  "purpose": "REGISTER",
+  "realSmtp": true,
+  "recipient": "pending registration; omitted",
+  "codeIncluded": false,
+  "inboxVerified": false
+}

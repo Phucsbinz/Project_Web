@@ -1,0 +1,86 @@
+[
+  {
+    "route": "/account/addresses",
+    "status": "passed",
+    "overflow": false
+  },
+  {
+    "route": "/account/loyalty",
+    "status": "passed",
+    "overflow": false
+  },
+  {
+    "route": "/favorites",
+    "status": "passed",
+    "overflow": false
+  },
+  {
+    "route": "/viewed",
+    "status": "passed",
+    "overflow": false
+  },
+  {
+    "route": "/reviews",
+    "status": "passed",
+    "overflow": false
+  },
+  {
+    "route": "/comments",
+    "status": "passed",
+    "overflow": false
+  },
+  {
+    "flow": "login -> add default address",
+    "status": "passed"
+  },
+  {
+    "route": "/account/profile",
+    "viewport": "tablet",
+    "overflow": false,
+    "status": "passed"
+  },
+  {
+    "route": "/account/addresses",
+    "viewport": "tablet",
+    "overflow": false,
+    "status": "passed"
+  },
+  {
+    "route": "/auth/register",
+    "viewport": "tablet",
+    "overflow": false,
+    "status": "passed"
+  },
+  {
+    "route": "/account/profile",
+    "viewport": "mobile",
+    "overflow": false,
+    "status": "passed"
+  },
+  {
+    "route": "/account/addresses",
+    "viewport": "mobile",
+    "overflow": false,
+    "status": "passed"
+  },
+  {
+    "route": "/auth/register",
+    "viewport": "mobile",
+    "overflow": false,
+    "status": "passed"
+  },
+  {
+    "route": "/admin/users",
+    "role": "admin",
+    "status": "passed"
+  },
+  {
+    "route": "/manager/users",
+    "role": "manager",
+    "status": "passed"
+  },
+  {
+    "flow": "logout clears cookies",
+    "status": "passed"
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "url": "http://localhost:8080",
+  "runtimeReady": true,
+  "pages": [
+    {
+      "route": "/auth/login",
+      "status": 200,
+      "utf8": true
+    },
+    {
+      "route": "/auth/register",
+      "status": 200,
+      "utf8": true
+    },
+    {
+      "route": "/auth/forgot",
+      "status": 200,
+      "utf8": true
+    },
+    {
+      "route": "/auth/otp",
+      "status": 200,
+      "utf8": true
+    },
+    {
+      "route": "/auth/reset",
+      "status": 200,
+      "utf8": true
+    }
+  ],
+  "updatedJavascript": true,
+  "localSecretExcludedFromWar": true,
+  "gitVisibleSecretScan": "passed",
+  "additionalEmailSent": false
+}

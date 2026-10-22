@@ -1,0 +1,55 @@
+<div class="auth-layout auth-flow-layout">
+<%@ include file="../auth/art.jspf" %>
+<section id="identity" data-page="<c:out value='${identityPage}'/>" class="card border-0">
+<div class="card-body">
+<c:set var="registerFlow" value="${identityPage == '/auth/register' || identityPage == '/auth/otp'}"/>
+<span class="auth-welcome">MỘT TÀI KHOẢN · THẬT NHIỀU NIỀM VUI</span>
+<ol class="auth-steps" aria-label="Tiến trình" id="auth-steps">
+<li class="${identityPage == '/auth/register' || identityPage == '/auth/forgot' ? 'is-current' : 'is-complete'}" ${identityPage == '/auth/register' || identityPage == '/auth/forgot' ? 'aria-current="step"' : ''}><span>1</span>${registerFlow ? 'Tạo tài khoản' : 'Email'}</li>
+<li class="${identityPage == '/auth/otp' || identityPage == '/auth/reset' ? 'is-current' : ''}" ${identityPage == '/auth/otp' || identityPage == '/auth/reset' ? 'aria-current="step"' : ''}><span>2</span>Xác minh OTP</li>
+<c:if test="${not registerFlow}"><li><span>3</span>Mật khẩu mới</li></c:if>
+</ol>
+<c:choose>
+<c:when test="${identityPage == '/auth/register'}">
+<h1>Tạo tài khoản</h1><p class="auth-intro">Điền thông tin của bạn. UTETra sẽ gửi mã xác minh đến email này.</p>
+</c:when>
+<c:when test="${identityPage == '/auth/forgot'}">
+<h1>Quên mật khẩu?</h1><p class="auth-intro">Nhập email đã đăng ký để nhận mã OTP và tạo mật khẩu mới.</p>
+</c:when>
+<c:otherwise>
+<h1 id="auth-flow-title">Xác minh email</h1><p class="auth-intro" id="auth-flow-intro">Nhập mã OTP gồm 6 chữ số được gửi đến email của bạn. Mã có hiệu lực trong 5 phút.</p>
+</c:otherwise>
+</c:choose>
+<div id="identity-message" class="alert d-none" role="status" aria-live="polite" tabindex="-1"></div>
+<c:choose>
+<c:when test="${identityPage == '/auth/register'}">
+<form data-endpoint="/auth/register">
+<label class="form-label" for="fullName">Họ và tên</label><input class="form-control mb-3" id="fullName" name="fullName" required maxlength="100" autocomplete="name" placeholder="Nguyễn Ngọc Anh">
+<label class="form-label" for="username">Tên đăng nhập</label><input class="form-control" id="username" name="username" pattern="[a-zA-Z0-9_.\-]{3,50}" required maxlength="50" autocomplete="username" placeholder="ngocanh" aria-describedby="username-hint"><p class="auth-field-hint" id="username-hint">3–50 ký tự: chữ không dấu, số, dấu chấm, gạch dưới hoặc gạch ngang.</p>
+<label class="form-label" for="email">Email của bạn</label><input class="form-control mb-3" id="email" name="email" type="email" required maxlength="254" autocomplete="email" placeholder="ban@gmail.com">
+<label class="form-label" for="password">Mật khẩu</label><div class="password-field"><input class="form-control" id="password" name="password" type="password" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="Ít nhất 8 ký tự" aria-describedby="password-hint"><button class="password-toggle" type="button" data-toggle-password="password" aria-label="Hiện mật khẩu" aria-pressed="false">Hiện</button></div><p class="auth-field-hint" id="password-hint">Từ 8 ký tự, tối đa 72 byte. Bạn có thể dùng chữ và số.</p>
+<button class="btn btn-primary w-100" type="submit">Tạo tài khoản &amp; nhận OTP <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+</form>
+<p class="auth-switch">Đã có tài khoản? <a href="<c:url value='/auth/login'/>">Đăng nhập</a></p>
+</c:when>
+<c:when test="${identityPage == '/auth/forgot'}">
+<form data-endpoint="/auth/forgot"><label class="form-label" for="email">Email đã đăng ký</label><input class="form-control mb-4" id="email" name="email" type="email" required maxlength="254" autocomplete="email" placeholder="ban@gmail.com"><button class="btn btn-primary w-100" type="submit">Gửi mã OTP <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></form>
+<p class="auth-switch"><a href="<c:url value='/auth/login'/>">Quay lại đăng nhập</a></p>
+</c:when>
+<c:otherwise>
+<form data-endpoint="/auth/otp/verify" id="otp-form">
+<input type="hidden" name="purpose" value="${registerFlow ? 'REGISTER' : 'PASSWORD_RESET'}">
+<label class="form-label" for="email">Email nhận mã</label><input class="form-control mb-3" id="email" name="email" type="email" required maxlength="254" autocomplete="email" placeholder="ban@gmail.com">
+<label class="form-label" for="otp">Mã xác minh</label><input class="form-control auth-otp-input" id="otp" name="otp" required pattern="[0-9]{6}" minlength="6" maxlength="6" inputmode="numeric" autocomplete="one-time-code" placeholder="000000" aria-describedby="otp-hint"><p class="auth-field-hint" id="otp-hint">Kiểm tra cả mục thư rác nếu bạn chưa nhận được mã.</p>
+<button class="btn btn-primary w-100" type="submit">Xác minh email <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+<p class="auth-resend">Chưa nhận được mã? <button id="resend-otp" type="button" class="auth-text-link">Gửi lại OTP</button></p>
+</form>
+<form id="reset-form" data-endpoint="/auth/reset" class="d-none"><input name="grant" type="hidden">
+<label class="form-label" for="newPassword">Mật khẩu mới</label><div class="password-field"><input class="form-control" id="newPassword" name="password" type="password" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="Ít nhất 8 ký tự" aria-describedby="new-password-hint"><button class="password-toggle" type="button" data-toggle-password="newPassword" aria-label="Hiện mật khẩu" aria-pressed="false">Hiện</button></div><p class="auth-field-hint" id="new-password-hint">Từ 8 ký tự, tối đa 72 byte. Bạn có thể dùng chữ và số.</p>
+<button class="btn btn-primary w-100" type="submit">Lưu mật khẩu mới <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></form>
+<div id="auth-complete" class="d-none"><a class="btn btn-primary w-100" href="<c:url value='/auth/login'/>">Đăng nhập ngay <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+<p class="auth-switch" id="auth-back"><a href="<c:url value='${registerFlow ? "/auth/register" : "/auth/forgot"}'/>">${registerFlow ? 'Quay lại tạo tài khoản' : 'Dùng email khác'}</a></p>
+</c:otherwise>
+</c:choose>
+</div></section></div>
+<%@ page pageEncoding="UTF-8" %>

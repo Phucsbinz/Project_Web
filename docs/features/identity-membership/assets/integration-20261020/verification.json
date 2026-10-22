@@ -1,0 +1,71 @@
+{
+  "baseUrl": "http://localhost:8080",
+  "mode": "mysql-no-seeding",
+  "checks": [
+    {
+      "route": "/",
+      "status": 200,
+      "viewport": "desktop"
+    },
+    {
+      "route": "/menu",
+      "status": 200,
+      "viewport": "desktop"
+    },
+    {
+      "route": "/stores",
+      "status": 200,
+      "viewport": "desktop"
+    },
+    {
+      "route": "/auth/login",
+      "status": 200,
+      "viewport": "desktop"
+    },
+    {
+      "route": "/auth/register",
+      "status": 200,
+      "viewport": "desktop"
+    },
+    {
+      "route": "/auth/forgot",
+      "status": 200,
+      "viewport": "desktop"
+    },
+    {
+      "route": "/cart",
+      "status": 200,
+      "viewport": "desktop"
+    },
+    {
+      "route": "/menu",
+      "viewport": "mobile",
+      "overflow": false
+    },
+    {
+      "route": "/auth/login",
+      "viewport": "mobile",
+      "overflow": false
+    },
+    {
+      "route": "/auth/register",
+      "viewport": "mobile",
+      "overflow": false
+    },
+    {
+      "route": "/cart",
+      "viewport": "mobile",
+      "overflow": false
+    },
+    {
+      "route": "POST /auth/login",
+      "nonexistentAccount": 401,
+      "authCookieIssued": false
+    },
+    {
+      "route": "POST /auth/login",
+      "missingCsrf": 403
+    }
+  ],
+  "javascriptErrors": []
+}

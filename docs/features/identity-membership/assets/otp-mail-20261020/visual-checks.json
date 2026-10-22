@@ -1,0 +1,20 @@
+{
+  "checks": [
+    {
+      "width": 800,
+      "overflow": false,
+      "leadingZeroCodeVisible": true
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "leadingZeroCodeVisible": true
+    },
+    {
+      "width": 320,
+      "overflow": false,
+      "leadingZeroCodeVisible": true
+    }
+  ],
+  "mode": "HTML email template in Chromium; not an Inbox screenshot"
+}

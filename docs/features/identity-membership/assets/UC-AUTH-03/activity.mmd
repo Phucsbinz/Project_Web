@@ -1,0 +1,13 @@
+flowchart TD
+  Start([Bắt đầu]) --> Permission{Input, phiên và quyền hợp lệ?}
+  Permission -->|Không| Deny[Từ chối, không ghi dở]
+  Permission -->|Có| S0
+  S0["Kiểm BCrypt/active/verified"]
+  S0 --> S1
+  S1["lưu refresh hash"]
+  S1 --> S2
+  S2["ký JWT sid"]
+  S2 --> S3
+  S3["đặt HttpOnly cookie và chuyển hồ sơ"]
+  S3 --> End([Trả DTO/View])
+  Deny --> End

@@ -1,0 +1,13 @@
+flowchart TD
+  Start([Bắt đầu]) --> Permission{Input, phiên và quyền hợp lệ?}
+  Permission -->|Không| Deny[Từ chối, không ghi dở]
+  Permission -->|Có| S0
+  S0["Kiểm Admin"]
+  S0 --> S1
+  S1["khóa role Admin giữ Admin cuối"]
+  S1 --> S2
+  S2["kiểm version và đổi role/active/assignment"]
+  S2 --> S3
+  S3["revoke và audit"]
+  S3 --> End([Trả DTO/View])
+  Deny --> End
