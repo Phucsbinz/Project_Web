@@ -1,5 +1,14 @@
 # UTETra — Nhật ký yêu cầu và prompt AI của cuộc trò chuyện khởi tạo
 
+## INT-AI-001 — Merge và chạy thử integration — 22/10/2026
+
+```text
+bạn merge qua nhánh integration merge hết tất cả các nhánh vào đó rồi chạy thử
+à bạn pull code các nhánh về trước đã
+```
+
+Đã fetch trước merge và kiểm lại fetch --all: cả 6 nhánh có 0 remote commit chưa tải. Merge đủ 5 đầu nhánh vào integration/utetra; chỉ xung đột README và giữ đủ liên kết. Clean verify 130 tests; WAR mysql đang chạy localhost:8080, Flyway validate 6 migration không chạy mới; 11 HTTP checks thật đạt. [Kết quả và giới hạn](integration/VERIFICATION_20261022.md). Chưa push remote hoặc merge ngược main.
+
 ## UI-AI-001 — Layout thống nhất toàn bộ nhánh — 22/10/2026
 
 Hai prompt nguyên văn được lưu tại [UI_PROMPT_HISTORY](UI_PROMPT_HISTORY.md): yêu cầu kiểm tra frontend lệch giữa thành viên, rồi chuẩn hóa duy nhất một layout chung và viết Markdown cho agent biết dùng/chỉnh cấu hình. Đã tạo nguồn main riêng, đồng bộ 16 file UI vào 6 nhánh local, không trộn nghiệp vụ. Main 16 tests, order tích hợp 130 tests, catalog riêng 37 tests đều đạt clean verify và build WAR. [Kiểm chứng và trạng thái remote](SHARED_UI_VERIFICATION_20261022.md). Chưa push các nhánh.
