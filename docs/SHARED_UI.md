@@ -1,0 +1,77 @@
+# UTETra — Một layout dùng chung cho toàn bộ nhóm
+
+## Quyết định chung
+
+Từ 22/10/2026, **chỉ có một layout SiteMesh**: `src/main/webapp/WEB-INF/views/layouts/app.jsp`. Không tạo client.jsp/auth.jsp/admin.jsp/vendor.jsp/manager.jsp/shipper.jsp riêng. Bộ chuẩn lấy từ giao diện đã ghép trên identify/order: xanh trà, nền kem, Bootstrap 5.3.3 local, header/footer và sidebar responsive chung. Đây là chuẩn trình bày; không thay đổi quyền hoặc phạm vi nghiệp vụ.
+
+Các trang khách, tài khoản, đăng nhập và quản lý khác nhau ở nội dung và menu theo role; cùng một khung HTML, cùng CSS/JS/Bootstrap. Auth vẫn có panel/ảnh riêng bên trong trang, workspace có sidebar; không phải frontend hoặc template khác.
+
+## File nào được sửa ở đâu?
+
+| Nhu cầu | Nơi dùng chung |
+| --- | --- |
+| Header, footer, icon, sidebar, meta CSRF, thứ tự nạp tài nguyên | layouts/app.jsp |
+| Màu, font, spacing, button, form, table, breakpoint | static/assets/css/utetra.css |
+| Bootstrap | static/assets/vendor/bootstrap; giữ 5.3.3 |
+| Logo/ảnh thương hiệu | static/assets/images/utetra-* |
+| currentPath/currentRole/workspace | controller/NavigationAdvice.java |
+| Mapping decorator | config/SiteMeshConfig.java: chỉ một /* → app.jsp |
+| Hành vi giao diện chung, định dạng tiền/trạng thái, logout | static/assets/js/site-ui.js |
+| Hàm CSRF/WebSocket URL dùng chung | static/assets/js/utetra.js |
+| Trang và tương tác nghiệp vụ | WEB-INF/views/<module>/, assets/js/<module>.js |
+
+Đường dẫn CSS/JS/ảnh bắt đầu từ src/main/resources/. Danh sách đầy đủ có thể đồng bộ bằng Git nằm trong [SHARED_UI_FILES.txt](SHARED_UI_FILES.txt). Không có properties chứa khóa, SQL hoặc service nghiệp vụ trong bundle này.
+
+## Quy trình cho agent của từng thành viên
+
+1. Đọc AGENTS.md, tài liệu này và tài liệu chức năng của nhánh.
+2. Dùng cùng bundle chuẩn của main. Không chọn template Bootstrap khác hay sao chép layout từ project khác.
+3. Tạo JSP nội dung trong thư mục module. SiteMesh lấy title/head/body rồi chèn vào app.jsp đúng một lần; không include layout bằng tay.
+4. Không chép navbar/footer/sidebar, meta CSRF hoặc Bootstrap vào trang nội dung. Menu phụ của chức năng được phép nằm trong body.
+5. CSS riêng nếu cần đặt trong `<module>.css`, scope dưới class gốc như .order-page/.catalog-page/.identity-page. Không override body, :root, .navbar, .btn hoặc .container theo ý riêng.
+6. Nạp CSS riêng trong head; nạp JS chức năng đúng một lần trong trang. Giao diện dùng c:url, c:out, meta app-context và helper CSRF chung; không hardcode localhost hoặc bỏ CSRF.
+7. Khi cần thay đổi theme/navigation, chỉnh nguồn chung trên main, ghi lý do và đồng bộ bundle. Các bản khác nhau không được giữ song song thành layout thứ hai.
+
+Ví dụ JSP chức năng:
+
+```jsp
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<!DOCTYPE html>
+<html lang="vi"><head><title>Tên chức năng · UTETra</title></head><body>
+<section class="order-page">
+  <h1 class="h3">Tên chức năng</h1>
+  <div class="card card-body">Nội dung được escape bằng c:out.</div>
+</section>
+<script src="<c:url value='/assets/js/orders.js'/>"></script>
+</body></html>
+```
+
+## Cấu hình, màu và responsive
+
+- SiteMesh filter đăng ký một lần; `setDecoratorPrefix("")`; một mapping /* tới app.jsp. Giữ exclusions /api/*, /assets/*, /ws, /payments/*, /error; JSON/static không bị bọc HTML.
+- NavigationAdvice cung cấp currentRole từ principal hiện hành, currentPath và workspace cho URL quản lý. Thêm role/menu trong logic chung, không thêm decorator. Security/Service vẫn quyết định quyền thật.
+- Theme tokens hiện có: --tea #173c32, --cream #faf8f3, --ink #233b33, --orange #cb643d; font Segoe UI/Arial. Dùng var(...) thay vì đặt màu/font mới theo từng module.
+- Dùng breakpoint Bootstrap và quy tắc trong utetra.css; kiểm 390px, 768px, desktop. Table có table-responsive, form có label, trạng thái/loading/lỗi rõ ràng. Không tải Bootstrap/jQuery/font/icon từ CDN riêng.
+- Chỉ thay file giao diện và config SiteMesh/NavigationAdvice cho nhu cầu này; không sửa datasource/JWT/Cloudinary/mail/pom để làm trang đẹp hơn.
+
+## Đồng bộ giữa các nhánh
+
+Nguồn chuẩn là **main sau khi commit Shared UI được công bố**. Nếu nhánh đã có bundle chuẩn, chỉ cần pull nhánh của mình. Nếu phát sinh lệch, lấy lại đúng bundle; không merge toàn bộ order chỉ để lấy header/footer.
+
+```powershell
+git fetch origin
+# Sau khi origin/main đã có Shared UI v1; trước đó dùng main local đã cập nhật.
+$uiFiles = Get-Content docs/SHARED_UI_FILES.txt | Where-Object { $_ -and -not $_.StartsWith('#') }
+git restore --source=origin/main -- $uiFiles src/main/webapp/WEB-INF/views/layouts
+py -3 tools/check_shared_ui.py --compare origin/main
+git diff --stat
+```
+
+Đối chiếu thay đổi chức năng trước khi commit. Việc restore cả thư mục layouts cũng loại layout role cũ đang tracked. Không dùng git reset --hard/force push để đồng bộ giao diện.
+
+Kiểm ngay trên nhánh hiện tại: `py -3 tools/check_shared_ui.py`. So với main local: `py -3 tools/check_shared_ui.py --compare main`. Mọi file trong manifest phải giống nguồn chuẩn; CSS/JS chức năng ngoài manifest vẫn thuộc module. Sau sửa JSP/layout, chạy kiểm render thật Tomcat/SiteMesh; MockMvc đơn thuần không chứng minh JSP đã compile.
+
+## Triển khai và chứng cứ
+
+Bundle này được tách từ main, không chứa code order/catalog/identity nghiệp vụ. Chỉ có một app.jsp; sáu file layout cũ là bản sao được thay thế bằng nguồn duy nhất, các trang chức năng vẫn giữ nguyên. Main đã qua clean verify với Java 21: 16/16 tests đạt, gồm render JSP/Tomcat/SiteMesh và kiểm JSON/static không bị decorate; WAR build thành công. Công cụ check_shared_ui xác nhận một layout và đủ 16 file chung. Việc này chưa đồng nghĩa các remote đã nhận thay đổi; phải xác nhận trạng thái push trước khi yêu cầu thành viên pull.

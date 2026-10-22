@@ -1,5 +1,7 @@
 # UTETra — Baseline main và hợp đồng các nhánh
 
+> Chuẩn UI 22/10/2026: một SiteMesh decorator layouts/app.jsp cho mọi nhánh và role. Header/footer/sidebar/assets tập trung; hướng dẫn agent và đồng bộ tại [SHARED_UI](SHARED_UI.md). Quy định này thay cấu trúc sáu layout trước đó.
+
 > Nguồn ưu tiên: QUY_DINH_VA_CAU_HINH_CHUNG.md, PROJECT_PLAN.md, DATABASE_DESIGN.md, USE_CASES.md. Bản này thay baseline 26 bảng/3 role/COD-only/.env; đọc cấu hình thật trong src/main/resources/application*.properties.
 
 ## 1. Stack khóa chung
