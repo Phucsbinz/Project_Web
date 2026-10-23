@@ -1,0 +1,64 @@
+#identity[data-page="/account/profile"] .identity-editor,#identity[data-page="/account/profile"] .identity-results{width:50%}
+#identity[data-page="/account/profile"] .account-facts{background:var(--paper,#fff);color:var(--ink);height:100%}
+#identity[data-page="/account/profile"] .account-facts .eyebrow{color:var(--muted)}
+#identity[data-page="/account/profile"] .account-facts .member-name{color:var(--tea)}
+#identity[data-page="/account/profile"] .account-facts:after{display:none}
+#identity[data-page="/account/profile"] .profile-details{margin:28px 0 0;display:grid;gap:8px}
+#identity[data-page="/account/profile"] .profile-details dt{font-size:12px;color:var(--muted);font-weight:400;margin-top:12px}
+#identity[data-page="/account/profile"] .profile-details dd{margin:0;padding-bottom:12px;border-bottom:1px solid var(--tea-soft);overflow-wrap:anywhere}
+#identity[data-page="/account/profile"] .avatar-preview-wrap{display:flex;align-items:center;gap:20px;margin:20px 0}
+#identity[data-page="/account/profile"] .avatar-preview-wrap img,#identity[data-page="/account/profile"] #avatar-placeholder{width:96px;height:96px;flex-shrink:0;border-radius:50%;object-fit:cover;background:var(--tea-soft)}
+#identity[data-page="/account/profile"] #avatar-placeholder{display:grid;place-items:center;font-size:26px;color:var(--tea)}
+#identity[data-page="/account/profile"] [hidden]{display:none!important}
+#identity[data-page="/account/profile"] .avatar-preview-wrap p{margin:0;color:var(--muted);font-size:12px}
+@media(max-width:991px){#identity[data-page="/account/profile"] .identity-editor,#identity[data-page="/account/profile"] .identity-results{width:100%}}
+
+#identity[data-page="/account/profile"] .profile-banner{display:grid;grid-template-columns:112px minmax(180px,1fr) minmax(260px,380px);align-items:center;gap:28px;background:var(--paper,#fff);border:1px solid #e2e7dd;border-radius:24px;padding:32px;margin-bottom:24px}
+#identity[data-page="/account/profile"] .profile-banner-heading{grid-column:2;grid-row:1}
+#identity[data-page="/account/profile"] .profile-banner-heading h2{font-size:28px;margin:0 0 8px}
+#identity[data-page="/account/profile"] .profile-banner-heading p{margin:0;overflow-wrap:anywhere;color:var(--muted)}
+#identity[data-page="/account/profile"] .profile-banner .avatar-preview-wrap{grid-column:1;grid-row:1;margin:0}
+#identity[data-page="/account/profile"] .profile-banner .avatar-preview-wrap p{display:none}
+#identity[data-page="/account/profile"] .profile-banner form{grid-column:3;grid-row:1}
+#identity[data-page="/account/profile"] .account-facts{background:#fff!important;color:var(--ink)}
+#identity[data-page="/account/profile"] .account-facts h2{font-size:22px;margin:0;color:var(--tea)}
+#identity[data-page="/account/profile"] .account-facts .eyebrow{display:none}
+#identity[data-page="/account/profile"] .profile-details{margin-top:20px}
+#identity[data-page="/account/profile"] .profile-details dt{color:#647568}
+#identity[data-page="/account/profile"] .profile-details dd{color:#233b33;font-size:15px}
+#identity[data-page="/account/profile"] .identity-editor h1{font-size:22px}
+@media(max-width:767px){#identity[data-page="/account/profile"] .profile-banner{grid-template-columns:80px minmax(0,1fr);padding:22px;gap:16px}#identity[data-page="/account/profile"] .profile-banner form{grid-column:1/-1;grid-row:2}#identity[data-page="/account/profile"] .profile-banner-heading h2{font-size:22px}#identity[data-page="/account/profile"] .avatar-preview-wrap img,#identity[data-page="/account/profile"] #avatar-placeholder{width:76px;height:76px}}
+
+/* Use the original tea-green member card with readable account details. */
+#identity[data-page="/account/profile"] .account-facts{background:var(--tea)!important;color:#f5f3e6;position:relative;overflow:hidden}
+#identity[data-page="/account/profile"] .account-facts:after{content:"✳";position:absolute;right:-12px;top:-48px;font-size:190px;line-height:1;opacity:.08;pointer-events:none;color:#f5f3e6}
+#identity[data-page="/account/profile"] .account-facts .card-body{position:relative;z-index:1;padding:30px!important}
+#identity[data-page="/account/profile"] .account-facts h2{color:#f5f3e6;font-size:25px;margin:0 0 24px}
+#identity[data-page="/account/profile"] .account-facts .profile-details{margin:0;gap:8px}
+#identity[data-page="/account/profile"] .account-facts .profile-details dt{color:#c9d4bc;font-size:12px;margin-top:12px}
+#identity[data-page="/account/profile"] .account-facts .profile-details dd{color:#fffdf4;font-weight:600;font-size:16px;border-bottom:1px solid #ffffff26;padding-bottom:18px}
+#identity[data-page="/account/profile"] .account-facts .profile-details dd:last-child{border:0;padding-bottom:0}
+
+/* Highlight the actual values, keeping labels secondary. */
+#identity[data-page="/account/profile"] .account-facts .profile-details dd{color:#fffdf4!important;font-size:18px;font-weight:750;line-height:1.6;letter-spacing:.01em}
+#identity[data-page="/account/profile"] .account-facts .profile-details dt{color:#c9d4bc!important;font-size:12px;font-weight:400}
+#identity[data-page="/account/profile"] .account-facts h2{color:#f2edc9!important;font-weight:750}
+
+#identity[data-page="/account/profile"] .profile-security{margin-top:28px;padding-top:26px;border-top:1px solid #dce3d8}
+#identity[data-page="/account/profile"] .profile-security h2{font-size:22px;margin-bottom:10px}
+#identity[data-page="/account/profile"] .security-setting{border:1px solid #dce3d8;border-radius:14px;padding:18px;margin-top:20px}
+#identity[data-page="/account/profile"] .security-setting summary{display:flex;justify-content:space-between;gap:16px;align-items:center;cursor:pointer;list-style:none}
+#identity[data-page="/account/profile"] .security-setting summary::-webkit-details-marker{display:none}
+#identity[data-page="/account/profile"] .security-setting summary small{display:block;color:var(--muted);margin-top:4px;font-size:12px}
+#identity[data-page="/account/profile"] .security-setting summary>span:last-child{font-size:28px;color:var(--tea)}
+#identity[data-page="/account/profile"] .security-setting[open] summary>span:last-child{transform:rotate(90deg)}
+#identity[data-page="/account/profile"] .security-session{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-top:24px}
+
+#identity .security-page-link{display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:20px;border:1px solid #dce3d8;border-radius:14px;margin-top:26px;color:var(--tea);gap:20px}
+#identity .security-page-link small{display:block;color:var(--muted);font-size:12px;margin-top:5px}
+#identity .security-page-link:hover{background:var(--tea-soft)}
+#identity[data-page="/account/security"] .identity-editor{width:100%;max-width:760px;margin:auto}
+#identity[data-page="/account/security"] .identity-results{display:none}
+#identity[data-page="/account/security"] .security-setting summary{display:none}
+#identity[data-page="/account/security"] .security-session{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:28px;padding-top:24px;border-top:1px solid #dce3d8}
+#identity[data-page="/account/security"] #security-title{font-size:28px}

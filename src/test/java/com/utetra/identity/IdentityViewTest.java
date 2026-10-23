@@ -38,10 +38,11 @@ class IdentityViewTest {
         doAnswer(call -> { code.set(call.getArgument(1)); return null; }).when(delivery).send(anyString(),anyString(),anyString());
         auth.register(new IdentityForms.Register("view"+suffix,email,"ViewPassword42!","Người dùng giao diện")); otp.verify(email,"REGISTER",code.get());
         var tokens=auth.login(email,"ViewPassword42!"); var headers=new HttpHeaders(); headers.setBearerAuth(tokens.access());
-        for(String path:List.of("/account/profile","/account/addresses","/account/loyalty","/favorites","/viewed","/reviews","/comments")) {
+        for(String path:List.of("/account/profile","/account/security","/account/addresses","/account/loyalty","/favorites","/viewed","/reviews","/comments")) {
             var res=http.exchange(path,HttpMethod.GET,new HttpEntity<>(headers),String.class);
             assertThat(res.getStatusCode()).as(path).isEqualTo(HttpStatus.OK);
             assertThat(res.getBody()).contains("identity-content","identity.js").doesNotContain("<c:","<%@","<sitemesh:");
+            if(path.equals("/account/security")) assertThat(res.getBody()).contains("Mật khẩu và bảo mật","Quên mật khẩu hiện tại?","/auth/forgot","confirmPassword");
         }
         var csrfPage=http.exchange("/account/addresses",HttpMethod.GET,new HttpEntity<>(headers),String.class);
         var matcher=java.util.regex.Pattern.compile("name=\"_csrf\" content=\"([^\"]+)\"").matcher(csrfPage.getBody());

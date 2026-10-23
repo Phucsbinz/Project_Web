@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .requestMatchers("/manager/**","/api/manager/**").hasAnyRole("MANAGER","ADMIN")
                 .requestMatchers("/vendor/**","/api/vendor/**").hasRole("VENDOR")
                 .requestMatchers("/shipper/**","/api/shipper/**").hasRole("SHIPPER")
-                .requestMatchers("/account/profile","/account/profile/**","/account/password").authenticated()
+                .requestMatchers("/account/security","/account/profile","/account/profile/**","/account/password").authenticated()
                 .requestMatchers("/cart/**").permitAll()
                 .requestMatchers("/checkout/**","/orders/**","/account/**","/favorites/**","/viewed/**","/reviews/**","/comments/**","/api/buyer/**").hasAnyRole("USER","VENDOR")
                 .anyRequest().authenticated())

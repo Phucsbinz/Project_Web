@@ -34,7 +34,7 @@ public class AccountService {
     @Transactional(readOnly=true)
     public Map<String,Object> profile(UtetraPrincipal p) {
         require(p,false);
-        return db.one("select id,username,email,full_name,phone,avatar_url,version from users where id=?",p.userId());
+        return db.one("select id,username,email,full_name,phone,avatar_url,email_verified_at,created_at,version from users where id=?",p.userId());
     }
     @Transactional
     public void profile(UtetraPrincipal p,IdentityForms.Profile f) {
@@ -42,6 +42,11 @@ public class AccountService {
         require(p,false); db.user(p.userId(),true);
         if(db.update("update users set full_name=?,phone=?,updated_at=?,version=version+1 where id=? and version=?",
             IdentityValidation.text(f.fullName(),1,100),IdentityValidation.phone(f.phone(),false),time(clock.instant()),p.userId(),f.version())!=1) throw IdentityException.conflict();
+    }
+    @Transactional
+    public void profileWithAvatar(UtetraPrincipal p,IdentityForms.Profile form,MultipartFile file) {
+        profile(p,form);
+        if(file!=null && !file.isEmpty()) avatar(p,file);
     }
     @Transactional
     public void password(UtetraPrincipal p,IdentityForms.Password f) {

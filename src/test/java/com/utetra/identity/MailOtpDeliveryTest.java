@@ -33,7 +33,7 @@ class MailOtpDeliveryTest {
         var plain=new ArrayList<String>();var html=new ArrayList<String>();bodies(message,plain,html);
         assertThat(plain).hasSize(1);assertThat(html).hasSize(1);
         assertThat(plain.getFirst()).contains("000123","5 phút","email mới nhất");
-        assertThat(html.getFirst()).contains("000123","5 phút","Chào bạn, mời vào nhà trà.","#173c32").doesNotContain("{{","http://localhost");
+        assertThat(html.getFirst()).contains("000123","5 phút","Xác minh địa chỉ email của bạn","#173c32").doesNotContain("{{","http://localhost");
         assertThat(message.getSubject()).doesNotContain("000123");
     }
     @Test void recoveryEmailUsesRecoveryCopyAndConfiguredLifetime() throws Exception {
@@ -41,7 +41,7 @@ class MailOtpDeliveryTest {
         delivery(true,Duration.ofSeconds(90)).send("recipient@example.test","123456","PASSWORD_RESET");
         message.saveChanges();var plain=new ArrayList<String>();var html=new ArrayList<String>();bodies(message,plain,html);
         assertThat(message.getSubject()).isEqualTo("UTETra | Khôi phục mật khẩu");
-        assertThat(html.getFirst()).contains("Một bước để trở lại.","90 giây","123456").doesNotContain("5 phút","hoàn tất tài khoản");
+        assertThat(html.getFirst()).contains("Yêu cầu đặt lại mật khẩu","90 giây","123456").doesNotContain("5 phút","hoàn tất tài khoản");
     }
     @Test void disabledProviderDoesNotSendAndSmtpFailureRemainsUnavailable() throws Exception {
         assertThatThrownBy(()->delivery(false,Duration.ofMinutes(5)).send("recipient@example.test","123456","REGISTER")).isInstanceOf(IdentityException.class);

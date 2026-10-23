@@ -14,6 +14,11 @@ public class AccountController {
     public AccountController(AccountService accounts,LoyaltyService loyalty,AuthCookies cookies) { this.accounts=accounts; this.loyalty=loyalty; this.cookies=cookies; }
     @GetMapping("/profile/data") public Map<String,Object> profile(@AuthenticationPrincipal UtetraPrincipal p) { return accounts.profile(p); }
     @PostMapping("/profile") public Map<String,Object> save(@AuthenticationPrincipal UtetraPrincipal p,@Valid @RequestBody IdentityForms.Profile f) { accounts.profile(p,f); return ok(); }
+    @PostMapping("/profile/save") public Map<String,Object> saveWithAvatar(@AuthenticationPrincipal UtetraPrincipal p,
+        @RequestParam String fullName,@RequestParam(required=false) String phone,@RequestParam Long version,
+        @RequestParam(required=false) MultipartFile file) {
+        accounts.profileWithAvatar(p,new IdentityForms.Profile(fullName,phone,version),file); return ok();
+    }
     @PostMapping("/profile/avatar") public Map<String,Object> avatar(@AuthenticationPrincipal UtetraPrincipal p,@RequestParam MultipartFile file) { accounts.avatar(p,file); return ok(); }
     @PostMapping("/password") public Map<String,Object> password(@AuthenticationPrincipal UtetraPrincipal p,@Valid @RequestBody IdentityForms.Password f,HttpServletRequest req,HttpServletResponse res) { accounts.password(p,f); cookies.clear(req,res); return Map.of("message","Đã đổi mật khẩu. Vui lòng đăng nhập lại.","redirect",req.getContextPath()+"/auth/login"); }
     @GetMapping("/addresses/data") public List<Map<String,Object>> addresses(@AuthenticationPrincipal UtetraPrincipal p) { return accounts.addresses(p); }

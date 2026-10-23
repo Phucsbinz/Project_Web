@@ -77,3 +77,41 @@ sau khi 114 test đã đạt. Dùng POM tạm chỉ đổi output sang `tmp/hand
 Log đóng gói: `tmp/handoff-package.log`. Lần verify heap 192 MB trước đó
 đạt toàn bộ test nhưng thiếu heap khi tạo WAR; lần package ở target với 512 MB
 bị lỗi rename file. Không ghi các lần này là verify thành công toàn bộ.
+
+## 23/10/2026 — Thanh: đồng bộ và rà soát
+
+Yêu cầu: đọc toàn bộ Markdown, lấy code GitHub mới nhất, xử lý conflict, rà validation khắt khe cho identity-membership, hướng dẫn chia sẻ mail local và chỉnh email chuyên nghiệp.
+
+Đã đọc corpus Markdown trước đồng bộ và tài liệu bổ sung sau đồng bộ. Fetch tất cả remote; nhánh identify cập nhật fast-forward từ 78facd2 tới dac7ad0 (origin/integration/utetra), không có conflict. Nhánh integration chứa cập nhật các module và Shared UI. Gán owner Thanh trong hướng dẫn identity; chỉnh lời email đăng ký/khôi phục và test tương ứng; bổ sung cách cài mail trên máy thành viên. Không chuyển credential local vào Git. Shared UI checker đạt. Kết quả Maven xem REVIEW_20261023.md. Không commit/push trong phiên này.
+
+## 23/10/2026 — Bố cục hồ sơ và xem trước avatar
+
+Thanh phản hồi bố cục lệch, cần thấy ảnh trước khi đổi và thông tin đầy đủ hơn. Cân hai cột desktop, mobile xếp dọc bằng CSS scope riêng identity-profile.css, không sửa theme/layout chung. Thêm ảnh hiện tại/chữ cái thay thế và preview ảnh local trước upload; từ chối MIME/dung lượng sai phía client, giữ validation server. Thông tin tóm tắt có username/email/phone/email verified/ngày tham gia từ API profile; không thêm dữ liệu giả. Shared UI checker đạt; Maven verify Java 21 đạt (bao gồm render JSP/Tomcat). Chưa kiểm thủ công ảnh preview trên trình duyệt. Server MySQL được khởi động lại sau build.
+
+## 23/10/2026 — Sửa lại hồ sơ theo phản hồi ảnh thứ hai
+
+Thanh yêu cầu avatar ở đầu trang và thông tin dễ đọc, tham khảo website chuyên nghiệp. Tham khảo hướng dẫn tài khoản Google/Microsoft (https://support.google.com/accounts/answer/27442 và https://support.microsoft.com/en-gb/accounts-billing/manage/change-your-microsoft-account-picture). Đưa avatar hiện tại/preview vào banner đầu trang, cạnh tên/email và thao tác upload. Hai cột dưới chứa form và thông tin tài khoản. Nguyên nhân chữ khó đọc: .profile-summary của theme ép nền xanh !important; đổi sang class riêng account-facts với nền trắng, chữ tương phản. Thêm phiên bản URL CSS để tránh cache. Shared UI checker và IdentityViewTest với Tomcat thật đạt; verify tạo WAR thành công. Chưa có kiểm screenshot thủ công sau sửa. Không thay layout chung.
+
+## 23/10/2026 — Nhấn mạnh thông tin tài khoản
+
+Thanh yêu cầu highlight khối thông tin tài khoản. Chỉnh CSS scope riêng: nền xanh trà nhạt, viền trên xanh đậm, tiêu đề lớn và giá trị đậm; giữ chữ tối dễ đọc. Không đổi JSP/layout hoặc logic. Shared UI checker đạt; package thành công (skip tests do chỉ đổi CSS). Server được khởi động lại. Chưa kiểm hình ảnh thủ công.
+
+## 23/10/2026 — Nền xanh template và lưu avatar cùng hồ sơ
+
+Thanh đính chính dùng nền xanh trà đậm như template ban đầu. Khôi phục màu thẻ xanh bằng class account-facts riêng, chữ sáng và đường phân cách tương phản. Thanh yêu cầu chọn ảnh nằm trong Hồ sơ của bạn, chỉ lưu ảnh khi bấm Lưu hồ sơ: chuyển file input vào profile form, giữ preview ở banner, bỏ nút upload riêng. Thêm endpoint multipart /account/profile/save gọi profileWithAvatar trong một transaction; giữ API JSON cũ. Nếu validation/upload thất bại thì rollback thông tin, giữ cơ chế cleanup tài nguyên. Không chọn ảnh vẫn lưu được thông tin. Shared UI checker đạt; IdentityViewTest và IdentityIntegrationTest đạt; test mới combinedProfileSaveRollsBackDetailsWhenAvatarIsInvalid chạy riêng đạt, kiểm rollback version/tên khi ảnh sai và lưu không có ảnh. WAR build thành công. Chưa kiểm upload provider thật bằng thao tác tay.
+
+## 23/10/2026 — Mật khẩu và bảo mật
+
+Thanh yêu cầu nhấn mạnh giá trị data và tổ chức đổi mật khẩu tương tự mục bảo mật Facebook. Tăng độ đậm/cỡ chữ giá trị sáng trên nền xanh, tiêu đề màu kem. Gom bảo mật thành khu vực riêng với mục đổi mật khẩu mở rộng, nhập lại mật khẩu, checkbox hiện/ẩn và thông báo revoke phiên hiện có. Bỏ nút gia hạn thủ công khỏi hồ sơ, giữ đăng xuất. Confirmation kiểm client và không gửi vào JSON; server vẫn kiểm password/quyền/CSRF và thu hồi phiên như trước. Không thêm chức năng 2FA/thiết bị giả. Shared UI checker đạt; IdentityViewTest (Tomcat) và verify đạt. Server khởi động lại. Chưa kiểm thao tác trình duyệt thủ công.
+
+## 23/10/2026 — Trang security riêng và hỗ trợ quên mật khẩu
+
+Thanh yêu cầu bấm Mật khẩu và bảo mật chuyển trang riêng, hỗ trợ khi quên mật khẩu hiện tại. Thêm /account/security dùng layout SiteMesh chung, cho mọi tài khoản đã xác thực; profile và navigation liên kết sang trang này. Chuyển form đổi mật khẩu sang security, có liên kết /auth/forgot dùng OTP email và reset grant sẵn có. Security không gọi API /data không tồn tại. Shared UI checker đạt; BaselineSecurityTest và IdentityViewTest đạt. Bổ sung route security và nội dung forgot/confirm vào test Tomcat; chạy lại 2 IdentityViewTest đạt, WAR build thành công. Server khởi động lại. Chưa gửi OTP SMTP thật trong phiên này.
+
+## 23/10/2026 — Đưa đăng xuất về profile
+
+Theo yêu cầu Thanh, chuyển khối Phiên đăng nhập/nút Đăng xuất từ security về profile, giữ handler đăng xuất hiện có. Shared UI checker và IdentityViewTest với Tomcat đạt; verify build thành công, server mở lại.
+
+## 23/10/2026 — Thông báo lỗi đăng nhập
+
+Thanh gửi ảnh Failed to fetch khi nhập sai password. Đây là lỗi transport không nhận response, không coi mặc định là sai mật khẩu. Request helper bắt lỗi fetch và hiển thị thông báo kết nối tiếng Việt. Riêng /auth/login trả 401 hiện Email hoặc mật khẩu không đúng, gợi ý Quên mật khẩu; không phân biệt email tồn tại. Shared UI checker và IdentityIntegrationTest đạt, verify tạo WAR thành công. Server khởi động lại. Chưa kiểm transport failure bằng trình duyệt.

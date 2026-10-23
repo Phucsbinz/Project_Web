@@ -1,6 +1,6 @@
 # Hướng dẫn nhánh feature/identity-membership — Xác thực, tài khoản và tương tác
 
-Owner: TV2; tên cá nhân và reviewer do nhóm phân công. 16 UC bắt buộc, 0 UC thêm. Danh mục này thay hướng dẫn 28 UC trước đây.
+Owner: Thanh (TV2); reviewer do nhóm phân công. 16 UC bắt buộc, 0 UC thêm. Danh mục này thay hướng dẫn 28 UC trước đây.
 
 Đọc [quy định](docs/QUY_DINH_VA_CAU_HINH_CHUNG.md), [PROJECT_PLAN](PROJECT_PLAN.md), [DATABASE_DESIGN](DATABASE_DESIGN.md), [USE_CASES](USE_CASES.md), [COMMON_BASELINE](docs/COMMON_BASELINE.md), [SETUP](docs/SETUP.md), [IMPLEMENTATION](docs/features/identity-membership/IMPLEMENTATION.md). Ghi prompt thực tại [AI_LOG](docs/features/identity-membership/AI_LOG.md).
 

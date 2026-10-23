@@ -1,12 +1,14 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html><html lang="vi"><head><title>Tài khoản và thành viên · UTETra</title>
+<link rel="stylesheet" href="<c:url value='/assets/css/identity-profile.css?v=20261023c'/>">
 <script defer src="<c:url value='/assets/js/identity.js'/>"></script></head><body>
 <c:choose><c:when test="${identityPage.startsWith('/auth/')}"><%@ include file="auth.jspf" %></c:when><c:otherwise>
 <div id="identity" data-page="<c:out value='${identityPage}'/>">
 
 <c:if test="${not empty identityRole}"><div class="identity-hero"><div><span class="eyebrow">${workspace ? 'PEOPLE & ACCESS' : 'YOUR UTETRA CORNER'}</span><h1>${workspace ? 'Người dùng & đội ngũ.' : 'Góc nhỏ của bạn.'}</h1><p>${workspace ? 'Quản lý tài khoản và phân quyền trong phạm vi của bạn.' : 'Lưu những điều thân quen. Thêm niềm vui mỗi lần trở lại.'}</p></div><span class="member-mark" aria-hidden="true"><svg class="icon"><use href="#i-leaf"/></svg></span></div><nav class="identity-nav d-flex flex-wrap gap-2 mb-4" aria-label="Tài khoản">
 <a class="btn btn-outline-success btn-sm" href="<c:url value='/account/profile'/>">Hồ sơ</a>
+<a class="btn btn-outline-success btn-sm" href="<c:url value='/account/security'/>">Mật khẩu và bảo mật</a>
 <c:if test="${buyer}">
 <a class="btn btn-outline-success btn-sm" href="<c:url value='/account/addresses'/>">Địa chỉ</a>
 <a class="btn btn-outline-success btn-sm" href="<c:url value='/account/loyalty'/>">Điểm thành viên</a>
@@ -19,19 +21,29 @@
 <c:if test="${identityRole == 'ROLE_ADMIN'}"><a class="btn btn-outline-success btn-sm" href="<c:url value='/admin/users'/>">Quản trị người dùng</a></c:if>
 </nav></c:if>
 <div id="identity-message" class="alert d-none" role="status" aria-live="polite"></div>
+<c:if test="${identityPage == '/account/profile'}"><section class="profile-banner"><div class="profile-banner-heading"><span class="eyebrow">HỒ SƠ CÁ NHÂN</span><h2 id="profile-display-name">Tài khoản của bạn</h2><p id="profile-display-email"></p></div><div class="avatar-preview-wrap"><img id="avatar-preview" alt="Ảnh đại diện hiện tại" hidden><span id="avatar-placeholder" aria-label="Chưa có ảnh đại diện">UT</span><p id="avatar-preview-note">Ảnh đại diện hiện tại. Chọn ảnh để xem trước.</p></div>
+</section></c:if>
 <div class="row g-4"><section class="col-12 col-lg-5 identity-editor"><div class="card shadow-sm border-0"><div class="card-body p-4">
 <c:choose>
 <c:when test="${identityPage == '/account/profile'}">
 <h1 class="h3">Hồ sơ của bạn</h1>
-<form data-endpoint="/account/profile" id="profile-form"><input name="version" type="hidden" data-number>
+<form data-endpoint="/account/profile/save" data-multipart id="profile-form"><input name="version" type="hidden" data-number>
 <label class="form-label" for="fullName">Họ tên</label><input class="form-control mb-3" id="fullName" name="fullName" required maxlength="100" autocomplete="name">
-<label class="form-label" for="phone">Điện thoại</label><input class="form-control mb-3" id="phone" name="phone" maxlength="20" autocomplete="tel"><button class="btn btn-success">Lưu hồ sơ</button></form>
-<hr><h2 class="h5">Ảnh đại diện</h2><form data-endpoint="/account/profile/avatar" data-multipart><label class="form-label" for="avatar">JPEG/PNG, tối đa 5MB</label><input class="form-control mb-3" id="avatar" name="file" type="file" accept="image/jpeg,image/png" required><button class="btn btn-outline-success">Cập nhật ảnh</button></form>
-<hr><h2 class="h5">Đổi mật khẩu</h2><form data-endpoint="/account/password">
-<label class="form-label" for="currentPassword">Mật khẩu hiện tại</label><input class="form-control mb-3" id="currentPassword" name="currentPassword" type="password" required autocomplete="current-password">
-<label class="form-label" for="password">Mật khẩu mới</label><input class="form-control mb-3" id="password" name="password" type="password" required minlength="8" maxlength="72" autocomplete="new-password"><button class="btn btn-outline-success">Đổi mật khẩu</button></form>
-<div class="d-flex flex-wrap gap-2 mt-4"><button class="btn btn-outline-secondary" id="refresh-session">Gia hạn đăng nhập</button><button class="btn btn-outline-danger" id="logout">Đăng xuất</button></div>
+<label class="form-label" for="phone">Điện thoại</label><input class="form-control mb-3" id="phone" name="phone" maxlength="20" autocomplete="tel"><label class="form-label" for="avatar">Ảnh đại diện mới</label><input class="form-control mb-2" id="avatar" name="file" type="file" accept="image/jpeg,image/png"><p class="text-secondary small">JPEG/PNG, tối đa 5MB. Ảnh chỉ được cập nhật khi lưu hồ sơ.</p><button class="btn btn-success">Lưu hồ sơ</button></form>
+<a class="security-setting security-page-link" href="<c:url value='/account/security'/>"><span><strong>Mật khẩu và bảo mật</strong><small>Đổi mật khẩu và hỗ trợ khôi phục tài khoản</small></span><span aria-hidden="true">›</span></a>
+<div class="security-session"><div><strong>Phiên đăng nhập</strong><p class="small text-secondary mb-0">Đăng xuất tài khoản khỏi trình duyệt này.</p></div><button class="btn btn-outline-danger" id="logout">Đăng xuất</button></div>
 </c:when>
+<c:when test="${identityPage == '/account/security'}"><section class="profile-security" aria-labelledby="security-title"><h1 id="security-title" class="h3">Mật khẩu và bảo mật</h1><p class="text-secondary small">Quản lý cách đăng nhập và bảo vệ tài khoản của bạn.</p>
+<details class="security-setting" open><summary><span><strong>Đổi mật khẩu</strong><small>Cập nhật mật khẩu để bảo vệ tài khoản</small></span><span aria-hidden="true">›</span></summary>
+<form data-endpoint="/account/password" id="password-settings-form" class="pt-3">
+<label class="form-label" for="currentPassword">Mật khẩu hiện tại</label><input class="form-control mb-3" id="currentPassword" name="currentPassword" type="password" required autocomplete="current-password">
+<a class="d-inline-block mb-3 small" href="<c:url value='/auth/forgot'/>">Quên mật khẩu hiện tại?</a><br><label class="form-label" for="password">Mật khẩu mới</label><input class="form-control mb-3" id="password" name="password" type="password" required minlength="8" maxlength="72" autocomplete="new-password">
+<label class="form-label" for="confirmPassword">Nhập lại mật khẩu mới</label><input class="form-control mb-3" id="confirmPassword" name="confirmPassword" type="password" required autocomplete="new-password">
+<label class="d-flex gap-2 align-items-center mb-3 small"><input type="checkbox" id="show-profile-password">Hiện mật khẩu</label>
+<p class="small text-secondary">Dùng ít nhất 8 ký tự, tối đa 72 byte UTF-8. Sau khi đổi, các phiên đăng nhập sẽ kết thúc và bạn cần đăng nhập lại.</p>
+<button class="btn btn-success">Lưu mật khẩu mới</button></form></details>
+
+</section><a class="d-inline-block mt-4 small" href="<c:url value='/account/profile'/>">← Quay lại hồ sơ</a></c:when>
 <c:when test="${identityPage == '/account/addresses'}">
 <h1 class="h3">Địa chỉ nhận hàng</h1><p class="text-secondary">Thêm nhiều địa chỉ và chọn địa chỉ mặc định.</p>
 <form data-endpoint="/account/addresses" id="address-form"><label class="form-label" for="recipientName">Người nhận</label><input class="form-control mb-3" id="recipientName" name="recipientName" required maxlength="100" autocomplete="name">

@@ -54,3 +54,9 @@ Pull code không tự chuyển App Password từ máy người khác. Thiết l�
 ở trên là bắt buộc để gửi mail thật trên máy mới. Nếu gặp lỗi, kiểm tra địa chỉ
 khớp App Password, mail đã bật, quyền truy cập SMTP 587 và cấu hình đã được nạp.
 Ứng dụng báo lỗi khi SMTP thất bại; không trả OTP qua API hoặc log.
+
+## Chia sẻ cho thành viên nhóm
+
+Thanh chỉ cần chia sẻ repository và hướng dẫn này. Mỗi bạn chạy script cấu hình trên máy mình rồi khởi động lại ứng dụng; không cần máy Thanh đang bật. File `.local/mail.properties` không đi theo Git. Ưu tiên mỗi người dùng Gmail và App Password của chính mình. Nếu dùng chung Gmail nhóm, chủ tài khoản cấp App Password riêng cho từng người qua kênh riêng, có thể thu hồi riêng khi ngừng sử dụng. Không gửi cả thư mục `.local`, vì có thể chứa cấu hình và dữ liệu cục bộ khác.
+
+Chạy từ thư mục gốc project để nạp đúng file. Không commit App Password, không dùng mật khẩu đăng nhập Gmail. Test tự động dùng mail giả lập; cần thử đăng ký và khôi phục bằng hộp thư thật để xác nhận SMTP trên từng máy.

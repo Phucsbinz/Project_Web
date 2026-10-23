@@ -23,7 +23,7 @@ public class MailOtpDelivery implements OtpDelivery {
         if(!enabled || sender.getIfAvailable()==null) throw unavailable();
         if(otp==null || !otp.matches("[0-9]{6}") || !java.util.Set.of("REGISTER","PASSWORD_RESET").contains(purpose)) throw new IllegalArgumentException("Invalid OTP message");
         boolean registration="REGISTER".equals(purpose);
-        String title=registration?"Chào bạn, mời vào nhà trà.":"Một bước để trở lại.";
+        String title=registration?"Xác minh địa chỉ email của bạn":"Yêu cầu đặt lại mật khẩu";
         String action=registration?"Xác minh tài khoản":"Khôi phục mật khẩu";
         String intro=registration
             ?"Cảm ơn bạn đã chọn UTETra. Nhập mã bên dưới trên trang đăng ký để xác minh email và hoàn tất tài khoản của bạn."
@@ -32,7 +32,7 @@ public class MailOtpDelivery implements OtpDelivery {
             +"\nHiệu lực: "+validity+". Mã chỉ dùng một lần."
             +"\nNếu đã yêu cầu gửi lại, hãy dùng mã trong email mới nhất."
             +"\nKhông chia sẻ mã này. UTETra không yêu cầu bạn cung cấp OTP qua điện thoại hoặc tin nhắn."
-            +"\nNếu không thực hiện yêu cầu này, bạn có thể bỏ qua email.\n\nUTETra — Một chút trà. Một ngày vui.";
+            +"\nNếu không thực hiện yêu cầu này, bạn có thể bỏ qua email.\n\nTrân trọng, đội ngũ UTETra";
         String html=template.replace("{{title}}",title).replace("{{action}}",action)
             .replace("{{intro}}",intro).replace("{{code}}",otp).replace("{{validity}}",validity);
         try {

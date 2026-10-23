@@ -13,6 +13,24 @@
   function rememberEmail(purpose, email) {
     try { sessionStorage.setItem(pendingKey(purpose), email); } catch (_) { /* The OTP page still accepts email manually. */ }
   }
+  let avatarObjectUrl;
+  const avatarInput = document.getElementById('avatar');
+  avatarInput?.addEventListener('change', () => {
+    if (avatarObjectUrl) URL.revokeObjectURL(avatarObjectUrl);
+    const file = avatarInput.files[0];
+    if (!file) { load(); return; }
+    if (!['image/jpeg', 'image/png'].includes(file.type) || file.size > 5 * 1024 * 1024) {
+      avatarInput.value = ''; say('Chọn ảnh JPEG/PNG tối đa 5MB.', true); load(); return;
+    }
+    const img = document.getElementById('avatar-preview');
+    avatarObjectUrl = URL.createObjectURL(file); img.src = avatarObjectUrl; img.hidden = false;
+    document.getElementById('avatar-placeholder').hidden = true;
+    document.getElementById('avatar-preview-note').textContent = 'Ảnh xem trước — bấm Cập nhật ảnh để lưu.';
+    img.onerror = () => { img.hidden = true; document.getElementById('avatar-placeholder').hidden = false; avatarInput.value = ''; say('Không đọc được ảnh. Vui lòng chọn ảnh khác.', true); };
+  });
+  document.getElementById('show-profile-password')?.addEventListener('change', event => {
+    document.querySelectorAll('#password-settings-form input[autocomplete$="password"]').forEach(input => { input.type = event.target.checked ? 'text' : 'password'; });
+  });
   const otpForm = document.getElementById('otp-form');
   if (otpForm) {
     try { otpForm.elements.email.value = sessionStorage.getItem(pendingKey(otpForm.elements.purpose.value)) || ''; } catch (_) { /* Storage may be disabled. */ }
@@ -51,7 +69,15 @@
     let body;
     if (data instanceof FormData) body = data;
     else if (data !== undefined) { body = JSON.stringify(data); headers['Content-Type'] = 'application/json'; }
-    const res = await fetch(context + path, {method, headers, body, credentials: 'same-origin', cache: 'no-store'});
+    let res;
+    try {
+      res = await fetch(context + path, {method, headers, body, credentials: 'same-origin', cache: 'no-store'});
+    } catch (_) {
+      throw new Error('Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối và thử lại sau.');
+    }
+    if (path === '/auth/login' && res.status === 401) {
+      throw new Error('Email hoặc mật khẩu không đúng. Vui lòng thử lại hoặc chọn Quên mật khẩu.');
+    }
     if (res.redirected || !res.headers.get('Content-Type')?.includes('application/json')) {
       throw new Error('Phiên đăng nhập đã hết hạn hoặc quyền truy cập không hợp lệ. Vui lòng đăng nhập lại.');
     }
@@ -67,6 +93,7 @@
     for (const name of ['username', 'email', 'fullName', 'phone', 'recipientName', 'addressDetail', 'otp']) {
       if (typeof values[name] === 'string') values[name] = values[name].trim();
     }
+    delete values.confirmPassword;
     return values;
   }
   function validateForm(form) {
@@ -81,6 +108,8 @@
         input.setCustomValidity('Mật khẩu mới cần ít nhất 8 ký tự; tối đa 72 byte UTF-8, không chứa ký tự điều khiển.');
       }
     }
+    const confirmation = form.querySelector('[name="confirmPassword"]');
+    if (confirmation && confirmation.value !== form.elements.password.value) confirmation.setCustomValidity('Mật khẩu nhập lại chưa khớp.');
     const phone = form.querySelector('[name="phone"]');
     if (phone && phone.value.trim()) {
       const value = phone.value.trim(), digits = value.replace(/\D/g, '').length;
@@ -134,6 +163,7 @@
         const submit = form.querySelector('button[type="submit"],button:not([type])'); submit.disabled = true;
         try {
           const result = await request(form.dataset.endpoint, form.dataset.method || 'POST', form.hasAttribute('data-multipart') ? new FormData(form) : fieldData(form));
+          if (form.id === 'profile-form') avatarInput.value = '';
           say(result.message || 'Đã lưu.');
           if (['/auth/register', '/auth/forgot'].includes(form.dataset.endpoint)) {
             const register = form.dataset.endpoint === '/auth/register';
@@ -240,15 +270,31 @@
     }));
   }
   async function load() {
-    if (!output || page.startsWith('/auth/')) return;
+    if (!output || page.startsWith('/auth/') || page === '/account/security') return;
     output.replaceChildren(text('p', 'Đang tải…', 'text-secondary'));
     try {
       const suffix = `?page=${currentPage}&size=20&q=${encodeURIComponent(query)}`;
       const data = await request(page + '/data' + suffix); output.replaceChildren();
       if (page === '/account/profile') {
         fill(document.getElementById('profile-form'), data);
-        const body = card(data.full_name); body.closest('.card').classList.add('profile-summary'); body.querySelector('h2,h3')?.classList.add('member-name'); body.prepend(text('span','UTETRA MEMBER','eyebrow')); body.append(text('p', data.email), text('p', `Tên đăng nhập: ${data.username}`));
-        if (data.avatar_url?.startsWith('https://')) { const img = document.createElement('img'); img.src = data.avatar_url; img.alt = 'Ảnh đại diện'; img.className = 'rounded-circle'; img.width = 120; img.height = 120; body.append(img); }
+        const body = card('Thông tin tài khoản');
+        body.closest('.card').classList.add('account-facts');
+        document.getElementById('profile-display-name').textContent = data.full_name || data.username;
+        document.getElementById('profile-display-email').textContent = data.email;
+        body.querySelector('h2')?.classList.add('member-name');
+        body.prepend(text('span', 'THÔNG TIN TÀI KHOẢN', 'eyebrow'));
+        const details = document.createElement('dl'); details.className = 'profile-details';
+        for (const [label, value] of [['Tên đăng nhập', data.username], ['Email', data.email], ['Điện thoại', data.phone || 'Chưa cập nhật'], ['Xác minh email', data.email_verified_at ? 'Đã xác minh' : 'Chưa xác minh'], ['Ngày tham gia', data.created_at ? new Date(data.created_at).toLocaleDateString('vi-VN') : 'Chưa có thông tin']]) {
+          details.append(text('dt', label), text('dd', value));
+        }
+        body.append(details);
+        const preview = document.getElementById('avatar-preview');
+        const placeholder = document.getElementById('avatar-placeholder');
+        const imageUrl = data.avatar_url?.startsWith('https://') ? data.avatar_url : null;
+        preview.hidden = !imageUrl; placeholder.hidden = !!imageUrl;
+        document.getElementById('avatar-preview-note').textContent = 'Ảnh đại diện hiện tại. Chọn ảnh để xem trước.';
+        if (imageUrl) preview.src = imageUrl; else preview.removeAttribute('src');
+        placeholder.textContent = (data.full_name || data.username || 'UT').trim().split(/\s+/).slice(-2).map(x => x[0]).join('').toUpperCase();
         return;
       }
       if (page === '/account/loyalty') {

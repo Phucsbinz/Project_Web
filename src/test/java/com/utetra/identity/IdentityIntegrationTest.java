@@ -258,6 +258,15 @@ class IdentityIntegrationTest {
         verify(delivery).send(eq(unknown),anyString(),eq("PASSWORD_RESET"));
         assertThatThrownBy(() -> otp.verify(unknown,"PASSWORD_RESET",lastOtp.get())).isInstanceOf(OtpRejectedException.class);
     }
+    @Test void combinedProfileSaveRollsBackDetailsWhenAvatarIsInvalid() {
+        var p=buyer(); var before=account.profile(p);
+        var invalid=new MockMultipartFile("file","bad.png","image/png",new byte[]{1,2,3});
+        assertThatThrownBy(() -> account.profileWithAvatar(p,new IdentityForms.Profile("Không được lưu","0901234567",number(before,"version")),invalid)).isInstanceOf(IdentityException.class);
+        assertThat(account.profile(p).get("full_name")).isEqualTo(before.get("full_name"));
+        assertThat(account.profile(p).get("version")).isEqualTo(before.get("version"));
+        account.profileWithAvatar(p,new IdentityForms.Profile("Đã lưu hồ sơ","0901234567",number(before,"version")),null);
+        assertThat(account.profile(p).get("full_name")).isEqualTo("Đã lưu hồ sơ");
+    }
     @Test void avatarUploadIsCompensatedOnRollbackAndOldAssetDeletedAfterCommit() {
         var p=buyer();
         var file=new MockMultipartFile("file","avatar.png","image/png",TestImages.png());
