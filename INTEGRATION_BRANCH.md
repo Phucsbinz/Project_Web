@@ -1,5 +1,7 @@
 # Hướng dẫn nhánh integration/utetra — Ghép chức năng
 
+> Mới nhất 24/10/2026: đã pull catalog ce46ce2 và identify 4d0dc73, xử lý 4 conflict JS/JSP và một fixture lệch thứ tự cột; clean verify 137 tests đạt, WAR TiDB và 16 HTTP checks đạt. [Báo cáo/cách sửa](docs/integration/VERIFICATION_20261024.md) thay trạng thái kiểm chứng của các phiên cũ bên dưới. Server kiểm thử đã được dừng.
+
 > Cập nhật 22/10/2026: đã fetch toàn bộ remote và merge đủ main/catalog/identity-membership/order/identify. Clean verify 130 tests đạt; WAR MySQL chạy được, 6 migration validate và 11 HTTP checks đạt. [Báo cáo hiện tại](docs/integration/VERIFICATION_20261022.md). Các bảng baseline ở phần dưới là lịch sử trước khi có nghiệp vụ, không phải trạng thái hiện hành.
 
 Người phụ trách: nhóm trưởng và reviewer ba module; tên cá nhân chưa được nhóm xác nhận. Đọc PROJECT_PLAN.md, DATABASE_DESIGN.md, USE_CASES.md, docs/README.md, docs/COMMON_BASELINE.md, docs/SETUP.md và docs/BRANCH_WORKFLOW.md.

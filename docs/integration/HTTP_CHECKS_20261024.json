@@ -1,0 +1,102 @@
+{
+  "mode": "mysql-public-and-rejected-requests-no-seeding",
+  "baseUrl": "http://localhost:8080",
+  "checks": [
+    {
+      "method": "GET",
+      "path": "/api/system/health",
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8"
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "status": 200,
+      "contentType": "text/html;charset=UTF-8"
+    },
+    {
+      "method": "GET",
+      "path": "/menu",
+      "status": 200,
+      "contentType": "text/html;charset=UTF-8"
+    },
+    {
+      "method": "GET",
+      "path": "/stores",
+      "status": 200,
+      "contentType": "text/html;charset=UTF-8"
+    },
+    {
+      "method": "GET",
+      "path": "/cart",
+      "status": 200,
+      "contentType": "text/html;charset=UTF-8"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/login",
+      "status": 200,
+      "contentType": "text/html;charset=UTF-8"
+    },
+    {
+      "method": "GET",
+      "path": "/assets/js/site-ui.js",
+      "status": 200,
+      "contentType": "text/javascript;charset=UTF-8"
+    },
+    {
+      "method": "GET",
+      "path": "/assets/css/identity-profile.css",
+      "status": 200,
+      "contentType": "text/css;charset=UTF-8"
+    },
+    {
+      "method": "GET",
+      "path": "/assets/js/catalog-management.js",
+      "status": 200,
+      "contentType": "text/javascript;charset=UTF-8"
+    },
+    {
+      "method": "GET",
+      "path": "/account/security",
+      "status": 302,
+      "contentType": ""
+    },
+    {
+      "method": "GET",
+      "path": "/account/profile/data",
+      "status": 401,
+      "contentType": "application/json;charset=UTF-8"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/catalog/stores",
+      "status": 401,
+      "contentType": "application/json;charset=UTF-8"
+    },
+    {
+      "method": "GET",
+      "path": "/orders/data",
+      "status": 401,
+      "contentType": "application/json;charset=UTF-8"
+    },
+    {
+      "method": "GET",
+      "path": "/orders",
+      "status": 302,
+      "contentType": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/system",
+      "status": 401,
+      "contentType": "application/json;charset=UTF-8"
+    },
+    {
+      "method": "POST",
+      "path": "/checkout",
+      "status": 403,
+      "contentType": "application/json;charset=UTF-8"
+    }
+  ]
+}

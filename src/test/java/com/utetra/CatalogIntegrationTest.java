@@ -108,7 +108,7 @@ class CatalogIntegrationTest {
         assertThatThrownBy(() -> stores.registrations(null)).isInstanceOf(ResponseStatusException.class);
     }
     @Test void approvalPoliciesAreActiveAndVisibleOnlyToScopedReviewers() {
-        jdbc.update("insert into commission_policies values(2,'Inactive',7,false,current_timestamp,current_timestamp,0)");
+        jdbc.update("insert into commission_policies(id,name,rate_percent,is_active,created_at,updated_at,version) values(2,'Inactive',7,false,current_timestamp,current_timestamp,0)");
         assertThat(stores.commissionPolicies(admin,storeId)).extracting(CommissionPolicyView::id).containsExactly(1L);
         assertThatThrownBy(() -> stores.commissionPolicies(vendor,storeId)).isInstanceOf(ResponseStatusException.class);
         assertThatThrownBy(() -> stores.commissionPolicies(manager,storeId)).isInstanceOf(ResponseStatusException.class);

@@ -1,5 +1,13 @@
 # UTETra — Nhật ký yêu cầu và prompt AI của cuộc trò chuyện khởi tạo
 
+## INT-AI-002 — Pull mới và sửa xung đột ba module — 24/10/2026
+
+```text
+pull đầy đủ code về và merg vào nhánh kiếm thử xem 3 nhánh  có xung đột gì không và sửa cho hoàn chỉnh
+```
+
+Đã fetch toàn bộ remote, fast-forward catalog/identify local và ghép vào integration. Xử lý 4 conflict frontend bằng cách giữ cả nghiệp vụ mới và giao diện chung; sửa fixture policy phải ghi tên cột; thêm HTTP test xuyên Catalog/Identity/Order cho duyệt shop/thu hồi phiên/checkout. Clean verify 137 tests và WAR thành công, 16 HTTP checks MySQL/TiDB đạt; sau kiểm tra đã dừng server. [Nguồn, lỗi, kết quả và giới hạn](integration/VERIFICATION_20261024.md). Chưa push remote hoặc merge ngược main.
+
 ## INT-AI-001 — Merge và chạy thử integration — 22/10/2026
 
 ```text

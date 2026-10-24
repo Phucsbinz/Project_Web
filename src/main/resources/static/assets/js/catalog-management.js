@@ -114,7 +114,7 @@
     document.querySelectorAll('[data-catalog-tab]').forEach(tab => {
       const active = tab.dataset.catalogTab === section;
       tab.classList.toggle('btn-primary', active); tab.classList.toggle('btn-outline-dark', !active);
-      tab.setAttribute('aria-pressed', String(active));
+      if(active) tab.setAttribute('aria-current','page'); else tab.removeAttribute('aria-current');
     });
     list.replaceChildren(el('p','Đang tải…'));
     const storeRequired = ['products','areas','stock','memberships'].includes(section) || (section === 'promotions' && app.dataset.role !== 'admin');

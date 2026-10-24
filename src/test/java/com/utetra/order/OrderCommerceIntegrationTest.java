@@ -385,6 +385,40 @@ class OrderCommerceIntegrationTest {
   }
 
   @Test
+  void shopApprovalUsesOrderPolicyRevokesIdentitySessionAndPreservesBuyerCart() {
+    Map<String, String> buyer = new LinkedHashMap<>(), admin = new LinkedHashMap<>();
+    assertThat(browserPost("/auth/login", Map.of("email", "u1@test.invalid", "password", "Only-test-user-password"), buyer)
+        .getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(browserPost("/cart/items", item(1), buyer).getStatusCode()).isEqualTo(HttpStatus.OK);
+    var registered = browserPost("/account/shop-registration", Map.of("name", "New vendor shop",
+        "slug", "approval-contract", "address", "Store address", "phone", "0901234567",
+        "openTime", "08:00", "closeTime", "22:00", "acceptingOrders", false, "version", 0), buyer);
+    assertThat(registered.getStatusCode()).isEqualTo(HttpStatus.OK);
+    long store = id(registered.getBody());
+    assertThat(browserPost("/auth/login", Map.of("email", "u4@test.invalid", "password", "Only-test-user-password"), admin)
+        .getStatusCode()).isEqualTo(HttpStatus.OK);
+    var policies = http.exchange("/api/admin/catalog/stores/" + store + "/commission-policies",
+        HttpMethod.GET, new HttpEntity<>(browserHeaders(admin)), List.class);
+    assertThat(policies.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(policies.getBody()).hasSize(1);
+    assertThat(browserPost("/api/admin/catalog/stores/" + store + "/review", Map.of("decision", "APPROVED",
+        "note", "Approved with the active Order policy", "commissionPolicyId", 1,
+        "version", registered.getBody().get("version")), admin).getStatusCode()).isEqualTo(HttpStatus.OK);
+    var revoked = http.exchange("/orders/data", HttpMethod.GET, new HttpEntity<>(browserHeaders(buyer)), Map.class);
+    assertThat(revoked.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    assertThat(browserPost("/auth/login", Map.of("email", "u1@test.invalid", "password", "Only-test-user-password"), buyer)
+        .getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(jwt.verify(buyer.get("UTETRA_JWT")).role()).isEqualTo("ROLE_VENDOR");
+    String key = UUID.randomUUID().toString();
+    var quote = browserPost("/checkout/quote", request(key, "", 2, null), buyer);
+    assertThat(quote.getStatusCode()).isEqualTo(HttpStatus.OK);
+    var created = browserPost("/checkout", request(key, quote.getBody().get("hash").toString(), 2, null), buyer);
+    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(jdbc.queryForObject("select user_id from orders where id=?", Long.class, id(created.getBody()))).isEqualTo(1L);
+    assertThat(jdbc.queryForObject("select commission_policy_id from stores where id=?", Long.class, store)).isEqualTo(1L);
+  }
+
+  @Test
   void orderJsonNeverTruncatesDecimalOrCoercesStringIdsAndQuantities() {
     Map<String, String> cookies = new LinkedHashMap<>();
     for (String raw : List.of(
