@@ -48,16 +48,19 @@ public class CatalogController {
     }
     @PostMapping("/products/{id}/quote") @ResponseBody public Object quote(@PathVariable Long id,@Valid @RequestBody DrinkInput input) { return catalog.quote(id,input); }
     @GetMapping("/stores") public String stores(Model model) { model.addAttribute("stores",bean(stores.publicStores())); return "catalog/stores"; }
-    @GetMapping("/stores/{id}") public String store(@PathVariable Long id,Model model) {
+    @GetMapping("/stores/{id}") public String store(@PathVariable Long id,@RequestParam(defaultValue="0") int page,Model model) {
         model.addAttribute("store",bean(stores.publicStore(id))); model.addAttribute("promotions",bean(promotions.available(id)));
         model.addAttribute("deliveryRates",bean(stores.deliveryRates(id)));
-        model.addAttribute("result",bean(catalog.search("",null,id,null,null,"newest",0,50,false,false))); return "catalog/store";
+        model.addAttribute("result",bean(catalog.search("",null,id,null,null,"newest",page,12,false,false))); return "catalog/store";
     }
-    @GetMapping("/account/shop-registration") public String registration() { return "catalog/register"; }
+    @GetMapping("/account/shop-registration") public String registration(@AuthenticationPrincipal UtetraPrincipal p,Model model) {
+        model.addAttribute("registrations",bean(stores.registrations(p))); return "catalog/register";
+    }
     @PostMapping("/account/shop-registration") @ResponseBody public Object registration(@AuthenticationPrincipal UtetraPrincipal p,@Valid @RequestBody StoreInput input) { return stores.register(p,input); }
-    @GetMapping({"/vendor","/vendor/{section:products|promotions|stores|shop}","/manager","/manager/{section:products|categories|toppings|promotions|stores}","/admin","/admin/{section:products|categories|toppings|promotions|stores}"})
+    @GetMapping({"/vendor","/vendor/{section:products|promotions|stores|shop|areas|stock}","/manager","/manager/{section:products|categories|toppings|promotions|stores|areas|stock}","/admin","/admin/{section:products|categories|toppings|promotions|stores|areas|stock|memberships}"})
     public String management(jakarta.servlet.http.HttpServletRequest request,Model model) {
-        String role=request.getServletPath().split("/")[1]; model.addAttribute("rolePath",role);
+        String[] path=request.getServletPath().split("/"); model.addAttribute("rolePath",path[1]);
+        model.addAttribute("catalogSection",path.length<3 || "shop".equals(path[2]) ? "stores" : path[2]);
         return "catalog/manage";
     }
 }

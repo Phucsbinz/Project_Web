@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8" %>
 <div class="row g-4">
 <c:forEach items="${result.items}" var="p"><div class="col-12 col-sm-6 col-lg-3"><article class="card h-100 shadow-sm">
 <c:choose><c:when test="${not empty p.imageUrl}"><img class="card-img-top catalog-photo" src="<c:out value='${p.imageUrl}'/>" alt="<c:out value='${p.name}'/>" loading="lazy"></c:when><c:otherwise><div class="catalog-placeholder" aria-hidden="true">UTETra</div></c:otherwise></c:choose>

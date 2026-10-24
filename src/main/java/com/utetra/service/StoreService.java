@@ -39,6 +39,17 @@ public class StoreService {
         var s=found(stores.findById(id)); require("ACTIVE".equals(s.getStatus()),"Shop chưa hoạt động"); return view(s);
     }
     public StoreView managedStore(UtetraPrincipal p,Long id) { guard.store(p,id); return view(found(stores.findById(id))); }
+    public List<RegistrationView> registrations(UtetraPrincipal p) {
+        guard.buyer(p);
+        return requests.findByApplicantIdOrderByIdDesc(p.userId()).stream()
+            .map(r -> new RegistrationView(view(found(stores.findById(r.getStoreId()))),r.getStatus(),r.getNote(),r.getCreatedAt(),r.getReviewedAt())).toList();
+    }
+    /** Read existing policies for shop approval; creating policies belongs to Order. */
+    public List<CommissionPolicyView> commissionPolicies(UtetraPrincipal p,Long storeId) {
+        guard.reviewer(p,storeId);
+        return jdbc.query("select id,name,rate_percent from commission_policies where is_active=true order by name,id",
+            (rs,n) -> new CommissionPolicyView(rs.getLong("id"),rs.getString("name"),rs.getBigDecimal("rate_percent")));
+    }
     public List<StoreView> managedStores(UtetraPrincipal p) {
         guard.role(p);
         return stores.findAll().stream().filter(s -> guard.operates(p,s.getId())).map(this::view).toList();

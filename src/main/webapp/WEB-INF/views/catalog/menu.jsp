@@ -3,6 +3,7 @@
 <!DOCTYPE html><html lang="vi"><head><title>Thực đơn · UTETra</title></head><body>
 <section class="p-4 p-md-5 rounded-4 catalog-hero mb-4"><p class="text-uppercase small fw-bold">UTETra · Trà ngon mỗi ngày</p><h1>Chọn vị trà, chọn niềm vui.</h1><p>Tự chọn chi nhánh và tùy biến ly trà theo sở thích của bạn.</p><a class="btn btn-dark" href="<c:url value='/stores'/>">Khám phá các shop</a></section>
 <form class="row g-3 mb-4" method="get" action="<c:url value='/menu'/>">
+<c:if test="${param.top == 'true'}"><input type="hidden" name="top" value="true"></c:if>
 <div class="col-md-4"><label class="form-label" for="keyword">Tên sản phẩm</label><input class="form-control" id="keyword" name="keyword" maxlength="150" value="<c:out value='${param.keyword}'/>"></div>
 <div class="col-md-4"><label class="form-label" for="categoryId">Danh mục</label><select class="form-select" id="categoryId" name="categoryId"><option value="">Tất cả danh mục</option><c:forEach items="${categories}" var="c"><option value="${c.id}" ${param.categoryId == c.id ? 'selected' : ''}><c:out value="${c.name}"/></option></c:forEach></select></div>
 <div class="col-md-4"><label class="form-label" for="storeId">Shop</label><select class="form-select" id="storeId" name="storeId"><option value="">Tất cả shop</option><c:forEach items="${stores}" var="s"><option value="${s.id}" ${param.storeId == s.id ? 'selected' : ''}><c:out value="${s.name}"/></option></c:forEach></select></div>

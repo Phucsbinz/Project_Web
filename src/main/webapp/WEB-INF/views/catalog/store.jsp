@@ -7,4 +7,9 @@
 <h2 class="h4">Khu vực phục vụ</h2><ul><c:forEach items="${store.areas}" var="a"><c:if test="${a.active}"><li><c:out value="${a.name}"/></li></c:if></c:forEach></ul><p class="small text-secondary">Phí giao được xác định theo khu vực và nhà vận chuyển khi đặt hàng.</p>
 <h2 class="h4">Ưu đãi đang diễn ra</h2><c:forEach items="${promotions}" var="p"><p class="alert alert-success"><strong><c:out value="${p.name}"/></strong> · Giảm ${p.percent}% · Tối đa ${p.maxDiscount} đ · Đơn từ ${p.minOrder} đ <c:if test="${not empty p.code}">· Mã <c:out value="${p.code}"/></c:if></p></c:forEach><c:if test="${empty promotions}"><p>Chưa có ưu đãi đang áp dụng.</p></c:if>
 <c:if test="${not empty deliveryRates}"><div class="table-responsive mb-4"><table class="table"><caption>Phí giao theo khu vực và nhà vận chuyển</caption><thead><tr><th scope="col">Khu vực</th><th scope="col">Nhà vận chuyển</th><th scope="col">Phí giao</th></tr></thead><tbody><c:forEach items="${deliveryRates}" var="r"><tr><td><c:out value="${r.areaName}"/></td><td><c:out value="${r.carrierName}"/></td><td>${r.fee} đ</td></tr></c:forEach></tbody></table></div></c:if>
-<h2 class="h4">Thực đơn shop</h2><%@ include file="product-list.jspf" %></body></html>
+<h2 class="h4">Thực đơn shop</h2><%@ include file="product-list.jspf" %>
+<nav class="d-flex gap-3 align-items-center my-4" aria-label="Phân trang thực đơn shop">
+<c:if test="${result.page > 0}"><button type="button" class="btn btn-outline-dark catalog-page" data-page="${result.page - 1}">Trang trước</button></c:if>
+<span>Trang ${result.page + 1} · ${result.total} món</span>
+<c:if test="${result.page + 1 < result.pages}"><button type="button" class="btn btn-outline-dark catalog-page" data-page="${result.page + 1}">Trang sau</button></c:if>
+</nav><script src="<c:url value='/assets/js/catalog.js'/>" defer></script></body></html>

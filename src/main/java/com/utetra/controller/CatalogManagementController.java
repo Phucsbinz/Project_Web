@@ -19,6 +19,7 @@ public class CatalogManagementController {
     @PostMapping(value="/media/{type}/{id}",consumes="multipart/form-data") public void image(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable String type,@PathVariable Long id,@RequestParam long version,@RequestParam org.springframework.web.multipart.MultipartFile file) { media.upload(p,type,id,version,file); }
     @GetMapping("/stores") public Object stores(@AuthenticationPrincipal UtetraPrincipal p) { return stores.managedStores(p); }
     @GetMapping("/stores/{id}") public Object store(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable Long id) { return stores.managedStore(p,id); }
+    @GetMapping("/stores/{id}/commission-policies") public Object policies(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable Long id) { return stores.commissionPolicies(p,id); }
     @PutMapping("/stores/{id}") public Object store(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable Long id,@Valid @RequestBody StoreInput input) { return stores.update(p,id,input); }
     @PostMapping("/stores/{id}/review") public Object review(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable Long id,@Valid @RequestBody Decision input) { return stores.review(p,id,input); }
     @PutMapping("/stores/{id}/state") public Object state(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable Long id,@Valid @RequestBody StoreState input) { return stores.state(p,id,input); }
