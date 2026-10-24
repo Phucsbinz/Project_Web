@@ -1,5 +1,7 @@
 # feature/catalog-sales — Danh mục, shop Vendor và khuyến mãi
 
+> Cập nhật chức năng catalog ngày 24/10/2026: [UPDATE_20261024](UPDATE_20261024.md). Audit trước sửa: [AUDIT_20261024](AUDIT_20261024.md). Các dependency Identity/Order được giữ ngoài phạm vi nhánh.
+
 > Cập nhật theo quy định thầy ngày 13/10/2026. Người phụ trách TV1: [điền tên]. Baseline main/commit: [điền]. Hướng dẫn gốc; trạng thái mới ngày 15/10/2026 tại [RUNBOOK](RUNBOOK.md). Đã có code cho 18 UC, kiểm H2/Tomcat; chưa nghiệm thu cloud/tích hợp.
 
 ## 1. Các file phải đọc và cấu hình

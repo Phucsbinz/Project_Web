@@ -8,8 +8,9 @@
   const form = document.querySelector('#management-form');
   const list = document.querySelector('#management-list');
   const message = document.querySelector('#management-message');
-  const routeSection = location.pathname.split('/').filter(Boolean).pop();
-  let section = ['stores','products','categories','toppings','promotions'].includes(routeSection) ? routeSection : 'stores', editing = null, shopList = [], categories = [], toppings = [], productList = [], loading = false;
+  const tabs = app.dataset.role === 'vendor' ? ['stores','products','promotions','areas','stock'] : ['stores','products','categories','toppings','promotions','areas','stock',...(app.dataset.role === 'admin' ? ['memberships'] : [])];
+  const section = tabs.includes(app.dataset.section) ? app.dataset.section : 'stores';
+  let editing = null, shopList = [], categories = [], toppings = [], productList = [], loading = false;
   const labels = {stores:'Shop',products:'Sản phẩm',categories:'Danh mục',toppings:'Topping',promotions:'Khuyến mãi',areas:'Khu vực giao',stock:'Topping tại shop',memberships:'Phân công Manager'};
   const specs = {
     stores:[['name','Tên shop'],['slug','Đường dẫn'],['address','Địa chỉ'],['phone','Điện thoại'],['description','Giới thiệu','textarea'],['openTime','Mở cửa','time'],['closeTime','Đóng cửa','time'],['acceptingOrders','Nhận đơn','checkbox']],
@@ -32,6 +33,7 @@
     }
     if(data && !(data instanceof FormData)) headers['Content-Type'] = 'application/json';
     const response = await fetch(base + path, {method,headers,body:data instanceof FormData ? data : data ? JSON.stringify(data) : undefined});
+    if(response.redirected || response.status === 401) throw new Error('Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.');
     const result = await response.json().catch(() => ({}));
     if(!response.ok) throw new Error(result.message || result.detail || (response.status === 403 ? 'Bạn chưa được cấp quyền cho thao tác này.' : response.status === 409 ? 'Dữ liệu trùng hoặc đã thay đổi. Hãy tải lại.' : 'Yêu cầu không thành công (' + response.status + '). Kiểm tra dữ liệu hoặc đăng nhập lại.'));
     return result;
@@ -71,11 +73,42 @@
     const b = el('button',text,'btn btn-sm btn-outline-dark'); b.type = 'button';
     b.onclick = async () => { if(loading) return; loading = true; b.disabled = true; try { await action(); } catch(error) { notice(error.message,true); } finally { b.disabled = false; loading = false; } }; return b;
   }
-  async function review(item, decision) {
-    const note = prompt(decision === 'APPROVED' ? 'Ghi chú duyệt hồ sơ:' : 'Lý do từ chối:'); if(!note?.trim()) return;
-    const commissionPolicyId = decision === 'APPROVED' ? Number(prompt('ID chính sách hoa hồng đang hoạt động:')) : null;
-    if(decision === 'APPROVED' && !commissionPolicyId) return;
-    await request('/stores/' + item.id + '/review','POST',{decision,note,version:item.version,commissionPolicyId}); await reload(); notice('Đã xử lý hồ sơ.');
+  async function review(item, decision, card) {
+    card.querySelector('[data-review-form]')?.remove();
+    const reviewForm = el('form',undefined,'vstack gap-2 mt-3'); reviewForm.dataset.reviewForm = '';
+    const noteLabel = el('label',decision === 'APPROVED' ? 'Ghi chú duyệt hồ sơ' : 'Lý do từ chối','form-label');
+    const note = el('textarea'); note.id = 'review-note-' + item.id; noteLabel.htmlFor = note.id;
+    note.required = true; note.maxLength = 1000; note.className = 'form-control'; reviewForm.append(noteLabel,note);
+    let policy;
+    if(decision === 'APPROVED') {
+      const policies = await request('/stores/' + item.id + '/commission-policies');
+      if(!policies.length) throw new Error('Chưa có chính sách hoa hồng đang hoạt động. Hãy liên hệ quản trị trước khi duyệt shop.');
+      const label = el('label','Chính sách hoa hồng','form-label'); policy = el('select'); policy.id = 'review-policy-' + item.id; label.htmlFor = policy.id;
+      policy.className = 'form-select'; policy.required = true;
+      const placeholder = el('option','Chọn chính sách'); placeholder.value = ''; policy.append(placeholder);
+      policies.forEach(p => { const option = el('option',p.name + ' · ' + p.ratePercent + '%'); option.value = p.id; policy.append(option); });
+      reviewForm.append(label,policy);
+    }
+    const save = el('button',decision === 'APPROVED' ? 'Xác nhận duyệt' : 'Xác nhận từ chối','btn btn-dark');
+    const cancel = el('button','Hủy','btn btn-outline-secondary'); cancel.type = 'button'; cancel.onclick = () => reviewForm.remove();
+    reviewForm.append(save,cancel);
+    reviewForm.onsubmit = async event => {
+      event.preventDefault(); if(loading) return;
+      if(!note.value.trim()) { note.setCustomValidity('Vui lòng nhập nội dung phản hồi.'); note.reportValidity(); return; }
+      loading = true; save.disabled = true;
+      try { await request('/stores/' + item.id + '/review','POST',{decision,note:note.value.trim(),version:item.version,commissionPolicyId:policy ? Number(policy.value) : null}); await reload(); notice('Đã xử lý hồ sơ.'); }
+      catch(error) { notice(error.message,true); } finally { loading = false; save.disabled = false; }
+    };
+    note.oninput = () => note.setCustomValidity(''); card.append(reviewForm); note.focus();
+  }
+  function rememberStore() {
+    const url = new URL(location.href);
+    if(select.value) url.searchParams.set('storeId',select.value); else url.searchParams.delete('storeId');
+    history.replaceState(null,'',url);
+    document.querySelectorAll('[data-catalog-tab]').forEach(tab => {
+      const target = new URL(context + '/' + app.dataset.role + '/' + tab.dataset.catalogTab,location.origin);
+      if(select.value) target.searchParams.set('storeId',select.value); tab.href = target.pathname + target.search;
+    });
   }
   async function refresh() {
     document.querySelectorAll('[data-catalog-tab]').forEach(tab => {
@@ -87,11 +120,12 @@
     const storeRequired = ['products','areas','stock','memberships'].includes(section) || (section === 'promotions' && app.dataset.role !== 'admin');
     if (app.dataset.role === 'admin' && select.options[0]?.value === '') select.options[0].textContent = section === 'promotions' ? 'Toàn hệ thống (khuyến mãi)' : 'Chọn cửa hàng để quản lý';
     if (storeRequired && !select.value) {
+      editing = null;
       document.querySelector('#catalog-list-title').textContent = labels[section];
       const empty = el('div',undefined,'empty-state');
       empty.append(el('h3','Bắt đầu từ một cửa hàng.'),el('p',shopList.length ? 'Chọn cửa hàng ở phía trên để xem và quản lý dữ liệu.' : 'Chưa có cửa hàng trong phạm vi của bạn. Khi cửa hàng được duyệt hoặc phân công, dữ liệu sẽ xuất hiện tại đây.'));
       if(app.dataset.role === 'vendor') {const link=el('a','Đăng ký cửa hàng','btn btn-primary');link.href=context+'/account/shop-registration';empty.append(link);}
-      else empty.append(button('Xem cửa hàng',async()=>{section='stores';await refresh();}));
+      else {const link=el('a','Xem cửa hàng','btn btn-outline-dark');link.href=context+'/'+app.dataset.role+'/stores';empty.append(link);}
       list.replaceChildren(empty); form.replaceChildren(el('p','Chọn cửa hàng trước khi tạo hoặc cập nhật dữ liệu.','small text-secondary'));
       document.querySelector('#catalog-form-title').textContent = 'Sẵn sàng cho cửa hàng của bạn';
       document.querySelector('#image-panel').hidden = true;
@@ -111,7 +145,7 @@
         actions.append(button('Sửa',() => edit(item)));
         if(section === 'products') actions.append(button('Ngừng bán',async () => { if(!confirm('Ngừng bán sản phẩm này?')) return; await request('/products/' + item.id + '?version=' + item.version,'DELETE'); await refresh(); }));
         if(section === 'stores' && app.dataset.role !== 'vendor') {
-          if(item.status === 'PENDING_APPROVAL') { actions.append(button('Duyệt',() => review(item,'APPROVED')),button('Từ chối',() => review(item,'REJECTED'))); }
+          if(item.status === 'PENDING_APPROVAL') { actions.append(button('Duyệt',() => review(item,'APPROVED',card)),button('Từ chối',() => review(item,'REJECTED',card))); }
           if(['ACTIVE','SUSPENDED'].includes(item.status)) actions.append(button(item.status === 'ACTIVE' ? 'Tạm khóa' : 'Mở lại', async () => {
             await request('/stores/' + item.id + '/state','PUT',{status:item.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE',version:item.version}); await reload();
           }));
@@ -123,11 +157,12 @@
     } catch(error) { list.replaceChildren(el('p',error.message,'alert alert-warning')); edit(); }
   }
   async function reload() {
-    const previous = select.value; shopList = await request('/stores'); select.replaceChildren();
+    const previous = select.value || new URL(location.href).searchParams.get('storeId'); shopList = await request('/stores'); select.replaceChildren();
     if(app.dataset.role === 'admin') { const o = el('option','Toàn hệ thống (khuyến mãi)'); o.value = ''; select.append(o); }
     shopList.forEach(s => { const o = el('option',s.name + ' · ' + s.status); o.value = s.id; select.append(o); });
     if(!select.options.length) {const o=el('option','Chưa có cửa hàng được phân công');o.value='';select.append(o);}
     if([...select.options].some(o => o.value === previous)) select.value = previous;
+    rememberStore();
     const lookups = await fetch(context + '/products/lookups').then(r => r.ok ? r.json() : {categories:[]}); categories = lookups.categories;
     toppings = await request('/toppings');
     productList = select.value ? await request('/products?storeId=' + select.value) : [];
@@ -151,9 +186,12 @@
       await request(path,method,data); await reload(); notice('Đã lưu thành công.');
     } catch(error) { notice(error.message,true); } finally { save.disabled = false; loading = false; }
   });
-  const tabs = app.dataset.role === 'vendor' ? ['stores','products','promotions','areas','stock'] : ['stores','products','categories','toppings','promotions','areas','stock',...(app.dataset.role === 'admin' ? ['memberships'] : [])];
-  tabs.forEach(tab => {const item = button(labels[tab],async () => { section = tab; await refresh(); }); item.dataset.catalogTab = tab; document.querySelector('#catalog-tabs').append(item);});
-  select.addEventListener('change',async () => { try { productList = select.value ? await request('/products?storeId=' + select.value) : []; await refresh(); } catch(error) { notice(error.message,true); } });
+  tabs.forEach(tab => {
+    const link = el('a',labels[tab],tab === section ? 'btn btn-primary' : 'btn btn-outline-dark'); link.dataset.catalogTab = tab;
+    link.href = context + '/' + app.dataset.role + '/' + tab;
+    if(tab === section) link.setAttribute('aria-current','page'); document.querySelector('#catalog-tabs').append(link);
+  });
+  select.addEventListener('change',async () => { try { rememberStore(); productList = select.value ? await request('/products?storeId=' + select.value) : []; await refresh(); } catch(error) { notice(error.message,true); } });
   document.querySelector('#catalog-reload').onclick = () => reload().catch(error => notice(error.message,true));
   document.querySelector('#catalog-image').addEventListener('submit',async event => {
     event.preventDefault(); if(!editing || loading) return; loading = true;

@@ -95,6 +95,26 @@ class CatalogIntegrationTest {
         stores.assign(admin,storeId,new Membership(manager.userId(),true),true);
         assertThat(catalog.saveCategory(manager,null,new CategoryInput("Được giao","duoc-giao","",0,true)).id()).isNotNull();
     }
+    @Test void applicantsSeeOnlyTheirOwnRegistrationAndReviewFeedback() {
+        Long pending=stores.register(vendor,shop("history-shop",0,false)).id();
+        stores.review(admin,pending,new Decision("REJECTED","Cần bổ sung địa chỉ",0,null));
+        var history=stores.registrations(vendor);
+        assertThat(history).hasSize(1);
+        assertThat(history.getFirst().store().id()).isEqualTo(pending);
+        assertThat(history.getFirst().status()).isEqualTo("REJECTED");
+        assertThat(history.getFirst().note()).isEqualTo("Cần bổ sung địa chỉ");
+        assertThat(history.getFirst().reviewedAt()).isNotNull();
+        assertThat(stores.registrations(other)).isEmpty();
+        assertThatThrownBy(() -> stores.registrations(null)).isInstanceOf(ResponseStatusException.class);
+    }
+    @Test void approvalPoliciesAreActiveAndVisibleOnlyToScopedReviewers() {
+        jdbc.update("insert into commission_policies values(2,'Inactive',7,false,current_timestamp,current_timestamp,0)");
+        assertThat(stores.commissionPolicies(admin,storeId)).extracting(CommissionPolicyView::id).containsExactly(1L);
+        assertThatThrownBy(() -> stores.commissionPolicies(vendor,storeId)).isInstanceOf(ResponseStatusException.class);
+        assertThatThrownBy(() -> stores.commissionPolicies(manager,storeId)).isInstanceOf(ResponseStatusException.class);
+        stores.assign(admin,storeId,new Membership(manager.userId(),true),false);
+        assertThat(stores.commissionPolicies(manager,storeId)).hasSize(1);
+    }
     @Test void cannotTransferProductOrModifyAnotherShop() {
         var p=product(); assertThatThrownBy(() -> catalog.saveProduct(other,p.id(),productInput(storeId,p.slug(),p.version()))).isInstanceOf(ResponseStatusException.class);
     }

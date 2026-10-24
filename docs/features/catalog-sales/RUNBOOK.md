@@ -1,5 +1,7 @@
 # Catalog-sales — triển khai và bàn giao ngày 15/10/2026
 
+> Bổ sung ngày 24/10/2026: xem [UPDATE_20261024](UPDATE_20261024.md) về điều hướng quản trị, hồ sơ shop, chọn policy có sẵn, phân trang shop và artifact schema chỉ gồm bảng catalog. Các lệnh/phiên bản/kiểm chứng bên dưới là lịch sử ngày 15/10, không thay kết quả chạy mới.
+
 Đã bổ sung mã nguồn cho 18 UC của nhánh `feature/catalog-sales`. Kiểm chứng hiện tại trên H2 isolated và Tomcat thật; chưa nghiệm thu TiDB, Cloudinary thật hoặc luồng checkout xuyên nhánh. Không thay đổi V1, pom, properties, khóa JWT hoặc cấu hình provider. Không commit/push trong phiên này.
 
 ## Phạm vi có mã nguồn

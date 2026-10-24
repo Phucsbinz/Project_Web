@@ -30,7 +30,7 @@
     event.preventDefault(); const button = registration.querySelector('button'); const result = registration.querySelector('output');
     button.disabled = true; result.textContent = 'Đang gửi hồ sơ…';
     try { const data = Object.fromEntries(new FormData(registration)); data.version = 0; data.acceptingOrders = false;
-      await send('/account/shop-registration', data); registration.reset(); result.textContent = 'Hồ sơ đã được gửi và đang chờ duyệt.';
+      await send('/account/shop-registration', data); location.reload();
     } catch(error) { result.textContent = error.message; } finally { button.disabled = false; }
   });
 })();

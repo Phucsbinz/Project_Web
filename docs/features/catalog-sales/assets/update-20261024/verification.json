@@ -1,0 +1,40 @@
+{
+  "mode": "disposable H2 + test-issued JWT; no real login or cloud provider",
+  "checks": [
+    {
+      "route": "/admin/products?storeId=1",
+      "width": 1440,
+      "correctSection": true,
+      "overflow": false
+    },
+    {
+      "route": "/admin/products?storeId=1",
+      "width": 768,
+      "correctSection": true,
+      "overflow": false
+    },
+    {
+      "route": "/admin/products?storeId=1",
+      "width": 390,
+      "correctSection": true,
+      "overflow": false
+    },
+    {
+      "navigation": "tabs + reload",
+      "selectedStoreRetained": true
+    },
+    {
+      "approvalPolicyPicker": "active policies only",
+      "noRawIdPrompt": true
+    },
+    {
+      "registrationFeedback": "visible to applicant",
+      "escaped": true
+    },
+    {
+      "route": "/manager/stock?storeId=1",
+      "correctSection": true
+    }
+  ],
+  "javascriptErrors": []
+}
