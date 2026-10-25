@@ -23,7 +23,8 @@ public final class OrderWebSupport {
   }
 
   public static Map<String, Object> carrier(com.utetra.order.entity.Carrier c) {
-    return Map.of(
-        "id", c.id, "name", c.name, "fee", c.baseFee, "active", c.isActive, "version", c.version);
+    var result=new LinkedHashMap<String,Object>(Map.of(
+        "id", c.id, "name", c.name, "fee", c.baseFee, "active", c.isActive, "version", c.version));
+    result.put("storeId",c.managedStoreId);return result;
   }
 }

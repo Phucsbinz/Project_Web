@@ -1,0 +1,16 @@
+[
+  {
+    "url": "https://tocotocotea.com/order/",
+    "status": 200,
+    "file": "tocotoco-menu.png",
+    "observedAt": "2026-10-24T11:08:30.689225+00:00",
+    "scope": "public page, no login or transaction"
+  },
+  {
+    "url": "https://phuclong.com.vn/hoi-vien/faq",
+    "status": 200,
+    "file": "phuclong-faq.png",
+    "observedAt": "2026-10-24T11:08:34.186093+00:00",
+    "scope": "public page, no login or transaction"
+  }
+]

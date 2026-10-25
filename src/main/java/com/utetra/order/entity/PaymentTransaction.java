@@ -5,7 +5,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
-@Table(name = "payment_transactions")
+@Table(name = "payment_transactions", uniqueConstraints = @UniqueConstraint(
+    name = "uk_payment_provider_receipt", columnNames = {"provider", "provider_txn_id"}))
 public class PaymentTransaction {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

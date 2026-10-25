@@ -27,7 +27,7 @@ public final class TestRows {
     }
    }return null;
   });
-  if(values.containsKey("id")) {new SimpleJdbcInsert(jdbc).withTableName(table).execute(values);return ((Number)values.get("id")).longValue();}
-  return new SimpleJdbcInsert(jdbc).withTableName(table).usingGeneratedKeyColumns("id").executeAndReturnKey(values).longValue();
+  if(values.containsKey("id")) {new SimpleJdbcInsert(jdbc).withTableName(table).usingColumns(values.keySet().toArray(String[]::new)).execute(values);return ((Number)values.get("id")).longValue();}
+  return new SimpleJdbcInsert(jdbc).withTableName(table).usingColumns(values.keySet().toArray(String[]::new)).usingGeneratedKeyColumns("id").executeAndReturnKey(values).longValue();
  }
 }

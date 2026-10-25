@@ -22,6 +22,7 @@ public class OrderWorkflowService {
   private final Clock clock;
   private final Duration returnWindow;
   private final boolean shipperEnabled;
+  private final OrderInventoryService inventory;
 
   public OrderWorkflowService(
       OrderDataRepository data,
@@ -31,7 +32,7 @@ public class OrderWorkflowService {
       OrderPromotionService promos,
       Clock clock,
       @Value("${order.return-window:3h}") Duration returnWindow,
-      @Value("${features.shipper.enabled:false}") boolean shipperEnabled) {
+      @Value("${features.shipper.enabled:false}") boolean shipperEnabled, OrderInventoryService inventory) {
     this.data = data;
     this.refs = refs;
     this.support = support;
@@ -40,6 +41,7 @@ public class OrderWorkflowService {
     this.clock = clock;
     this.returnWindow = returnWindow;
     this.shipperEnabled = shipperEnabled;
+    this.inventory = inventory;
   }
 
   public void shipper(Actor actor) {
@@ -248,7 +250,7 @@ public class OrderWorkflowService {
         || !states.get(position + 1).equals(request.status())
         || shipping && position < 1)
       throw OrderProblem.conflict("Không được bỏ bước hoặc đảo trạng thái đơn.");
-    if ("VNPAY".equals(o.paymentMethod) && !"PAID".equals(o.paymentStatus))
+    if (!"COD".equals(o.paymentMethod) && !"PAID".equals(o.paymentStatus))
       throw OrderProblem.conflict("Chưa xác nhận thanh toán trực tuyến.");
     String from = o.status;
     o.status = request.status();
@@ -322,19 +324,23 @@ public class OrderWorkflowService {
     boolean owner = actor.buyer() && o.userId == actor.userId();
     boolean operator = refs.operates(actor, o.storeId);
     if (!owner && !operator) throw OrderProblem.forbidden();
+    if("VNPAY".equals(o.paymentMethod) && "REVIEW".equals(o.paymentStatus))
+      throw OrderProblem.conflict("Giao dịch đang chờ đối soát cổng; chưa thể hủy hoặc thanh toán lại.");
     if (owner && !operator && !"NEW".equals(o.status)
         || !Set.of("NEW", "CONFIRMED", "PICKED_UP", "DELIVERING").contains(o.status))
       throw OrderProblem.conflict("Đơn không còn trong thời điểm cho phép hủy.");
-    if ("PAID".equals(o.paymentStatus))
+    boolean prepaidBank = Set.of("BANK_TRANSFER","VNPAY").contains(o.paymentMethod) && "PAID".equals(o.paymentStatus);
+    if ("PAID".equals(o.paymentStatus) && !prepaidBank)
       throw OrderProblem.conflict(
           "Đơn trả trước cần quy trình hoàn ngân hàng; tích hợp này đang được hoãn.");
     String from = o.status;
     o.status = "CANCELLED";
-    o.paymentStatus = "CANCELLED";
+    o.paymentStatus = prepaidBank ? "REFUND_PENDING" : "CANCELLED";
     o.cancelReason = OrderSupport.required(reason, 500);
     o.cancelledAt = clock.instant();
     o.updatedAt = clock.instant();
     loyalty.record(o.userId, id, "REFUND", o.pointsUsed);
+    inventory.releaseBeforePreparation(o,from);
     promos.status(id, "RELEASED");
     for (var assignment :
         data.query(
@@ -348,7 +354,7 @@ public class OrderWorkflowService {
     for (var p :
         data.query(
             PaymentTransaction.class, "where e.orderId=:order", Map.of("order", id), true, 20)) {
-      p.status = "FAILED";
+      if (!"SUCCEEDED".equals(p.status)) p.status = "FAILED";
       p.updatedAt = clock.instant();
     }
     support.audit(actor, "ORDER_CANCEL", id);
@@ -466,18 +472,21 @@ public class OrderWorkflowService {
   public Map<String, Object> refundCash(Actor actor, long id, RefundInput request) {
     Order o = data.require(Order.class, id, true);
     refs.requireOperator(actor, o.storeId);
+    boolean bank = Set.of("BANK_TRANSFER","VNPAY").contains(o.paymentMethod);
+    if (bank && !actor.is("ADMIN")) throw OrderProblem.forbidden();
     version(o, request.version());
+    boolean cancelledBank = bank && "CANCELLED".equals(o.status) && "REFUND_PENDING".equals(o.paymentStatus);
     ReturnRequest r =
         data
             .query(ReturnRequest.class, "where e.orderId=:order", Map.of("order", id), true, 1)
             .stream()
             .findFirst()
-            .orElseThrow(OrderProblem::missing);
-    if (!"COD".equals(o.paymentMethod)
-        || !"PAID".equals(o.paymentStatus)
+            .orElse(null);
+    if (!cancelledBank && ((!"COD".equals(o.paymentMethod) && !bank)
+        || !"PAID".equals(o.paymentStatus) || r == null
         || !("RETURNED".equals(o.status)
-            || "RETURN_APPROVED".equals(o.status) && r.waivePhysicalReturn))
-      throw OrderProblem.conflict("Chưa đủ điều kiện hoàn COD cả đơn.");
+            || "RETURN_APPROVED".equals(o.status) && r.waivePhysicalReturn)))
+      throw OrderProblem.conflict("Chưa đủ điều kiện hoàn tiền cả đơn.");
     PaymentTransaction p =
         data.query(
                 PaymentTransaction.class,
@@ -499,34 +508,36 @@ public class OrderWorkflowService {
     RefundTransaction refund = new RefundTransaction();
     refund.orderId = id;
     refund.paymentId = p.id;
-    refund.returnRequestId = r.id;
+    refund.returnRequestId = r == null ? null : r.id;
     refund.refundRef = "RF-" + UUID.randomUUID();
     refund.amount = o.finalAmount;
     refund.status = "SUCCEEDED";
-    refund.reason = r.reason;
+    refund.reason = cancelledBank ? o.cancelReason : r.reason;
     refund.evidenceRef = OrderSupport.required(request.evidence(), 500);
     refund.approvedBy = actor.userId();
     refund.createdAt = clock.instant();
     refund.completedAt = clock.instant();
     data.save(refund);
     o.paymentStatus = "REFUNDED";
-    loyalty.record(o.userId, id, "REFUND", o.pointsUsed);
-    loyalty.record(o.userId, id, "REVERSAL", o.pointsEarned);
-    promos.status(id, "RELEASED");
-    StoreSettlement s =
+    if (!cancelledBank) {
+      loyalty.record(o.userId, id, "REFUND", o.pointsUsed);
+      loyalty.record(o.userId, id, "REVERSAL", o.pointsEarned);
+      promos.status(id, "RELEASED");
+      StoreSettlement s =
         data.query(StoreSettlement.class, "where e.orderId=:order", Map.of("order", id), true, 1)
             .getFirst();
     s.refundedGoods = s.goodsNet;
     s.refundedShipping = s.shippingNet;
     s.commissionReversed = s.commissionAmount;
     s.updatedAt = clock.instant();
-    r.status = "REFUNDED";
-    r.updatedAt = clock.instant();
+      r.status = "REFUNDED";
+      r.updatedAt = clock.instant();
+    }
     String from = o.status;
     o.status = "REFUNDED";
     o.paymentStatus = "REFUNDED";
     o.updatedAt = clock.instant();
-    support.audit(actor, "CASH_REFUND", id);
+    support.audit(actor, bank ? "BANK_REFUND" : "CASH_REFUND", id);
     support.event(o, actor, from, "REFUNDED", "");
     return support.view(o);
   }

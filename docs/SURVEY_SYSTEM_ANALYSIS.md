@@ -1,5 +1,7 @@
 # UTETra — Khảo sát hiện trạng và phân tích thiết kế
 
+> Đã bổ sung khảo sát bàn và ảnh công khai có nguồn ngày 24/10: [SURVEY_FINDINGS_20261024](SURVEY_FINDINGS_20261024.md). Bảng trống dưới đây dành cho khảo sát bổ sung của nhóm, không phủ nhận nguồn đã khảo sát.
+
 ## 1. Mẫu tham khảo đã đọc
 
 Nguồn: [KhaoSat_PhanTichHeThong.docx](../KhaoSat_PhanTichHeThong.docx), dùng làm tham khảo theo chỉ dẫn của người dùng. Đã trích nội dung, gồm Chương 2 khảo sát Tiki/Shopee/Lazada/Etsy với ảnh và ưu/nhược; Chương 3 chức năng Guest/Customer/Vendor/Admin, bảng UC, use case diagram, sequence diagram, ERD và từ điển dữ liệu. File có 45 ảnh nhúng; không xác nhận đã kiểm từng hình/layout và không sao chép nhận xét trong mẫu như kết quả khảo sát mới.

@@ -42,12 +42,13 @@ public class OperationsService {
     if (!actor.is("ADMIN") && !actor.is("MANAGER") && !actor.buyer())
       throw OrderProblem.forbidden();
     return data.query(Carrier.class, "order by e.id", Map.of(), false, 100).stream()
-        .map(this::carrierView)
+        .filter(c -> !actor.is("MANAGER") || c.managedStoreId==null || refs.operates(actor,c.managedStoreId))
+        .map(c -> carrierView(c,actor))
         .toList();
   }
 
-  private Map<String, Object> carrierView(Carrier c) {
-    return Map.of(
+  private Map<String, Object> carrierView(Carrier c, Actor actor) {
+    var result = new LinkedHashMap<String,Object>(Map.of(
         "id",
         c.id,
         "name",
@@ -57,14 +58,23 @@ public class OperationsService {
         "isActive",
         c.isActive,
         "version",
-        c.version);
+        c.version));
+    result.put("storeId",c.managedStoreId);
+    result.put("canManage",actor.is("ADMIN") || actor.is("MANAGER") && c.managedStoreId!=null && refs.operates(actor,c.managedStoreId));
+    return result;
   }
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public Carrier carrier(Actor actor, CarrierInput request) {
-    admin(actor);
+    refs.requireCurrent(actor,false);
+    if(!actor.is("ADMIN") && !actor.is("MANAGER")) throw OrderProblem.forbidden();
+    if(actor.is("MANAGER") && request.storeId()==null) throw OrderProblem.forbidden();
+    if(request.storeId()!=null) refs.requireOperator(actor,request.storeId());
     Carrier c =
         request.id() == null ? new Carrier() : data.require(Carrier.class, request.id(), true);
+    if(request.id()!=null && !Objects.equals(c.managedStoreId,request.storeId()))
+      throw OrderProblem.forbidden();
+    c.managedStoreId=request.storeId();
     if (request.id() != null && c.version != request.version())
       throw OrderProblem.conflict("Nhà vận chuyển đã thay đổi.");
     c.name = OrderSupport.required(request.name(), 150);
@@ -88,7 +98,9 @@ public class OperationsService {
     long store = CommerceReferenceRepository.number(area, "store_id");
     refs.requireOperator(actor, store);
     if (!actor.is("ADMIN") && !actor.is("MANAGER")) throw OrderProblem.forbidden();
-    data.require(Carrier.class, request.carrierId(), true);
+    Carrier carrier=data.require(Carrier.class, request.carrierId(), true);
+    if(carrier.managedStoreId!=null && carrier.managedStoreId!=store)
+      throw OrderProblem.forbidden();
     CarrierAreaRate r =
         data
             .query(
@@ -234,9 +246,9 @@ public class OperationsService {
             cart.storeId),
         "carriers",
         data
-            .query(Carrier.class, "where e.isActive=true order by e.id", Map.of(), false, 100)
+            .query(Carrier.class, "where e.isActive=true and (e.managedStoreId is null or e.managedStoreId=:store) order by e.id", Map.of("store",cart.storeId), false, 100)
             .stream()
-            .map(this::carrierView)
+            .map(c -> carrierView(c,actor))
             .toList(),
         "promotions",
         refs.list(

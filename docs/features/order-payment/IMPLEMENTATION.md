@@ -1,6 +1,12 @@
 # feature/order-payment — Bán hàng, thanh toán và vận hành mọi role
 
-> Cập nhật theo quy định thầy ngày 13/10/2026. Người phụ trách TV3: [điền tên]. Baseline trước code: bb700d1; commit implementation: 29aac50. Code của nhánh đã được bổ sung; trạng thái thực tại mục 6. VNPAY hoãn theo người dùng, các phụ thuộc cần review trên integration.
+> Mới nhất: [VNPAY](VNPAY.md) đã có adapter/test, chưa merchant thật; Manager đã CRUD carrier riêng shop. Xem [FINAL_REQUIREMENTS_STATUS](../../FINAL_REQUIREMENTS_STATUS.md).
+
+Bàn giao 24/10: đọc [JWT DB, stock/version và WebSocket checkout](../order-payment/REALTIME_CHECKOUT_JWT.md) trước khi merge/chạy với schema mới. Các nhánh cần nhận đủ source integration, không chỉ migration/JS; JWT cũ cần đăng nhập lại hoặc refresh hợp lệ.
+
+Bổ sung 24/10 trên integration: [BANK_TRANSFER](BANK_TRANSFER.md) cho QR Techcombank, đối soát Admin, hủy/trả/hoàn thủ công và ledger liên module. VNPAY vẫn hoãn; [REMEDIATION](../../REMEDIATION_20261024.md) ghi trạng thái kiểm chứng và việc cần thành viên.
+
+> Cập nhật theo quy định thầy ngày 13/10/2026. Người phụ trách TV3: [điền tên]. Baseline trước code: bb700d1; commit implementation: 29aac50. Code của nhánh đã được bổ sung; trạng thái thực tại mục 6. VNPAY đã có adapter/test trong bản integration; còn merchant sandbox thật và review liên module.
 
 ## 1. Các file phải đọc và cấu hình
 

@@ -19,7 +19,11 @@ public final class CatalogRequests {
     public record ToppingInput(@NotBlank @Size(max=100) String name,
         @NotNull @DecimalMin("0") @Digits(integer=12,fraction=0) BigDecimal price, boolean active) {}
     public record VariantInput(@NotBlank @Pattern(regexp="S|M|L") String sizeName,
-        @NotNull @DecimalMin("0") @Digits(integer=12,fraction=0) BigDecimal extraPrice, boolean active) {}
+        @NotNull @DecimalMin("0") @Digits(integer=12,fraction=0) BigDecimal extraPrice, boolean active,
+        @Min(0) @Max(1000000) @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using=com.utetra.identity.StrictNumbers.IntValue.class) Integer stockQuantity,
+        @PositiveOrZero @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using=com.utetra.identity.StrictNumbers.LongValue.class) Long stockVersion) {
+        public VariantInput(String sizeName,BigDecimal extraPrice,boolean active) { this(sizeName,extraPrice,active,null,null); }
+    }
     public record ProductInput(@NotNull Long storeId, @NotNull Long categoryId,
         @NotBlank @Size(max=150) String name,
         @NotBlank @Pattern(regexp="[a-z0-9]+(?:-[a-z0-9]+)*") @Size(max=150) String slug,

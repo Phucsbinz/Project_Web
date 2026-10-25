@@ -1,15 +1,15 @@
-package com.utetra.service;
+package com.utetra.repository.catalog;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.*;
 
 /** Reads owner modules' committed data. Missing optional modules produce zero metrics, never invented sales. */
-@Service
-public class CatalogStatistics {
+@Repository
+public class CatalogStatisticsRepository {
     private final JdbcTemplate jdbc;
-    public CatalogStatistics(JdbcTemplate jdbc) { this.jdbc=jdbc; }
+    public CatalogStatisticsRepository(JdbcTemplate jdbc) { this.jdbc=jdbc; }
     public boolean tables(String... names) {
         return Boolean.TRUE.equals(jdbc.execute((org.springframework.jdbc.core.ConnectionCallback<Boolean>) c -> {
             Set<String> existing=new HashSet<>();

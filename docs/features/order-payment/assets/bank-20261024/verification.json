@@ -1,0 +1,44 @@
+{
+  "mode": "isolated H2 fixture; no real transfer",
+  "checks": [
+    {
+      "page": "buyer bank pending",
+      "width": 1440,
+      "status": 200,
+      "overflow": false,
+      "qrLoaded": true
+    },
+    {
+      "page": "buyer bank pending",
+      "width": 768,
+      "status": 200,
+      "overflow": false,
+      "qrLoaded": true
+    },
+    {
+      "page": "buyer bank pending",
+      "width": 390,
+      "status": 200,
+      "overflow": false,
+      "qrLoaded": true
+    },
+    {
+      "page": "admin reconciliation",
+      "width": 1440,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "page": "admin reconciliation",
+      "width": 390,
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "action": "admin UI confirmation",
+      "paymentStatus": "PAID",
+      "database": "isolated H2 fixture"
+    }
+  ],
+  "javascriptErrors": []
+}

@@ -1,6 +1,5 @@
 package com.utetra.repository.catalog;
 
-import com.utetra.service.CatalogStatistics;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
@@ -12,8 +11,8 @@ public class CatalogQueryRepository {
     public record RankedProduct(Long id,long sold,BigDecimal rating,long favorites) {}
     public record Result(List<RankedProduct> items,long total) {}
     private final NamedParameterJdbcTemplate jdbc;
-    private final CatalogStatistics statistics;
-    public CatalogQueryRepository(NamedParameterJdbcTemplate jdbc,CatalogStatistics statistics) { this.jdbc=jdbc; this.statistics=statistics; }
+    private final CatalogStatisticsRepository statistics;
+    public CatalogQueryRepository(NamedParameterJdbcTemplate jdbc,CatalogStatisticsRepository statistics) { this.jdbc=jdbc; this.statistics=statistics; }
     public Result search(String keyword,Long categoryId,Long storeId,BigDecimal min,BigDecimal max,String sort,int page,int size,boolean guest,boolean top20) {
         MapSqlParameterSource args=new MapSqlParameterSource();
         StringBuilder from=new StringBuilder(" from products p join categories c on c.id=p.category_id join stores s on s.id=p.store_id");

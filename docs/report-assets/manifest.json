@@ -1,0 +1,84 @@
+[
+  {
+    "file": "application-architecture.png",
+    "caption": "Kiến trúc ứng dụng UTETra",
+    "source": null,
+    "basis": "working tree 24/10/2026; source illustration, not runtime screenshot"
+  },
+  {
+    "file": "activity-vnpay.png",
+    "caption": "Hoạt động thanh toán VNPAY",
+    "source": null,
+    "basis": "working tree 24/10/2026; source illustration, not runtime screenshot"
+  },
+  {
+    "file": "code-vnpay-ipn.png",
+    "caption": "Xác minh IPN trước khi ghi thanh toán",
+    "source": {
+      "path": "src/main/java/com/utetra/order/service/VnpayService.java",
+      "first_line": 56,
+      "excerpt_lines": 23,
+      "notes": [
+        "Chữ ký phải hợp lệ trước khi đọc và sửa giao dịch.",
+        "Amount phải khớp cả payment snapshot và order. Order lock đi trước payment lock để cùng thứ tự với hủy và hoàn tiền."
+      ]
+    },
+    "basis": "working tree 24/10/2026; source illustration, not runtime screenshot"
+  },
+  {
+    "file": "code-manager-carrier.png",
+    "caption": "Manager quản lý carrier theo cửa hàng",
+    "source": {
+      "path": "src/main/java/com/utetra/order/service/OperationsService.java",
+      "first_line": 68,
+      "excerpt_lines": 23,
+      "notes": [
+        "Manager phải có cửa hàng và quyền vận hành đúng scope.",
+        "Carrier toàn hệ thống vẫn thuộc Admin; không được đổi scope của carrier bằng cách thay storeId trong request."
+      ]
+    },
+    "basis": "working tree 24/10/2026; source illustration, not runtime screenshot"
+  },
+  {
+    "file": "code-jwt-registry.png",
+    "caption": "Lưu fingerprint JWT vào phiên DB",
+    "source": {
+      "path": "src/main/java/com/utetra/repository/AccessTokenRegistry.java",
+      "first_line": 23,
+      "excerpt_lines": 6,
+      "notes": [
+        "DB lưu JTI, hash và hạn dùng của access token, không lưu bearer token nguyên văn.",
+        "Refresh thay fingerprint; filter HTTP và guard WebSocket kiểm phiên và token hiện hành."
+      ]
+    },
+    "basis": "working tree 24/10/2026; source illustration, not runtime screenshot"
+  },
+  {
+    "file": "code-inventory.png",
+    "caption": "Giữ tồn hữu hạn trong transaction",
+    "source": {
+      "path": "src/main/java/com/utetra/order/service/OrderInventoryService.java",
+      "first_line": 22,
+      "excerpt_lines": 23,
+      "notes": [
+        "Tổng số ly phải được gom theo variant trước khi giữ tồn.",
+        "Cập nhật có điều kiện ngăn số âm; checkout lỗi rollback toàn bộ, sự kiện chỉ gửi sau commit."
+      ]
+    },
+    "basis": "working tree 24/10/2026; source illustration, not runtime screenshot"
+  },
+  {
+    "file": "code-community.png",
+    "caption": "Bình luận kiểm quyền và điều kiện mua",
+    "source": {
+      "path": "src/main/java/com/utetra/identity/CommunityService.java",
+      "first_line": 68,
+      "excerpt_lines": 23,
+      "notes": [
+        "Chỉ người có bằng chứng mua hợp lệ được bình luận.",
+        "Độ dài và media phải qua validation; ảnh code là trích source, không phải kết quả test provider."
+      ]
+    },
+    "basis": "working tree 24/10/2026; source illustration, not runtime screenshot"
+  }
+]

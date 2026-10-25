@@ -15,12 +15,14 @@ public class OrderPromotionService {
   private final CommerceReferenceRepository refs;
   private final OrderDataRepository data;
   private final Clock clock;
+  private final CheckoutAvailabilityEvents events;
 
   public OrderPromotionService(
-      CommerceReferenceRepository refs, OrderDataRepository data, Clock clock) {
+      CommerceReferenceRepository refs, OrderDataRepository data, Clock clock, CheckoutAvailabilityEvents events) {
     this.refs = refs;
     this.data = data;
     this.clock = clock;
+    this.events = events;
   }
 
   public BigDecimal discount(
@@ -115,6 +117,7 @@ public class OrderPromotionService {
     r.promotionNameSnapshot = promotion.get("name").toString();
     r.createdAt = clock.instant();
     data.save(r);
+    events.changed(null,List.of(),List.of(id));
   }
 
   public void status(long order, String status) {
@@ -123,6 +126,7 @@ public class OrderPromotionService {
             CouponRedemption.class, "where e.orderId=:order", Map.of("order", order), true, 10)) {
       r.status = status;
       if (status.equals("RELEASED")) r.releasedAt = clock.instant();
+      if (status.equals("RELEASED")) events.changed(null,List.of(),List.of(r.promotionId));
     }
   }
 }

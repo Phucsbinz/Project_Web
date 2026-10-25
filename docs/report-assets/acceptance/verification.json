@@ -1,0 +1,18 @@
+{
+  "mode": "Tomcat/SiteMesh H2 fixture; fake merchant, no bank or gateway transaction",
+  "checks": [
+    {
+      "scenario": "Manager creates/edits own carrier name and fee",
+      "globalCarrierNotEditable": true,
+      "viewport": 390,
+      "overflow": false
+    },
+    {
+      "scenario": "VNPAY JSP/create URL/verified callback",
+      "mode": "simulated signed IPN in H2, no external gateway call",
+      "duplicateAck": "02",
+      "paymentStatus": "PAID"
+    }
+  ],
+  "javascriptErrors": []
+}

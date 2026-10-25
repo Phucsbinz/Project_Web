@@ -28,7 +28,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = "features.shipper.enabled=true")
+    properties = {"features.shipper.enabled=true","payment.vnpay.enabled=true",
+      "payment.vnpay.tmn-code=TESTCODE","payment.vnpay.hash-secret=test-only-merchant-secret-1234567890",
+      "payment.vnpay.return-url=https://merchant.example.invalid/payments/vnpay/return",
+      "payment.vnpay.ipn-url=https://merchant.example.invalid/payments/vnpay/ipn"})
 @ActiveProfiles("test")
 @Import(OrderCommerceIntegrationTest.TimeConfiguration.class)
 class OrderCommerceIntegrationTest {
@@ -37,6 +40,13 @@ class OrderCommerceIntegrationTest {
   @Autowired CheckoutService checkout;
   @Autowired OrderWorkflowService workflow;
   @Autowired OperationsService operations;
+  @Autowired BankTransferService bankTransfers;
+  @Autowired CheckoutAvailabilityService availability;
+  @Autowired com.utetra.identity.AuthService authentication;
+  @Autowired com.utetra.service.SessionIdentityService currentIdentity;
+  @Autowired com.utetra.service.CatalogService catalog;
+  @Autowired VnpayService vnpay;
+  @Autowired VnpaySettings vnpaySettings;
   @Autowired OrderLoyaltyBridge points;
   @Autowired JdbcTemplate jdbc;
   @Autowired TestRestTemplate http;
@@ -269,6 +279,141 @@ class OrderCommerceIntegrationTest {
 
   Checkout request(String key, String hash, int used, Long promotion) {
     return new Checkout(key, 1, 1, 1, promotion, null, used, hash, "");
+  }
+
+  Map<String, Object> createBank() {
+    carts.add(BUYER, item(2));
+    String key = UUID.randomUUID().toString();
+    var draft = new Checkout(key, 1, 1, 1, null, null, 2, "", "", "BANK_TRANSFER");
+    String hash = checkout.quote(BUYER, draft).get("hash").toString();
+    return checkout.checkout(BUYER,
+        new Checkout(key, 1, 1, 1, null, null, 2, hash, "", "BANK_TRANSFER"));
+  }
+
+  BankConfirmation receipt(long order, String reference) {
+    return new BankConfirmation(reference,
+        new BigDecimal(workflow.read(BUYER, order).get("total").toString()), version(order));
+  }
+
+  @Test
+  void bankTransferRequiresAdminExactAmountAndCannotAdvanceBeforePayment() {
+    long order = id(createBank());
+    assertThatThrownBy(() -> workflow.transition(VENDOR, order,
+        new Transition("CONFIRMED", version(order), "", false))).isInstanceOf(OrderProblem.class);
+    for (Actor actor : List.of(BUYER, VENDOR, MANAGER, SHIPPER))
+      assertThatThrownBy(() -> bankTransfers.confirm(actor, order, receipt(order, "TCB-001")))
+          .isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(() -> bankTransfers.confirm(ADMIN, order,
+        new BankConfirmation("TCB-001", BigDecimal.ONE, version(order))))
+        .isInstanceOf(OrderProblem.class);
+    var confirmation = receipt(order, "TCB-001");
+    var paid = bankTransfers.confirm(ADMIN, order, confirmation);
+    assertThat(paid).containsEntry("paymentStatus", "PAID");
+    long events = jdbc.queryForObject("select count(*) from order_status_history where order_id=?", Long.class, order);
+    assertThat(bankTransfers.confirm(ADMIN, order, confirmation)).isEqualTo(paid);
+    assertThat(jdbc.queryForObject("select count(*) from order_status_history where order_id=?", Long.class, order)).isEqualTo(events);
+    assertThatThrownBy(() -> bankTransfers.confirm(ADMIN, order, receipt(order, "TCB-OTHER")))
+        .isInstanceOf(OrderProblem.class);
+    long second = id(createBank());
+    assertThatThrownBy(() -> bankTransfers.confirm(ADMIN, second, receipt(second, "tcb-001")))
+        .isInstanceOf(OrderProblem.class);
+    assertThat(workflow.read(BUYER, second)).containsEntry("paymentStatus", "UNPAID");
+  }
+
+  @Test
+  void paidBankOrderCanBeDeliveredAndReturnedWithAdminManualRefundOnly() {
+    long order = id(createBank());
+    bankTransfers.confirm(ADMIN, order, receipt(order, "TCB-RETURN"));
+    delivered(order);
+    workflow.requestReturn(BUYER, order, "Wrong drink");
+    workflow.reviewReturn(VENDOR, order, new Decision(true, true, "Quality issue", version(order)));
+    assertThatThrownBy(() -> workflow.refundCash(VENDOR, order, new RefundInput("REF-01", version(order))))
+        .isInstanceOf(OrderProblem.class);
+    workflow.refundCash(ADMIN, order, new RefundInput("TCB-REFUND-01", version(order)));
+    assertThat(workflow.read(BUYER, order)).containsEntry("paymentStatus", "REFUNDED");
+    assertThat(jdbc.queryForObject("select count(*) from refund_transactions where order_id=?", Long.class, order)).isEqualTo(1);
+    assertThatThrownBy(() -> workflow.refundCash(ADMIN, order, new RefundInput("AGAIN", version(order))))
+        .isInstanceOf(OrderProblem.class);
+  }
+
+  @Test
+  void cancellingPaidBankOrderKeepsReceiptAndRefundDoesNotRestorePointsTwice() {
+    long order = id(createBank());
+    bankTransfers.confirm(ADMIN, order, receipt(order, "TCB-CANCEL"));
+    workflow.cancel(BUYER, order, version(order), "Changed mind");
+    assertThat(workflow.read(BUYER, order)).containsEntry("status", "CANCELLED")
+        .containsEntry("paymentStatus", "REFUND_PENDING");
+    assertThat(jdbc.queryForObject("select status from payment_transactions where order_id=?", String.class, order)).isEqualTo("SUCCEEDED");
+    int balance = jdbc.queryForObject("select balance from loyalty_accounts where user_id=1", Integer.class);
+    workflow.refundCash(ADMIN, order, new RefundInput("TCB-REFUND-CANCEL", version(order)));
+    assertThat(jdbc.queryForObject("select balance from loyalty_accounts where user_id=1", Integer.class)).isEqualTo(balance);
+    assertThat(workflow.read(BUYER, order)).containsEntry("paymentStatus", "REFUNDED");
+  }
+
+  @Test
+  void lateBankTransferDoesNotReopenCancelledOrderAndCanBeRefunded() {
+    long order = id(createBank());
+    workflow.cancel(BUYER, order, version(order), "Cancelled before transfer");
+    bankTransfers.confirm(ADMIN, order, receipt(order, "TCB-LATE"));
+    assertThat(workflow.read(BUYER, order)).containsEntry("status", "CANCELLED")
+        .containsEntry("paymentStatus", "REFUND_PENDING");
+    workflow.refundCash(ADMIN, order, new RefundInput("TCB-REFUND-LATE", version(order)));
+    assertThat(workflow.read(BUYER, order)).containsEntry("paymentStatus", "REFUNDED");
+  }
+
+  @Test
+  void bankCheckoutAndPaymentViewsRenderOnTomcatAndConfirmationIsProtected() {
+    long order = id(createBank());
+    Map<String, String> buyer = new LinkedHashMap<>();
+    assertThat(browserPost("/auth/login", Map.of("email", "u1@test.invalid", "password", "Only-test-user-password"), buyer)
+        .getStatusCode()).isEqualTo(HttpStatus.OK);
+    var page = http.exchange("/orders/" + order, HttpMethod.GET,
+        new HttpEntity<>(browserHeaders(buyer)), String.class);
+    assertThat(page.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(page.getBody()).contains("techcombank-utetra.jpg", "3337110941", "BUI THANH PHUC", "UT" + order)
+        .doesNotContain("id=\"bank-confirm-form\"");
+    assertThat(browserPost("/orders/" + order + "/bank-confirmation", receipt(order, "HTTP-RECEIPT"), buyer)
+        .getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    Map<String, String> admin = new LinkedHashMap<>();
+    assertThat(browserPost("/auth/login", Map.of("email", "u4@test.invalid", "password", "Only-test-user-password"), admin)
+        .getStatusCode()).isEqualTo(HttpStatus.OK);
+    var adminPage = http.exchange("/admin/orders/" + order, HttpMethod.GET,
+        new HttpEntity<>(browserHeaders(admin)), String.class);
+    assertThat(adminPage.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(adminPage.getBody()).contains("id=\"bank-confirm-form\"");
+    assertThat(browserPost("/admin/orders/" + order + "/bank-confirmation", receipt(order, "HTTP-RECEIPT"), admin)
+        .getStatusCode()).isEqualTo(HttpStatus.OK);
+    var checkoutPage = http.exchange("/checkout", HttpMethod.GET,
+        new HttpEntity<>(browserHeaders(buyer)), String.class);
+    assertThat(checkoutPage.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(checkoutPage.getBody()).contains("value=\"BANK_TRANSFER\"");
+  }
+
+  @Test
+  void bankMethodIsBoundToQuoteAndConcurrentConfirmationCreatesOneReceipt() throws Exception {
+    carts.add(BUYER, item(2));
+    String key = UUID.randomUUID().toString();
+    String codHash = checkout.quote(BUYER, request(key, "", 2, null)).get("hash").toString();
+    assertThatThrownBy(() -> checkout.checkout(BUYER,
+        new Checkout(key, 1, 1, 1, null, null, 2, codHash, "", "BANK_TRANSFER")))
+        .isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(() -> checkout.quote(BUYER,
+        new Checkout(key, 1, 1, 1, null, null, 2, "", "", "CLIENT_PAID")))
+        .isInstanceOf(OrderProblem.class);
+    long order = id(createBank());
+    var confirmation = receipt(order, "TCB-CONCURRENT");
+    var gate = new CountDownLatch(1);
+    try (var pool = Executors.newFixedThreadPool(2)) {
+      var first = pool.submit(() -> { gate.await(); return bankTransfers.confirm(ADMIN, order, confirmation); });
+      var second = pool.submit(() -> { gate.await(); return bankTransfers.confirm(ADMIN, order, confirmation); });
+      gate.countDown();
+      assertThat(first.get(20, TimeUnit.SECONDS)).containsEntry("paymentStatus", "PAID");
+      assertThat(second.get(20, TimeUnit.SECONDS)).containsEntry("paymentStatus", "PAID");
+    }
+    assertThat(jdbc.queryForObject("select count(*) from order_status_history where order_id=? and event_type='BANK_TRANSFER_CONFIRMED'", Long.class, order)).isEqualTo(1);
+    // Also assert the DB guard itself, independent of the Service's duplicate check.
+    assertThatThrownBy(() -> jdbc.update("insert into payment_transactions(order_id,provider,txn_ref,provider_txn_id,amount,status,created_at,updated_at,version) select order_id,provider,'DUPLICATE-RECEIPT',provider_txn_id,amount,status,created_at,updated_at,0 from payment_transactions where order_id=?", order))
+        .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
   }
 
   Map<String, Object> create(int used) {
@@ -741,6 +886,222 @@ class OrderCommerceIntegrationTest {
             jdbc.queryForObject(
                 "select count(*) from coupon_redemptions where status='RESERVED'", Long.class))
         .isEqualTo(1);
+  }
+
+  @Test
+  void jwtFingerprintIsStoredInDbAndRefreshRevokesPreviousAccessToken() {
+    var tokens=authentication.login("u1@test.invalid","Only-test-user-password");
+    var principal=jwt.verify(tokens.access());
+    var row=jdbc.queryForMap("select access_token_id,access_token_hash,access_expires_at from auth_sessions where id=?",principal.sessionId());
+    assertThat(row.get("access_token_id")).isEqualTo(principal.tokenId());
+    assertThat(row.get("access_token_hash")).isEqualTo(com.utetra.repository.AccessTokenRegistry.fingerprint(tokens.access()));
+    assertThat(row.values()).doesNotContain(tokens.access());
+    assertThat(currentIdentity.isCurrent(principal,tokens.access())).isTrue();
+    var next=authentication.refresh(tokens.refresh());
+    assertThat(currentIdentity.isCurrent(principal,tokens.access())).isFalse();
+    assertThat(currentIdentity.isCurrent(jwt.verify(next.access()),next.access())).isTrue();
+    var headers=new HttpHeaders();headers.setBearerAuth(tokens.access());headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+    assertThat(http.exchange("/orders/data",HttpMethod.GET,new HttpEntity<>(headers),String.class).getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    authentication.logout(jwt.verify(next.access()),next.refresh());
+    assertThat(currentIdentity.isCurrent(jwt.verify(next.access()),next.access())).isFalse();
+  }
+
+  @Test
+  void lastGlobalVoucherCannotBeOversoldAcrossDifferentStores() throws Exception {
+    jdbc.update("insert into promotions(id,created_by,scope,kind,code,name,percent,max_discount,min_order,usage_limit,per_user_limit,starts_at,ends_at,is_active,funded_by,created_at,updated_at,version) values(1,4,'GLOBAL','PRODUCT_PERCENT','GLOBAL_LAST','Last global slot',10,100000,0,1,1,?,?,true,'APP',?,?,0)",
+        time.instant().minusSeconds(60),time.instant().plusSeconds(3600),time.instant(),time.instant());
+    carts.add(BUYER,item(1));carts.add(BUYER_B,new Item(2,50,50,List.of(),1,"Other store"));
+    String k1=UUID.randomUUID().toString(),k2=UUID.randomUUID().toString();
+    var r1=request(k1,checkout.quote(BUYER,request(k1,"",0,1L)).get("hash").toString(),0,1L);
+    var draft=new Checkout(k2,2,2,1,1L,null,0,"","");
+    var r2=new Checkout(k2,2,2,1,1L,null,0,checkout.quote(BUYER_B,draft).get("hash").toString(),"");
+    var gate=new CountDownLatch(1);
+    try(var pool=Executors.newFixedThreadPool(2)) {
+      var a=pool.submit(()->{gate.await();try {checkout.checkout(BUYER,r1);return true;}catch(OrderProblem e){return false;}});
+      var b=pool.submit(()->{gate.await();try {checkout.checkout(BUYER_B,r2);return true;}catch(OrderProblem e){return false;}});
+      gate.countDown();
+      assertThat(List.of(a.get(20,TimeUnit.SECONDS),b.get(20,TimeUnit.SECONDS))).containsExactlyInAnyOrder(true,false);
+    }
+    assertThat(jdbc.queryForObject("select count(*) from coupon_redemptions where status='RESERVED'",Integer.class)).isEqualTo(1);
+    assertThat(jdbc.queryForObject("select count(*) from orders",Integer.class)).isEqualTo(1);
+  }
+
+  @Test
+  void twoBuyersCompetingForLastCupCreateOnlyOneOrderAndCancelReleasesOnce() throws Exception {
+    jdbc.update("update product_variants set stock_quantity=1 where id=1");
+    carts.add(BUYER,item(1));carts.add(BUYER_B,item(1));
+    String k1=UUID.randomUUID().toString(),k2=UUID.randomUUID().toString();
+    var r1=request(k1,checkout.quote(BUYER,request(k1,"",0,null)).get("hash").toString(),0,null);
+    var draft=new Checkout(k2,2,1,1,null,null,0,"","");
+    var r2=new Checkout(k2,2,1,1,null,null,0,checkout.quote(BUYER_B,draft).get("hash").toString(),"");
+    var gate=new CountDownLatch(1);
+    try(var pool=Executors.newFixedThreadPool(2)) {
+      var a=pool.submit(()->{gate.await();try {return checkout.checkout(BUYER,r1);}catch(OrderProblem e){return null;}});
+      var b=pool.submit(()->{gate.await();try {return checkout.checkout(BUYER_B,r2);}catch(OrderProblem e){return null;}});
+      gate.countDown();var first=a.get(20,TimeUnit.SECONDS);var second=b.get(20,TimeUnit.SECONDS);
+      assertThat((first==null)!=(second==null)).isTrue();
+      var winner=first!=null?first:second;Actor actor=first!=null?BUYER:BUYER_B;
+      long order=id(winner);long v=((Number)winner.get("version")).longValue();
+      assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=1",Integer.class)).isZero();
+      assertThat(jdbc.queryForObject("select count(*) from orders",Integer.class)).isEqualTo(1);
+      assertThat(checkout.checkout(actor,first!=null?r1:r2)).containsEntry("id",order);
+      workflow.cancel(actor,order,v,"Cancel before preparation");
+      assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=1",Integer.class)).isEqualTo(1);
+      assertThatThrownBy(()->workflow.cancel(actor,order,v,"again")).isInstanceOf(OrderProblem.class);
+      assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=1",Integer.class)).isEqualTo(1);
+    }
+  }
+
+  @Test
+  void inventoryAggregatesDifferentConfigurationsAndRollsBackFailedCheckout() {
+    jdbc.update("update product_variants set stock_quantity=3 where id=1");
+    carts.add(BUYER,item(2));carts.add(BUYER,new Item(1,30,50,List.of(1L),2,"Different sugar"));
+    assertThatThrownBy(()->checkout.quote(BUYER,request(UUID.randomUUID().toString(),"",0,null))).isInstanceOf(OrderProblem.class);
+    assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=1",Integer.class)).isEqualTo(3);
+    jdbc.update("update product_variants set stock_quantity=10 where id=1");
+    String key=UUID.randomUUID().toString();
+    var quote=checkout.quote(BUYER,request(key,"",2,null));
+    jdbc.update("update loyalty_accounts set balance=0 where user_id=1");
+    assertThatThrownBy(()->checkout.checkout(BUYER,request(key,quote.get("hash").toString(),2,null))).isInstanceOf(OrderProblem.class);
+    assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=1",Integer.class)).isEqualTo(10);
+    assertThat(jdbc.queryForObject("select count(*) from orders",Integer.class)).isZero();
+  }
+
+  @Test
+  void preparedDrinkIsNotReturnedToSellableInventoryOnCancellation() {
+    jdbc.update("update product_variants set stock_quantity=5 where id=1");
+    long order=id(create(0));
+    workflow.transition(VENDOR,order,new Transition("CONFIRMED",version(order),"",false));
+    workflow.transition(VENDOR,order,new Transition("PICKED_UP",version(order),"",false));
+    workflow.cancel(VENDOR,order,version(order),"Delivery cannot continue");
+    assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=1",Integer.class)).isEqualTo(3);
+  }
+
+  @Test
+  void checkoutAvailabilityRevisionChangesWhenStockIsReservedAndReleased() {
+    jdbc.update("update product_variants set stock_quantity=5 where id=1");
+    carts.add(BUYER_B,item(1));
+    Object before=availability.snapshot(BUYER_B).get("revision");
+    long order=id(create(0));
+    assertThat(availability.snapshot(BUYER_B).get("revision")).isNotEqualTo(before);
+    workflow.cancel(BUYER,order,version(order),"Free stock");
+    assertThat(availability.snapshot(BUYER_B).get("revision")).isEqualTo(before);
+  }
+
+  @Test
+  void staleCatalogFormCannotOverwriteStockConsumedByCheckout() {
+    jdbc.update("update product_variants set stock_quantity=5 where id=1");
+    var before=catalog.detail(1L);
+    var size=before.variants().getFirst();
+    create(0);
+    var input=new com.utetra.dto.CatalogRequests.ProductInput(1L,1L,before.name(),before.slug(),before.description(),
+        before.basePrice().setScale(0),true,true,false,
+        List.of(new com.utetra.dto.CatalogRequests.VariantInput(size.sizeName(),size.extraPrice().setScale(0),true,5,size.version())),
+        before.toppingIds(),before.version());
+    var vendor=jwt.verify(jwt.issue(2L,2L,"ROLE_VENDOR"));
+    assertThatThrownBy(()->catalog.saveProduct(vendor,1L,input)).isInstanceOf(org.springframework.web.server.ResponseStatusException.class).hasMessageContaining("Tồn kho đã thay đổi");
+    assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=1",Integer.class)).isEqualTo(3);
+  }
+
+  @Test
+  void managerCanManageCarrierNamesAndFeesWithinAssignedShopOnly() {
+    var own=operations.carrier(MANAGER,new CarrierInput(null,"Shop delivery",new BigDecimal("12000"),true,0,1L));
+    long carrier=own.id;
+    var edited=operations.carrier(MANAGER,new CarrierInput(carrier,"Renamed delivery",new BigDecimal("15000"),true,own.version,1L));
+    assertThat(edited.name).isEqualTo("Renamed delivery");
+    assertThat(edited.baseFee).isEqualByComparingTo("15000");
+    assertThatThrownBy(()->operations.carrier(MANAGER,new CarrierInput(1L,"Global changed",BigDecimal.ZERO,true,0,1L))).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->operations.carrier(MANAGER,new CarrierInput(null,"Outside",BigDecimal.ZERO,true,0,2L))).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->operations.rate(ADMIN,new RateInput(carrier,2,BigDecimal.ZERO,true))).isInstanceOf(OrderProblem.class);
+    operations.rate(MANAGER,new RateInput(carrier,1,BigDecimal.ZERO,true));
+    carts.add(BUYER_B,new Item(2,50,50,List.of(),1,"Other shop"));
+    assertThatThrownBy(()->checkout.quote(BUYER_B,new Checkout(UUID.randomUUID().toString(),2,2,carrier,null,null,0,"",""))).isInstanceOf(OrderProblem.class);
+  }
+
+  Map<String,Object> createVnpay() {
+    carts.add(BUYER,item(1));String key=UUID.randomUUID().toString();
+    var draft=new Checkout(key,1,1,1,null,null,0,"","","VNPAY");
+    String hash=checkout.quote(BUYER,draft).get("hash").toString();
+    return checkout.checkout(BUYER,new Checkout(key,1,1,1,null,null,0,hash,"","VNPAY"));
+  }
+
+  Map<String,String> signedVnpayReceipt(long order,String transaction) {
+    var fields=new TreeMap<String,String>();
+    fields.put("vnp_TmnCode","TESTCODE");fields.put("vnp_TxnRef",jdbc.queryForObject("select txn_ref from payment_transactions where order_id=?",String.class,order));
+    BigDecimal total=jdbc.queryForObject("select final_amount from orders where id=?",BigDecimal.class,order);
+    fields.put("vnp_Amount",total.multiply(BigDecimal.valueOf(100)).toBigIntegerExact().toString());
+    fields.put("vnp_ResponseCode","00");fields.put("vnp_TransactionStatus","00");fields.put("vnp_TransactionNo",transaction);
+    fields.put("vnp_SecureHash",vnpaySettings.sign(fields));return fields;
+  }
+
+  @Test
+  void vnpayChecksSignatureAmountAndDuplicateIpnBeforeMarkingPaid() {
+    long order=id(createVnpay());
+    String url=vnpay.start(BUYER,order,"127.0.0.1");
+    assertThat(url).startsWith("https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?").contains("vnp_SecureHash=","vnp_ExpireDate=","vnp_Version=2.1.0");
+    assertThatThrownBy(()->vnpay.start(BUYER_B,order,"127.0.0.1")).isInstanceOf(OrderProblem.class);
+    var receipt=signedVnpayReceipt(order,"123456789");
+    receipt.put("vnp_Amount","1");assertThat(vnpay.ipn(receipt)).containsEntry("RspCode","97");
+    receipt.put("vnp_SecureHash",vnpaySettings.sign(receipt));assertThat(vnpay.ipn(receipt)).containsEntry("RspCode","04");
+    assertThat(workflow.read(BUYER,order)).containsEntry("paymentStatus","UNPAID");
+    receipt=signedVnpayReceipt(order,"123456789");
+    assertThat(vnpay.ipn(receipt)).containsEntry("RspCode","00");
+    assertThat(vnpay.ipn(receipt)).containsEntry("RspCode","02");
+    assertThat(jdbc.queryForObject("select count(*) from payment_callback_events where outcome='PAID_00_00'",Integer.class)).isEqualTo(1);
+    assertThat(workflow.read(BUYER,order)).containsEntry("paymentStatus","PAID");
+    delivered(order);
+    assertThat(jdbc.queryForObject("select count(*) from payment_transactions where order_id=? and status='SUCCEEDED'",Integer.class,order)).isEqualTo(1);
+  }
+
+  @Test
+  void lateVnpayIpnDoesNotReopenCancelledOrderAndAdminCanRecordActualRefund() {
+    long order=id(createVnpay());
+    workflow.cancel(BUYER,order,version(order),"Cancelled");
+    assertThat(vnpay.ipn(signedVnpayReceipt(order,"987654321"))).containsEntry("RspCode","00");
+    assertThat(workflow.read(BUYER,order)).containsEntry("status","CANCELLED").containsEntry("paymentStatus","REFUND_PENDING");
+    assertThatThrownBy(()->workflow.refundCash(VENDOR,order,new RefundInput("not authorized",version(order)))).isInstanceOf(OrderProblem.class);
+    workflow.refundCash(ADMIN,order,new RefundInput("Merchant console refund confirmation",version(order)));
+    assertThat(workflow.read(BUYER,order)).containsEntry("paymentStatus","REFUNDED");
+  }
+
+  @Test
+  void vnpayBrowserReturnCannotMarkPaidAndIpnRejectsDuplicatedParameters() {
+    long order=id(createVnpay());
+    var response=http.getForEntity("/payments/vnpay/return?vnp_ResponseCode=00",String.class);
+    assertThat(response.getStatusCode().value()).isIn(302,401); // redirect, or protected destination after following it
+    assertThat(workflow.read(BUYER,order)).containsEntry("paymentStatus","UNPAID");
+    var receipt=signedVnpayReceipt(order,"112233445");
+    String query=VnpaySettings.canonical(receipt)+"&vnp_SecureHash="+receipt.get("vnp_SecureHash");
+    var duplicate=http.getForEntity("/payments/vnpay/ipn?"+query+"&vnp_Amount=1",Map.class);
+    assertThat(duplicate.getBody()).containsEntry("RspCode","99");
+    var accepted=http.getForEntity("/payments/vnpay/ipn?"+query,Map.class);
+    assertThat(accepted.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(accepted.getBody()).containsEntry("RspCode","00");
+    assertThat(workflow.read(BUYER,order)).containsEntry("paymentStatus","PAID");
+  }
+
+  @Test
+  void vnpayReviewBlocksNewPaymentAndCancellationUntilDefinitiveIpn() {
+    long order=id(createVnpay());var receipt=signedVnpayReceipt(order,"22334455");
+    receipt.put("vnp_ResponseCode","07");receipt.put("vnp_TransactionStatus","07");receipt.put("vnp_SecureHash",vnpaySettings.sign(receipt));
+    assertThat(vnpay.ipn(receipt)).containsEntry("RspCode","00");
+    assertThat(workflow.read(BUYER,order)).containsEntry("paymentStatus","REVIEW");
+    assertThatThrownBy(()->vnpay.start(BUYER,order,"127.0.0.1")).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->workflow.cancel(BUYER,order,version(order),"Retry")).isInstanceOf(OrderProblem.class);
+    assertThat(vnpay.ipn(signedVnpayReceipt(order,"22334455"))).containsEntry("RspCode","00");
+    assertThat(workflow.read(BUYER,order)).containsEntry("paymentStatus","PAID");
+  }
+
+  @Test
+  void vnpayExpiredLinkIsRejectedAndSignedFailureCanBeCancelledToReleaseStock() {
+    jdbc.update("update product_variants set stock_quantity=2 where id=1");
+    long order=id(createVnpay());time.advance(Duration.ofMinutes(16));
+    assertThatThrownBy(()->vnpay.start(BUYER,order,"127.0.0.1")).isInstanceOf(OrderProblem.class);
+    var failed=signedVnpayReceipt(order,"0");failed.put("vnp_ResponseCode","24");failed.put("vnp_TransactionStatus","02");failed.put("vnp_SecureHash",vnpaySettings.sign(failed));
+    assertThat(vnpay.ipn(failed)).containsEntry("RspCode","00");
+    assertThat(workflow.read(BUYER,order)).containsEntry("paymentStatus","FAILED");
+    workflow.cancel(BUYER,order,version(order),"Failed payment");
+    assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=1",Integer.class)).isEqualTo(2);
   }
 
   @Test

@@ -62,6 +62,8 @@
       const old = item?.variants.find(v => v.sizeName === size);
       form.append(field('size_' + size,'Bán size ' + size,'checkbox',old ? old.active : size === 'M'));
       form.append(field('extra_' + size,'Phụ thu size ' + size + ' (đ)','number',old?.extraPrice || 0));
+      const quantity = field('stock_' + size,'Số ly còn nhận size ' + size + ' (trống: giữ hiện có)','number',old?.stockQuantity ?? '');
+      const input = quantity.querySelector('input'); if(input) {input.required=false;input.min='0';input.max='1000000';input.step='1';} form.append(quantity);
     });
     const save = el('button',item ? 'Lưu thay đổi' : 'Lưu','btn btn-dark'); form.append(save);
     const reset = el('button','Tạo / cấu hình mới','btn btn-outline-secondary'); reset.type = 'button'; reset.onclick = () => edit(); form.append(reset);
@@ -175,7 +177,7 @@
       specs[section].forEach(([name,,type]) => { data[name] = type === 'checkbox' ? form.elements[name].checked : ['toppings','products'].includes(type) ? values.getAll(name).map(Number) : type === 'number' || ['category','topping'].includes(type) ? Number(values.get(name)) : type === 'datetime-local' ? new Date(values.get(name)).toISOString() : values.get(name); });
       let path = '/' + section + (editing ? '/' + editing.id : ''), method = editing ? 'PUT' : 'POST'; data.version = editing?.version || 0;
       if(section === 'products') {
-        data.storeId = Number(select.value); data.variants = ['S','M','L'].filter(s => form.elements['size_' + s].checked).map(s => ({sizeName:s,extraPrice:Number(values.get('extra_' + s)),active:true}));
+        data.storeId = Number(select.value); data.variants = ['S','M','L'].filter(s => form.elements['size_' + s].checked).map(s => ({sizeName:s,extraPrice:Number(values.get('extra_' + s)),active:true,stockQuantity:values.get('stock_' + s)===''?null:Number(values.get('stock_' + s)),stockVersion:editing?.variants.find(v=>v.sizeName===s)?.version??null}));
       }
       if(section === 'promotions') { data.storeId = select.value ? Number(select.value) : null; if(!data.code) data.code = null; }
       if(['areas','stock','memberships'].includes(section)) {

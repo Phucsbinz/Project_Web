@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "order_items")
 public class OrderItem {
+  @Column(name="stock_reserved",nullable=false,columnDefinition="boolean default false")
+  public boolean stockReserved;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;

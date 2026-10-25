@@ -11,10 +11,16 @@ public class AuthSession {
     @Column(name="expires_at",nullable=false) private Instant expiresAt;
     @Column(name="last_refreshed_at") private Instant lastRefreshedAt;
     @Column(name="revoked_at") private Instant revokedAt;
+    @Column(name="access_token_id",length=36) private String accessTokenId;
+    @Column(name="access_token_hash",length=64) private String accessTokenHash;
+    @Column(name="access_expires_at") private Instant accessExpiresAt;
     @Version private long version;
     protected AuthSession() {}
     public Long getId() { return id; }
     public User getUser() { return user; }
     public Instant getExpiresAt() { return expiresAt; }
     public Instant getRevokedAt() { return revokedAt; }
+    public String getAccessTokenId() { return accessTokenId; }
+    public String getAccessTokenHash() { return accessTokenHash; }
+    public Instant getAccessExpiresAt() { return accessExpiresAt; }
 }

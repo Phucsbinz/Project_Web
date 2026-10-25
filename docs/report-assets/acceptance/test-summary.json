@@ -1,0 +1,12 @@
+{
+  "basis": "Maven clean verify, finished 2026-10-24T18:07:44+07:00; current integration working tree, uncommitted",
+  "suites": 21,
+  "tests": 161,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "limitations": [
+    "Provider configuration in integration tests uses test values.",
+    "Not a real VNPAY merchant transaction or complete role-by-role user acceptance."
+  ]
+}

@@ -1,5 +1,11 @@
 # UTETra — Kế hoạch dự án theo quy định cuối kỳ
 
+> Bổ sung cuối lượt 24/10: VNPAY có adapter và test giao thức, còn merchant sandbox để nghiệm thu; Manager CRUD carrier theo shop. Xem [trạng thái theo yêu cầu thầy](docs/FINAL_REQUIREMENTS_STATUS.md).
+
+> Bổ sung tiếp 24/10: [JWT DB và checkout realtime](docs/features/order-payment/REALTIME_CHECKOUT_JWT.md) đã có JTI/hash/hạn access token trong DB, tồn hữu hạn theo size, chống tranh tồn/voucher, thông báo sau commit và polling. Cần nhập tồn theo size để bật kiểm số lượng; nhánh thành viên phải merge đầy đủ source integration trước khi chạy chung DB. Đây không phải tích hợp ví điện tử.
+
+> Bổ sung 24/10/2026 trên integration: đã thêm chuyển khoản Techcombank QR đối soát thủ công bên cạnh COD; xem [BANK_TRANSFER](docs/features/order-payment/BANK_TRANSFER.md) và [bàn giao sau audit](docs/REMEDIATION_20261024.md). Đây không phải implementation VNPAY/MOMO; UC cổng online vẫn chờ chốt với giảng viên. Kiến trúc catalog đã đưa SQL shop/thống kê về Repository.
+
 > Phiên bản 3.0, 13/10/2026. Nguồn ưu tiên: [Quy định và cấu hình chung](docs/QUY_DINH_VA_CAU_HINH_CHUNG.md). Cập nhật này thay phạm vi Customer/Staff/Admin và COD-only của bản 2; không xóa chức năng đã có. Trạng thái code/test thực tại docs/BASELINE_VERIFICATION.md sau khi kiểm chứng.
 
 ## 1. Mục tiêu

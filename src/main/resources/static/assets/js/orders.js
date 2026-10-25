@@ -1,4 +1,6 @@
 'use strict';
+document.querySelectorAll('[data-status="REVIEW"]').forEach(node => { node.textContent = 'Chờ đối soát VNPAY'; });
+document.querySelectorAll('[data-status="REFUND_PENDING"]').forEach(node => { node.textContent = 'Chờ hoàn tiền'; });
 window.orders = {
   async send(path, value) {
     const context = document.querySelector('meta[name="app-context"]')?.content || '';
@@ -44,8 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (frame.startsWith('CONNECTED\n')) {
           retry = 1000;
           ['orders', 'notifications'].forEach(name => socket.send('SUBSCRIBE\nid:order-ui-' + name + '\ndestination:/user/queue/' + name + '\nack:auto\n\n\0'));
+          const store=Number(document.getElementById('checkout-form')?.dataset.storeId);
+          if(store>0) {
+            ['/topic/stores/'+store+'/checkout','/topic/checkout/promotions'].forEach((destination,index)=>socket.send('SUBSCRIBE\nid:checkout-ui-'+index+'\ndestination:'+destination+'\nack:auto\n\n\0'));
+            document.dispatchEvent(new Event('utetra:availability-changed'));
+          }
         } else if (frame.startsWith('MESSAGE\n')) {
-          orders.message('Có cập nhật mới về đơn hàng hoặc thông báo. Tải lại trang để xem dữ liệu mới nhất.');
+          let payload;try {payload=JSON.parse(frame.slice(frame.indexOf('\n\n')+2));} catch(e) {}
+          if(payload?.type==='AVAILABILITY_CHANGED') document.dispatchEvent(new Event('utetra:availability-changed'));
+          else orders.message('Có cập nhật mới về đơn hàng hoặc thông báo. Tải lại trang để xem dữ liệu mới nhất.');
         } else if (frame.startsWith('ERROR\n')) socket.close();
       }
     };

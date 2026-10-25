@@ -13,15 +13,24 @@ import org.springframework.web.bind.annotation.*;
 public class CheckoutController {
   private final CheckoutService checkout;
   private final OperationsService operations;
+  private final BankTransferSettings bank;
+  private final VnpaySettings vnpay;
+  private final CheckoutAvailabilityService availability;
 
-  public CheckoutController(CheckoutService checkout, OperationsService operations) {
+  public CheckoutController(CheckoutService checkout, OperationsService operations, BankTransferSettings bank,
+      CheckoutAvailabilityService availability,VnpaySettings vnpay) {
     this.checkout = checkout;
     this.operations = operations;
+    this.bank = bank;
+    this.availability = availability;this.vnpay=vnpay;
   }
 
   @GetMapping
   public String page(Model model) {
     model.addAttribute("choices", operations.checkoutChoices(OrderWebSupport.actor()));
+    model.addAttribute("bankEnabled", bank.available());
+    model.addAttribute("vnpayEnabled",vnpay.available());
+    model.addAttribute("availability", availability.snapshot(OrderWebSupport.actor()));
     return "order/checkout";
   }
 
@@ -30,6 +39,10 @@ public class CheckoutController {
   public Map<String, Object> quote(@RequestBody Checkout request) {
     return checkout.quote(OrderWebSupport.actor(), request);
   }
+
+  @GetMapping("/availability")
+  @ResponseBody
+  public Map<String,Object> availability() { return availability.snapshot(OrderWebSupport.actor()); }
 
   @PostMapping
   @ResponseBody

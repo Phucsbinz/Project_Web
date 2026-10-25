@@ -1,0 +1,37 @@
+{
+  "mode": "WAR/TiDB, 9 migrations, real VNPAY disabled; no commerce seeding or provider transaction",
+  "checks": [
+    {
+      "route": "/api/system/health",
+      "status": 200
+    },
+    {
+      "route": "/menu",
+      "status": 200
+    },
+    {
+      "route": "/assets/js/checkout-availability.js",
+      "status": 200
+    },
+    {
+      "route": "/assets/js/orders.js",
+      "status": 200
+    },
+    {
+      "route": "/manager/order-tools",
+      "status": 401
+    },
+    {
+      "route": "/checkout/availability",
+      "status": 401
+    },
+    {
+      "route": "/payments/vnpay/ipn",
+      "status": 200
+    },
+    {
+      "route": "/payments/vnpay/return",
+      "status": 302
+    }
+  ]
+}

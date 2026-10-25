@@ -40,7 +40,19 @@ public final class OrderRequests {
       @Positive @JsonDeserialize(using = StrictNumbers.LongValue.class) Long shippingPromotionId,
       @Min(0) @JsonDeserialize(using = StrictNumbers.IntValue.class) int points,
       @NotBlank String quoteHash,
-      @Size(max = 500) String note) {}
+      @Size(max = 500) String note,
+      @Pattern(regexp = "COD|BANK_TRANSFER|VNPAY") String paymentMethod) {
+    public Checkout(String key, long addressId, long areaId, long carrierId,
+        Long productPromotionId, Long shippingPromotionId, int points, String quoteHash, String note) {
+      this(key, addressId, areaId, carrierId, productPromotionId, shippingPromotionId,
+          points, quoteHash, note, null);
+    }
+  }
+
+  public record BankConfirmation(
+      @NotBlank @Pattern(regexp = "[A-Za-z0-9][A-Za-z0-9._/-]{2,99}") String reference,
+      @NotNull @Positive java.math.BigDecimal amount,
+      @Min(0) @JsonDeserialize(using = StrictNumbers.LongValue.class) long version) {}
 
   public record Transition(
       @NotBlank String status,
@@ -70,7 +82,12 @@ public final class OrderRequests {
       @NotBlank @Size(max = 150) String name,
       @NotNull @PositiveOrZero java.math.BigDecimal baseFee,
       @JsonDeserialize(using = StrictNumbers.BooleanValue.class) boolean active,
-      @Min(0) @JsonDeserialize(using = StrictNumbers.LongValue.class) long version) {}
+      @Min(0) @JsonDeserialize(using = StrictNumbers.LongValue.class) long version,
+      @Positive @JsonDeserialize(using = StrictNumbers.LongValue.class) Long storeId) {
+    public CarrierInput(Long id,String name,java.math.BigDecimal baseFee,boolean active,long version) {
+      this(id,name,baseFee,active,version,null);
+    }
+  }
 
   public record RateInput(
       @Positive @JsonDeserialize(using = StrictNumbers.LongValue.class) long carrierId,

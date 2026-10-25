@@ -46,7 +46,8 @@ class CatalogIntegrationTest {
     @Autowired EntityManager em;
     @Autowired MockMvc mvc;
     @Autowired ObjectMapper mapper;
-    final UtetraPrincipal admin=principal(101,"ADMIN"),vendor=principal(102,"VENDOR"),other=principal(103,"VENDOR"),manager=principal(104,"MANAGER"),buyer=principal(105,"USER");
+    @Autowired com.utetra.security.JwtService jwt;
+    UtetraPrincipal admin=principal(101,"ADMIN"),vendor=principal(102,"VENDOR"),other=principal(103,"VENDOR"),manager=principal(104,"MANAGER"),buyer=principal(105,"USER");
     Long storeId,categoryId,toppingId;
     static UtetraPrincipal principal(long id,String role) { return new UtetraPrincipal(id,id,"ROLE_"+role,Instant.now().plusSeconds(3600)); }
     static BigDecimal money(long x) { return BigDecimal.valueOf(x); }
@@ -62,6 +63,11 @@ class CatalogIntegrationTest {
         for(String role:List.of("ADMIN","VENDOR","MANAGER","USER")) jdbc.update("insert into roles(name) select ? where not exists (select 1 from roles where name=?)","ROLE_"+role,"ROLE_"+role);
         for(var p:List.of(admin,vendor,other,manager,buyer)) jdbc.update("insert into users(id,role_id,username,email,password_hash,full_name,is_active,email_verified_at,created_at,updated_at,version) values(?,(select id from roles where name=?),?,?,?,'Test',true,current_timestamp,current_timestamp,current_timestamp,0)",p.userId(),p.role(),"catalog"+p.userId(),"catalog"+p.userId()+"@example.test","not-a-login-password");
         for(var p:List.of(admin,vendor,other,manager,buyer)) jdbc.update("insert into auth_sessions(id,user_id,refresh_token_hash,created_at,expires_at,version) values(?,?,?,?,?,0)",p.sessionId(),p.userId(),String.format("%064d",p.userId()),clock.instant(),clock.instant().plusSeconds(86400));
+        admin=jwt.verify(jwt.issue(admin.userId(),admin.sessionId(),admin.role()));
+        vendor=jwt.verify(jwt.issue(vendor.userId(),vendor.sessionId(),vendor.role()));
+        other=jwt.verify(jwt.issue(other.userId(),other.sessionId(),other.role()));
+        manager=jwt.verify(jwt.issue(manager.userId(),manager.sessionId(),manager.role()));
+        buyer=jwt.verify(jwt.issue(buyer.userId(),buyer.sessionId(),buyer.role()));
         jdbc.update("merge into commission_policies(id,name,rate_percent,is_active,created_at,updated_at,version) key(id) values(1,'Test policy',5,true,current_timestamp,current_timestamp,0)");
         storeId=stores.register(buyer,shop("shop-test",0,false)).id();
         stores.review(admin,storeId,new Decision("APPROVED","Đủ điều kiện",0,1L)); em.flush(); em.clear();

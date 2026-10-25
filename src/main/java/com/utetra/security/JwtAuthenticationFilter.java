@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token!=null) {
             try {
                 var principal=jwt.verify(token);
-                if (!identity.isCurrent(principal)) throw new IllegalArgumentException("Revoked session");
+                if (!identity.isCurrent(principal,token)) throw new IllegalArgumentException("Revoked session or token");
                 var authentication=new UsernamePasswordAuthenticationToken(principal,null,
                     List.of(new SimpleGrantedAuthority(principal.role())));
                 SecurityContextHolder.getContext().setAuthentication(authentication);

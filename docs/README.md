@@ -1,5 +1,13 @@
 # UTETra — Hồ sơ và cấu hình chung của nhóm
 
+> Đọc trạng thái mới nhất: [FINAL_REQUIREMENTS_STATUS](FINAL_REQUIREMENTS_STATUS.md). Clean verify 161 tests đạt; VNPAY có code/test nhưng thiếu merchant sandbox thật; Manager carrier theo shop đã bổ sung. Có [khảo sát có nguồn](SURVEY_FINDINGS_20261024.md), bộ hình report-assets và SETUP viết lại.
+
+Mới nhất 24/10: [JWT lưu DB, tồn kho/voucher đồng thời và WebSocket checkout](features/order-payment/REALTIME_CHECKOUT_JWT.md). Verify 153 tests đạt; có minh chứng STOMP trên trình duyệt với H2 riêng và migration thứ 8 trên TiDB. Code đang trên integration, chưa push.
+
+Bổ sung sau audit: [QR ngân hàng và việc giao từng thành viên](REMEDIATION_20261024.md); [hướng dẫn nghiệp vụ/setup bank transfer](features/order-payment/BANK_TRANSFER.md). Bản sửa đang trên integration, chưa push.
+
+Kiểm tra theo yêu cầu thầy, cập nhật 24/10: [ma trận yêu cầu, mức hoàn thiện và các phần còn thiếu](TEACHER_REQUIREMENTS_AUDIT_20261024.md). Đây là đánh giá source/test/hồ sơ tại commit 8369b67, không phải xác nhận project đã nghiệm thu 100%.
+
 Order, cập nhật 21/10: [đồng bộ catalog/identity, contract và kiểm chứng](features/order-payment/INTEGRATION_20261021.md).
 
 Nhánh `identify`: xem [thiết lập gửi mail sau khi pull](features/identity-membership/MAIL_SETUP.md)
@@ -32,4 +40,4 @@ Main có pom/config/layout/migration/common code. Không tự dựng project/th�
 
 Mỗi UC dùng [mẫu hồ sơ](templates/USE_CASE_NOTE.md), prompt dùng [mẫu prompt](templates/PROMPT_ENTRY.md). Ghi actor/owner/schema/file/symbol/commit, kiến trúc/activity/sequence, hướng dẫn từng bước, ảnh code/UI thật, setup, test và kết quả AI nhóm sửa. Prompt gợi ý không tính đã dùng; code/hình chưa thực hiện phải ghi rõ.
 
-Repo có nền cấu hình, chưa có tất cả tính năng thương mại. Credential SMTP/Cloudinary/VNPAY chưa cung cấp không được ghi như đã tích hợp; feature giữ config từ main và bổ sung UC của mình.
+Repo đã có code thương mại tích hợp; mức hoàn thiện xem audit và biên bản bổ sung 24/10 ở đầu file. Cloudinary ảnh đã có cấu hình/kiểm provider trước đó; SMTP phải thiết lập theo máy; VNPAY/MOMO chưa triển khai. Chuyển khoản QR là đối soát thủ công, không thay bằng chứng tích hợp cổng online. Feature giữ cấu hình/layout chung và cập nhật hồ sơ UC của mình.

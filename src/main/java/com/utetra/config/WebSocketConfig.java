@@ -40,6 +40,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         });
     }
     private boolean allowed(UtetraPrincipal principal,String destination) {
+        // These topics contain public availability IDs only, never order/identity data.
+        if("/topic/checkout/promotions".equals(destination)
+            || destination!=null && destination.matches("/topic/stores/[0-9]+/checkout")) return true;
         if ("/user/queue/orders".equals(destination) || "/user/queue/notifications".equals(destination)) return true;
         if ("/topic/admin/orders".equals(destination)) return "ROLE_ADMIN".equals(principal.role());
         if (destination!=null && destination.matches("/topic/stores/[0-9]+/orders")) {

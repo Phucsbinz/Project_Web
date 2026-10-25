@@ -15,13 +15,20 @@ public class JwtService {
     private final String audience;
     private final Duration accessDuration;
     private final Clock clock;
+    private final com.utetra.repository.AccessTokenRegistry registry;
+    public JwtService(String encodedKey,String issuer,String audience,Duration duration,Clock clock) {
+        this(encodedKey,issuer,audience,duration,clock,null);
+    }
+    @org.springframework.beans.factory.annotation.Autowired
     public JwtService(@Value("${security.jwt.secret-key}") String encodedKey,
             @Value("${security.jwt.issuer}") String issuer,
             @Value("${security.jwt.audience}") String audience,
-            @Value("${security.jwt.access-duration}") Duration duration, Clock clock) {
+            @Value("${security.jwt.access-duration}") Duration duration, Clock clock,
+            com.utetra.repository.AccessTokenRegistry registry) {
         this.key=Base64.getDecoder().decode(encodedKey);
         if (key.length<32) throw new IllegalArgumentException("JWT key must contain at least 32 random bytes");
         this.issuer=issuer; this.audience=audience; this.accessDuration=duration; this.clock=clock;
+        this.registry=registry;
     }
     /** Called only by the authentication service after validating the user/session. */
     public String issue(Long userId, Long sessionId, String role) {
@@ -29,13 +36,16 @@ public class JwtService {
             throw new IllegalArgumentException("Invalid token identity");
         try {
             Instant now=clock.instant();
+            String tokenId=UUID.randomUUID().toString();
             var claims=new JWTClaimsSet.Builder().issuer(issuer).audience(audience)
                 .subject(userId.toString()).claim("sid",sessionId.toString()).claim("role",role)
                 .issueTime(Date.from(now)).notBeforeTime(Date.from(now))
-                .expirationTime(Date.from(now.plus(accessDuration))).jwtID(UUID.randomUUID().toString()).build();
+                .expirationTime(Date.from(now.plus(accessDuration))).jwtID(tokenId).build();
             var token=new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.HS256).type(JOSEObjectType.JWT).build(),claims);
             token.sign(new MACSigner(key));
-            return token.serialize();
+            String serialized=token.serialize();
+            if(registry!=null) registry.register(userId,sessionId,tokenId,serialized,now.plus(accessDuration),now);
+            return serialized;
         } catch (JOSEException exception) { throw new IllegalStateException("JWT signing failed",exception); }
     }
     public UtetraPrincipal verify(String value) {
@@ -54,7 +64,9 @@ public class JwtService {
             Long sessionId=Long.valueOf(claims.getStringClaim("sid"));
             String role=claims.getStringClaim("role");
             if (userId<=0 || sessionId<=0 || !validRole(role)) throw new IllegalArgumentException("Invalid JWT identity");
-            return new UtetraPrincipal(userId,sessionId,role,claims.getExpirationTime().toInstant());
+            String tokenId=claims.getJWTID();
+            UUID.fromString(tokenId);
+            return new UtetraPrincipal(userId,sessionId,role,claims.getExpirationTime().toInstant(),tokenId);
         } catch (Exception exception) { throw new IllegalArgumentException("Invalid or expired JWT",exception); }
     }
     private static boolean validRole(String role) {

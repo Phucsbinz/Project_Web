@@ -54,7 +54,9 @@ public class LoyaltyService {
         } else {
             boolean refunded=payment.equals("REFUNDED");
             boolean cancelledUnpaid=status.equals("CANCELLED") && Set.of("UNPAID","PENDING","FAILED","CANCELLED").contains(payment);
-            if(!(refunded || type.equals("REFUND") && cancelledUnpaid)) throw IdentityException.invalid("Chưa đủ điều kiện hoàn điểm.");
+            boolean cancelledBank=status.equals("CANCELLED") && payment.equals("REFUND_PENDING")
+                && Set.of("BANK_TRANSFER","VNPAY").contains(order.get("payment_method"));
+            if(!(refunded || type.equals("REFUND") && (cancelledUnpaid || cancelledBank))) throw IdentityException.invalid("Chưa đủ điều kiện hoàn điểm.");
             String previous=type.equals("REFUND")?"REDEEM":"EARN";
             var origin=db.optional("select points_delta from loyalty_transactions where order_id=? and type=? and account_id=?",orderId,previous,accountId);
             if(origin.isEmpty()) return;

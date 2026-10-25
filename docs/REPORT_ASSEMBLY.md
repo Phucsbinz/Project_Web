@@ -1,5 +1,7 @@
 # UTETra — Tổng hợp hồ sơ Markdown thành báo cáo Word
 
+> Nguồn hiện tại: [trạng thái đầy đủ](FINAL_REQUIREMENTS_STATUS.md), [hướng dẫn setup](SETUP.md), [khảo sát thực hiện](SURVEY_FINDINGS_20261024.md), [manifest hình](report-assets/manifest.json). Hình/report source chưa thay DOCX cuối được review; không dùng kết luận baseline cũ để ghi chức năng đã thiếu sau khi đã bổ sung.
+
 ## 1. Ánh xạ yêu cầu giảng viên
 
 | Yêu cầu | Nhóm chuẩn bị tại đâu | Điều kiện đưa vào báo cáo |

@@ -21,6 +21,9 @@ public class CheckoutService {
   private final OrderPromotionService promos;
   private final OrderLoyaltyBridge loyalty;
   private final Clock clock;
+  private final BankTransferSettings bank;
+  private final OrderInventoryService inventory;
+  private final VnpaySettings vnpay;
 
   public CheckoutService(
       OrderDataRepository data,
@@ -28,13 +31,23 @@ public class CheckoutService {
       OrderSupport support,
       OrderPromotionService promos,
       OrderLoyaltyBridge loyalty,
-      Clock clock) {
+      Clock clock, BankTransferSettings bank, OrderInventoryService inventory,VnpaySettings vnpay) {
     this.data = data;
     this.refs = refs;
     this.support = support;
     this.promos = promos;
     this.loyalty = loyalty;
     this.clock = clock;
+    this.bank = bank;
+    this.inventory = inventory;
+    this.vnpay = vnpay;
+  }
+  private String method(Checkout request) {
+    if("VNPAY".equals(request.paymentMethod())) {
+      if(!vnpay.available()) throw OrderProblem.conflict("VNPAY chưa được cấu hình merchant.");
+      return "VNPAY";
+    }
+    return bank.method(request.paymentMethod());
   }
 
   record Line(
@@ -64,6 +77,7 @@ public class CheckoutService {
 
   private Quote calculate(Actor actor, Checkout request, boolean lock) {
     support.buyer(actor);
+    String paymentMethod = method(request);
     if (request.points() < 0) throw OrderProblem.invalid("Điểm không hợp lệ.");
     Cart cart = data.cart(actor.userId(), lock);
     if (cart == null || data.cartItems(cart.id).isEmpty())
@@ -72,6 +86,8 @@ public class CheckoutService {
     var address = refs.address(actor.userId(), request.addressId());
     var area = refs.area(cart.storeId, request.areaId());
     Carrier carrier = data.require(Carrier.class, request.carrierId(), lock);
+    if(carrier.managedStoreId!=null && !carrier.managedStoreId.equals(cart.storeId))
+      throw OrderProblem.invalid("Nhà vận chuyển không phục vụ cửa hàng này.");
     if (!carrier.isActive) throw OrderProblem.conflict("Nhà vận chuyển đã ngừng hoạt động.");
     var rates =
         data.query(
@@ -118,6 +134,9 @@ public class CheckoutService {
       lines.add(new Line(item, v, toppings, topTotal, total));
     }
     if (units > 50) throw OrderProblem.invalid("Mỗi đơn tối đa 50 ly.");
+    Map<Long,Integer> quantities=new TreeMap<>();
+    for(Line line:lines) quantities.merge(line.item.variantId,line.item.quantity,Math::addExact);
+    inventory.check(quantities);
     // Lock program IDs in a stable order before counting quota.
     if (lock) {
       TreeSet<Long> ids = new TreeSet<>();
@@ -161,7 +180,12 @@ public class CheckoutService {
     BigDecimal fee =
         goods.multiply(commission.ratePercent).divide(new BigDecimal("100"), 0, RoundingMode.DOWN);
     BigDecimal total = OrderSupport.amount(goods.add(shipping).subtract(shippingDiscount));
+    if (!"COD".equals(paymentMethod) && total.signum() <= 0)
+      throw OrderProblem.invalid("Đơn chuyển khoản phải có tổng tiền lớn hơn 0.");
+    if("VNPAY".equals(paymentMethod) && total.multiply(BigDecimal.valueOf(100)).toBigIntegerExact().toString().length()>12)
+      throw OrderProblem.invalid("Tổng tiền vượt giới hạn gửi cổng thanh toán.");
     var payload = new LinkedHashMap<String, Object>();
+    payload.put("paymentMethod", paymentMethod);
     payload.put("store", store);
     payload.put("address", address);
     payload.put("area", area);
@@ -242,6 +266,9 @@ public class CheckoutService {
     Quote q = calculate(actor, request, true);
     if (!q.hash.equals(request.quoteHash()))
       throw OrderProblem.conflict("Giá hoặc cấu hình đã thay đổi; hãy xác nhận báo giá mới.");
+    Map<Long,Integer> quantities=new TreeMap<>();
+    for(Line line:q.lines) quantities.merge(line.item.variantId,line.item.quantity,Math::addExact);
+    Set<Long> trackedVariants=inventory.reserve(q.cart.storeId,quantities);
     Order o = new Order();
     o.orderCode = "UT-" + UUID.randomUUID().toString().replace("-", "");
     o.userId = actor.userId();
@@ -268,7 +295,7 @@ public class CheckoutService {
     o.storeNet = q.goodsNet.subtract(q.commissionAmount);
     o.pointsUsed = request.points();
     o.pointsEarned = 0;
-    o.paymentMethod = "COD";
+    o.paymentMethod = method(request);
     o.paymentStatus = "UNPAID";
     o.status = "NEW";
     o.note = OrderSupport.note(request.note(), 500);
@@ -283,6 +310,7 @@ public class CheckoutService {
       OrderItem i = new OrderItem();
       i.orderId = o.id;
       i.variantId = l.item.variantId;
+      i.stockReserved = trackedVariants.contains(l.item.variantId);
       i.productName = l.variant.get("product_name").toString();
       i.sizeName = l.variant.get("size_name").toString();
       i.basePrice = money(l.variant, "base_price");
@@ -317,12 +345,13 @@ public class CheckoutService {
     promos.reserve(request.shippingPromotionId(), o.id, o.userId, q.shippingDiscount);
     PaymentTransaction p = new PaymentTransaction();
     p.orderId = o.id;
-    p.provider = "COD";
-    p.txnRef = "COD-" + o.orderCode;
+    p.provider = o.paymentMethod;
+    p.txnRef = "VNPAY".equals(o.paymentMethod)?"VN"+UUID.randomUUID().toString().replace("-",""):o.paymentMethod + "-" + o.orderCode;
     p.amount = o.finalAmount;
     p.status = "PENDING";
     p.createdAt = clock.instant();
     p.updatedAt = clock.instant();
+    if("VNPAY".equals(o.paymentMethod)) p.expiresAt=clock.instant().plus(vnpay.timeout());
     data.save(p);
     data.clear(q.cart);
     support.event(o, actor, null, "CREATED", "");

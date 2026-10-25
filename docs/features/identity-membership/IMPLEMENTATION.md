@@ -1,5 +1,7 @@
 # feature/identity-membership — OTP, tài khoản, tương tác và thành viên
 
+Bàn giao 24/10: đọc [JWT DB, stock/version và WebSocket checkout](../order-payment/REALTIME_CHECKOUT_JWT.md) trước khi merge/chạy với schema mới. Các nhánh cần nhận đủ source integration, không chỉ migration/JS; JWT cũ cần đăng nhập lại hoặc refresh hợp lệ.
+
 > Cập nhật theo quy định thầy ngày 13/10/2026. Người phụ trách TV2: [điền tên]. Baseline main/commit: [điền]. Đây là hướng dẫn công việc, không xác nhận mọi UC đã code.
 
 ## 1. Các file phải đọc và cấu hình

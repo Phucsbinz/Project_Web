@@ -1,81 +1,97 @@
-# UTETra — Hướng dẫn chạy baseline chung
+# Thiết lập bản tích hợp UTETra
 
-## 1. Bộ phiên bản và cấu hình thật
+Cập nhật 24/10/2026. Đây là hướng dẫn bản integration có code catalog, identity và order; thay hướng dẫn baseline ba bảng cũ. Không coi việc khởi động thành công là đã nghiệm thu email, media hoặc thanh toán thật.
 
-Java 21; Boot 3.5.13; Maven Wrapper 3.9.16; WAR utetra; package com.utetra. Đọc pom.xml và src/main/resources/application.properties, application-mysql.properties. Cấu hình ghi trực tiếp và được theo dõi Git theo yêu cầu nhóm; không import .env. Mật khẩu chỉ tại file cấu hình cần thiết, không sao chép vào báo cáo/prompt/log.
+## 1. Chuẩn bị và nhận source
 
-MySQL Connector nối TiDB Cloud cổng 4000, database riêng utetra_db, sslMode=VERIFY_IDENTITY. Database đã tạo riêng; không đổi hoặc migration project_idv. TLS dùng truststore JDK; không hạ xuống useSSL=false/trust-all khi gặp lỗi kết nối cloud. JPA validate và Flyway chỉ chạy migration version mới.
-
-## 2. Lấy main và chạy
+- JDK 21, Git, Maven Wrapper có sẵn trong repo; Python 3 dùng các script hỗ trợ. Build WAR bằng Spring Boot 3.5.13, JSP/JSTL, SiteMesh và Bootstrap chung.
+- Nhận toàn bộ bản integration đã được nhóm công bố, không chỉ copy JSP/config/migration. Source đang sửa chưa push sẽ không xuất hiện trên máy khác khi pull.
+- Đọc AGENTS.md, SHARED_UI, PROJECT_PLAN, DATABASE_DESIGN, USE_CASES và hồ sơ nhánh. Không chạy code cũ song song để demo inventory/JTI mới trên cùng DB.
 
 ```powershell
-git switch main
+git status --short
+git fetch origin
+git switch integration/utetra
+git pull --ff-only origin integration/utetra
 java -version
-.\mvnw.cmd -v
-.\mvnw.cmd clean verify
+.\mvnw.cmd -B -ntp clean verify
+```
+
+Chỉ pull khi working tree sạch hoặc đã lưu công việc của mình. Không dùng reset/force push để bỏ thay đổi thành viên. Nếu JAVA_HOME đang trỏ JDK khác, đặt lại đường dẫn JDK 21 thực trên máy trước khi chạy Maven.
+
+## 2. Database
+
+Profile mặc định `mysql`, database riêng `utetra_db`. Thông tin kết nối nằm trong `src/main/resources/application-mysql.properties` theo cấu hình chung của repo; không copy credential vào báo cáo/ảnh/log. Không dùng database `project_idv`.
+
+- Flyway quản lý migration, `ddl-auto=validate`, `clean-disabled=true`. Bản có carrier theo shop dùng migration đến `2026102403` và tổng 9 migration. Không sửa checksum các migration đã chạy.
+- Không dùng create-drop/update trên cloud để chữa lỗi thiếu cột. Nếu schema lỗi, ghi migration/version và sửa có kiểm soát.
+- DB thực là TiDB tương thích MySQL. Nếu thầy yêu cầu đúng MySQL Server, nhóm cần xác nhận/kiểm thêm trên MySQL riêng. CHECK trên cluster từng được đọc là OFF; vẫn phải kiểm validation và cập nhật có điều kiện, không suy diễn mọi CHECK đã được DB thực thi.
+- Profile test dùng H2 in-memory. Fixture có guard chặn reset cloud; không đổi test datasource sang cloud để tạo dữ liệu demo.
+
+## 3. Chạy và dừng ứng dụng
+
+```powershell
 java -jar target/utetra.war
 ```
 
-PATH/JAVA_HOME phải trỏ Java21, không Java17 mặc định máy hiện tại. Nếu cần trên máy đang làm:
+Mở `http://localhost:8080/`. Health: `/api/system/health`. Nếu dùng script:
 
 ```powershell
-$env:JAVA_HOME='D:/java/.tools/jdk21/jdk-21.0.12.1+1'
-$env:Path=$env:JAVA_HOME+'/bin;'+$env:Path
+py -3 tools/start_web.py 8080
+py -3 tools/stop_web.py
 ```
 
-Máy khác điền JDK21 của máy mình; không tự sửa pom thành Java17/26. Mở http://localhost:8080/; health JSON /api/system/health. Trang home hiện chỉ kiểm chứng JSP/JSTL/SiteMesh/Bootstrap và ghi rõ tính năng còn chờ feature. /auth/login là màn hình thông tin, chưa luồng đăng nhập/OTP thật; không có tài khoản demo tự tạo.
+Script tìm JDK 21 từ JAVA_HOME/UTETRA_JAVA_HOME hoặc bộ công cụ của workspace; không mặc định máy thành viên có đường dẫn JDK giống máy người khác. Dừng WAR trước khi đóng gói lại trên Windows để tránh file WAR đang bị khóa.
 
-## 3. Schema và test
+## 4. Tài khoản và dữ liệu cần có
 
-V1 hiện thực roles/users/auth_sessions, seed 5 role; flyway_schema_history là bảng kỹ thuật. Không tạo 43 bảng bằng Hibernate update; chúng là thiết kế để triển khai migration tiếp theo. Thứ tự/owner/FK theo DATABASE_DESIGN. Main chốt migration, không mỗi nhánh tạo V2 khác nhau.
+Không có tài khoản demo production tự tạo kèm hướng dẫn này. Nhóm cần tài khoản active/verified đúng role và scope, không ghi mật khẩu vào báo cáo.
 
-Test profile test dùng H2 isolated, create-drop chỉ database in-memory để thử JWT/role/CSRF/session; không trỏ test create-drop lên cloud. Migration/JPA/TLS kiểm chứng bằng WAR trên MySQL/TiDB thật; bằng chứng trong BASELINE_VERIFICATION.md.
+1. Admin có quyền toàn hệ thống; Manager được phân công shop; quyền catalog dùng chung phải được cấp `CATALOG_ADMIN` nếu báo cáo chức năng đó.
+2. User đăng ký shop tạo hồ sơ chờ duyệt. Admin chuẩn bị policy chiết khấu phù hợp, duyệt và kích hoạt shop; chủ shop đăng nhập lại để nhận quyền Vendor. Vendor vẫn có luồng mua hàng như User.
+3. Chuẩn bị danh mục, sản phẩm, size, topping và ảnh; shop đúng giờ/đang nhận đơn. Muốn demo finite inventory, nhập số ly theo size; NULL là chưa bật theo dõi số lượng hữu hạn.
+4. Chuẩn bị khu vực giao, carrier và biểu phí. Manager tạo carrier riêng của shop; carrier toàn hệ thống do Admin quản lý. Carrier riêng không được dùng ở shop khác.
+5. User có địa chỉ thuộc chính mình; voucher đúng shop/global và còn quota. Tài khoản test cần dữ liệu hợp lệ trước khi thử checkout.
+6. Top 20/phân trang cần đủ dữ liệu; Guest hiện diễn giải bán >10 theo số ly từ đơn DELIVERED/PAID, cần thầy xác nhận. Dữ liệu thử phải ghi rõ là demo; không giả là giao dịch thật.
 
-## 4. Cấu hình provider
+Lần kiểm tra trước, DB có 9 tài khoản active/verified nhưng không có shop/product/carrier/policy đang hoạt động. Không lấy kết quả test H2 làm bằng chứng DB cloud đã đủ dữ liệu.
 
-| Nhóm properties | Cần điền/bật | Trạng thái |
-| --- | --- | --- |
-| security.jwt.* | Đã có key ngẫu nhiên, issuer/audience/15m/7d; không tự thay khác giữa nhánh | Hạ tầng ký/verify; login/refresh nghiệp vụ cần feature |
-| app.otp.* và spring.mail.* | SMTP/from/auth/TLS, enabled; OTP HMAC/TTL5m/5attempts/60s theo contract | Chưa có SMTP thật; OTP nghiệp vụ chưa code |
-| cloudinary.* | cloud-name/api-key/api-secret; enabled=true khi có credentials | Bean/adapter có kiểm ảnh, hiện disabled |
-| payment.vnpay.* | tmn-code/hash-secret/return URL/IPN HTTPS công khai; enabled | Chưa merchant credentials/handler; không báo payment thành công |
-| features.shipper.enabled | Bật khi có module assignment/permission/test | Phần thêm, hiện false |
+## 5. Email OTP
 
-Không lấy credentials mẫu trong PDF để dùng thật. Provider disabled không nghĩa là tích hợp đã hoàn tất. Cloudinary baseline hỗ trợ ảnh JPEG/PNG5MB; feature phải mở rộng video đúng kiểm MIME/signature/20MB cho comments, và cleanup theo commit/rollback. Chỉ mở IPN khi có handler verify; CSRF exception giới hạn callback thật, không disable toàn app.
+Code đăng ký/kích hoạt, đăng nhập/đăng xuất và reset OTP đã triển khai; tài liệu baseline nói chưa có code không còn đúng.
 
-## 5. Lỗi cấu hình đã gặp và cách giữ nhất quán
-
-Java default17 không build release21 → đặt JAVA_HOME. PowerShell truyền Maven -D có dấu chấm phải quote tham số. SiteMesh 3.2.2 mặc định thêm prefix `/WEB-INF/decorators/`. Main map các đường dẫn đầy đủ `/WEB-INF/views/layouts/*.jsp`, nên phải `builder.setDecoratorPrefix("")` trước mapping. Bản sửa này loại đường dẫn ghép sai gây 404/500; vẫn giữ dispatcher REQUEST/ASYNC/ERROR và firewall nghiêm ngặt với request ngoài. API/assets/ws/payments loại khỏi decorator; filter JWT đăng ký một lần trong chain, bean servlet registration disabled.
-
-Các lỗi DNS/TLS/TiDB/credentials phải kiểm cấu hình trước, không đổi DB khác. Nếu 8080 đã dùng, đổi server.port trực tiếp chung hoặc dùng --server.port khi chạy thử và ghi rõ; không để thành viên tự đổi source main không review.
-
-## 6. Setup theo module và nhật ký
-
-Catalog cần Cloudinary/catalog/store/promo seed; Identity cần SMTP/OTP/session/address/community/loyalty; Order cần contract giá/quyền/điểm/promo và merchant sandbox/carrier/commission. Mỗi branch có hướng dẫn riêng và UC note.
-
-| Ngày/người | Commit/profile | Lệnh/URL/dữ liệu | Kết quả thật | Lỗi/cách sửa | Hình/log |
-| --- | --- | --- | --- | --- | --- |
-| [điền] | [điền] | [điền] | [điền] | [điền] | [điền] |
-
-## 7. Linux và cloud
-
-Cần JDK 21 đầy đủ, không chỉ JRE; `java -version` và `javac -version` cùng nền 21. Wrapper không cần chmod file tracked: dùng `bash mvnw`. Nếu thư mục người dùng chỉ đọc, đặt Maven cache trong `/workspace`.
-
-```bash
-cd /workspace/Project_Web
-export JAVA_HOME=/workspace/onboarding-utetra/jdk21
-export PATH="$JAVA_HOME/bin:$PATH"
-export MAVEN_USER_HOME=/workspace/.m2
-export MAVEN_OPTS="${MAVEN_OPTS:-} -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts"
-bash mvnw -s /workspace/onboarding-utetra/settings.xml -B -ntp -Dmaven.repo.local=/workspace/.m2/repository verify
+```powershell
+py -3 tools/configure_mail.py --email your-address@gmail.com
 ```
 
-Các đường dẫn trên là của môi trường cloud đã chuẩn bị; máy khác dùng JDK/cache của máy mình. `settings.xml` ngoài checkout được tạo từ HTTPS_PROXY của máy bởi install_script trong cấu hình Codex; không lưu thông tin proxy/credential vào Git. Dùng truststore hệ thống có CA môi trường, không tắt TLS. install_script cài JDK với SHA-256 kiểm từ Oracle và tạo settings/cache, start_skill ghi bước khởi động; chúng là cấu hình Codex, không tự push lên GitHub.
+Nhập App Password của tài khoản gửi do chủ Gmail cấp, không dùng mật khẩu đăng nhập Gmail. Script và cấu hình bàn giao theo [MAIL_SETUP](features/identity-membership/MAIL_SETUP.md). Trên máy kiểm tra chưa có SMTP local; phải cấu hình và khởi động lại trước demo nhận OTP thật. Không gửi OTP thử cho người không tham gia kiểm thử.
 
-Smoke test isolated với H2, giữ nguyên file properties tracked:
+## 6. JWT và WebSocket
 
-```bash
-bash mvnw -s /workspace/onboarding-utetra/settings.xml -B -ntp -Dmaven.repo.local=/workspace/.m2/repository spring-boot:run -Dspring-boot.run.useTestClasspath=true -Dspring-boot.run.profiles=test '-Dspring-boot.run.arguments=--server.port=8081 --spring.config.additional-location=file:./src/test/resources/'
-```
+JWT dùng cookie HttpOnly, CSRF cho mutation và kiểm account/role/session DB. Session lưu thêm JTI/hash/hạn access token, refresh thay token hiện hành; đăng nhập lại hoặc refresh hợp lệ sau khi nâng schema mới.
 
-Kiểm HTTP nội bộ: home/login 200 với layout render, health 200 JSON UTETra/UP, Bootstrap 200 CSS, admin không xác thực 401. H2 disposable không chạy migration MySQL và không chứng minh TiDB. TiDB cần DNS và TCP native đến host trong application-mysql.properties cổng 4000; cloud hiện lỗi DNS, probe HTTPS CONNECT nhận 403. Không sửa DB hoặc hạ TLS để vượt lỗi mạng. Sau khi mạng hỗ trợ, chạy WAR với profile mysql và kiểm Flyway/JPA/TLS thật.
+WebSocket `/ws` dùng STOMP; topic order kiểm quyền riêng. Checkout nghe thay đổi stock/voucher sau commit và có polling 15 giây. DB transaction/khóa quyết định ai đặt thành công. Xem [REALTIME_CHECKOUT_JWT](features/order-payment/REALTIME_CHECKOUT_JWT.md).
+
+## 7. Cloudinary
+
+Adapter upload/xóa ảnh đã có và có biên bản thử PNG thật trước đó. Đọc `CloudinaryConfig` và file properties hiện tại; không chụp khóa lên báo cáo. Bình luận hỗ trợ ảnh/video nhưng cần kiểm video thực qua provider trên máy báo cáo; test mock/PNG không thay nghiệm thu MP4. Media provider lỗi không được ghi thành upload thành công.
+
+## 8. Các phương thức thanh toán
+
+- COD: không cần merchant ngân hàng. Kiểm giao hàng và xác nhận thu tiền theo quyền; chưa thu đủ không được coi đơn hoàn tất.
+- QR Techcombank: [BANK_TRANSFER](features/order-payment/BANK_TRANSFER.md). QR tài khoản tĩnh, khách nhập số tiền/nội dung theo đơn; Admin đối soát và xác nhận. Không tự chuyển tiền/không tự xác nhận từ ảnh chụp.
+- VNPAY: đã có code ký URL và kiểm IPN, vẫn tắt ở cấu hình thật khi thiếu merchant. Xem [VNPAY](features/order-payment/VNPAY.md) để thiết lập, kiểm sandbox, public IPN, hủy/hoàn/đối soát. Không dùng key test trong mã kiểm thử làm tài khoản merchant thật.
+- MOMO: chưa triển khai; nếu đã chọn VNPAY thì không bắt buộc làm thêm cả MOMO chỉ vì đề viết VNPAY hoặc MOMO.
+
+## 9. Checklist máy báo cáo
+
+- Build và health đạt, schema đúng version, chỉ một layout và một Bootstrap.
+- Đăng nhập được đúng role/scope; Vendor mua như User, Manager không sửa shop khác.
+- Nhận OTP đăng ký/reset thật; upload ảnh/video đúng quyền và định dạng.
+- Có shop/món/địa chỉ/carrier/rate/policy/voucher và dữ liệu top hợp lệ.
+- Demo hai người tranh tồn/voucher và trạng thái socket, kể cả khi không nhận được socket thì server vẫn chặn vượt quota.
+- Demo COD/QR và VNPAY sandbox khi merchant đã cấp; phân biệt chữ ký IPN và ReturnUrl.
+- Demo giao/thu/trả/hoàn và ledger, chụp desktop/mobile/tablet đúng phiên bản.
+- Hoàn thiện tên/MSSV/phân công, khảo sát, hình source/activity/UI, prompt, DOCX và diễn tập; không tự xác nhận đã nộp/chấm đạt.
+
+Hạn nộp/link nộp theo thông báo lớp; văn bản được cung cấp chưa có ngày cụ thể.

@@ -1,0 +1,29 @@
+{
+  "mode": "WAR/TiDB, 8 migrations; no commerce seeding or bank calls",
+  "checks": [
+    {
+      "route": "/api/system/health",
+      "status": 200
+    },
+    {
+      "route": "/menu",
+      "status": 200
+    },
+    {
+      "route": "/assets/js/checkout-availability.js",
+      "status": 200
+    },
+    {
+      "route": "/assets/js/orders.js",
+      "status": 200
+    },
+    {
+      "route": "/assets/js/catalog-management.js",
+      "status": 200
+    },
+    {
+      "route": "/checkout/availability",
+      "status": 401
+    }
+  ]
+}

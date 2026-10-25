@@ -166,7 +166,7 @@ Quản lý, phân công nhiệm vụ các thành viên và có quá trình commi
 Đúng cấu trúc project theo mô hình 3 tầng: 0.5 điểm
 Đúng và đầy đủ tính logic, validation, security,.. của các chức năng từng role: 6 điểm
 Giao diện đẹp, dễ sử dụng và Responsive: 1 điểm
-Các chức năng sáng tạo: đối với đề tài bán hàng (ví dụ: thanh toán qua ví điện tử, JWT, Phiếu giảm giá, websocket...) các đề tài khác với các chức năng tương đương (websocket): 1 điểm. 
+Các chức năng sáng tạo: đối với đề tài bán hàng (ví dụ: thanh toán qua ví điện tử, JWT, Phiếu giảm giá, websocket...) các đề tài khác với các chức năng tương đương (websocket): 1 điểm.
 Khả năng báo cáo và trả lời câu hỏi: 0.5 điểm
 f. Thời gian:
 
@@ -673,3 +673,109 @@ Có code gửi OTP, template mail, mẫu cấu hình và script nhập App Passw
 cho từng máy. Xem [MAIL_SETUP](features/identity-membership/MAIL_SETUP.md).
 Không đưa `.local/mail.properties` hay App Password vào Git. Kết quả kiểm chứng
 và commit bàn giao được ghi trong AI_LOG của identity.
+
+## AUDIT-AI-001 — Đối chiếu đầy đủ yêu cầu giảng viên — 24/10/2026
+
+Prompt nguyên văn:
+
+```text
+bạn check xem nó có chuẩn theo các yêu cầu hay quy định của thầy tôi không và có vi phạm gì không vì tôi muốn là báo theo yêu cầu của thầy tôi bạn liệt kê đầy đủ các yêu cầu của thầy tôi và xem project đã bám các yêu cầu ở các mức độ nào đã hoàn chỉnh theo yêu cầu đó chưa
+```
+
+Kết quả: [TEACHER_REQUIREMENTS_AUDIT_20261024](TEACHER_REQUIREMENTS_AUDIT_20261024.md), đối chiếu snapshot `integration/utetra` tại `8369b67` với quy định cuối kỳ và yêu cầu báo cáo AI đã gửi. Phân biệt yêu cầu thầy với quyết định nhóm và tài liệu BOOKROOM giữa kỳ.
+
+Thực hiện: đọc source/config/tài liệu và báo cáo test đã có; đếm lại Surefire (137 test, không lỗi/fail/skip); chạy lại Shared UI checker so main đạt; truy vấn chỉ đọc `utetra_db` để kiểm dữ liệu và CHECK. Không ghi credential, không seed/sửa DB, không thay nghiệp vụ/cấu hình, không gửi mail/upload/thanh toán hay khởi động server trong lượt audit; không push. Lượt clean verify và 16 HTTP check là bằng chứng của lượt tích hợp trước, không nhận là đã chạy mới trong lượt này.
+
+Kết luận chính: chưa thể xác nhận hoàn chỉnh 100%; thiếu tích hợp cổng online, dữ liệu commerce để demo, SMTP trên máy hiện tại, khảo sát/DOCX/bộ hình hoàn chỉnh; cần rà tầng dữ liệu, quyền Manager và CHECK đang OFF. Có code/test không đồng nghĩa đã nghiệm thu mọi luồng với provider/DB thật. Ma trận chi tiết và thứ tự hoàn thiện nằm trong file kết quả.
+
+Tin nhắn bổ sung cùng yêu cầu, nguyên văn: `còn thiếu gì thì bạn liệt kê ra`. Phản hồi tập trung danh sách phần thiếu/cần hoàn thiện, phân biệt thiếu code với thiếu cấu hình, dữ liệu demo, hồ sơ và nội dung cần thầy xác nhận.
+
+## ORD-AI-BANK-20261024 — QR chuyển khoản và hoàn thiện sau audit
+
+Prompt nguyên văn, kèm ảnh QR người dùng cung cấp:
+
+```text
+[Image #1]  bạn làm phần thanh toán ngân hàng đây là qr của tôi bạn làm gắn vào còn mấy phần kia thiếu gì thì bạn bổ sung còn những phần cần có người đảm nhận bổ sung thì bạn nêu rõ để tôi kêu người đó sửa còn bạn sửa được thì bạn sửa
+```
+
+Ảnh nguồn: `44c52f54ad7a2d24746b.jpg`. Không sửa/xóa ảnh người dùng. Bản dùng trong website ở `static/assets/images/payment/techcombank-utetra.jpg`.
+
+Kết quả và phân công: [REMEDIATION_20261024](REMEDIATION_20261024.md), [BANK_TRANSFER](features/order-payment/BANK_TRANSFER.md). Thêm chuyển khoản thủ công Admin đối soát, giữ COD; hủy/trả/hoàn và late payment; tách data access catalog về Repository. Làm trên integration; không tự commit/push hoặc sửa các feature branch. Không lưu khóa/password/token vào prompt hay báo cáo.
+
+Kiểm thử: lượt đầu phát hiện tên bảng sai trong testcase và rule điểm identity chưa cho hoàn điểm khi hủy bank đã trả; sửa nguyên nhân và bổ sung regression. Lượt `clean verify` cuối đạt **143 tests, không failure/error/skip**, có test xác nhận đồng thời và unique DB; render JSP/Tomcat thật. Bổ sung Playwright với fixture H2 riêng và smoke WAR/TiDB theo biên bản kết quả; không có giao dịch ngân hàng thật và không seed commerce vào cloud. Không coi QR thủ công là hoàn thành VNPAY/MOMO.
+
+## STACK-AUDIT-20261024 — Kiểm tra công nghệ theo tên đề tài
+
+Prompt nguyên văn:
+
+```text
+12. Xây dựng website chuỗi bán trà sữa UTETra bằng Spring boot + JSP/JSTL + Decorator Sitemesh + Bootstrap + JPA + SQLServer/MySQL/ postgreSQL+JWT+websocket+Cloudairy. bạn xem đã dùng các framework thư viện công cụ này chưa
+```
+
+Kết quả: đọc lại pom, cấu hình và source thực. Có Spring Boot 3.5.13/Java 21, JSP/JSTL, SiteMesh 3.2.2, Bootstrap 5.3.3, JPA, MySQL driver/dialect, Nimbus JWT 10.10, STOMP WebSocket và Cloudinary HTTP5 2.4.0. DB thực là TiDB Cloud tương thích MySQL, không phải MySQL Server; không dùng SQL Server/PostgreSQL trong cấu hình đã chọn. Cloudinary có upload/delete adapter và biên bản thử ảnh thật trước đó; không suy diễn mọi luồng media đã nghiệm thu. Không chạy lại ứng dụng/test/provider, không sửa code hay cấu hình trong lượt hỏi này.
+
+## CREATIVE-AI-20261024 — JWT DB, tranh tồn/voucher và WebSocket checkout
+
+Prompt nguyên văn:
+
+```text
+Các chức năng sáng tạo: đối với đề tài bán hàng (ví dụ: thanh toán qua ví điện tử, JWT, Phiếu giảm giá, websocket...) các đề tài khác với các chức năng tương đương (websocket) bạn xem đã có những này chưa bổ sung thêm đi jwt bạn lưu trong db luôn còn websocket tôi nghĩ sẽ dùng trong thanh toán khi nhiều người cùng mua cùng lúc nó sẽ xử lý logic realtime nhỉ ví dụ còn 1 sp tồn kho mà 2 người cùng mua hay là còn 1 voucher mà 2 người cùng dùng ... trong phần thanh toán
+```
+
+Kết quả: [REALTIME_CHECKOUT_JWT](features/order-payment/REALTIME_CHECKOUT_JWT.md). Đã kiểm phần có sẵn, thêm access JWT JTI/hash/hạn dùng vào auth_sessions, finite stock theo size và version chống ghi đè, giữ/hoàn tồn theo trạng thái, WebSocket availability sau commit và polling; giữ quota/voucher transaction, bổ sung test GLOBAL giữa shop. DB transaction/khóa quyết định người thắng; socket không thay logic chống bán vượt tồn. Không lưu bearer JWT nguyên văn trong DB/tài liệu.
+
+Kiểm chứng cuối: Maven verify 153 test, không fail/error/skip; browser H2 riêng có 3 kịch bản, nhận 4 frame STOMP availability, không lỗi JS, kiểm ảnh desktop/mobile; WAR/TiDB validate 8 migration và 6 HTTP checks đạt. Chưa test cạnh tranh tạo đơn trên TiDB, chưa có ví VNPAY/MOMO, không seed/reset cloud hay gọi ngân hàng. Các lỗi fixture phát hiện được ghi trong tài liệu kết quả. Không commit/push, chỉ làm trên integration; không đổi layout chung.
+
+## FINAL-AUDIT-20261024 — Đối chiếu đầy đủ và bổ sung
+
+Prompt nguyên văn:
+
+```text
+bạn check thử đã đáp ứng hết chưa cần bổ sung gì không thì bổ sung a. Khảo sát hiện trạng và phân tích thiết kế hệ thống
+
+https://utexlms.hcmute.edu.vn/pluginfile.php/1976452/mod_page/content/17/KhaoSat_PhanTichHeThong.docx
+
+b. Tiến hành phân công nhiệm vụ từng thành viên code theo các chức năng theo User+Guest; Vendor, Manager, Admin,Shipper tương ứng trong bước a. Sử dụng 01 template Boostrap để làm giao diện đẹp.
+
+- Chức năng chung: tìm kiếm và lọc sản phẩm, đăng ký tài khoản có gửi mã OTP kích hoạt qua Email, đăng nhập, đăng xuất, quên mật khẩu có gửi mã OTP kích hoạt qua Email. Mật khẩu phải được mã hóa. Nếu dùng Spring boot thì dùng Spring Security.
+
+Guest: Giao diện Trang chủ (hiển thị sản phẩm bán trên 10 sản phẩm của các shop (sắp xếp theo thứ tự từ lớn đến nhỏ)
+User: Giao diện trang chủ, trang sản phẩm theo danh mục, 20 (sản phẩm mới, bán chạy, đánh giá, yêu thích) nhất được phân trang (hoặc lazy loading), trang profile user (có quản lý địa chỉ nhận hàng khác nhau nếu làm đề tài về Bán hàng), trang chi tiết sản phẩm, giỏ hàng được lưu trên database, thanh toán(COD, VNPAY hoặc MOMO), quản lý lịch sử mua hàng theo trạng thái (đơn hàng mới, đã xác nhận, đang giao, đã giao, hủy, trả hàng- hoàn tiền), thích sản phẩm, sản phẩm đã xem, đánh giá sản phẩm đã mua, bình luận (text (tối thiểu 50 ký tự), hình ảnh/video) sản phẩm đã mua, chọn mã giảm giá,...
+Vendor (Seller): có các quyền của User và thêm các chức năng: đăng ký shop, quản lý trang chủ shop, quản lý sản phẩm của mình, quản lý đơn hàng của shop theo trạng thái (đơn hàng mới, đã xác nhận, đã lấy hàng, đang giao, đã giao, hủy, trả hàng- hoàn tiền), tạo chương trình khuyến mãi, quản lý doanh thu của shop.
+Manager: Quản lý từng cửa hàng: tìm kiếm và quản lý user, quản lý sản phẩm của từng shop, Quản lý doanh mục, quản lý chiết khấu app cho các shop, quản lý chương trình khuyến mãi (giảm % sản phẩm, giảm phí vận chuyển), quản lý nhà vận chuyển (tên nhà vận chuyển, phí vận chuyển)..
+Admin: tìm kiếm và quản lý user, quản lý sản phẩm của từng shop, Quản lý doanh mục, quản lý chiết khấu app cho các shop, quản lý chương trình khuyến mãi (giảm % sản phẩm, giảm phí vận chuyển), quản lý nhà vận chuyển (tên nhà vận chuyển, phí vận chuyển).
+Shipper (phần thêm): Quản lý đơn hàng được phân công đi giao, thống kê đơn hàng được phân công giao.
+c. Các đề tài không phải bán hàng thì sẽ có role: Guest, User, Manager, Admin. các chức năng cho từng role sẽ thảo luận với giáo viên để quyết định.
+
+d. Viết báo cáo mà mình được phân công ứng với vai trò từng User+Guest; Vendor, Admin, shipper theo từng thành viên trong nhóm.
+
+
+e. Tiêu chí chấm điểm: thang điểm 100 và quy đổi sang thang điểm 10
+
+Quản lý, phân công nhiệm vụ các thành viên và có quá trình commit Github: 1 điểm
+Đúng cấu trúc project theo mô hình 3 tầng: 0.5 điểm
+Đúng và đầy đủ tính logic, validation, security,.. của các chức năng từng role: 6 điểm
+Giao diện đẹp, dễ sử dụng và Responsive: 1 điểm
+Các chức năng sáng tạo: đối với đề tài bán hàng (ví dụ: thanh toán qua ví điện tử, JWT, Phiếu giảm giá, websocket...) các đề tài khác với các chức năng tương đương (websocket): 1 điểm.
+Khả năng báo cáo và trả lời câu hỏi: 0.5 điểm 1. Với sự hỗ trợ của AI, Nhóm hãy viết tài liệu bằng file .docx chi tiết hướng dẫn xây dựng từng chức năng của ứng dụng gồm các phần:các hình kiến trúc úng dụng, các hình sơ đồ hoạt động của chức năng + hình diễn giải Source Code, hình diễn giải giao diện, file hướng dẫn setup ứng dụng, danh sách các prompt nhóm đã sử dụng để AI hỗ trợ sinh code, sinh hình,...
+```
+
+Prompt tiếp nối nguyên văn ngày 25/10/2026:
+
+```text
+tiếp tục
+```
+
+Kết quả: [FINAL_REQUIREMENTS_STATUS](FINAL_REQUIREMENTS_STATUS.md). Bổ sung VNPAY adapter/IPN idempotent, callback audit và REVIEW; Manager quản lý carrier theo shop; cập nhật setup, khảo sát công khai có nguồn và ảnh, 7 hình kiến trúc/activity/source, UC và chỉ mục catalog. Không sửa layout dùng chung. Giữ VNPAY production tắt vì chưa có merchant.
+
+Kiểm chứng: Maven clean verify 161 test, 0 failure/error/skipped; browser H2 hai kịch bản Manager carrier và VNPAY với IPN ký giả lập, không lỗi JavaScript; WAR/TiDB 9 migration và 8 kiểm tra HTTP. Không có giao dịch merchant/bank thật, không seed dữ liệu bán hàng vào cloud. Chưa có DOCX cuối, thông tin thành viên/reviewer, kiểm SMTP/MP4 thật và nghiệm thu mọi UC. Hình do script dựng từ source hoặc chụp browser, không dùng ImageGen. Kết quả và giới hạn được ghi riêng, không dùng số test để khẳng định đạt toàn bộ rubric. Chưa commit/push; các thay đổi giữ tại integration/utetra.
+
+## RELEASE-PUSH-20261025 — Đẩy bản tích hợp
+
+Prompt nguyên văn:
+
+```text
+push code lên
+```
+
+Phạm vi: commit toàn bộ bổ sung code, migration, test, tài liệu và hình minh chứng hiện tại trên integration/utetra; push đúng origin/integration/utetra, không đẩy main hoặc các feature branch. Đã fetch trước khi phát hành: HEAD hơn remote 4 commit, remote không có commit mới cần merge. Kết quả SHA và push xác nhận qua Git/remote, không ghi khóa/token/password vào nhật ký. Build kiểm gần nhất: clean verify 161 test đạt ngày 24/10; lượt phát hành này kiểm lại whitespace và shared UI, không nhận là đã chạy lại Maven.

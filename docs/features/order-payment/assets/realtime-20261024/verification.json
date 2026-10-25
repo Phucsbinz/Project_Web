@@ -1,0 +1,26 @@
+{
+  "mode": "real browser/STOMP against isolated H2 fixture; no cloud orders",
+  "checks": [
+    {
+      "scenario": "another buyer reserves last voucher and one cup",
+      "websocketFrameReceived": true,
+      "quoteInvalidated": true,
+      "voucherDisabled": true,
+      "stockRemaining": 2,
+      "elapsedMs": 242
+    },
+    {
+      "scenario": "cancel before preparation",
+      "voucherAvailableAgain": true,
+      "stockRemaining": 3,
+      "mobileOverflow": false
+    },
+    {
+      "scenario": "vendor edits inventory",
+      "stockInput": 3,
+      "mobileOverflow": false
+    }
+  ],
+  "javascriptErrors": [],
+  "availabilityFrameCount": 4
+}

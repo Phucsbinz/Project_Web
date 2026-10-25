@@ -20,6 +20,9 @@ public class Carrier {
   @Column(name = "name", nullable = false, length = 150)
   public String name;
 
+  @Column(name="managed_store_id")
+  public Long managedStoreId;
+
   @Column(name = "base_fee", nullable = false, precision = 14, scale = 2)
   public BigDecimal baseFee = BigDecimal.ZERO;
 

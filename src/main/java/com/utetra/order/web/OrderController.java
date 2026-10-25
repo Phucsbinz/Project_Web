@@ -20,10 +20,15 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
   private final OrderWorkflowService orders;
   private final ReturnEvidenceService evidence;
+  private final BankTransferService bankTransfers;
+  private final BankTransferSettings bank;
 
-  public OrderController(OrderWorkflowService orders, ReturnEvidenceService evidence) {
+  public OrderController(OrderWorkflowService orders, ReturnEvidenceService evidence,
+      BankTransferService bankTransfers, BankTransferSettings bank) {
     this.orders = orders;
     this.evidence = evidence;
+    this.bankTransfers = bankTransfers;
+    this.bank = bank;
   }
 
   private String base(HttpServletRequest r) {
@@ -66,6 +71,7 @@ public class OrderController {
     model.addAttribute("base", base(request));
     model.addAttribute("mode", mode(request));
     model.addAttribute("role", OrderWebSupport.actor().role());
+    model.addAttribute("bank", bank.instructions(id));
     return "order/detail";
   }
 
@@ -79,6 +85,12 @@ public class OrderController {
   @ResponseBody
   public Map<String, Object> status(@PathVariable long id, @Valid @RequestBody Transition request) {
     return orders.transition(OrderWebSupport.actor(), id, request);
+  }
+
+  @PostMapping("/{id}/bank-confirmation")
+  @ResponseBody
+  public Map<String, Object> confirmBank(@PathVariable long id, @Valid @RequestBody BankConfirmation request) {
+    return bankTransfers.confirm(OrderWebSupport.actor(), id, request);
   }
 
   @PostMapping("/{id}/cancel")

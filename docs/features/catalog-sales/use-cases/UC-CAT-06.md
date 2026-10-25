@@ -1,5 +1,7 @@
 # UC-CAT-06 — Xem/chọn chi nhánh và trang shop
 
+> Cập nhật 24/10/2026: đã có source `StoreService.publicStores/publicStore/deliveryRates` và test liên quan `shopOpeningHoursAreEnforcedInVietnamTime`. Đọc [chỉ mục hiện tại](../CURRENT_IMPLEMENTATION.md) và [đối chiếu cuối kỳ](../../../FINAL_REQUIREMENTS_STATUS.md). Các bảng placeholder bên dưới là hồ sơ cần owner hoàn thiện, không phải kết luận UC chưa có code.
+
 > Actor: Mọi người. Owner: feature/catalog-sales. P0 bắt buộc. Đặc tả gốc; mã nguồn và kiểm thử bổ sung ngày 15/10/2026. Trạng thái nghiệm thu xem mục triển khai bên dưới.
 
 
@@ -20,7 +22,7 @@ Nguồn: [Danh mục và BR](../../../../USE_CASES.md), [từ điển dữ liệ
 - Kích hoạt: actor chọn chức năng xem/chọn chi nhánh và trang shop trên giao diện hoặc gọi route tương ứng.
 - Tiền điều kiện: nền main đã đồng bộ; bảng cần dùng có migration đã review; dữ liệu tham chiếu tồn tại. Public chỉ đọc dữ liệu được duyệt; thao tác bảo vệ cần tài khoản active/verified, phiên hợp lệ và đúng phạm vi.
 - Đầu vào: storeId, areaId, carrierId. ID và số tiền từ client không thay thế kiểm quyền/tính toán phía server.
-- Dữ liệu: `stores, store_delivery_areas, carriers, carrier_area_rates`. Ngoài ba bảng identity V1, đây là các bảng cần triển khai, chưa được xem là đã có.
+- Dữ liệu: `stores, store_delivery_areas, carriers, carrier_area_rates`. Các bảng nghiệp vụ đã có trong migration tích hợp; đối chiếu schema thật theo DATABASE_DESIGN và biên bản mới nhất.
 - Contract dự kiến: `StoreService`; route dự kiến: `/stores/{id}`. Chốt DTO/signature và migration trên main trước khi code; không tự tạo Service trùng chức năng module khác.
 - Hậu điều kiện thành công: đạt điều kiện nghiệm thu nêu trên; trạng thái và dữ liệu nhất quán, trả DTO/view đã escape. GET không thay đổi dữ liệu nghiệp vụ; ghi nhiều bảng phải có transaction và kiểm quyền trước ghi.
 - Hậu điều kiện thất bại: không ghi dở/mất dữ liệu; lỗi validation/quyền/version rõ ràng; provider thất bại có pending/retry hoặc lỗi thật, không giả thành công.
@@ -60,7 +62,7 @@ Shop khóa/ngoài giờ/khu vực không hỗ trợ; đổi shop phải xác nh�
 
 | Case | Mong đợi | Kết quả hiện tại |
 | --- | --- | --- |
-| Luồng chính với storeId, areaId, carrierId hợp lệ | Chọn thủ công; thông tin, khu vực/phí; không tính khoảng cách | Chưa chạy — UC chưa triển khai |
+| Luồng chính với storeId, areaId, carrierId hợp lệ | Chọn thủ công; thông tin, khu vực/phí; không tính khoảng cách | Chưa điền kết quả riêng tại bảng này — xem source/test hiện tại |
 | Input hoặc tham chiếu không hợp lệ | Lỗi rõ ràng, không ghi dở | Chưa chạy |
 | Actor/owner/scope không hợp lệ | 401/403 hoặc 404 theo contract, không lộ dữ liệu | Chưa chạy |
 | Tình huống đặc thù: Shop khóa/ngoài giờ/khu vực không hỗ trợ; đổi shop phải xác nhận giỏ; không geocode hoặc tính khoảng cách | Tuân thủ luồng lỗi và tính nhất quán nêu trên | Chưa chạy |

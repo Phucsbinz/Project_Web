@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .sessionAuthenticationStrategy(new org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy()))
             .authorizeHttpRequests(auth -> auth
                 .dispatcherTypeMatchers(DispatcherType.FORWARD,DispatcherType.ERROR).permitAll()
+                .requestMatchers("/payments/vnpay/ipn","/payments/vnpay/return").permitAll()
                 .requestMatchers("/","/menu","/products/**","/stores/**","/assets/**","/auth/**","/error","/api/system/health").permitAll()
                 .requestMatchers("/admin/**","/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/manager/**","/api/manager/**").hasAnyRole("MANAGER","ADMIN")

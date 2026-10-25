@@ -1,0 +1,12 @@
+database=utetra_db
+active_stores=0
+active_products=0
+available_active_products=0
+delivered_paid_orders=0
+products_over_10_sold=0
+active_carriers=0
+active_rates=0
+active_commission_policies=0
+verified_active_users=9
+successful_migrations=9
+tidb_enable_check_constraint=OFF

@@ -23,14 +23,15 @@ public class CatalogService {
     private final StoreToppingRepository stock;
     private final StoreRepository stores;
     private final CatalogGuard guard;
-    private final CatalogStatistics statistics;
+    private final CatalogStatisticsRepository statistics;
     private final CatalogQueryRepository queries;
     private final java.time.Clock clock;
+    private final com.utetra.order.service.CheckoutAvailabilityEvents availabilityEvents;
     public CatalogService(ProductRepository products,CategoryRepository categories,ToppingRepository toppings,
         ProductVariantRepository variants,ProductToppingRepository links,StoreToppingRepository stock,StoreRepository stores,
-        CatalogGuard guard,CatalogStatistics statistics,CatalogQueryRepository queries,java.time.Clock clock) {
+        CatalogGuard guard,CatalogStatisticsRepository statistics,CatalogQueryRepository queries,java.time.Clock clock,com.utetra.order.service.CheckoutAvailabilityEvents availabilityEvents) {
         this.products=products; this.categories=categories; this.toppings=toppings; this.variants=variants;
-        this.links=links; this.stock=stock; this.stores=stores; this.guard=guard; this.statistics=statistics; this.queries=queries; this.clock=clock;
+        this.links=links; this.stock=stock; this.stores=stores; this.guard=guard; this.statistics=statistics; this.queries=queries; this.clock=clock; this.availabilityEvents=availabilityEvents;
     }
     public List<CategoryView> categories(boolean management,UtetraPrincipal p) {
         if(management) guard.catalog(p);
@@ -83,11 +84,12 @@ public class CatalogService {
         var old=variants.findByProductId(product.getId()); old.forEach(v -> v.setActive(false));
         for(var i:input.variants()) {
             var v=old.stream().filter(x -> x.getSizeName().equals(i.sizeName())).findFirst().orElseGet(ProductVariant::new);
-            v.setProductId(product.getId()); v.setSizeName(i.sizeName()); v.setExtraPrice(i.extraPrice()); v.setActive(i.active()); variants.save(v);
+            if(i.stockQuantity()!=null && v.getId()!=null) require(i.stockVersion()!=null && i.stockVersion()==v.getVersion(),"Tồn kho đã thay đổi; tải lại sản phẩm trước khi chỉnh số lượng");
+            v.setProductId(product.getId()); v.setSizeName(i.sizeName()); v.setExtraPrice(i.extraPrice()); v.setActive(i.active()); if(i.stockQuantity()!=null) v.setStockQuantity(i.stockQuantity()); variants.save(v);
         }
         links.deleteByProductId(product.getId()); links.flush();
         for(Long toppingId:input.toppingIds()) { var link=new ProductTopping(); link.setProductId(product.getId()); link.setToppingId(toppingId); links.save(link); }
-        variants.flush(); products.flush(); guard.audit(p,"SAVE","PRODUCT",product.getId()); return view(product,0,BigDecimal.ZERO,0);
+        variants.flush(); products.flush(); availabilityEvents.changed(product.getStoreId(),variants.findByProductId(product.getId()).stream().map(ProductVariant::getId).toList(),List.of()); guard.audit(p,"SAVE","PRODUCT",product.getId()); return view(product,0,BigDecimal.ZERO,0);
     }
     @Transactional public void disableProduct(UtetraPrincipal p,Long id,long suppliedVersion) {
         var product=found(products.findById(id)); guard.store(p,product.getStoreId()); version(product.getVersion(),suppliedVersion);
@@ -100,6 +102,7 @@ public class CatalogService {
         require(!time.isBefore(store.getOpenTime()) && time.isBefore(store.getCloseTime()),"Shop đang ngoài giờ phục vụ");
         require(Set.of(0,30,50,70,100).contains(input.sugarLevel()) && Set.of(0,30,50,70,100).contains(input.iceLevel()),"Mức đường/đá không hợp lệ");
         var variant=found(variants.findById(input.variantId())); require(id.equals(variant.getProductId()) && variant.getActive(),"Size không hợp lệ");
+        require(variant.getStockQuantity()==null || variant.getStockQuantity()>=input.quantity(),"Size không còn đủ số lượng");
         var allowed=links.findByProductId(id).stream().map(ProductTopping::getToppingId).collect(java.util.stream.Collectors.toSet());
         BigDecimal extra=BigDecimal.ZERO;
         for(Long toppingId:input.toppingIds()) {
@@ -119,7 +122,7 @@ public class CatalogService {
             .filter(t -> t.getActive() && available.contains(t.getId())).map(this::toppingView).toList();
         return new ProductView(p.getId(),p.getStoreId(),p.getCategoryId(),p.getName(),p.getSlug(),p.getDescription(),p.getBasePrice(),p.getImageUrl(),
             p.getActive(),p.getAvailable(),p.getFeatured(),p.getVersion(),p.getCreatedAt(),variants.findByProductId(p.getId()).stream()
-            .map(v -> new VariantView(v.getId(),v.getSizeName(),v.getExtraPrice(),v.getActive())).toList(),options,
+            .map(v -> new VariantView(v.getId(),v.getSizeName(),v.getExtraPrice(),v.getActive(),v.getStockQuantity(),v.getVersion())).toList(),options,
             links.findByProductId(p.getId()).stream().map(ProductTopping::getToppingId).collect(java.util.stream.Collectors.toSet()),sold,rating,favorites);
     }
     private CategoryView categoryView(Category c) { return new CategoryView(c.getId(),c.getName(),c.getSlug(),c.getDescription(),c.getDisplayOrder(),c.getActive()); }

@@ -1,0 +1,30 @@
+{
+  "mode": "final WAR mysql/TiDB; no commerce seed or transfer",
+  "checks": [
+    {
+      "route": "/api/system/health",
+      "status": 200
+    },
+    {
+      "route": "/",
+      "status": 200
+    },
+    {
+      "route": "/menu",
+      "status": 200
+    },
+    {
+      "route": "/assets/images/payment/techcombank-utetra.jpg",
+      "status": 200
+    },
+    {
+      "route": "/assets/js/orders.js",
+      "status": 200
+    },
+    {
+      "route": "/admin/orders/1/data",
+      "status": 401
+    }
+  ],
+  "legacyStatisticsServiceAbsent": true
+}

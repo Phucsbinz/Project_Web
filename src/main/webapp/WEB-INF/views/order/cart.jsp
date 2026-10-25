@@ -7,7 +7,7 @@
 <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Món</th><th>Đường / đá</th><th>Số ly</th><th>Ghi chú</th><th></th></tr></thead><tbody>
 <c:forEach items="${cart.items}" var="item"><tr><td><c:out value="${item.name}"/> · <c:out value="${item.size}"/><small class="d-block"><c:forEach items="${item.toppings}" var="top"><span class="me-2"><c:out value="${top}"/></span></c:forEach></small></td><td><c:out value="${item.sugar}"/>% / <c:out value="${item.ice}"/>%</td><td><input aria-label="Số ly" class="form-control quantity" type="number" min="1" max="20" value="${item.quantity}" data-id="${item.id}"></td><td><c:out value="${item.note}"/></td><td><button class="btn btn-outline-danger delete-item" data-id="${item.id}">Xóa</button></td></tr></c:forEach>
 </tbody></table></div><button class="btn btn-outline-danger" id="clear-cart">Xóa giỏ / đổi cửa hàng</button>
-<c:choose><c:when test="${signedIn}"><a class="btn btn-primary" href="<c:url value='/checkout'/>">Tiến hành đặt hàng COD</a></c:when><c:otherwise><p class="mt-3">Đăng nhập để lưu các món đã chọn và tiếp tục đặt hàng.</p><a href="<c:url value='/auth/login'/>">Đăng nhập</a></c:otherwise></c:choose>
+<c:choose><c:when test="${signedIn}"><a class="btn btn-primary" href="<c:url value='/checkout'/>">Tiến hành thanh toán</a></c:when><c:otherwise><p class="mt-3">Đăng nhập để lưu các món đã chọn và tiếp tục đặt hàng.</p><a href="<c:url value='/auth/login'/>">Đăng nhập</a></c:otherwise></c:choose>
 </c:otherwise></c:choose>
 <c:if test="${signedIn}"><button class="btn btn-outline-secondary mt-3" id="merge-cart">Giữ các món đã chọn trước đăng nhập</button></c:if>
 <script src="<c:url value='/assets/js/orders.js'/>"></script><script>

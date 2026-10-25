@@ -1,5 +1,9 @@
 # feature/catalog-sales — Danh mục, shop Vendor và khuyến mãi
 
+> Trạng thái source/test hiện tại: [CURRENT_IMPLEMENTATION](CURRENT_IMPLEMENTATION.md); phần ghi việc/reviewer cá nhân vẫn phải hoàn thiện.
+
+Bàn giao 24/10: đọc [JWT DB, stock/version và WebSocket checkout](../order-payment/REALTIME_CHECKOUT_JWT.md) trước khi merge/chạy với schema mới. Các nhánh cần nhận đủ source integration, không chỉ migration/JS; JWT cũ cần đăng nhập lại hoặc refresh hợp lệ.
+
 > Cập nhật chức năng catalog ngày 24/10/2026: [UPDATE_20261024](UPDATE_20261024.md). Audit trước sửa: [AUDIT_20261024](AUDIT_20261024.md). Các dependency Identity/Order được giữ ngoài phạm vi nhánh.
 
 > Cập nhật theo quy định thầy ngày 13/10/2026. Người phụ trách TV1: [điền tên]. Baseline main/commit: [điền]. Hướng dẫn gốc; trạng thái mới ngày 15/10/2026 tại [RUNBOOK](RUNBOOK.md). Đã có code cho 18 UC, kiểm H2/Tomcat; chưa nghiệm thu cloud/tích hợp.

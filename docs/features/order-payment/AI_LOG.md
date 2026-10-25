@@ -63,3 +63,15 @@ Phản hồi thực hiện: bổ sung Entity/JPA/DTO/Repository → Service → 
 [VERIFICATION](VERIFICATION.md) ghi lệnh, kết quả cuối và giới hạn. Build không đóng gói test helper/token vào WAR. Không sửa main hoặc feature của thành viên khác; commit code `29aac50`; commit tài liệu và push feature/order-payment theo ORD-AI-008, xác nhận SHA remote sau push. Review người thật, ghép integration, DOCX/ảnh code có callout và provider thật còn cần nhóm thực hiện.
 
 Commit code thực: [29aac50](https://github.com/Phucsbinz/Project_Web/commit/29aac509163236b88f44834ad45c4036cca5a89f). Minh chứng test tóm tắt: [test-results.txt](assets/test-results.txt).
+
+## ORD-AI-BANK-20261024 — Bổ sung QR ngân hàng trên integration
+
+Prompt nguyên văn và ảnh nguồn được ghi tại [AI_PROMPT_HISTORY](../../AI_PROMPT_HISTORY.md), mục ORD-AI-BANK-20261024. Source và quy trình thực: [BANK_TRANSFER](BANK_TRANSFER.md). Kết quả kiểm chứng, giới hạn và việc giao từng người: [REMEDIATION](../../REMEDIATION_20261024.md). Không sửa/push nhánh feature/order-payment trong lượt này; code đang ở workspace integration, chưa commit. QR tài khoản tĩnh do người dùng cung cấp, không phải ảnh AI sinh; Admin đối soát thủ công, không giả callback ngân hàng.
+
+## CREATIVE-AI-20261024 — JWT lưu DB và checkout realtime
+
+Prompt nguyên văn trong [AI_PROMPT_HISTORY](../../AI_PROMPT_HISTORY.md). Đã bổ sung hash/JTI/hạn access JWT, finite stock và chống ghi đè số lượng, socket availability/voucher sau commit, polling và test tranh suất cuối. [Source, contract, kết quả và giới hạn](REALTIME_CHECKOUT_JWT.md). Verify cuối 153 test đạt; browser STOMP dùng fixture H2 riêng, WAR/TiDB migration thứ 8 đã chạy. Không giao dịch ví/ngân hàng thật, không seed cloud hoặc push.
+
+## FINAL-AUDIT-20261024 — Đối chiếu đầy đủ và bổ sung
+
+Prompt đầy đủ và lệnh “tiếp tục” được ghi trong [AI_PROMPT_HISTORY](../../AI_PROMPT_HISTORY.md). Thực hiện trên integration: VNPAY URL ký và IPN, audit, chống callback trùng, REVIEW/late payment/refund; Manager carrier đúng shop; cập nhật UC-ORD-06, UC-MGR-06, setup và bằng chứng báo cáo. [Trạng thái đầy đủ](../../FINAL_REQUIREMENTS_STATUS.md), [VNPAY](VNPAY.md). Clean verify 161 test đạt; browser fixture H2 không lỗi JS; WAR/TiDB 9 migration và 8 HTTP checks. Chưa có merchant thật, không gọi giao dịch ngân hàng, không seed commerce cloud, không commit/push. Không coi ảnh H2 hoặc callback giả lập là giao dịch cổng thật.
