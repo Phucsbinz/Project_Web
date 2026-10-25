@@ -779,3 +779,13 @@ push code lên
 ```
 
 Phạm vi: commit toàn bộ bổ sung code, migration, test, tài liệu và hình minh chứng hiện tại trên integration/utetra; push đúng origin/integration/utetra, không đẩy main hoặc các feature branch. Đã fetch trước khi phát hành: HEAD hơn remote 4 commit, remote không có commit mới cần merge. Kết quả SHA và push xác nhận qua Git/remote, không ghi khóa/token/password vào nhật ký. Build kiểm gần nhất: clean verify 161 test đạt ngày 24/10; lượt phát hành này kiểm lại whitespace và shared UI, không nhận là đã chạy lại Maven.
+
+## RELEASE-MAIN-20261025 — Phát hành lên main
+
+Prompt nguyên văn:
+
+```text
+push lên nhánh main nữa
+```
+
+Đã fetch và kiểm tra origin/main là tổ tiên của bản integration/utetra 5e5708fe33c218efd9bddaac9356097859a4be55 (main remote không có commit riêng). Cập nhật main bằng fast-forward để giữ lịch sử, ghi thêm nhật ký yêu cầu này, rồi push main bình thường; không force push hoặc đẩy các nhánh chức năng. Source ứng dụng giữ nguyên bản tích hợp đã kiểm 161 test; không chạy lại Maven cho thay đổi nhật ký.
