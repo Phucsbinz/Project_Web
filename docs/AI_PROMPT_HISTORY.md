@@ -840,3 +840,5 @@ pull code các nhánh về rồi push lên nhánh integration
 ```
 
 Phạm vi được yêu cầu: fetch các nhánh origin, giữ bản UI đang làm, ghép vào integration/utetra rồi kiểm và push đúng nhánh này; không thay main hoặc push các feature. identify có commit mới ba355e0 (tool reset mật khẩu test và migration nullable). Chỉ ghép source, không chạy công cụ reset/seed trên DB. Trạng thái ảnh nguồn QR bị xóa cục bộ có trước lượt này được giữ ngoài commit; bản QR dùng trong static assets vẫn tồn tại. Kết quả merge/test/push ghi theo thực tế trong biên bản phát hành.
+
+Kết quả INTEGRATION-PUBLISH-20261026: ghép identify ba355e0 vào bản UI e394907 bằng merge fae9778, không xung đột. Clean verify 167 test đạt, không failure/error/skipped; WAR build thành công, shared UI và whitespace đạt. Tất cả 6 remote tip đều nằm trong bản ghép. Phát hành đúng integration/utetra bằng push thường, đối chiếu SHA remote trước khi báo xong. Biên bản: INTEGRATION_VERIFICATION_20261026.md.

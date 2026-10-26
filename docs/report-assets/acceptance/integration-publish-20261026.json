@@ -1,0 +1,11 @@
+{
+  "sourceCommit": "fae97783ac86ebc00710a6c4cc252305cf4bd9e1",
+  "command": "py -3 tools/run_verify.py",
+  "result": "BUILD SUCCESS",
+  "suites": 21,
+  "tests": 167,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "scope": "Clean verify on merged integration; tests use isolated fixtures. No cloud seed/reset/provider transaction."
+}
