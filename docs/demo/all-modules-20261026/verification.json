@@ -1,0 +1,1154 @@
+{
+  "fixture": "Isolated H2, port 8882; shipper enabled only in fixture; Manager catalog delegation assigned in fixture",
+  "checks": [
+    {
+      "role": "guest",
+      "path": "/",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/menu",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/stores",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/stores/1",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/products/1",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/cart",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/auth/login",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/auth/register",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "guest-auth-register-1440.png"
+    },
+    {
+      "role": "guest",
+      "path": "/auth/forgot",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "guest-auth-forgot-1440.png"
+    },
+    {
+      "role": "guest",
+      "path": "/auth/otp",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/auth/reset",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/menu",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/stores",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/stores/1",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/products/1",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/cart",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/auth/login",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/auth/register",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "guest-auth-register-390.png"
+    },
+    {
+      "role": "guest",
+      "path": "/auth/forgot",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "guest-auth-forgot-390.png"
+    },
+    {
+      "role": "guest",
+      "path": "/auth/otp",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "guest",
+      "path": "/auth/reset",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/cart",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/checkout",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/checkout?branch=1",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-checkout-branch-1-1440.png"
+    },
+    {
+      "role": "user",
+      "path": "/orders",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/orders/1",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/account/profile",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/account/security",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/account/addresses",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-account-addresses-1440.png"
+    },
+    {
+      "role": "user",
+      "path": "/account/loyalty",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-account-loyalty-1440.png"
+    },
+    {
+      "role": "user",
+      "path": "/favorites",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-favorites-1440.png"
+    },
+    {
+      "role": "user",
+      "path": "/viewed",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-viewed-1440.png"
+    },
+    {
+      "role": "user",
+      "path": "/reviews",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-reviews-1440.png"
+    },
+    {
+      "role": "user",
+      "path": "/comments",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-comments-1440.png"
+    },
+    {
+      "role": "user",
+      "path": "/account/shop-registration",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-account-shop-registration-1440.png"
+    },
+    {
+      "role": "user",
+      "path": "/notifications",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-notifications-1440.png"
+    },
+    {
+      "role": "user",
+      "path": "/",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/cart",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/checkout",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/checkout?branch=1",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-checkout-branch-1-390.png"
+    },
+    {
+      "role": "user",
+      "path": "/orders",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/orders/1",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/account/profile",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/account/security",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "user",
+      "path": "/account/addresses",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-account-addresses-390.png"
+    },
+    {
+      "role": "user",
+      "path": "/account/loyalty",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-account-loyalty-390.png"
+    },
+    {
+      "role": "user",
+      "path": "/favorites",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-favorites-390.png"
+    },
+    {
+      "role": "user",
+      "path": "/viewed",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-viewed-390.png"
+    },
+    {
+      "role": "user",
+      "path": "/reviews",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-reviews-390.png"
+    },
+    {
+      "role": "user",
+      "path": "/comments",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-comments-390.png"
+    },
+    {
+      "role": "user",
+      "path": "/account/shop-registration",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-account-shop-registration-390.png"
+    },
+    {
+      "role": "user",
+      "path": "/notifications",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "user-notifications-390.png"
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/products",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/stores",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/shop",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/promotions",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/areas",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/stock",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/orders",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/orders/1",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/revenue",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/cart",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/account/profile",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/account/shop-registration",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/notifications",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/products",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/stores",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/shop",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/promotions",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/areas",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/stock",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/orders",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/orders/1",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/vendor/revenue",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/cart",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/account/profile",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/account/shop-registration",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "path": "/notifications",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/products",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/categories",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/toppings",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/promotions",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/stores",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/areas",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/stock",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/users",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "manager-manager-users-1440.png"
+    },
+    {
+      "role": "manager",
+      "path": "/manager/order-tools",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "manager-manager-order-tools-1440.png"
+    },
+    {
+      "role": "manager",
+      "path": "/manager/orders",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/orders/1",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/reports",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/notifications",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/account/profile",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/account/security",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/products",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/categories",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/toppings",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/promotions",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/stores",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/areas",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/stock",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/users",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "manager-manager-users-390.png"
+    },
+    {
+      "role": "manager",
+      "path": "/manager/order-tools",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "manager-manager-order-tools-390.png"
+    },
+    {
+      "role": "manager",
+      "path": "/manager/orders",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/orders/1",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/manager/reports",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/notifications",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/account/profile",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "manager",
+      "path": "/account/security",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/products",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/categories",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/toppings",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "admin-admin-toppings-1440.png"
+    },
+    {
+      "role": "admin",
+      "path": "/admin/promotions",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/stores",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/areas",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "admin-admin-areas-1440.png"
+    },
+    {
+      "role": "admin",
+      "path": "/admin/stock",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "admin-admin-stock-1440.png"
+    },
+    {
+      "role": "admin",
+      "path": "/admin/memberships",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "admin-admin-memberships-1440.png"
+    },
+    {
+      "role": "admin",
+      "path": "/admin/users",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/order-tools",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/orders",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/orders/1",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/reports",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/notifications",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/account/profile",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/account/security",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/products",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/categories",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/toppings",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "admin-admin-toppings-390.png"
+    },
+    {
+      "role": "admin",
+      "path": "/admin/promotions",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/stores",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/areas",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "admin-admin-areas-390.png"
+    },
+    {
+      "role": "admin",
+      "path": "/admin/stock",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "admin-admin-stock-390.png"
+    },
+    {
+      "role": "admin",
+      "path": "/admin/memberships",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "admin-admin-memberships-390.png"
+    },
+    {
+      "role": "admin",
+      "path": "/admin/users",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/order-tools",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/orders",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/orders/1",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/admin/reports",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/notifications",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/account/profile",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "admin",
+      "path": "/account/security",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "shipper",
+      "path": "/shipper/orders",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "shipper-shipper-orders-1440.png"
+    },
+    {
+      "role": "shipper",
+      "path": "/shipper/reports",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "shipper-shipper-reports-1440.png"
+    },
+    {
+      "role": "shipper",
+      "path": "/notifications",
+      "width": 1440,
+      "status": 200,
+      "passed": true,
+      "screenshot": "shipper-notifications-1440.png"
+    },
+    {
+      "role": "shipper",
+      "path": "/account/profile",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "shipper",
+      "path": "/account/security",
+      "width": 1440,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "shipper",
+      "path": "/shipper/orders",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "shipper-shipper-orders-390.png"
+    },
+    {
+      "role": "shipper",
+      "path": "/shipper/reports",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "shipper-shipper-reports-390.png"
+    },
+    {
+      "role": "shipper",
+      "path": "/notifications",
+      "width": 390,
+      "status": 200,
+      "passed": true,
+      "screenshot": "shipper-notifications-390.png"
+    },
+    {
+      "role": "shipper",
+      "path": "/account/profile",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "shipper",
+      "path": "/account/security",
+      "width": 390,
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "pageErrors": [],
+  "failures": [],
+  "limits": "Render, layout, navigation and responsive checks; not all mutation/provider workflows; no cloud reset or provider call."
+}

@@ -1,0 +1,35 @@
+{
+  "result": "BUILD SUCCESS",
+  "finishedAt": "2026-10-26T21:25:11+07:00",
+  "suites": [
+    {
+      "suite": "com.utetra.BaselineViewTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "com.utetra.CatalogViewTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "com.utetra.identity.IdentityViewTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "com.utetra.order.OrderCommerceIntegrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "scope": "Selected native Tomcat/SiteMesh render and CSRF tests. Later mobile-nav CSS repackaged with skipTests and verified by browser."
+}

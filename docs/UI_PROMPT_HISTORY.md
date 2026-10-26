@@ -18,3 +18,19 @@ Yêu cầu: giữ chức năng cũ, áp dụng thiết kế trang chủ/menu/chi
 ## 26/10/2026 — Chọn món trước, chi nhánh sau
 
 Thanh yêu cầu chọn chi nhánh tại bước lên đơn, bỏ các chi nhánh khỏi menu và tiếp tục áp dụng thiết kế popup đồ uống. Menu hiện gộp theo mã món chung; popup dùng lại trang chi tiết trong tài liệu cùng origin và template chung, không tạo layout/framework thứ hai. Giữ trang cửa hàng để tham khảo và sidebar quản lý. Backend migration/giỏ/checkout được ghi riêng trong BRANCH_SELECTION_20261026.md; chưa push GitHub.
+
+## UI-REFERENCE-20261026 — Màu và phông theo ảnh
+
+Prompt nguyên văn:
+
+```text
+[Image #1] bạn thiết kế giao diện theo màu và phông như này được không vẫn giữ đầy đủ chức năng
+```
+
+Ảnh người dùng: 2aOboR8CXHLLqRujaayM4hUEoJJikhocP0fkZwvY.jpg. Áp dụng trên shared CSS và app.jsp, giữ một layout. Dùng Be Vietnam Pro local (SIL OFL), nền kem/xanh trà và serif cho logo; giữ nguyên chức năng, endpoint và phân quyền. Không dùng ImageGen cho việc CSS/font. Kết quả kiểm thử: UI_REFERENCE_REFINEMENT_20261026.md. Chưa commit/push hoặc đồng bộ nhánh khác.
+
+Kết quả UI-REFERENCE-20261026: Maven package chạy 10 render tests đạt, browser vòng đầu 21 route/viewport đạt. Review ảnh phát hiện tương phản wordmark footer và ghi chú sidebar cần chỉnh; đã sửa CSS, package lại với skipTests và kiểm browser cuối riêng. Không cộng test cũ 167 vào lượt này, không nhận skipTests là chạy test. Biên bản/hình/JSON nằm trong docs/UI_REFERENCE_REFINEMENT_20261026.md và docs/demo/reference-20261026.
+
+## ALL-MODULE-UI-20261026
+
+Prompt “tích hợp đầy đủ ui nha đừng để thiếu ui bên các phần khác” được gửi hai lần, sau đó “tiếp tục”; nguyên văn giữ trong AI_PROMPT_HISTORY.md. Cập nhật sidebar/dropdown/footer theo role, picker catalog và Shipper report, mobile order nav; giữ một layout và theme. Kiểm render 13 test và browser trên H2 riêng, biên bản ALL_MODULE_UI_20261026.md.

@@ -1,0 +1,29 @@
+{
+  "command": "py -3 tools/run_verify.py -Dtest=BaselineViewTest,CatalogViewTest,IdentityViewTest package",
+  "finishedAt": "2026-10-26T20:33:16+07:00",
+  "result": "BUILD SUCCESS",
+  "suites": [
+    {
+      "suite": "com.utetra.BaselineViewTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "com.utetra.CatalogViewTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "com.utetra.identity.IdentityViewTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "note": "10 render tests before footer contrast correction; final CSS repackaged with skipTests at 20:36:34 and checked separately in browser."
+}
