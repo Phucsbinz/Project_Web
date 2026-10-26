@@ -1,0 +1,110 @@
+{
+  "checks": [
+    {
+      "route": "/",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/menu",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/products/88",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/",
+      "width": 390,
+      "status": 200
+    },
+    {
+      "route": "/menu",
+      "width": 390,
+      "status": 200
+    },
+    {
+      "route": "/products/88",
+      "width": 390,
+      "status": 200
+    },
+    {
+      "route": "/menu",
+      "width": 768,
+      "status": 200
+    },
+    {
+      "route": "/account/profile",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/account/security",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/orders",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/admin/reports",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/admin/orders",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/admin/products",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/admin/orders",
+      "width": 390,
+      "status": 200
+    },
+    {
+      "route": "/admin/reports",
+      "width": 390,
+      "status": 200
+    },
+    {
+      "route": "/manager/reports",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/manager/orders",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/manager/products",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/vendor/revenue",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/vendor/orders",
+      "width": 1440,
+      "status": 200
+    },
+    {
+      "route": "/vendor/products",
+      "width": 1440,
+      "status": 200
+    }
+  ],
+  "errors": []
+}

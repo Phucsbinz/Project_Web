@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "70d96c5",
+  "command": "py -3 tools/run_verify.py",
+  "finishedAt": "2026-10-26T20:20:09+07:00",
+  "result": "BUILD SUCCESS",
+  "suites": 21,
+  "tests": 167,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "render": "Tomcat/SiteMesh tests with isolated fixtures",
+  "providerTransactionsPerformed": false,
+  "cloudSeedExecuted": false
+}

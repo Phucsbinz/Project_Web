@@ -1,6 +1,15 @@
 # UTETra — Nhật ký yêu cầu và prompt AI của cuộc trò chuyện khởi tạo
 
+## MAIN-AI-001 — Khởi động và kiểm thử trình duyệt nhánh main — 25/10/2026
+
+```text
+chạy project ở nhánh main lên và bắt đầu kiểm thử bằng trình duyệt mở rồi kiếm thử chi tiết đầy đủ các chức năng
+```
+
+Khởi động WAR trên cổng 8080 profile mysql kết nối TiDB Cloud `utetra_db`, xác thực 9 Flyway migrations thành công, endpoint `/api/system/health` trả UP. Sử dụng Browser Subagent mở trình duyệt thực hiện kiểm thử chi tiết và toàn diện: Desktop (1440x900) và Mobile (390x844), kiểm tra thanh điều hướng, Trang chủ, Thực đơn `/menu`, Cửa hàng `/stores`, Giỏ hàng `/cart`, Đăng nhập `/auth/login`, Đăng ký `/auth/register`, bảo vệ tuyến `/checkout`, `/orders`, `/admin`, `/manager`. Không có lỗi console JS hay lỗi tài nguyên mạng. Đã ghi video WebP và ảnh chụp màn hình vào báo cáo kiểm thử.
+
 ## INT-AI-002 — Pull mới và sửa xung đột ba module — 24/10/2026
+
 
 ```text
 pull đầy đủ code về và merg vào nhánh kiếm thử xem 3 nhánh  có xung đột gì không và sửa cho hoàn chỉnh
@@ -789,3 +798,45 @@ push lên nhánh main nữa
 ```
 
 Đã fetch và kiểm tra origin/main là tổ tiên của bản integration/utetra 5e5708fe33c218efd9bddaac9356097859a4be55 (main remote không có commit riêng). Cập nhật main bằng fast-forward để giữ lịch sử, ghi thêm nhật ký yêu cầu này, rồi push main bình thường; không force push hoặc đẩy các nhánh chức năng. Source ứng dụng giữ nguyên bản tích hợp đã kiểm 161 test; không chạy lại Maven cho thay đổi nhật ký.
+
+## FETCH-ALL-20261026 — Cập nhật các nhánh
+
+Prompt nguyên văn:
+
+```text
+pull code các nhánh về
+```
+
+Đã fetch origin --prune toàn bộ nhánh. Nhánh identify fast-forward từ 4d0dc73 lên 70d96c5 (7 commit); các nhánh còn lại đã khớp remote. Giữ workspace ở main, không merge identify vào main hoặc nhánh khác. Giữ nguyên thay đổi cục bộ có sẵn trong nhật ký này, không commit/push và không chạy lại ứng dụng/test vì chỉ cập nhật nhánh.
+
+## INTEGRATION-MERGE-20261026 — Ghép vào nhánh kiểm thử
+
+Prompt nguyên văn:
+
+```text
+merg vào nhánh kiểm thử đi
+```
+
+Đã fetch, chuyển sang integration/utetra và ghép các remote feature/catalog-sales, feature/identity-membership, feature/order-payment, identify. Fast-forward từ 5e5708f tới 70d96c5, không xung đột; tất cả bốn nhánh là tổ tiên của HEAD. Giữ thay đổi nhật ký có sẵn bằng stash đúng file rồi khôi phục thành công. Không sửa main hoặc push. Clean verify đạt 167 test, 0 failures/errors/skipped và WAR build thành công lúc 20:20:09; Shared UI checker nội bộ đạt, Node syntax và whitespace đạt. So với main còn 4 file bundle khác do thiết kế mới từ identify; chưa tự đồng bộ sang main. Không seed cloud hoặc gọi giao dịch thanh toán thật. [Biên bản](INTEGRATION_VERIFICATION_20261026.md).
+
+## UI-REFERENCE-20261026 — Thiết kế theo ảnh mẫu
+
+Prompt nguyên văn:
+
+```text
+[Image #1] bạn thiết kế giao diện theo màu và phông như này được không vẫn giữ đầy đủ chức năng
+```
+
+Ảnh nguồn: 2aOboR8CXHLLqRujaayM4hUEoJJikhocP0fkZwvY.jpg. Chỉnh shared theme trên integration/utetra, bổ sung font local Be Vietnam Pro và giấy phép, giữ nguyên chức năng/backend. Xem [quy chuẩn](SHARED_UI.md) và [biên bản mới](UI_REFERENCE_REFINEMENT_20261026.md). Không nhận font đã chọn là font chính xác trong ảnh; không dùng ImageGen hoặc dịch vụ CDN runtime. Không commit/push.
+
+Kết quả UI-REFERENCE-20261026: Maven package chạy 10 render tests đạt, browser vòng đầu 21 route/viewport đạt. Review ảnh phát hiện tương phản wordmark footer và ghi chú sidebar cần chỉnh; đã sửa CSS, package lại với skipTests và kiểm browser cuối riêng. Không cộng test cũ 167 vào lượt này, không nhận skipTests là chạy test. Biên bản/hình/JSON nằm trong docs/UI_REFERENCE_REFINEMENT_20261026.md và docs/demo/reference-20261026.
+
+## INTEGRATION-PUBLISH-20261026 — Pull nhánh và phát hành integration
+
+Prompt nguyên văn:
+
+```text
+pull code các nhánh về rồi push lên nhánh integration
+```
+
+Phạm vi được yêu cầu: fetch các nhánh origin, giữ bản UI đang làm, ghép vào integration/utetra rồi kiểm và push đúng nhánh này; không thay main hoặc push các feature. identify có commit mới ba355e0 (tool reset mật khẩu test và migration nullable). Chỉ ghép source, không chạy công cụ reset/seed trên DB. Trạng thái ảnh nguồn QR bị xóa cục bộ có trước lượt này được giữ ngoài commit; bản QR dùng trong static assets vẫn tồn tại. Kết quả merge/test/push ghi theo thực tế trong biên bản phát hành.

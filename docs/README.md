@@ -1,5 +1,7 @@
 # UTETra — Hồ sơ và cấu hình chung của nhóm
 
+Giao diện tham chiếu 26/10: [màu/font, hình desktop–mobile và kết quả kiểm tra](UI_REFERENCE_REFINEMENT_20261026.md). Bản thử trên integration, chưa phát hành sang main.
+
 > Đọc trạng thái mới nhất: [FINAL_REQUIREMENTS_STATUS](FINAL_REQUIREMENTS_STATUS.md). Clean verify 161 tests đạt; VNPAY có code/test nhưng thiếu merchant sandbox thật; Manager carrier theo shop đã bổ sung. Có [khảo sát có nguồn](SURVEY_FINDINGS_20261024.md), bộ hình report-assets và SETUP viết lại.
 
 Mới nhất 24/10: [JWT lưu DB, tồn kho/voucher đồng thời và WebSocket checkout](features/order-payment/REALTIME_CHECKOUT_JWT.md). Verify 153 tests đạt; có minh chứng STOMP trên trình duyệt với H2 riêng và migration thứ 8 trên TiDB. Code đang trên integration, chưa push.

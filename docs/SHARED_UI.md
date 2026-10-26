@@ -51,7 +51,7 @@ Ví dụ JSP chức năng:
 
 - SiteMesh filter đăng ký một lần; `setDecoratorPrefix("")`; một mapping /* tới app.jsp. Giữ exclusions /api/*, /assets/*, /ws, /payments/*, /error; JSON/static không bị bọc HTML.
 - NavigationAdvice cung cấp currentRole từ principal hiện hành, currentPath và workspace cho URL quản lý. Thêm role/menu trong logic chung, không thêm decorator. Security/Service vẫn quyết định quyền thật.
-- Theme tokens hiện có: --tea #173c32, --cream #faf8f3, --ink #233b33, --orange #cb643d; font Segoe UI/Arial. Dùng var(...) thay vì đặt màu/font mới theo từng module.
+- Theme tokens hiện có: --tea #315638, --cream #f5f2e8, --ink #263b2c, --orange #a5773d; font Be Vietnam Pro local, fallback Segoe UI/Arial. Dùng var(...) thay vì đặt màu/font mới theo từng module.
 - Dùng breakpoint Bootstrap và quy tắc trong utetra.css; kiểm 390px, 768px, desktop. Table có table-responsive, form có label, trạng thái/loading/lỗi rõ ràng. Không tải Bootstrap/jQuery/font/icon từ CDN riêng.
 - Chỉ thay file giao diện và config SiteMesh/NavigationAdvice cho nhu cầu này; không sửa datasource/JWT/Cloudinary/mail/pom để làm trang đẹp hơn.
 
@@ -81,3 +81,14 @@ Bundle này được tách từ main, không chứa code order/catalog/identity 
 Thanh yêu cầu áp dụng bản thiết kế kem/xanh lá trên source hiện có. Thay đổi được thực hiện local trên identify, chưa đồng bộ/push main: vẫn một app.jsp, một Bootstrap và một utetra.css. Cập nhật token xanh lá/kem, header, nút, hero ảnh matcha, thẻ danh mục có ảnh, card món, bộ lọc trái/giỏ tóm tắt phải ở desktop, bố cục mobile, sidebar quản lý và bảng trạng thái đơn. Báo cáo dùng KPI/biểu đồ từ số liệu service hiện có, không thêm số liệu tăng trưởng giả. Trang chi tiết vẫn giữ URL và luồng tùy chọn hiện hành. Thumbnail ba ly có logo lá và 30 ảnh món mới nằm trong assets/images; manifest/prompt ở docs/demo.
 
 Bundle thay đổi chung tập trung ở utetra.css và app.jsp; nội dung catalog/order giữ trong module. Chủ nhóm có thể review rồi tích hợp bộ chung sang main/các feature theo workflow cũ. Không tạo theme/layout theo role hoặc framework mới.
+
+
+## Tinh chỉnh theo ảnh tham chiếu — 26/10/2026
+
+Yêu cầu mới: `[Image #1] bạn thiết kế giao diện theo màu và phông như này được không vẫn giữ đầy đủ chức năng`. Ảnh tham chiếu do người dùng cung cấp: `2aOboR8CXHLLqRujaayM4hUEoJJikhocP0fkZwvY.jpg`. Không đưa toàn bộ poster thành nền website.
+
+Bản thử nghiệm nằm trên integration/utetra: màu kem ấm, xanh trà và nhấn nâu vàng; Be Vietnam Pro 400/500/600/700 hỗ trợ tiếng Việt, logo/nhấn biên tập dùng Georgia. Font được chọn để gần tinh thần ảnh, không khẳng định nhận diện chính xác font trong poster. Font và giấy phép SIL OFL được đóng gói local trong assets/vendor/fonts/be-vietnam-pro, không phụ thuộc CDN lúc chạy. Nguồn: https://github.com/google/fonts/tree/main/ofl/bevietnampro.
+
+Thay đổi chung: utetra.css (token/typography/nút/focus/card/sidebar/mobile), app.jsp (preload font, theme-color, cache version) và manifest thêm 5 file font/license. Không thêm decorator/layout/framework. Không đổi URL/action/name/id nghiệp vụ, provider, datasource, JWT hoặc quyền. Các KPI và trạng thái vẫn lấy từ service hiện có. Không ẩn chức năng để giống poster.
+
+Khi phát hành bundle này, đồng bộ cả font/license trong SHARED_UI_FILES.txt. Main và các feature chưa được cập nhật tự động. Kết quả kiểm thử hiện tại xem UI_REFERENCE_REFINEMENT_20261026.md; các biên bản cũ là lịch sử.

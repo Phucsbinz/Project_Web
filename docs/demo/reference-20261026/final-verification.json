@@ -1,0 +1,30 @@
+{
+  "checks": [
+    {
+      "scenario": "Final shared theme and readable footer logo",
+      "width": 1440
+    },
+    {
+      "scenario": "Final shared theme and readable footer logo",
+      "width": 390
+    },
+    {
+      "scenario": "Popup size/quantity/price preview and reachable submit; no add-to-cart or checkout submitted",
+      "width": 1440
+    },
+    {
+      "scenario": "Popup size/quantity/price preview and reachable submit; no add-to-cart or checkout submitted",
+      "width": 390
+    },
+    {
+      "scenario": "Readable workspace sidebar note and reports",
+      "width": 1440
+    },
+    {
+      "scenario": "Readable workspace sidebar note and reports",
+      "width": 390
+    }
+  ],
+  "errors": [],
+  "scope": "Final WAR after footer contrast correction; no cart/order/provider mutation"
+}
