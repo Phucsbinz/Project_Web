@@ -30,3 +30,7 @@ Prompt nguyên văn:
 Ảnh người dùng: 2aOboR8CXHLLqRujaayM4hUEoJJikhocP0fkZwvY.jpg. Áp dụng trên shared CSS và app.jsp, giữ một layout. Dùng Be Vietnam Pro local (SIL OFL), nền kem/xanh trà và serif cho logo; giữ nguyên chức năng, endpoint và phân quyền. Không dùng ImageGen cho việc CSS/font. Kết quả kiểm thử: UI_REFERENCE_REFINEMENT_20261026.md. Chưa commit/push hoặc đồng bộ nhánh khác.
 
 Kết quả UI-REFERENCE-20261026: Maven package chạy 10 render tests đạt, browser vòng đầu 21 route/viewport đạt. Review ảnh phát hiện tương phản wordmark footer và ghi chú sidebar cần chỉnh; đã sửa CSS, package lại với skipTests và kiểm browser cuối riêng. Không cộng test cũ 167 vào lượt này, không nhận skipTests là chạy test. Biên bản/hình/JSON nằm trong docs/UI_REFERENCE_REFINEMENT_20261026.md và docs/demo/reference-20261026.
+
+## ALL-MODULE-UI-20261026
+
+Prompt “tích hợp đầy đủ ui nha đừng để thiếu ui bên các phần khác” được gửi hai lần, sau đó “tiếp tục”; nguyên văn giữ trong AI_PROMPT_HISTORY.md. Cập nhật sidebar/dropdown/footer theo role, picker catalog và Shipper report, mobile order nav; giữ một layout và theme. Kiểm render 13 test và browser trên H2 riêng, biên bản ALL_MODULE_UI_20261026.md.

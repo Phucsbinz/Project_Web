@@ -1,5 +1,7 @@
 # UTETra — Hồ sơ và cấu hình chung của nhóm
 
+Tích hợp UI tất cả module: [phạm vi vai trò, ảnh và kiểm tra desktop/mobile](ALL_MODULE_UI_20261026.md).
+
 Giao diện tham chiếu 26/10: [màu/font, hình desktop–mobile và kết quả kiểm tra](UI_REFERENCE_REFINEMENT_20261026.md). Bản thử trên integration, chưa phát hành sang main.
 
 > Đọc trạng thái mới nhất: [FINAL_REQUIREMENTS_STATUS](FINAL_REQUIREMENTS_STATUS.md). Clean verify 161 tests đạt; VNPAY có code/test nhưng thiếu merchant sandbox thật; Manager carrier theo shop đã bổ sung. Có [khảo sát có nguồn](SURVEY_FINDINGS_20261024.md), bộ hình report-assets và SETUP viết lại.

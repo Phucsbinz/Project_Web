@@ -92,3 +92,12 @@ Bản thử nghiệm nằm trên integration/utetra: màu kem ấm, xanh trà v�
 Thay đổi chung: utetra.css (token/typography/nút/focus/card/sidebar/mobile), app.jsp (preload font, theme-color, cache version) và manifest thêm 5 file font/license. Không thêm decorator/layout/framework. Không đổi URL/action/name/id nghiệp vụ, provider, datasource, JWT hoặc quyền. Các KPI và trạng thái vẫn lấy từ service hiện có. Không ẩn chức năng để giống poster.
 
 Khi phát hành bundle này, đồng bộ cả font/license trong SHARED_UI_FILES.txt. Main và các feature chưa được cập nhật tự động. Kết quả kiểm thử hiện tại xem UI_REFERENCE_REFINEMENT_20261026.md; các biên bản cũ là lịch sử.
+
+
+## Tích hợp toàn bộ module — 26/10/2026
+
+Bản tích hợp dùng chung cả Guest/User, tài khoản/OTP, Vendor, Manager, Admin và Shipper. Sidebar bổ sung khu vực giao, topping tại shop, danh mục topping, phân công/quyền danh mục (Admin), thông báo, hồ sơ và bảo mật. Dropdown người mua có địa chỉ, đã xem, đánh giá và bình luận. Footer chỉ dẫn sang chức năng phù hợp vai trò; không dùng menu để thay quyền backend.
+
+Sidebar desktop cuộn độc lập khi dài; mobile dùng menu xuống dòng. Bộ chọn shop của catalog wrap trên màn hình nhỏ. Shipper report dùng cùng KPI/card/font/màu và bộ lọc ngày responsive. Nội dung catalog vẫn ở catalog/manage.jsp, shipper ở order/shipper-report.jsp, cùng được app.jsp decorate.
+
+Kiểm đầy đủ và đường dẫn ảnh: ALL_MODULE_UI_20261026.md. Công cụ `py -3 tools/check_all_ui.py` dựng H2 fixture riêng, bật Shipper riêng fixture và tự dừng server sau kiểm. Phải package/test trước để có classpath và JDK 21; không chạy fixture trên datasource cloud. Không thay features.shipper.enabled của cấu hình dùng chung chỉ để lấy ảnh.

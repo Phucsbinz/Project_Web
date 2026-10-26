@@ -842,3 +842,25 @@ pull code các nhánh về rồi push lên nhánh integration
 Phạm vi được yêu cầu: fetch các nhánh origin, giữ bản UI đang làm, ghép vào integration/utetra rồi kiểm và push đúng nhánh này; không thay main hoặc push các feature. identify có commit mới ba355e0 (tool reset mật khẩu test và migration nullable). Chỉ ghép source, không chạy công cụ reset/seed trên DB. Trạng thái ảnh nguồn QR bị xóa cục bộ có trước lượt này được giữ ngoài commit; bản QR dùng trong static assets vẫn tồn tại. Kết quả merge/test/push ghi theo thực tế trong biên bản phát hành.
 
 Kết quả INTEGRATION-PUBLISH-20261026: ghép identify ba355e0 vào bản UI e394907 bằng merge fae9778, không xung đột. Clean verify 167 test đạt, không failure/error/skipped; WAR build thành công, shared UI và whitespace đạt. Tất cả 6 remote tip đều nằm trong bản ghép. Phát hành đúng integration/utetra bằng push thường, đối chiếu SHA remote trước khi báo xong. Biên bản: INTEGRATION_VERIFICATION_20261026.md.
+
+## ALL-MODULE-UI-20261026 — Không bỏ sót UI các module
+
+Người dùng gửi cùng một prompt hai lần liên tiếp, nguyên văn mỗi lần:
+
+```text
+tích hợp đầy đủ ui nha đừng để thiếu ui bên các phần khác
+```
+
+```text
+tích hợp đầy đủ ui nha đừng để thiếu ui bên các phần khác
+```
+
+Prompt tiếp nối nguyên văn:
+
+```text
+tiếp tục
+```
+
+Đã rà các view/controller và nhóm vai trò, bổ sung navigation chung tới các cấu hình sẵn có, dropdown người mua đầy đủ và footer theo quyền, bố trí Shipper report bằng theme chung và sửa bộ chọn shop/mobile order nav. Không bỏ chức năng hoặc thêm layout. Test H2 riêng bật Shipper và delegation catalog cho Manager chỉ trong fixture; không bật/tạo dữ liệu/reset trên cloud. Lượt render đạt 13 test. Lượt browser đầu 158 checks đạt; review ảnh phát hiện menu phụ mobile cần wrap, đã sửa CSS và package lại với skipTests, không coi đó là test Maven mới. Kiểm cuối có thêm check API/assets error và form Admin sau chọn shop. Kết quả thực/ảnh ở ALL_MODULE_UI_20261026.md. Không chạy OTP gửi email, upload provider, đặt đơn/thu tiền thật qua browser để chứng minh UI.
+
+Kết quả ALL-MODULE-UI-20261026 cuối: 158/158 checks đạt trên 6 nhóm role ở 390/1440px, không lỗi JS/API/assets được ghi nhận, Admin form đã chọn shop, Shipper mobile menu đã wrap. Giữ kết quả 13 render tests riêng, không cộng số test cũ. Helper H2 tự dừng. Phát hành bổ sung UI lên integration/utetra theo phạm vi yêu cầu push còn hiệu lực; main/feature không đổi.
