@@ -2,11 +2,11 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html><html lang="vi"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#173c32"><meta name="description" content="UTETra — Chọn chi nhánh, tìm vị trà yêu thích và tự tay chọn size, đường, đá, topping cho ly trà của bạn.">
+<meta name="theme-color" content="#173c32"><meta name="description" content="UTETra — Chọn đồ uống, tùy chỉnh size, đường, đá và topping. Chọn chi nhánh phục vụ khi lên đơn.">
 <meta name="_csrf" content="<c:out value='${_csrf.token}'/>"><meta name="_csrf_header" content="<c:out value='${_csrf.headerName}'/>"><meta name="app-context" content="${pageContext.request.contextPath}">
 <title><sitemesh:write property="title"/></title>
 <link rel="icon" type="image/svg+xml" href="<c:url value='/assets/images/utetra-mark.svg'/>">
-<link rel="stylesheet" href="<c:url value='/assets/vendor/bootstrap/bootstrap.min.css'/>"><link rel="stylesheet" href="<c:url value='/assets/css/utetra.css'/>">
+<link rel="stylesheet" href="<c:url value='/assets/vendor/bootstrap/bootstrap.min.css'/>"><link rel="stylesheet" href="<c:url value='/assets/css/utetra.css?v=20261026'/>">
 <sitemesh:write property="head"/></head><body class="${workspace ? 'is-workspace' : 'is-storefront'}">
 <svg xmlns="http://www.w3.org/2000/svg" class="icon-library" aria-hidden="true"><defs>
 <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4C9 2 3 7 5 14c2 7 13 7 15-10Z"/><path d="m4 21 11-12M9 15l-1-5m5 1 4 1"/></symbol>

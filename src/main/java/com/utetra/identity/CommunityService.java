@@ -25,12 +25,16 @@ public class CommunityService {
     @Transactional(readOnly=true)
     public Map<String,Object> publicContent(long productId,int page,int size) {
         commerce.product(productId); int offset=IdentityValidation.offset(page,size);
-        var reviews=db.list("select r.id,r.stars,r.content,r.created_at,u.full_name as author_name from reviews r join users u on u.id=r.author_id where r.product_id=? and r.status='VISIBLE' order by r.id desc limit ? offset ?",productId,size,offset);
-        var comments=db.list("select c.id,c.content,c.created_at,u.full_name as author_name from product_comments c join users u on u.id=c.author_id where c.product_id=? and c.status='VISIBLE' order by c.id desc limit ? offset ?",productId,size,offset);
+        String family="(select p.id from products p join stores s on s.id=p.store_id join products original on original.id=? join stores os on os.id=original.store_id where s.owner_user_id=os.owner_user_id and p.category_id=original.category_id and (p.id=original.id or (original.catalog_key is not null and p.catalog_key=original.catalog_key)))";
+        var reviews=db.list("select r.id,r.stars,r.content,r.created_at,u.full_name as author_name from reviews r join users u on u.id=r.author_id where r.product_id in "+family+" and r.status='VISIBLE' order by r.id desc limit ? offset ?",productId,size,offset);
+        var comments=db.list("select c.id,c.content,c.created_at,u.full_name as author_name from product_comments c join users u on u.id=c.author_id where c.product_id in "+family+" and c.status='VISIBLE' order by c.id desc limit ? offset ?",productId,size,offset);
         reviews.forEach(r -> r.put("media",media.list("review",number(r,"id"))));
         comments.forEach(c -> c.put("media",media.list("comment",number(c,"id"))));
-        var rating=db.one("select count(*) as review_count,coalesce(avg(stars),0) as average_stars from reviews where product_id=? and status='VISIBLE'",productId);
-        return Map.of("reviews",reviews,"comments",comments,"rating",rating,"favorites",db.count("select count(*) from product_favorites where product_id=?",productId));
+        var rating=db.one("select count(*) as review_count,coalesce(avg(stars),0) as average_stars from reviews where product_id in "+family+" and status='VISIBLE'",productId);
+        return Map.of("reviews",reviews,"comments",comments,"rating",rating,
+            "soldUnits",db.count("select coalesce(sum(i.quantity),0) from order_items i join orders o on o.id=i.order_id join product_variants v on v.id=i.variant_id where v.product_id in "+family+" and o.status='DELIVERED' and o.payment_status='PAID'",productId),
+            "commentCount",db.count("select count(*) from product_comments where product_id in "+family+" and status='VISIBLE'",productId),
+            "favorites",db.count("select count(distinct user_id) from product_favorites where product_id in "+family,productId));
     }
     @Transactional
     public long favorite(UtetraPrincipal p,long productId,boolean enabled) {

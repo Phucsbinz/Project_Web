@@ -1,0 +1,129 @@
+{
+  "tool": "built-in imagegen",
+  "prompts": [
+    {
+      "slug": "milk-tea",
+      "prompt": "Photorealistic premium Vietnamese cafe e-commerce product photograph, square composition, one Vietnamese oolong milk tea, amber beige tea, black tapioca pearls at bottom in a clear takeaway cup with lid and ice, full cup visible centered, cream limestone pedestal, warm pale cream backdrop, soft studio light and realistic condensation, ingredients subtly beside the cup. On the FRONT CENTER of the cup MUST be a dark forest green circular printed sticker with a large clearly visible cream LEAF logo (single pointed leaf tilted diagonally up-right with central vein and two side veins), small legible text UTETra below the leaf inside circle. Utetra's own brand, absolutely no other brand logos. Distinct appetizing drink, premium consistent catalogue photography. No extra text, no collage."
+    },
+    {
+      "slug": "matcha",
+      "prompt": "Photorealistic premium Vietnamese cafe e-commerce product photograph, square composition, one vibrant green matcha latte with white milk marbling in a clear takeaway cup with lid and ice, full cup visible centered, cream limestone pedestal, warm pale cream backdrop, soft studio light and realistic condensation, ingredients subtly beside the cup. On the FRONT CENTER of the cup MUST be a dark forest green circular printed sticker with a large clearly visible cream LEAF logo (single pointed leaf tilted diagonally up-right with central vein and two side veins), small legible text UTETra below the leaf inside circle. Utetra's own brand, absolutely no other brand logos. Distinct appetizing drink, premium consistent catalogue photography. No extra text, no collage."
+    },
+    {
+      "slug": "peach-tea",
+      "prompt": "Photorealistic premium Vietnamese cafe e-commerce product photograph, square composition, one clear amber peach orange lemongrass iced tea with peach slices and orange slice in a clear takeaway cup with lid and ice, full cup visible centered, cream limestone pedestal, warm pale cream backdrop, soft studio light and realistic condensation, ingredients subtly beside the cup. On the FRONT CENTER of the cup MUST be a dark forest green circular printed sticker with a large clearly visible cream LEAF logo (single pointed leaf tilted diagonally up-right with central vein and two side veins), small legible text UTETra below the leaf inside circle. Utetra's own brand, absolutely no other brand logos. Distinct appetizing drink, premium consistent catalogue photography. No extra text, no collage."
+    },
+    {
+      "slug": "lychee-tea",
+      "prompt": "Photorealistic premium Vietnamese cafe e-commerce product photograph, square composition, one clear pale golden jasmine lychee iced tea with whole peeled lychees in a clear takeaway cup with lid and ice, full cup visible centered, cream limestone pedestal, warm pale cream backdrop, soft studio light and realistic condensation, ingredients subtly beside the cup. On the FRONT CENTER of the cup MUST be a dark forest green circular printed sticker with a large clearly visible cream LEAF logo (single pointed leaf tilted diagonally up-right with central vein and two side veins), small legible text UTETra below the leaf inside circle. Utetra's own brand, absolutely no other brand logos. Distinct appetizing drink, premium consistent catalogue photography. No extra text, no collage."
+    },
+    {
+      "slug": "coffee",
+      "prompt": "Photorealistic premium Vietnamese cafe e-commerce product photograph, square composition, one Vietnamese iced condensed milk coffee, deep espresso brown over creamy milk in a clear takeaway cup with lid and ice, full cup visible centered, cream limestone pedestal, warm pale cream backdrop, soft studio light and realistic condensation, ingredients subtly beside the cup. On the FRONT CENTER of the cup MUST be a dark forest green circular printed sticker with a large clearly visible cream LEAF logo (single pointed leaf tilted diagonally up-right with central vein and two side veins), small legible text UTETra below the leaf inside circle. Utetra's own brand, absolutely no other brand logos. Distinct appetizing drink, premium consistent catalogue photography. No extra text, no collage."
+    },
+    {
+      "slug": "lotus-tea",
+      "prompt": "Photorealistic premium Vietnamese cafe e-commerce product photograph, square composition, one golden lotus iced tea topped with white cream and visible lotus seeds in a clear takeaway cup with lid and ice, full cup visible centered, cream limestone pedestal, warm pale cream backdrop, soft studio light and realistic condensation, ingredients subtly beside the cup. On the FRONT CENTER of the cup MUST be a dark forest green circular printed sticker with a large clearly visible cream LEAF logo (single pointed leaf tilted diagonally up-right with central vein and two side veins), small legible text UTETra below the leaf inside circle. Utetra's own brand, absolutely no other brand logos. Distinct appetizing drink, premium consistent catalogue photography. No extra text, no collage."
+    },
+    {
+      "slug": "brown-sugar",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one brown sugar fresh milk boba, dark syrup tiger stripes and black pearls. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "taro",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one purple taro milk tea, purple cream with tapioca. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "thai-tea",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one orange Thai milk tea. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "jasmine-milk",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one pale creamy jasmine milk tea with white pearls. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "black-milk",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one classic brown black milk tea with black tapioca. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "cheese-oolong",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one amber oolong tea with thick white cheese foam. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "strawberry-tea",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one red strawberry jasmine iced tea with sliced strawberries. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "mango-tea",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one golden mango iced tea with mango cubes. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "passion-tea",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one orange passionfruit iced tea with passionfruit seeds. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "kumquat",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one amber iced kumquat tea with small green citrus slices. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "hibiscus",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one ruby hibiscus iced tea with hibiscus petals. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "pineapple",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one golden pineapple jasmine iced tea with pineapple wedge. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "matcha-coconut",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one green matcha coconut milk latte with layered white coconut milk. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "matcha-strawberry",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one pink strawberry milk below green matcha, clear distinct layers. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "matcha-cheese",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one green matcha topped with white cream cheese foam. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "hojicha",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one roasted hojicha milk tea, warm brown with ice. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "black-coffee",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one black Vietnamese iced coffee. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "bac-xiu",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one Vietnamese bac xiu, mostly white condensed milk with coffee swirl. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "coconut-coffee",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one Vietnamese blended coconut coffee with white coconut slush. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "salt-coffee",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one Vietnamese iced coffee topped with salted white cream. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "caramel-coffee",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one iced caramel coffee latte with caramel drizzle. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "chocolate",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one iced dark chocolate milk drink with chocolate swirl. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "cookies",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one blended cookies and cream drink with crushed dark cookies and cream. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "mango-smoothie",
+      "prompt": "Premium photorealistic square e-commerce drink photograph: one thick bright golden mango smoothie with mango garnish. Clear takeaway cup, full cup centered, lid appropriate to drink, realistic texture and condensation, cream stone pedestal with a few fresh ingredient props, warm cream studio background. Front center of cup MUST have a dark forest green CIRCULAR sticker with a LARGE clearly visible cream diagonal LEAF emblem with central vein and small text UTETra, professionally printed. Only UTETra branding; no other logos. Consistent Vietnamese premium cafe product catalogue style, appetizing realistic drink, no collage, no extra text."
+    },
+    {
+      "slug": "hero",
+      "prompt": "Edit the supplied UTETra drink photograph. Preserve framing, drinks, background, lighting, lettering, all details exactly. On EACH of the three plain dark green circular stickers centered on the cups, add a clearly visible cream-colored elegant leaf brand mark: a single diagonal pointed leaf tilted up-right with a curved central vein and two short side veins, like the UTETra leaf icon. Leaf must be centered INSIDE the circular green sticker, professionally printed, with perspective and condensation consistent with each cup. Do not add any other brand or text. Save the edited image for a website hero."
+    }
+  ]
+}

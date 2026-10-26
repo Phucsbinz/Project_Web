@@ -79,6 +79,11 @@ public class CatalogService {
         require(input.variants().stream().anyMatch(VariantInput::active),"Cần ít nhất một size hoạt động");
         for(Long toppingId:input.toppingIds()) require(found(toppings.findById(toppingId)).getActive(),"Topping đã ngừng hoạt động");
         product.setStoreId(input.storeId()); product.setCategoryId(input.categoryId()); product.setName(input.name().trim()); product.setSlug(input.slug());
+        if(input.catalogKey()!=null) {
+            String key=input.catalogKey().isBlank()?null:input.catalogKey();
+            require(key==null || products.findAll().stream().noneMatch(x -> !x.getId().equals(id) && x.getStoreId().equals(input.storeId()) && key.equals(x.getCatalogKey())),"Mã món chung đã tồn tại trong chi nhánh này");
+            product.setCatalogKey(key);
+        }
         product.setDescription(input.description()); product.setBasePrice(input.basePrice()); product.setActive(input.active()); product.setAvailable(input.available()); product.setFeatured(input.featured());
         product.touch(); products.saveAndFlush(product);
         var old=variants.findByProductId(product.getId()); old.forEach(v -> v.setActive(false));
@@ -123,8 +128,8 @@ public class CatalogService {
         return new ProductView(p.getId(),p.getStoreId(),p.getCategoryId(),p.getName(),p.getSlug(),p.getDescription(),p.getBasePrice(),p.getImageUrl(),
             p.getActive(),p.getAvailable(),p.getFeatured(),p.getVersion(),p.getCreatedAt(),variants.findByProductId(p.getId()).stream()
             .map(v -> new VariantView(v.getId(),v.getSizeName(),v.getExtraPrice(),v.getActive(),v.getStockQuantity(),v.getVersion())).toList(),options,
-            links.findByProductId(p.getId()).stream().map(ProductTopping::getToppingId).collect(java.util.stream.Collectors.toSet()),sold,rating,favorites);
+            links.findByProductId(p.getId()).stream().map(ProductTopping::getToppingId).collect(java.util.stream.Collectors.toSet()),sold,rating,favorites,p.getCatalogKey());
     }
-    private CategoryView categoryView(Category c) { return new CategoryView(c.getId(),c.getName(),c.getSlug(),c.getDescription(),c.getDisplayOrder(),c.getActive()); }
+    private CategoryView categoryView(Category c) { return new CategoryView(c.getId(),c.getName(),c.getSlug(),c.getDescription(),c.getDisplayOrder(),c.getActive(),c.getImageUrl()); }
     private ToppingView toppingView(Topping t) { return new ToppingView(t.getId(),t.getName(),t.getPrice(),t.getActive()); }
 }

@@ -75,3 +75,9 @@ Kiểm ngay trên nhánh hiện tại: `py -3 tools/check_shared_ui.py`. So vớ
 ## Triển khai và chứng cứ
 
 Bundle này được tách từ main, không chứa code order/catalog/identity nghiệp vụ. Chỉ có một app.jsp; sáu file layout cũ là bản sao được thay thế bằng nguồn duy nhất, các trang chức năng vẫn giữ nguyên. Main đã qua clean verify với Java 21: 16/16 tests đạt, gồm render JSP/Tomcat/SiteMesh và kiểm JSON/static không bị decorate; WAR build thành công. Công cụ check_shared_ui xác nhận một layout và đủ 16 file chung. Việc này chưa đồng nghĩa các remote đã nhận thay đổi; phải xác nhận trạng thái push trước khi yêu cầu thành viên pull.
+
+## Giao diện theo bản thiết kế — 26/10/2026
+
+Thanh yêu cầu áp dụng bản thiết kế kem/xanh lá trên source hiện có. Thay đổi được thực hiện local trên identify, chưa đồng bộ/push main: vẫn một app.jsp, một Bootstrap và một utetra.css. Cập nhật token xanh lá/kem, header, nút, hero ảnh matcha, thẻ danh mục có ảnh, card món, bộ lọc trái/giỏ tóm tắt phải ở desktop, bố cục mobile, sidebar quản lý và bảng trạng thái đơn. Báo cáo dùng KPI/biểu đồ từ số liệu service hiện có, không thêm số liệu tăng trưởng giả. Trang chi tiết vẫn giữ URL và luồng tùy chọn hiện hành. Thumbnail ba ly có logo lá và 30 ảnh món mới nằm trong assets/images; manifest/prompt ở docs/demo.
+
+Bundle thay đổi chung tập trung ở utetra.css và app.jsp; nội dung catalog/order giữ trong module. Chủ nhóm có thể review rồi tích hợp bộ chung sang main/các feature theo workflow cũ. Không tạo theme/layout theo role hoặc framework mới.

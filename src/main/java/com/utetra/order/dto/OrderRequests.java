@@ -27,6 +27,9 @@ public final class OrderRequests {
       @Size(max = 255) String note)
       implements java.io.Serializable {}
 
+  public record BranchSelection(@Positive @JsonDeserialize(using=StrictNumbers.LongValue.class) long storeId,
+      @NotNull @PositiveOrZero @JsonDeserialize(using=StrictNumbers.LongValue.class) Long version) {}
+
   public record Quantity(
       @Min(1) @Max(20) @JsonDeserialize(using = StrictNumbers.IntValue.class) int quantity,
       @Min(0) @JsonDeserialize(using = StrictNumbers.LongValue.class) long version) {}

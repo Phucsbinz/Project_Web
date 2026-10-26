@@ -1,0 +1,242 @@
+[
+  {
+    "slug": "milk-tea",
+    "name": "Ô long sữa trân châu",
+    "category": "Trà sữa",
+    "price": 39000,
+    "description": "Ô long rang thơm hòa sữa béo dịu, trân châu đen dai mềm.",
+    "image": "/assets/images/menu/milk-tea.png"
+  },
+  {
+    "slug": "matcha",
+    "name": "Matcha latte",
+    "category": "Matcha & trà rang",
+    "price": 49000,
+    "description": "Matcha xanh mịn quyện sữa tươi, vị trà rõ và hậu ngọt thanh.",
+    "image": "/assets/images/menu/matcha.png"
+  },
+  {
+    "slug": "peach-tea",
+    "name": "Trà đào cam sả",
+    "category": "Trà trái cây",
+    "price": 45000,
+    "description": "Trà đen ủ lạnh cùng đào, cam tươi và hương sả thanh mát.",
+    "image": "/assets/images/menu/peach-tea.png"
+  },
+  {
+    "slug": "lychee-tea",
+    "name": "Trà lài vải",
+    "category": "Trà trái cây",
+    "price": 45000,
+    "description": "Trà lài thơm nhẹ với vải mọng nước, thích hợp cho ngày nắng.",
+    "image": "/assets/images/menu/lychee-tea.png"
+  },
+  {
+    "slug": "coffee",
+    "name": "Cà phê sữa đá",
+    "category": "Cà phê",
+    "price": 35000,
+    "description": "Cà phê phin đậm đà cân bằng sữa đặc, đánh thức buổi sáng.",
+    "image": "/assets/images/menu/coffee.png"
+  },
+  {
+    "slug": "lotus-tea",
+    "name": "Trà sen kem sữa",
+    "category": "Trà nguyên lá",
+    "price": 49000,
+    "description": "Trà sen thanh dịu với hạt sen bùi và lớp kem sữa mềm.",
+    "image": "/assets/images/menu/lotus-tea.png"
+  },
+  {
+    "slug": "brown-sugar",
+    "name": "Sữa tươi trân châu đường đen",
+    "category": "Trà sữa",
+    "price": 45000,
+    "description": "Sữa tươi mát và đường đen thơm mật, thêm trân châu mềm.",
+    "image": "/assets/images/menu/brown-sugar.png"
+  },
+  {
+    "slug": "taro",
+    "name": "Trà sữa khoai môn",
+    "category": "Trà sữa",
+    "price": 45000,
+    "description": "Khoai môn béo bùi kết hợp nền trà nhẹ, hương vị êm dịu.",
+    "image": "/assets/images/menu/taro.png"
+  },
+  {
+    "slug": "thai-tea",
+    "name": "Trà sữa Thái đỏ",
+    "category": "Trà sữa",
+    "price": 39000,
+    "description": "Trà Thái màu hổ phách, hương trà rõ hòa sữa thơm béo.",
+    "image": "/assets/images/menu/thai-tea.png"
+  },
+  {
+    "slug": "jasmine-milk",
+    "name": "Trà sữa lài ngọc trai",
+    "category": "Trà sữa",
+    "price": 42000,
+    "description": "Trà lài và sữa dịu nhẹ đi cùng trân châu trắng giòn.",
+    "image": "/assets/images/menu/jasmine-milk.png"
+  },
+  {
+    "slug": "black-milk",
+    "name": "Hồng trà sữa",
+    "category": "Trà sữa",
+    "price": 35000,
+    "description": "Hồng trà đậm vị kết hợp sữa, món quen cho mọi buổi hẹn.",
+    "image": "/assets/images/menu/black-milk.png"
+  },
+  {
+    "slug": "cheese-oolong",
+    "name": "Ô long kem cheese",
+    "category": "Trà nguyên lá",
+    "price": 45000,
+    "description": "Ô long rang hậu ngọt phủ lớp kem cheese mặn béo vừa đủ.",
+    "image": "/assets/images/menu/cheese-oolong.png"
+  },
+  {
+    "slug": "strawberry-tea",
+    "name": "Trà lài dâu tươi",
+    "category": "Trà trái cây",
+    "price": 49000,
+    "description": "Trà lài thơm cùng dâu đỏ chua ngọt và đá mát lạnh.",
+    "image": "/assets/images/menu/strawberry-tea.png"
+  },
+  {
+    "slug": "mango-tea",
+    "name": "Trà xoài nhiệt đới",
+    "category": "Trà trái cây",
+    "price": 49000,
+    "description": "Xoài vàng thơm hòa trà thanh nhẹ, thêm miếng xoài tươi.",
+    "image": "/assets/images/menu/mango-tea.png"
+  },
+  {
+    "slug": "passion-tea",
+    "name": "Trà chanh dây",
+    "category": "Trà trái cây",
+    "price": 42000,
+    "description": "Chanh dây chua thanh và hồng trà đậm hương, ít ngọt dễ uống.",
+    "image": "/assets/images/menu/passion-tea.png"
+  },
+  {
+    "slug": "kumquat",
+    "name": "Trà tắc mật ong",
+    "category": "Trà trái cây",
+    "price": 35000,
+    "description": "Tắc thơm vỏ, trà đen và mật ong tạo hậu vị thanh mát.",
+    "image": "/assets/images/menu/kumquat.png"
+  },
+  {
+    "slug": "hibiscus",
+    "name": "Trà hibiscus đỏ",
+    "category": "Trà trái cây",
+    "price": 45000,
+    "description": "Atiso đỏ ủ lạnh sắc ruby, chua dịu và hương hoa tự nhiên.",
+    "image": "/assets/images/menu/hibiscus.png"
+  },
+  {
+    "slug": "pineapple",
+    "name": "Trà lài dứa",
+    "category": "Trà trái cây",
+    "price": 42000,
+    "description": "Trà lài kết hợp dứa vàng chua ngọt, hương vị nhiệt đới.",
+    "image": "/assets/images/menu/pineapple.png"
+  },
+  {
+    "slug": "matcha-coconut",
+    "name": "Matcha sữa dừa",
+    "category": "Matcha & trà rang",
+    "price": 55000,
+    "description": "Matcha xanh và sữa dừa thơm, vị béo thanh hòa quyện.",
+    "image": "/assets/images/menu/matcha-coconut.png"
+  },
+  {
+    "slug": "matcha-strawberry",
+    "name": "Matcha dâu latte",
+    "category": "Matcha & trà rang",
+    "price": 55000,
+    "description": "Lớp dâu đỏ, sữa tươi và matcha xanh tạo vị chua ngọt cân bằng.",
+    "image": "/assets/images/menu/matcha-strawberry.png"
+  },
+  {
+    "slug": "matcha-cheese",
+    "name": "Matcha kem cheese",
+    "category": "Matcha & trà rang",
+    "price": 55000,
+    "description": "Matcha rõ vị với lớp kem cheese mặn nhẹ, mềm mịn.",
+    "image": "/assets/images/menu/matcha-cheese.png"
+  },
+  {
+    "slug": "hojicha",
+    "name": "Hojicha latte",
+    "category": "Matcha & trà rang",
+    "price": 49000,
+    "description": "Trà rang hojicha hương hạt, hòa sữa tươi êm và ít đắng.",
+    "image": "/assets/images/menu/hojicha.png"
+  },
+  {
+    "slug": "black-coffee",
+    "name": "Cà phê đen đá",
+    "category": "Cà phê",
+    "price": 29000,
+    "description": "Cà phê phin đen đậm hương rang, hậu vị kéo dài.",
+    "image": "/assets/images/menu/black-coffee.png"
+  },
+  {
+    "slug": "bac-xiu",
+    "name": "Bạc xỉu",
+    "category": "Cà phê",
+    "price": 35000,
+    "description": "Sữa thơm làm nền, thêm cà phê phin cho vị dịu dễ uống.",
+    "image": "/assets/images/menu/bac-xiu.png"
+  },
+  {
+    "slug": "coconut-coffee",
+    "name": "Cà phê dừa",
+    "category": "Cà phê",
+    "price": 49000,
+    "description": "Cà phê rang đậm cùng dừa đá xay béo thơm, mát lạnh.",
+    "image": "/assets/images/menu/coconut-coffee.png"
+  },
+  {
+    "slug": "salt-coffee",
+    "name": "Cà phê muối",
+    "category": "Cà phê",
+    "price": 42000,
+    "description": "Cà phê sữa với kem muối mặn nhẹ, làm nổi bật vị cà phê.",
+    "image": "/assets/images/menu/salt-coffee.png"
+  },
+  {
+    "slug": "caramel-coffee",
+    "name": "Caramel latte",
+    "category": "Cà phê",
+    "price": 49000,
+    "description": "Cà phê sữa tươi và caramel vàng thơm, vị ngọt vừa.",
+    "image": "/assets/images/menu/caramel-coffee.png"
+  },
+  {
+    "slug": "chocolate",
+    "name": "Chocolate sữa đá",
+    "category": "Đá xay & chocolate",
+    "price": 45000,
+    "description": "Cacao đậm hòa sữa mát, thơm chocolate và hậu vị dịu.",
+    "image": "/assets/images/menu/chocolate.png"
+  },
+  {
+    "slug": "cookies",
+    "name": "Cookies đá xay",
+    "category": "Đá xay & chocolate",
+    "price": 55000,
+    "description": "Sữa đá xay với bánh cookies giòn, lớp kem mịn bên trên.",
+    "image": "/assets/images/menu/cookies.png"
+  },
+  {
+    "slug": "mango-smoothie",
+    "name": "Xoài đá xay",
+    "category": "Đá xay & chocolate",
+    "price": 49000,
+    "description": "Xoài chín xay mịn với đá, hương trái cây tươi mát.",
+    "image": "/assets/images/menu/mango-smoothie.png"
+  }
+]

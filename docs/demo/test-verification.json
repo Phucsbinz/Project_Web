@@ -1,0 +1,17 @@
+{
+  "full_suite": {
+    "tests": 167,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "build_success": true
+  },
+  "final_jsp_smoke": {
+    "tests": 6,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "build_success": true
+  },
+  "java": 21
+}

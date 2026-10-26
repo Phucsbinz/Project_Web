@@ -1,0 +1,10 @@
+{
+  "checks": [
+    "Quick view is usable without horizontal overflow at 390px",
+    "Guest selects a drink with no branch; quick view adds to actual cart",
+    "Guest choices survive login through draft merge",
+    "Stale branch selection rejected without changing the cart",
+    "Branch chosen only at checkout; sizes/options preserved and fresh quote confirmed"
+  ],
+  "errors": []
+}

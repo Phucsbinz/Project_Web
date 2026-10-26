@@ -31,7 +31,13 @@ public final class CatalogRequests {
         @NotNull @DecimalMin("0") @Digits(integer=12,fraction=0) BigDecimal basePrice,
         boolean active, boolean available, boolean featured,
         @NotEmpty @Size(max=3) List<@jakarta.validation.Valid VariantInput> variants,
-        @NotNull @Size(max=50) Set<@NotNull Long> toppingIds, @PositiveOrZero long version) {}
+        @NotNull @Size(max=50) Set<@NotNull Long> toppingIds, @PositiveOrZero long version,
+        @Size(max=150) @Pattern(regexp="|[a-z0-9]+(?:-[a-z0-9]+)*") String catalogKey) {
+        public ProductInput(Long storeId,Long categoryId,String name,String slug,String description,BigDecimal basePrice,
+            boolean active,boolean available,boolean featured,List<VariantInput> variants,Set<Long> toppingIds,long version) {
+            this(storeId,categoryId,name,slug,description,basePrice,active,available,featured,variants,toppingIds,version,null);
+        }
+    }
     public record PromotionInput(Long storeId, @NotBlank @Size(max=150) String name,
         @Pattern(regexp="[A-Za-z0-9_-]{3,50}") String code,
         @NotNull @Pattern(regexp="PRODUCT_PERCENT|SHIPPING_PERCENT") String kind,

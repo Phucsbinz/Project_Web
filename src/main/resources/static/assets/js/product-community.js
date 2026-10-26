@@ -12,7 +12,7 @@
   const r=await fetch(context+'/products/'+id+'/community');
   if(!r.ok)throw new Error('Chưa tải được đánh giá. Vui lòng thử lại.');
   const data=await r.json();
-  message.textContent=data.rating.review_count+' đánh giá · '+Number(data.rating.average_stars).toFixed(1)+'/5 · '+data.favorites+' lượt yêu thích';
+  message.textContent='Đã bán '+data.soldUnits+' ly · ★ '+Number(data.rating.average_stars).toFixed(1)+'/5 · '+data.rating.review_count+' đánh giá · '+data.commentCount+' bình luận · '+data.favorites+' lượt yêu thích';
   for(const type of ['reviews','comments']) {
    const list=node.querySelector('[data-list="'+type+'"]'); list.replaceChildren();
    if(!data[type].length) {const p=document.createElement('p');p.className='text-secondary';p.textContent=type==='reviews'?'Chưa có đánh giá.':'Chưa có bình luận.';list.append(p);}

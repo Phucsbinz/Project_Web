@@ -115,3 +115,23 @@ Theo yêu cầu Thanh, chuyển khối Phiên đăng nhập/nút Đăng xuất t
 ## 23/10/2026 — Thông báo lỗi đăng nhập
 
 Thanh gửi ảnh Failed to fetch khi nhập sai password. Đây là lỗi transport không nhận response, không coi mặc định là sai mật khẩu. Request helper bắt lỗi fetch và hiển thị thông báo kết nối tiếng Việt. Riêng /auth/login trả 401 hiện Email hoặc mật khẩu không đúng, gợi ý Quên mật khẩu; không phân biệt email tồn tại. Shared UI checker và IdentityIntegrationTest đạt, verify tạo WAR thành công. Server khởi động lại. Chưa kiểm transport failure bằng trình duyệt.
+
+## 26/10/2026 — Merge source mới nhất vào identify, chưa push
+
+Thanh yêu cầu merge code mới nhất vào identify và sau đó dặn chưa push, kiểm thử trước. Workspace sạch tại 4d0dc73. Fetch toàn bộ remote; merge origin/integration/utetra tới 5e5708f rồi origin/main tới 3ceff77 bằng fast-forward, không conflict. Tất cả đầu remote hiện tại là ancestor của HEAD. Không thay cấu hình local mail hoặc database để merge.
+
+Kiểm chứng local: Shared UI checker đạt; git diff --check đạt; Maven verify Java 21 đạt 161 tests, 0 failures/errors/skipped và tạo WAR thành công (bao gồm test HTTP/Tomcat/JSP, identity/catalog/order và migration H2 isolated). Dùng giới hạn bộ nhớ và Mockito premain như phiên trước. Chưa smoke-test database/provider thật trong phiên này. Chưa push GitHub theo yêu cầu Thanh; identify local hiện chứa 5 commit mới so với origin/identify. Không khởi động hoặc áp migration database thật chỉ để nghiệm thu merge.
+
+## 26/10/2026 — Bộ dữ liệu và giao diện mẫu
+
+Thanh yêu cầu logo lá trên ảnh ly; đầy đủ data tài khoản Việt/mật khẩu dễ nhập, món tham khảo thương hiệu lớn, mỗi món có ảnh logo UTETra, lượt mua/rating/comment theo đơn hợp lệ. Sau đó chốt 30 món, cho phép tên Việt giả lập, và yêu cầu UI theo ảnh tham chiếu mới nhưng giữ các chức năng cũ.
+
+Dùng built-in imagegen tạo 30 ảnh món và sửa thumbnail ba ly; tất cả asset/prompt lưu trong repo. Seed thêm 12 tài khoản demo, 3 chi nhánh, 6 danh mục, 90 sản phẩm theo shop, 270 size, topping/phí giao, 106 đơn (99 COD delivered, 7 trạng thái/thanh toán), 90 review/comment, 2 voucher. Tài khoản cũ không đổi. Các đơn qua service checkout/chuyển trạng thái; cộng điểm/stock/snapshot theo ứng dụng. Không phát SMTP hoặc gọi thanh toán thật. Seed có flag apply, guard database, không xóa dữ liệu/tắt ràng buộc. Dữ liệu/tài khoản ghi rõ demo trong docs/demo/README.md.
+
+UI vẫn một layout chung. Thêm ảnh danh mục vào DTO công khai, thống kê soldUnits/commentCount từ bảng đơn/review thật cho trang chi tiết. Sửa fixture test order_items có quantity=0 mặc định thành quantity=2 để kiểm lượt bán có ý nghĩa. Đối chiếu database bằng VerifyDemo: 12 kiểm tra không có vi phạm. Kiểm browser phát hiện overflow thanh category ở 390px, đã sửa trước lượt kiểm lại. Kết quả cuối ghi ở docs/demo/README.md và ui/verification.json. Không commit/push trong phiên này.
+
+Kết quả cuối của đợt UI/data: 161 test đạt, build WAR thành công; 18 lượt Edge desktop/tablet/mobile đạt với User/Admin/Manager/Vendor, không JS exception; 12 đối chiếu SQL không có vi phạm. Source ảnh/prompt/seed/test report ở docs/demo. Server mở lại bản cuối, chưa commit/push.
+
+## 26/10/2026 — Thanh đổi luồng chọn chi nhánh
+
+Yêu cầu: chỉ chọn chi nhánh khi lên đơn/thanh toán; chọn nước không hiển thị chi nhánh; giao diện theo ảnh tham chiếu có popup tùy chọn. Đã thêm giỏ draft không ràng buộc branch trong UI, bước chọn branch ở checkout đối chiếu toàn giỏ transaction/version/stock rồi lấy báo giá. Dùng catalog_key explicit cùng owner/danh mục để gộp 90 bản ghi demo thành 30 món; giữ dữ liệu và đơn cũ. Có form quản trị mã món, popup nút size/đường/đá/topping và giỏ tạm tính thực. Chi tiết migration/API/test ở docs/features/order-payment/BRANCH_SELECTION_20261026.md. 167 tests toàn bộ đạt, thêm smoke JSP cuối đạt 6; kết quả browser lưu docs/demo. Không commit/push.

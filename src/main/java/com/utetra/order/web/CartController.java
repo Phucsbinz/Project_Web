@@ -45,6 +45,11 @@ public class CartController {
     return actor != null ? carts.view(actor) : guests.view(guest(request.getSession()));
   }
 
+  @PostMapping("/draft/items") @ResponseBody
+  public Map<String,Object> addDraft(@Valid @RequestBody Item item,HttpServletRequest request) {
+    Actor actor=OrderWebSupport.optional();return actor!=null?carts.addDraft(actor,item):guests.addDraft(guest(request.getSession()),item);
+  }
+
   @PostMapping("/items")
   @ResponseBody
   public Map<String, Object> add(@Valid @RequestBody Item item, HttpServletRequest request) {
@@ -88,7 +93,7 @@ public class CartController {
     var g = guest(request.getSession());
     Map<String, Object> result;
     synchronized (g) {
-      result = carts.merge(actor, List.copyOf(g.items), g.mergeKey);
+      result = g.draft?carts.mergeDraft(actor,List.copyOf(g.items),g.mergeKey):carts.merge(actor, List.copyOf(g.items), g.mergeKey);
     }
     request.getSession().removeAttribute("utetra.cart");
     return result;

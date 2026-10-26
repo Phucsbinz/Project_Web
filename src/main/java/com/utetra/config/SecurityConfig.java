@@ -26,7 +26,12 @@ public class SecurityConfig {
         // assets) as a new login and rotate the CSRF cookie behind the rendered page.
         // Authentication is reconstructed from JWT, never restored from an HTTP session.
         // The identity login/logout service must rotate CSRF at those actual boundaries.
-        http.sessionManagement(session -> session.disable())
+        http.headers(headers -> headers.frameOptions(frame -> frame.disable()).addHeaderWriter((request,response) -> {
+                // Only the public quick-view document may be embedded, and only by this same origin.
+                boolean quick=request.getServletPath().matches("/products/[0-9]+") && "1".equals(request.getParameter("quick"));
+                response.setHeader("X-Frame-Options",quick?"SAMEORIGIN":"DENY");
+            }))
+            .sessionManagement(session -> session.disable())
             .securityContext(context -> context.securityContextRepository(new NullSecurityContextRepository()))
             .addFilterBefore(new DisableEncodeUrlFilter(),SecurityContextHolderFilter.class)
             .requestCache(cache -> cache.disable())

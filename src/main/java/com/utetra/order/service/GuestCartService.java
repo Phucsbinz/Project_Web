@@ -13,6 +13,7 @@ public class GuestCartService {
     public final List<Item> items = new ArrayList<>();
     public final String mergeKey = UUID.randomUUID().toString();
     public long version;
+    public boolean draft;
   }
 
   private final CartService carts;
@@ -36,9 +37,16 @@ public class GuestCartService {
 
   @Transactional(readOnly = true)
   public Map<String, Object> add(Snapshot g, Item raw) {
-    Item item = carts.validate(raw);
+    return add(g,raw,false);
+  }
+
+  @Transactional(readOnly=true)
+  public Map<String,Object> addDraft(Snapshot g,Item raw) { return add(g,raw,true); }
+
+  private Map<String,Object> add(Snapshot g,Item raw,boolean draft) {
+    Item item = draft?carts.validateDraft(raw):carts.validate(raw);
     synchronized (g) {
-      if (!g.items.isEmpty() && store(item.variantId()) != store(g.items.getFirst().variantId()))
+      if (!draft && !g.items.isEmpty() && store(item.variantId()) != store(g.items.getFirst().variantId()))
         throw OrderProblem.conflict(
             "Giỏ thuộc cửa hàng khác; xác nhận xóa giỏ trước khi đổi shop.");
       if (g.items.stream().mapToInt(Item::quantity).sum() + item.quantity() > 50)
@@ -59,6 +67,7 @@ public class GuestCartService {
                 old.quantity() + item.quantity(),
                 old.note()));
       } else g.items.add(item);
+      g.draft |= draft;
       g.version++;
       return view(g);
     }

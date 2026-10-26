@@ -295,6 +295,69 @@ class OrderCommerceIntegrationTest {
         new BigDecimal(workflow.read(BUYER, order).get("total").toString()), version(order));
   }
 
+  @Test void quickViewAllowsOnlySameOriginFramingAndNormalPagesRemainDenied() {
+    var quick=http.getForEntity("/products/1?quick=1",String.class);
+    assertThat(quick.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(quick.getHeaders().getFirst("X-Frame-Options")).isEqualTo("SAMEORIGIN");
+    assertThat(quick.getBody()).contains("id=\"drink-form\"").doesNotContain("Xem cửa hàng bán món này");
+    assertThat(http.getForEntity("/products/1",String.class).getHeaders().getFirst("X-Frame-Options")).isEqualTo("DENY");
+    assertThat(http.getForEntity("/auth/login?quick=1",String.class).getHeaders().getFirst("X-Frame-Options")).isEqualTo("DENY");
+  }
+
+  @Test void neutralCartSelectsBranchAtCheckoutPreservesOptionsAndUsesTargetStock() {
+    jdbc.update("update products set catalog_key='shared-tea' where id in (1,2)");
+    jdbc.update("update product_variants set stock_quantity=7 where id=2");
+    carts.addDraft(BUYER,new Item(1,30,70,List.of(),2,"Ít ngọt"));
+    var draft=carts.addDraft(BUYER,new Item(2,0,50,List.of(),1,"Không đường"));
+    var selected=carts.selectBranch(BUYER,2,((Number)draft.get("version")).longValue());
+    assertThat(((Number)selected.get("storeId")).longValue()).isEqualTo(2);
+    var items=(List<Map<String,Object>>)selected.get("items");
+    assertThat(items).hasSize(2).allSatisfy(item->assertThat(((Number)item.get("variantId")).longValue()).isEqualTo(2));
+    assertThat(items).anySatisfy(item->{assertThat(item.get("sugar")).isEqualTo(30);assertThat(item.get("ice")).isEqualTo(70);assertThat(item.get("note")).isEqualTo("Ít ngọt");});
+    assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=2",Integer.class)).isEqualTo(7);
+    String key=UUID.randomUUID().toString();
+    var q=new Checkout(key,1,2,1,null,null,0,"pending","","COD");
+    var order=checkout.checkout(BUYER,new Checkout(key,1,2,1,null,null,0,checkout.quote(BUYER,q).get("hash").toString(),"","COD"));
+    assertThat(((Number)order.get("storeId")).longValue()).isEqualTo(2);
+    assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=2",Integer.class)).isEqualTo(4);
+  }
+
+  @Test void branchSelectionRejectsMissingProductAndStaleVersionWithoutChangingCart() {
+    var draft=carts.addDraft(BUYER,new Item(1,50,50,List.of(),2,""));long version=((Number)draft.get("version")).longValue();
+    assertThatThrownBy(()->carts.selectBranch(BUYER,2,version)).isInstanceOf(OrderProblem.class);
+    assertThat(carts.view(BUYER)).isEqualTo(draft);
+    assertThatThrownBy(()->carts.selectBranch(BUYER,1,version+1)).isInstanceOf(OrderProblem.class);
+    assertThat(carts.view(BUYER)).isEqualTo(draft);
+  }
+
+  @Test void branchSelectionChecksCombinedStockAndToppingsBeforeReplacingCart() {
+    jdbc.update("update products set catalog_key='shared-tea' where id in (1,2)");
+    jdbc.update("update product_variants set stock_quantity=2 where id=2");
+    carts.addDraft(BUYER,new Item(1,30,50,List.of(),2,""));
+    var draft=carts.addDraft(BUYER,new Item(1,70,50,List.of(),1,""));
+    long combinedVersion=((Number)draft.get("version")).longValue();
+    assertThatThrownBy(()->carts.selectBranch(BUYER,2,combinedVersion)).isInstanceOf(OrderProblem.class);
+    assertThat(carts.view(BUYER)).isEqualTo(draft);
+    carts.clear(BUYER);draft=carts.addDraft(BUYER,item(1));long v=((Number)draft.get("version")).longValue();
+    assertThatThrownBy(()->carts.selectBranch(BUYER,2,v)).isInstanceOf(OrderProblem.class);
+    assertThat(carts.view(BUYER)).isEqualTo(draft);
+  }
+
+  @Test void draftSelectionDoesNotRequireAnOpenStoreButCheckoutBranchDoes() {
+    jdbc.update("update stores set accepting_orders=false where id=1");
+    var draft=carts.addDraft(BUYER,new Item(1,50,50,List.of(),1,""));
+    assertThatThrownBy(()->carts.selectBranch(BUYER,1,((Number)draft.get("version")).longValue())).isInstanceOf(OrderProblem.class);
+    assertThat(carts.view(BUYER)).isEqualTo(draft);
+  }
+
+  @Test void publicMenuDeduplicatesSameOwnersDrinkAcrossBranchesBeforePagination() {
+    jdbc.update("update products set catalog_key='shared-tea' where id in (1,2)");
+    var all=catalog.search("",null,null,null,null,"newest",0,12,false,false);
+    assertThat(all.total()).isEqualTo(1);assertThat(all.items()).hasSize(1);
+    jdbc.update("update stores set owner_user_id=6 where id=2");
+    assertThat(catalog.search("",null,null,null,null,"newest",0,12,false,false).total()).isEqualTo(2);
+  }
+
   @Test
   void bankTransferRequiresAdminExactAmountAndCannotAdvanceBeforePayment() {
     long order = id(createBank());
@@ -383,7 +446,10 @@ class OrderCommerceIntegrationTest {
     assertThat(adminPage.getBody()).contains("id=\"bank-confirm-form\"");
     assertThat(browserPost("/admin/orders/" + order + "/bank-confirmation", receipt(order, "HTTP-RECEIPT"), admin)
         .getStatusCode()).isEqualTo(HttpStatus.OK);
-    var checkoutPage = http.exchange("/checkout", HttpMethod.GET,
+    carts.addDraft(BUYER,new Item(1,50,50,List.of(),1,""));
+    var branchPage=http.exchange("/checkout",HttpMethod.GET,new HttpEntity<>(browserHeaders(buyer)),String.class);
+    assertThat(branchPage.getBody()).contains("id=\"branch-form\"").doesNotContain("id=\"checkout-form\"");
+    var checkoutPage = http.exchange("/checkout?branch=1", HttpMethod.GET,
         new HttpEntity<>(browserHeaders(buyer)), String.class);
     assertThat(checkoutPage.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(checkoutPage.getBody()).contains("value=\"BANK_TRANSFER\"");

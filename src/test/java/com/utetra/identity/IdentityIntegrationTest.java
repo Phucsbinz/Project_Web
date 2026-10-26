@@ -78,7 +78,7 @@ class IdentityIntegrationTest {
         long variant=row("product_variants",Map.of("product_id",product));
         long store=number(db.one("select store_id from products where id=?",product),"store_id");
         long id=row("orders",Map.of("user_id",user,"store_id",store,"status",status,"payment_status",payment,"points_used",points,"points_earned",0,"subtotal",amount,"product_discount",0,"points_discount",points*1000));
-        row("order_items",Map.of("order_id",id,"variant_id",variant,"product_name","Trà sữa")); return id;
+        row("order_items",Map.of("order_id",id,"variant_id",variant,"product_name","Trà sữa","quantity",2)); return id;
     }
     @Test void registrationHashesPasswordAndRequiresActivation() {
         register(); var u=db.one("select * from users where email=?",email);
@@ -192,7 +192,11 @@ class IdentityIntegrationTest {
         assertThat(comment).isPositive();
         long review=community.review(p,new IdentityForms.Review(product,item,5,"<script>alert(1)</script>"),List.of());
         assertThatThrownBy(() -> community.review(p,new IdentityForms.Review(product,item,4,""),List.of())).isInstanceOf(IdentityException.class);
+        var publicData=community.publicContent(product,0,20);
+        assertThat(((Number)publicData.get("soldUnits")).longValue()).isPositive();
+        assertThat(((Number)publicData.get("commentCount")).longValue()).isEqualTo(1);
         community.delete(p,true,review);
+        assertThat(((java.util.Map<?,?>)community.publicContent(product,0,20).get("rating")).get("review_count")).isEqualTo(0L);
         assertThatThrownBy(() -> community.review(p,new IdentityForms.Review(product,item,4,""),List.of())).isInstanceOf(IdentityException.class);
     }
     @Test void fakeVideoAndExcessMediaAreRejectedBeforeUpload() {

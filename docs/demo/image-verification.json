@@ -1,0 +1,242 @@
+[
+  {
+    "slug": "milk-tea",
+    "image": "/assets/images/menu/milk-tea.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2357889,
+    "sha256": "38a2ad3f244227183b0211f7c47cd7a950167f65e525fb2a63e0cadc442529aa"
+  },
+  {
+    "slug": "matcha",
+    "image": "/assets/images/menu/matcha.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2338142,
+    "sha256": "ae881d91df6240d6b002cc6a2a87d511e505c210d3f933c4394c6f91a106d5d9"
+  },
+  {
+    "slug": "peach-tea",
+    "image": "/assets/images/menu/peach-tea.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2431845,
+    "sha256": "aa9d6dc67d4fc2cd59e00f737440e84b860cd3a5a94ce2eb392655aacf364440"
+  },
+  {
+    "slug": "lychee-tea",
+    "image": "/assets/images/menu/lychee-tea.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2284847,
+    "sha256": "74ad1649af7b780695abf42416d03d4a4a2f4a9a19372c3f584dbccad5e8421d"
+  },
+  {
+    "slug": "coffee",
+    "image": "/assets/images/menu/coffee.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2257648,
+    "sha256": "dabf40fa3b612f8cd39990723ccc03881326576f506608e7fe2eb7bd391dc4fb"
+  },
+  {
+    "slug": "lotus-tea",
+    "image": "/assets/images/menu/lotus-tea.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2217021,
+    "sha256": "e088bf46a4b3dfc9714aedeadc2bf5dde87384bbc029596b33be7a1c626220a3"
+  },
+  {
+    "slug": "brown-sugar",
+    "image": "/assets/images/menu/brown-sugar.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2463243,
+    "sha256": "eb7528d3b6b9fc51bd08db002f62344166c12ffe94be82f1a06161b92fd1562e"
+  },
+  {
+    "slug": "taro",
+    "image": "/assets/images/menu/taro.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2318315,
+    "sha256": "97a5bda7bd92a7801ccba634a3e5943f119b923f8edcdf562763a2d10bbcf9b0"
+  },
+  {
+    "slug": "thai-tea",
+    "image": "/assets/images/menu/thai-tea.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2164879,
+    "sha256": "9620e3f6b1467e444780511f521cc9fceecda779f2da4b7e52c11dd9c91847d9"
+  },
+  {
+    "slug": "jasmine-milk",
+    "image": "/assets/images/menu/jasmine-milk.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2114943,
+    "sha256": "a7396fc602e3213ee58873082323f1148d694fdd357079e9789aeabdede86f0e"
+  },
+  {
+    "slug": "black-milk",
+    "image": "/assets/images/menu/black-milk.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2251510,
+    "sha256": "3943bc3bf1e9616c9b760aef2cad2fef243dee6b8b99ec73ca91ae9e1a5bbb08"
+  },
+  {
+    "slug": "cheese-oolong",
+    "image": "/assets/images/menu/cheese-oolong.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2253867,
+    "sha256": "570e5900e54b92dd26e36a2a1768bc6bd6cf5dc3cfaf610572a88e5c892c5360"
+  },
+  {
+    "slug": "strawberry-tea",
+    "image": "/assets/images/menu/strawberry-tea.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2360424,
+    "sha256": "e56a390669db86417ded8cc13dbcfa3dda71f2ab3e405fe0c8a87cf6f14755ae"
+  },
+  {
+    "slug": "mango-tea",
+    "image": "/assets/images/menu/mango-tea.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2189046,
+    "sha256": "aabff222862e2929b79f79c184e0c37e79abf1b12ddd64341fd916a3a492af1c"
+  },
+  {
+    "slug": "passion-tea",
+    "image": "/assets/images/menu/passion-tea.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2440160,
+    "sha256": "81a83993875424f65a34907a577d206239eaa207af1ad5d75f0e0309ee2ff991"
+  },
+  {
+    "slug": "kumquat",
+    "image": "/assets/images/menu/kumquat.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2263498,
+    "sha256": "11da9f0164fe2e5bde13f13cb189763bec63abbcdd3590810b51dc7d3c4b8313"
+  },
+  {
+    "slug": "hibiscus",
+    "image": "/assets/images/menu/hibiscus.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2382447,
+    "sha256": "027c2110b9caed8b84692e1e96eaf5b794f174ba29627bc28471bb7984ade034"
+  },
+  {
+    "slug": "pineapple",
+    "image": "/assets/images/menu/pineapple.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2357066,
+    "sha256": "45a71e3f48dcf48ee485a59ef32f819cce1d962dd81882f62c99a98676cc4f59"
+  },
+  {
+    "slug": "matcha-coconut",
+    "image": "/assets/images/menu/matcha-coconut.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2312920,
+    "sha256": "81e49b137e4a21c650df03b9cb0830d209915ffe598b6a3b754022f3621987ed"
+  },
+  {
+    "slug": "matcha-strawberry",
+    "image": "/assets/images/menu/matcha-strawberry.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2278088,
+    "sha256": "8132ad8356ecdd58eba03a0623b67a8a2bf1ad4da5d4907bfc8832448be546b5"
+  },
+  {
+    "slug": "matcha-cheese",
+    "image": "/assets/images/menu/matcha-cheese.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2310945,
+    "sha256": "98d4d75bdc034fe8d6ae05b07382157108c778e378442b4e232c5b98f846bbd1"
+  },
+  {
+    "slug": "hojicha",
+    "image": "/assets/images/menu/hojicha.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2345825,
+    "sha256": "844ec521af1983859a8a1c966651e11ebce53fb058e7443719fc6313bab8e064"
+  },
+  {
+    "slug": "black-coffee",
+    "image": "/assets/images/menu/black-coffee.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2368956,
+    "sha256": "8e4d7ae10b9a7f7f614fc8814b81e65e9ac05958beaa822bae47cb79d0151435"
+  },
+  {
+    "slug": "bac-xiu",
+    "image": "/assets/images/menu/bac-xiu.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2220288,
+    "sha256": "3aede1ebebe039b44cafc6531fc16622fa4f17ede149b26beb1c900bf5757a22"
+  },
+  {
+    "slug": "coconut-coffee",
+    "image": "/assets/images/menu/coconut-coffee.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2327194,
+    "sha256": "a352a7114694f2f388d2a41b4dd950c982f4f3a8f81ee3388b49563f5f2613d5"
+  },
+  {
+    "slug": "salt-coffee",
+    "image": "/assets/images/menu/salt-coffee.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2171051,
+    "sha256": "467fcd0b544a790a72e036b7b482a400d58ad128f6ba4c8dd535f8807539ac8f"
+  },
+  {
+    "slug": "caramel-coffee",
+    "image": "/assets/images/menu/caramel-coffee.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2213480,
+    "sha256": "6f4b7978c5b4ff06635560404cddffe2e25e2df16a156189421567d16e88a721"
+  },
+  {
+    "slug": "chocolate",
+    "image": "/assets/images/menu/chocolate.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2345503,
+    "sha256": "5d58599a0439ad537ab0471e10222789a07385822bb47c520549d32fffc97bfa"
+  },
+  {
+    "slug": "cookies",
+    "image": "/assets/images/menu/cookies.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2509861,
+    "sha256": "d8bfa97dfa30eb34d5b155eedbc2759bde53e0f3bb44e68cb0291da03e542252"
+  },
+  {
+    "slug": "mango-smoothie",
+    "image": "/assets/images/menu/mango-smoothie.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2246809,
+    "sha256": "c9df7a248e799b8055d34f31000743293ab615b742b63e2ea79b00320f2aebd3"
+  }
+]

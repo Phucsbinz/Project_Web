@@ -1,0 +1,188 @@
+[
+  {
+    "slug": "hero",
+    "path": "src/main/resources/static/assets/images/utetra-tea-ritual-branded.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "milk-tea",
+    "path": "src/main/resources/static/assets/images/menu/milk-tea.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "matcha",
+    "path": "src/main/resources/static/assets/images/menu/matcha.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "peach-tea",
+    "path": "src/main/resources/static/assets/images/menu/peach-tea.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "lychee-tea",
+    "path": "src/main/resources/static/assets/images/menu/lychee-tea.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "coffee",
+    "path": "src/main/resources/static/assets/images/menu/coffee.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "lotus-tea",
+    "path": "src/main/resources/static/assets/images/menu/lotus-tea.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "brown-sugar",
+    "path": "src/main/resources/static/assets/images/menu/brown-sugar.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "taro",
+    "path": "src/main/resources/static/assets/images/menu/taro.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "thai-tea",
+    "path": "src/main/resources/static/assets/images/menu/thai-tea.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "jasmine-milk",
+    "path": "src/main/resources/static/assets/images/menu/jasmine-milk.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "black-milk",
+    "path": "src/main/resources/static/assets/images/menu/black-milk.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "cheese-oolong",
+    "path": "src/main/resources/static/assets/images/menu/cheese-oolong.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "strawberry-tea",
+    "path": "src/main/resources/static/assets/images/menu/strawberry-tea.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "mango-tea",
+    "path": "src/main/resources/static/assets/images/menu/mango-tea.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "passion-tea",
+    "path": "src/main/resources/static/assets/images/menu/passion-tea.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "kumquat",
+    "path": "src/main/resources/static/assets/images/menu/kumquat.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "hibiscus",
+    "path": "src/main/resources/static/assets/images/menu/hibiscus.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "pineapple",
+    "path": "src/main/resources/static/assets/images/menu/pineapple.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "matcha-coconut",
+    "path": "src/main/resources/static/assets/images/menu/matcha-coconut.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "matcha-strawberry",
+    "path": "src/main/resources/static/assets/images/menu/matcha-strawberry.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "matcha-cheese",
+    "path": "src/main/resources/static/assets/images/menu/matcha-cheese.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "hojicha",
+    "path": "src/main/resources/static/assets/images/menu/hojicha.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "black-coffee",
+    "path": "src/main/resources/static/assets/images/menu/black-coffee.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "bac-xiu",
+    "path": "src/main/resources/static/assets/images/menu/bac-xiu.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "coconut-coffee",
+    "path": "src/main/resources/static/assets/images/menu/coconut-coffee.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "salt-coffee",
+    "path": "src/main/resources/static/assets/images/menu/salt-coffee.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "caramel-coffee",
+    "path": "src/main/resources/static/assets/images/menu/caramel-coffee.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "chocolate",
+    "path": "src/main/resources/static/assets/images/menu/chocolate.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "cookies",
+    "path": "src/main/resources/static/assets/images/menu/cookies.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  },
+  {
+    "slug": "mango-smoothie",
+    "path": "src/main/resources/static/assets/images/menu/mango-smoothie.png",
+    "generator": "built-in imagegen",
+    "branding": "UTETra cream leaf on tea-green circular sticker"
+  }
+]
