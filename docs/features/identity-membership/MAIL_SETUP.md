@@ -1,62 +1,28 @@
 # Gửi mail sau khi pull nhánh identify
 
-Nhánh có đầy đủ `MailOtpDelivery`, dependency Spring Mail, template HTML/plain text
-và cấu hình SMTP Gmail qua STARTTLS cổng 587. Mail được dùng cho OTP đăng ký
-và khôi phục mật khẩu. Mã có hiệu lực 5 phút; gửi lại cách nhau tối thiểu 60 giây.
+Gmail gửi OTP mặc định của nhóm là **jskosiskeekdj@gmail.com**, thay địa chỉ cũ. App Password được giữ trong `.local/mail.properties` trên máy chạy, không đưa lên Git.
 
-## Thiết lập một lần trên máy mới
+## Thiết lập trên máy mới
 
-Chạy tại thư mục gốc repository, với Python 3:
+Chạy tại thư mục gốc repository:
 
 ```powershell
-python tools/configure_mail.py --email your-address@gmail.com
+python tools/configure_mail.py
 ```
 
-Nhập **App Password 16 chữ cái của đúng Gmail người gửi**, không phải mật khẩu
-đăng nhập Gmail. Có thể dùng Gmail riêng của bạn hoặc Gmail của nhóm nếu chủ
-tài khoản đã cấp App Password riêng qua kênh riêng. Gmail cần bật xác minh hai
-bước và cho phép tạo App Password. Script không hiện mật khẩu và ghi cấu hình
-vào `.local/mail.properties`, được Git bỏ qua. Nếu dùng Gmail của nhóm hiện tại,
-có thể chạy `python tools/configure_mail.py` để dùng địa chỉ mặc định.
+Nhập App Password 16 chữ cái của Gmail người gửi được chủ tài khoản cấp riêng. Script ẩn nội dung khi nhập và ghi file cấu hình cục bộ. Muốn dùng Gmail khác, thêm `--email your-address@gmail.com`. Không dùng mật khẩu đăng nhập Gmail.
 
-Không có Python: tạo thư mục `.local`, copy `config/mail.properties.example`
-thành `.local/mail.properties`, rồi sửa địa chỉ và App Password trong file mới.
-Không sửa mật khẩu vào file mẫu hoặc `src/main/resources/application.properties`.
-
-## Chạy ứng dụng
-
-Cài JDK 21, đặt `JAVA_HOME`, sau đó chạy từ thư mục gốc:
+Sau đó dùng JDK 21, build và chạy từ thư mục gốc:
 
 ```powershell
-.\mvnw.cmd -B -ntp verify
+.\mvnw.cmd -B -ntp package -DskipTests
 java -jar target/utetra.war
 ```
 
-Ứng dụng đọc `.local/mail.properties` theo thư mục chạy hiện tại. Nếu chạy WAR
-từ thư mục khác, dùng đường dẫn tuyệt đối đến file cấu hình:
+Spring đọc `.local/mail.properties`; không cần máy Thanh đang bật. Máy chạy phải truy cập được SMTP Gmail cổng 587 qua STARTTLS. Khởi động lại server sau khi thay cấu hình. Chạy từ thư mục khác thì truyền `--spring.config.import=optional:file:C:/utetra/.local/mail.properties` với đường dẫn thực tế.
 
-```powershell
-java -jar target/utetra.war --spring.config.import=optional:file:C:/utetra/.local/mail.properties
-```
+Mail dùng cho OTP đăng ký và khôi phục mật khẩu, có bản HTML và plain text. OTP có hiệu lực 5 phút, gửi lại cách nhau tối thiểu 60 giây. Kiểm tra Inbox/Spam khi thử đăng ký hoặc quên mật khẩu. Test tự động dùng mail giả lập, không tự gửi OTP thật.
 
-Khởi động lại ứng dụng sau khi thay cấu hình. Mở `/auth/register` hoặc
-`/auth/forgot`, yêu cầu OTP cho email bạn kiểm soát và kiểm tra Inbox/Spam.
-Dùng mã trong email mới nhất. Không gửi OTP thử trong lúc build/test tự động.
+## Chia sẻ cho nhóm
 
-## Cấu hình bằng biến môi trường
-
-Có thể dùng bốn biến `UTETRA_MAIL_ENABLED=true`, `UTETRA_MAIL_USERNAME`,
-`UTETRA_MAIL_FROM`, `UTETRA_MAIL_APP_PASSWORD` thay cho file. Khi dùng cách này,
-không giữ `.local/mail.properties` cũ vì file được import có độ ưu tiên cao hơn.
-Không ghi giá trị bí mật vào Git hay lịch sử lệnh chia sẻ.
-
-Pull code không tự chuyển App Password từ máy người khác. Thiết lập một lần
-ở trên là bắt buộc để gửi mail thật trên máy mới. Nếu gặp lỗi, kiểm tra địa chỉ
-khớp App Password, mail đã bật, quyền truy cập SMTP 587 và cấu hình đã được nạp.
-Ứng dụng báo lỗi khi SMTP thất bại; không trả OTP qua API hoặc log.
-
-## Chia sẻ cho thành viên nhóm
-
-Thanh chỉ cần chia sẻ repository và hướng dẫn này. Mỗi bạn chạy script cấu hình trên máy mình rồi khởi động lại ứng dụng; không cần máy Thanh đang bật. File `.local/mail.properties` không đi theo Git. Ưu tiên mỗi người dùng Gmail và App Password của chính mình. Nếu dùng chung Gmail nhóm, chủ tài khoản cấp App Password riêng cho từng người qua kênh riêng, có thể thu hồi riêng khi ngừng sử dụng. Không gửi cả thư mục `.local`, vì có thể chứa cấu hình và dữ liệu cục bộ khác.
-
-Chạy từ thư mục gốc project để nạp đúng file. Không commit App Password, không dùng mật khẩu đăng nhập Gmail. Test tự động dùng mail giả lập; cần thử đăng ký và khôi phục bằng hộp thư thật để xác nhận SMTP trên từng máy.
+Pull code cập nhật địa chỉ gửi mặc định, không chuyển App Password. Mỗi máy cần cấu hình riêng một lần. Chủ tài khoản cấp thông tin qua kênh riêng; có thể thu hồi App Password trong tài khoản Google khi ngừng sử dụng. Các file trong `.local` tiếp tục được Git bỏ qua.

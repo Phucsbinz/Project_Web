@@ -6,7 +6,7 @@ import re
 
 root = Path(__file__).resolve().parent.parent
 parser = argparse.ArgumentParser(description='Configure Gmail OTP delivery on this machine without committing credentials.')
-parser.add_argument('--email', default='luxiphot123456@gmail.com', help='Gmail sender whose App Password will be entered')
+parser.add_argument('--email', default='jskosiskeekdj@gmail.com', help='Gmail sender whose App Password will be entered')
 args = parser.parse_args()
 email = args.email.strip()
 if not re.fullmatch(r'[A-Za-z0-9._%+-]+@gmail\.com', email, re.IGNORECASE):

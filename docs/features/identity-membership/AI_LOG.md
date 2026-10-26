@@ -149,3 +149,9 @@ Thanh yêu cầu bỏ dòng ghi chú trong mô tả popup và đổi nhãn Xem v
 - IdentityIntegrationTest: 35 đạt; IdentitySocketLifecycleTest: 1 đạt, không failure/error/skipped. Kiểm tra xóa cột trực tiếp sau đổi/reset và loại khỏi profile. Bước repackage đầu bị Windows khóa WAR đang chạy; dừng server rồi package lại thành công.
 - Server MySQL chạy lại, Flyway áp dụng migration. HTTP login thật Admin/Manager/Vendor/User đều 200; profile không có password_hash/password_plaintext. Chưa khẳng định mọi tài khoản đều được phép đăng nhập vì trạng thái khóa/xác minh giữ nguyên.
 - Đồng bộ seed mới và công cụ kiểm UI với thông tin kiểm thử mới; tài liệu phân biệt pull code với dữ liệu DB, yêu cầu chạy reset chủ động nếu database riêng.
+
+## 2026-10-26 — Thay Gmail gửi OTP theo yêu cầu Thanh
+
+- Yêu cầu: thay Gmail gửi OTP bằng jskosiskeekdj@gmail.com và App Password được cung cấp; người dùng cũng yêu cầu push thông tin SMTP.
+- Đã thay thông tin trong .local/mail.properties, kiểm tra STARTTLS xác minh chứng chỉ và SMTP AUTH trả 235, không gửi email. Server đã restart để nạp file mới. MailOtpDeliveryTest: 3 đạt, 0 failure/error/skipped.
+- Hệ thống automatic approval review chặn commit/push mật khẩu ứng dụng đang hoạt động do nguy cơ lộ quyền truy cập tài khoản lâu dài. Không thử lách giới hạn. Giữ file cục bộ bị Git bỏ qua; chỉ push địa chỉ mặc định, công cụ cấu hình và hướng dẫn không chứa bí mật.
