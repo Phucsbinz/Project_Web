@@ -1,0 +1,159 @@
+{
+  "mode": "isolated H2, actual fixture data and endpoints, no provider calls or order submission",
+  "checks": [
+    {
+      "role": "guest",
+      "width": 390,
+      "home": {
+        "cards": 4,
+        "newCards": 4,
+        "categories": 3,
+        "branches": 2,
+        "vouchers": 1,
+        "overflow": false,
+        "footer": 1,
+        "cta": "/menu"
+      },
+      "newTab": true,
+      "quickView": true
+    },
+    {
+      "role": "guest",
+      "width": 390,
+      "search": "Matcha",
+      "resultCount": 1
+    },
+    {
+      "role": "guest",
+      "width": 768,
+      "home": {
+        "cards": 4,
+        "newCards": 4,
+        "categories": 3,
+        "branches": 2,
+        "vouchers": 1,
+        "overflow": false,
+        "footer": 1,
+        "cta": "/menu"
+      },
+      "newTab": true,
+      "quickView": true
+    },
+    {
+      "role": "guest",
+      "width": 768,
+      "search": "Matcha",
+      "resultCount": 1
+    },
+    {
+      "role": "guest",
+      "width": 1440,
+      "home": {
+        "cards": 4,
+        "newCards": 4,
+        "categories": 3,
+        "branches": 2,
+        "vouchers": 1,
+        "overflow": false,
+        "footer": 1,
+        "cta": "/menu"
+      },
+      "newTab": true,
+      "quickView": true
+    },
+    {
+      "role": "guest",
+      "width": 1440,
+      "search": "Matcha",
+      "resultCount": 1
+    },
+    {
+      "role": "user",
+      "width": 390,
+      "home": {
+        "cards": 4,
+        "newCards": 4,
+        "categories": 3,
+        "branches": 2,
+        "vouchers": 1,
+        "overflow": false,
+        "footer": 1,
+        "cta": "/menu"
+      },
+      "newTab": true,
+      "quickView": true
+    },
+    {
+      "role": "user",
+      "width": 390,
+      "search": "Matcha",
+      "resultCount": 1
+    },
+    {
+      "role": "user",
+      "width": 768,
+      "home": {
+        "cards": 4,
+        "newCards": 4,
+        "categories": 3,
+        "branches": 2,
+        "vouchers": 1,
+        "overflow": false,
+        "footer": 1,
+        "cta": "/menu"
+      },
+      "newTab": true,
+      "quickView": true
+    },
+    {
+      "role": "user",
+      "width": 768,
+      "search": "Matcha",
+      "resultCount": 1
+    },
+    {
+      "role": "user",
+      "width": 1440,
+      "home": {
+        "cards": 4,
+        "newCards": 4,
+        "categories": 3,
+        "branches": 2,
+        "vouchers": 1,
+        "overflow": false,
+        "footer": 1,
+        "cta": "/menu"
+      },
+      "newTab": true,
+      "quickView": true
+    },
+    {
+      "role": "user",
+      "width": 1440,
+      "search": "Matcha",
+      "resultCount": 1
+    },
+    {
+      "action": "homepage quickview -> saved draft cart with sugar/ice/quantity",
+      "passed": true
+    },
+    {
+      "action": "size L + topping + saved quantity update",
+      "passed": true
+    },
+    {
+      "action": "select branch + real checkout quote, no order submitted",
+      "passed": true
+    },
+    {
+      "action": "homepage branch filter retained after menu search",
+      "passed": true
+    },
+    {
+      "action": "real category filter",
+      "passed": true
+    }
+  ],
+  "javascriptErrors": [],
+  "passed": true
+}

@@ -7,7 +7,7 @@
 <title><sitemesh:write property="title"/></title>
 <link rel="icon" type="image/svg+xml" href="<c:url value='/assets/images/utetra-mark.svg'/>">
 <link rel="preload" href="<c:url value='/assets/vendor/fonts/be-vietnam-pro/BeVietnamPro-Regular.ttf'/>" as="font" type="font/ttf" crossorigin>
-<link rel="stylesheet" href="<c:url value='/assets/vendor/bootstrap/bootstrap.min.css'/>"><link rel="stylesheet" href="<c:url value='/assets/css/utetra.css?v=20261026-all-modules'/>">
+<link rel="stylesheet" href="<c:url value='/assets/vendor/bootstrap/bootstrap.min.css'/>"><link rel="stylesheet" href="<c:url value='/assets/css/utetra.css?v=20261026-modern-matcha'/>">
 <sitemesh:write property="head"/></head><body class="${workspace ? 'is-workspace' : 'is-storefront'}">
 <svg xmlns="http://www.w3.org/2000/svg" class="icon-library" aria-hidden="true"><defs>
 <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4C9 2 3 7 5 14c2 7 13 7 15-10Z"/><path d="m4 21 11-12M9 15l-1-5m5 1 4 1"/></symbol>
@@ -26,6 +26,7 @@
 <div class="collapse navbar-collapse" id="mainNav"><div class="navbar-nav main-links mx-lg-auto">
 <a class="nav-link ${currentPath == '/' ? 'active' : ''}" href="<c:url value='/'/>">Trang chủ</a><a class="nav-link ${currentPath == '/menu' ? 'active' : ''}" href="<c:url value='/menu'/>">Thực đơn</a><a class="nav-link ${currentPath.startsWith('/stores') ? 'active' : ''}" href="<c:url value='/stores'/>">Cửa hàng</a>
 </div><div class="nav-actions">
+<form class="header-search" role="search" action="<c:url value='/menu'/>" method="get"><label class="visually-hidden" for="header-keyword">Tìm đồ uống</label><input id="header-keyword" type="search" name="keyword" maxlength="150" placeholder="Tìm món bạn thích" value="<c:out value='${param.keyword}'/>"><button type="submit" aria-label="Tìm kiếm"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></button></form>
 <c:if test="${currentRole == 'GUEST' || currentRole == 'ROLE_USER' || currentRole == 'ROLE_VENDOR'}"><a class="nav-icon" href="<c:url value='/cart'/>"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg><span>Giỏ hàng</span></a></c:if>
 <c:choose><c:when test="${currentRole != 'GUEST'}"><div class="dropdown"><button class="btn account-trigger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>Tài khoản</button><ul class="dropdown-menu dropdown-menu-end">
 <li><a class="dropdown-item" href="<c:url value='/account/profile'/>">Tài khoản của tôi</a></li>

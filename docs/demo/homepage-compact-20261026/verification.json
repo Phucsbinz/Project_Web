@@ -1,0 +1,151 @@
+{
+  "mode": "isolated H2, six delivered sample products, no cloud/provider calls",
+  "checks": [
+    {
+      "role": "guest",
+      "width": 390,
+      "route": "/",
+      "state": {
+        "cards": 4,
+        "filters": 0,
+        "overflow": false,
+        "footer": 1,
+        "cta": "/menu"
+      }
+    },
+    {
+      "role": "guest",
+      "width": 390,
+      "route": "/menu",
+      "heroCTANavigated": true,
+      "state": {
+        "filters": 1,
+        "topLinks": 4,
+        "cards": 7,
+        "overflow": false
+      }
+    },
+    {
+      "role": "guest",
+      "width": 768,
+      "route": "/",
+      "state": {
+        "cards": 4,
+        "filters": 0,
+        "overflow": false,
+        "footer": 1,
+        "cta": "/menu"
+      }
+    },
+    {
+      "role": "guest",
+      "width": 768,
+      "route": "/menu",
+      "heroCTANavigated": true,
+      "state": {
+        "filters": 1,
+        "topLinks": 4,
+        "cards": 7,
+        "overflow": false
+      }
+    },
+    {
+      "role": "guest",
+      "width": 1440,
+      "route": "/",
+      "state": {
+        "cards": 4,
+        "filters": 0,
+        "overflow": false,
+        "footer": 1,
+        "cta": "/menu"
+      }
+    },
+    {
+      "role": "guest",
+      "width": 1440,
+      "route": "/menu",
+      "heroCTANavigated": true,
+      "state": {
+        "filters": 1,
+        "topLinks": 4,
+        "cards": 7,
+        "overflow": false
+      }
+    },
+    {
+      "role": "user",
+      "width": 390,
+      "route": "/",
+      "state": {
+        "cards": 4,
+        "filters": 0,
+        "overflow": false,
+        "footer": 1,
+        "cta": "/menu"
+      }
+    },
+    {
+      "role": "user",
+      "width": 390,
+      "route": "/menu",
+      "heroCTANavigated": true,
+      "state": {
+        "filters": 1,
+        "topLinks": 4,
+        "cards": 7,
+        "overflow": false
+      }
+    },
+    {
+      "role": "user",
+      "width": 768,
+      "route": "/",
+      "state": {
+        "cards": 4,
+        "filters": 0,
+        "overflow": false,
+        "footer": 1,
+        "cta": "/menu"
+      }
+    },
+    {
+      "role": "user",
+      "width": 768,
+      "route": "/menu",
+      "heroCTANavigated": true,
+      "state": {
+        "filters": 1,
+        "topLinks": 4,
+        "cards": 7,
+        "overflow": false
+      }
+    },
+    {
+      "role": "user",
+      "width": 1440,
+      "route": "/",
+      "state": {
+        "cards": 4,
+        "filters": 0,
+        "overflow": false,
+        "footer": 1,
+        "cta": "/menu"
+      }
+    },
+    {
+      "role": "user",
+      "width": 1440,
+      "route": "/menu",
+      "heroCTANavigated": true,
+      "state": {
+        "filters": 1,
+        "topLinks": 4,
+        "cards": 7,
+        "overflow": false
+      }
+    }
+  ],
+  "javascriptErrors": [],
+  "passed": true
+}

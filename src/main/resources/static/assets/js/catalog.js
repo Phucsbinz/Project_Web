@@ -75,14 +75,23 @@
   window.addEventListener('utetra:cart-changed',refresh);refresh();
   const modal=document.getElementById('drink-modal'), frame=document.getElementById('drink-modal-frame');
   if(!modal || !frame)return;
+  const loading=document.getElementById('drink-modal-loading');
+  frame.addEventListener('load',()=>{if(frame.getAttribute('src')!=='about:blank'){if(loading)loading.hidden=true;frame.removeAttribute('aria-busy');}});
   document.addEventListener('click',event=>{
     const link=event.target.closest('.product-card .card-footer a');if(!link || event.ctrlKey || event.metaKey || event.shiftKey || event.button!==0)return;
     const url=new URL(link.href,location.href);if(url.origin!==location.origin || !/\/products\/[0-9]+$/.test(url.pathname))return;
-    event.preventDefault();url.searchParams.set('quick','1');frame.src=url.href;bootstrap.Modal.getOrCreateInstance(modal).show();
+    event.preventDefault();url.searchParams.set('quick','1');if(loading)loading.hidden=false;frame.setAttribute('aria-busy','true');frame.src=url.href;bootstrap.Modal.getOrCreateInstance(modal).show();
   });
   modal.addEventListener('hidden.bs.modal',()=>{frame.src='about:blank';});
   window.addEventListener('message',event=>{
     if(event.origin!==location.origin || event.source!==frame.contentWindow || event.data?.type!=='utetra:cart-changed')return;
-    refresh();bootstrap.Modal.getOrCreateInstance(modal).hide();
+    refresh();
+    const dismiss=()=>bootstrap.Modal.getOrCreateInstance(modal).hide();
+    // A fast response may arrive during Bootstrap's opening transition.
+    modal.addEventListener('shown.bs.modal',dismiss,{once:true});
+    modal.addEventListener('hidden.bs.modal',()=>modal.removeEventListener('shown.bs.modal',dismiss),{once:true});
+    dismiss();
+    const toast=document.getElementById('site-toast');
+    if(toast){toast.textContent='Đã thêm vào giỏ hàng. Mở giỏ hàng để kiểm tra và đặt món.';toast.hidden=false;clearTimeout(toast.utetraTimer);toast.utetraTimer=setTimeout(()=>{toast.hidden=true;},6000);}
   });
 })();

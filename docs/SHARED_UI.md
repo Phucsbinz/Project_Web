@@ -1,5 +1,9 @@
 # UTETra — Một layout dùng chung cho toàn bộ nhóm
 
+## Modern Matcha — bản local 26/10/2026
+
+Trang chủ mới dùng `catalog/home.jsp`, CSS scope `.catalog-homepage` và các fragment catalog hiện có. Header vẫn nằm duy nhất ở `layouts/app.jsp`, bổ sung form tìm kiếm GET `/menu`; style header tìm kiếm đặt trong `utetra.css`. Hai file này đã thuộc `SHARED_UI_FILES.txt`; cần tích hợp và đồng bộ cùng bundle khi phát hành từ main, không sao chép header vào JSP chức năng. Không đổi palette/provider/datasource/JWT hoặc tạo layout theo role. Chưa commit/push hay tự đồng bộ các nhánh. Phạm vi, endpoint và kết quả kiểm thực tế được ghi ở [MODERN_MATCHA_20261026.md](MODERN_MATCHA_20261026.md).
+
 ## Quyết định chung
 
 Từ 22/10/2026, **chỉ có một layout SiteMesh**: `src/main/webapp/WEB-INF/views/layouts/app.jsp`. Không tạo client.jsp/auth.jsp/admin.jsp/vendor.jsp/manager.jsp/shipper.jsp riêng. Bộ chuẩn lấy từ giao diện đã ghép trên identify/order: xanh trà, nền kem, Bootstrap 5.3.3 local, header/footer và sidebar responsive chung. Đây là chuẩn trình bày; không thay đổi quyền hoặc phạm vi nghiệp vụ.

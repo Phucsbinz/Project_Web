@@ -98,3 +98,12 @@ h1,h2,h3,h4,h5,h6{letter-spacing:-.025em;font-weight:700}
 @media(max-width:767px){.catalog-scope-picker .form-select{min-width:0;width:100%;flex-basis:100%}.shipper-report .report-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.shipper-report-filters label{min-width:0;flex-basis:calc(50% - 12px)}.shipper-report-filters .btn{width:100%}.workspace-sidebar .sidebar-section-label{flex-basis:100%}}
 
 @media(max-width:767px){.workspace-main nav[aria-label="Chức năng đặt hàng"]{flex-wrap:wrap!important;overflow:visible}.workspace-main nav[aria-label="Chức năng đặt hàng"] .nav-link{white-space:normal;max-width:100%}}
+
+/* Modern Matcha shared header: a real GET search, same layout for every role. */
+.header-search{display:flex;align-items:center;border:1px solid var(--line);background:var(--paper);border-radius:100px;padding:4px 5px 4px 14px;width:190px;min-width:0}
+.header-search input{width:100%;min-width:0;background:transparent;border:0;outline:none;color:var(--ink);font-size:11px;height:34px}
+.header-search button{display:grid;place-items:center;flex-shrink:0;width:36px;height:36px;border:0;border-radius:50%;background:var(--tea-soft);color:var(--tea)}
+.header-search:focus-within{outline:2px solid var(--tea);outline-offset:3px}
+.product-card h3 a{color:inherit;text-decoration:none}.product-card h3 a:hover{text-decoration:underline}.product-image-wrap{display:block}
+@media(min-width:992px) and (max-width:1199px){.nav-actions{gap:12px}.header-search{width:155px}.main-links{gap:12px}.navbar-brand{font-size:25px}.nav-login{padding:11px 14px!important}}
+@media(max-width:991px){.nav-actions{flex-wrap:wrap}.header-search{width:100%;order:-1}.header-search input{font-size:16px;min-height:38px}.header-search button{width:42px;height:42px}.nav-actions{padding-bottom:8px}}
