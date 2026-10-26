@@ -145,7 +145,9 @@ class IdentityIntegrationTest {
         assertThat(challenge.get("revoked_at")).isNull();
         assertThat(instant(challenge,"expires_at")).isAfter(Instant.now());
         assertThat(secretTokens.matches(string(challenge,"reset_grant_hash"),secretTokens.hash(grant))).isTrue();
+        db.update("update users set password_plaintext=? where id=?","123456",p.userId());
         auth.reset(grant,"ChangedPassword!42");
+        assertThat(db.one("select password_plaintext from users where id=?",p.userId()).get("password_plaintext")).isNull();
         assertThat(identity.isCurrent(p)).isFalse(); assertThatThrownBy(() -> auth.reset(grant,"AnotherPassword42!")).isInstanceOf(IdentityException.class);
         assertThatThrownBy(() -> auth.login(email,PASSWORD)).isInstanceOf(IdentityException.class);
         assertThat(auth.login(email,"ChangedPassword!42").access()).isNotBlank();
@@ -155,8 +157,10 @@ class IdentityIntegrationTest {
         var p=buyer(); long version=number(account.profile(p),"version");
         account.profile(p,new IdentityForms.Profile("Tên mới","0901234567",version));
         assertThatThrownBy(() -> account.profile(p,new IdentityForms.Profile("Ghi đè","",version))).isInstanceOf(IdentityException.class);
-        assertThat(account.profile(p)).doesNotContainKeys("password_hash","avatar_public_id");
+        assertThat(account.profile(p)).doesNotContainKeys("password_hash","password_plaintext","avatar_public_id");
+        db.update("update users set password_plaintext=? where id=?","123456",p.userId());
         account.password(p,new IdentityForms.Password(PASSWORD,"ChangedPassword!42")); assertThat(identity.isCurrent(p)).isFalse();
+        assertThat(db.one("select password_plaintext from users where id=?",p.userId()).get("password_plaintext")).isNull();
     }
     @Test void addressesAreOwnedAndHaveOneDefault() {
         var p=buyer(); var form=new IdentityForms.Address("Người nhận","0901234567","TP HCM",true);

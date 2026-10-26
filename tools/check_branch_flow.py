@@ -31,7 +31,7 @@ with sync_playwright() as p:
  frame.get_by_role('button',name='Thêm vào giỏ hàng').click();page.wait_for_selector('#drink-modal',state='hidden')
  page.wait_for_function("document.querySelector('#menu-cart-items').textContent.includes('Size')")
  checks.append('Guest selects a drink with no branch; quick view adds to actual cart')
- page.goto(base+'/auth/login',wait_until='networkidle');page.locator('#email').fill('demo.quanghung@example.test');page.locator('#password').fill('Utetra123!');page.locator('button[type=submit]').click();page.wait_for_url('**/account/profile')
+ page.goto(base+'/auth/login',wait_until='networkidle');page.locator('#email').fill('demo.quanghung@example.test');page.locator('#password').fill('123456');page.locator('button[type=submit]').click();page.wait_for_url('**/account/profile')
  original=page.request.get(base+'/cart/data').json()
  try:
   for item in original['items']:

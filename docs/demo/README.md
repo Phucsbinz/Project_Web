@@ -1,10 +1,10 @@
 # Dữ liệu demo UTETra — 26/10/2026
 
-Bộ dữ liệu phục vụ kiểm thử đồ án, không phải hoạt động kinh doanh hoặc phản hồi khách hàng thật. Tên tài khoản là tên tiếng Việt giả lập; Phan Tuấn Thanh do người dùng xác nhận. Không sửa tài khoản đang có của nhóm. Địa chỉ chi nhánh là khu vực mô phỏng tại TP.HCM, không khẳng định UTETra có cửa hàng thật ở đó. Ảnh menu được tạo bằng imagegen và mang logo lá UTETra.
+Bộ dữ liệu phục vụ kiểm thử đồ án, không phải hoạt động kinh doanh hoặc phản hồi khách hàng thật. Tên tài khoản là tên tiếng Việt giả lập; Phan Tuấn Thanh do người dùng xác nhận. Seed không sửa tài khoản đang có; lệnh reset riêng bên dưới thay mật khẩu tất cả tài khoản theo yêu cầu Thanh. Địa chỉ chi nhánh là khu vực mô phỏng tại TP.HCM, không khẳng định UTETra có cửa hàng thật ở đó. Ảnh menu được tạo bằng imagegen và mang logo lá UTETra.
 
 ## Tài khoản demo
 
-Mật khẩu chung **chỉ dành cho tài khoản demo**: `Utetra123!`.
+Mật khẩu hiện tại cho **toàn bộ tài khoản có sẵn trong database kiểm thử**, gồm cả tài khoản cũ và demo: `123456` (reset theo yêu cầu Thanh ngày 26/10/2026).
 
 | Vai trò | Tên hiển thị | Email đăng nhập |
 | --- | --- | --- |
@@ -21,7 +21,7 @@ Mật khẩu chung **chỉ dành cho tài khoản demo**: `Utetra123!`.
 | User | Đặng Khánh Vy | demo.khanhvy@example.test |
 | User | Bùi Quang Hưng | demo.quanghung@example.test |
 
-Các email `.test` đã được xác minh trong fixture để đăng nhập demo, không nhận email thật. Kiểm OTP/mail bằng tài khoản và hộp thư thật của bạn. Shipper chỉ hoạt động khi feature tương ứng được bật; fixture không thay cấu hình feature. Admin/Manager/Vendor dùng quyền ứng dụng hiện có; Manager được phân công cả ba chi nhánh demo. Tài khoản thật của Thanh không bị thay mật khẩu.
+Các email `.test` đã được xác minh trong fixture để đăng nhập demo, không nhận email thật. Kiểm OTP/mail bằng tài khoản và hộp thư thật của bạn. Shipper chỉ hoạt động khi feature tương ứng được bật; fixture không thay cấu hình feature. Admin/Manager/Vendor dùng quyền ứng dụng hiện có; Manager được phân công cả ba chi nhánh demo. Tài khoản cũ của Thanh cũng nằm trong lần reset toàn bộ theo yêu cầu mới. Trạng thái active/xác minh và vai trò không thay đổi.
 
 ## Phạm vi
 
@@ -65,3 +65,18 @@ Server local cuối cùng ở http://127.0.0.1:8080/. Chưa commit/push. Chưa n
 Cập nhật luồng 26/10: khách chọn món trước, chỉ chọn chi nhánh khi lên đơn. Menu gộp theo `catalog_key`, vẫn giữ 90 bản ghi theo shop trong DB nhưng hiển thị 30 món. Xem [hướng dẫn luồng mới](../features/order-payment/BRANCH_SELECTION_20261026.md). `tools/demo/AssignCatalogKeys.java` dùng để gán lại mã cho bộ demo có trước migration, không gán tên trùng tùy ý. Bộ seed mới tự ghi mã ngay từ đầu.
 
 Bản chọn chi nhánh tại checkout: toàn bộ 167 test đạt, 6 smoke/render cuối đạt; 21 kiểm tra trang/viewport và 5 kiểm tra guest→popup→login→branch→quote đạt. Bộ seed hiện tự gán 30 mã món chung cho 90 bản ghi demo sau migration.
+
+## Reset mật khẩu kiểm thử toàn bộ tài khoản
+
+Migration mới chỉ thêm cột nullable `users.password_plaintext`, không tự reset mật khẩu khi khởi động. Lệnh sau thay mật khẩu tất cả tài khoản hiện có thành `123456`, lưu BCrypt riêng cho từng tài khoản và giá trị đọc trực tiếp trong cột này; đồng thời thu hồi phiên đăng nhập và OTP/reset grant cũ. Đây là thông tin đăng nhập công khai phục vụ kiểm thử, không dùng cho hệ thống thật.
+
+Sau khi pull nhánh `identify`, build và khởi động bản mới để Flyway áp dụng migration, tạo dependency classpath như hướng dẫn phía trên, rồi chạy khi có chủ đích:
+
+```powershell
+python tools/reset_test_passwords.py                      # xem phạm vi, không ghi DB
+python tools/reset_test_passwords.py --apply-all-accounts # reset mọi tài khoản trong utetra_db
+```
+
+Git chỉ đồng bộ code và migration, không đồng bộ dữ liệu DB. Người dùng chung đúng database TiDB đã reset không cần chạy lại lệnh. Người dùng database riêng cần áp dụng migration rồi chủ động chạy lệnh. Không đổi datasource để sử dụng script. Script không bật tài khoản bị khóa hoặc xác minh email thay người dùng.
+
+Cột `password_plaintext` không xuất qua API hồ sơ. Khi tài khoản đổi/khôi phục mật khẩu, cột được xóa; mật khẩu cá nhân mới chỉ lưu BCrypt. Tài khoản đăng ký mới không lưu mật khẩu trực tiếp. Chính sách mật khẩu cho đăng ký/đổi/khôi phục vẫn giữ nguyên.

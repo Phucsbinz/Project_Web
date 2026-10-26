@@ -40,7 +40,7 @@ class SeedDemo {
       db=ctx.getBean(JdbcTemplate.class);
       if(!"utetra_db".equals(db.queryForObject("select database()",String.class)))throw new IllegalStateException("Wrong database");
       var tx=new TransactionTemplate(ctx.getBean(PlatformTransactionManager.class));
-      String password="Utetra123!",hash=ctx.getBean(PasswordEncoder.class).encode(password);
+      String password="123456",hash=ctx.getBean(PasswordEncoder.class).encode(password);
       long[] admin={0},manager={0},vendor={0};long[] buyers=new long[8],stores=new long[3],areas=new long[3],carrier={0};
       String[] names={"Phan Tuấn Thanh","Nguyễn Minh Anh","Trần Ngọc Linh","Lê Hoàng Nam","Phạm Thu Hà","Võ Gia Huy","Đặng Khánh Vy","Bùi Quang Hưng"};
       tx.executeWithoutResult(status->{
