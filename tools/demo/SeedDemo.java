@@ -75,7 +75,7 @@ class SeedDemo {
           for(int st=0;st<3;st++){
             String ps="demo-"+item.get("slug").asText()+"-"+st;
             long product=existing("products","slug",ps);
-            if(product==0)product=insert("products","store_id,category_id,name,slug,catalog_key,description,base_price,image_url,is_active,is_available,is_featured,created_at,updated_at,version",stores[st],cat,item.get("name").asText(),ps,"demo-"+item.get("slug").asText(),item.get("description").asText()+" Pha theo lựa chọn đường/đá của bạn. Ảnh minh họa AI dành cho dữ liệu demo UTETra.",item.get("price").asInt(),item.get("image").asText(),true,true,n%4==0,NOW,NOW,0);
+            if(product==0)product=insert("products","store_id,category_id,name,slug,catalog_key,description,base_price,image_url,is_active,is_available,is_featured,created_at,updated_at,version",stores[st],cat,item.get("name").asText(),ps,"demo-"+item.get("slug").asText(),item.get("description").asText(),item.get("price").asInt(),item.get("image").asText(),true,true,n%4==0,NOW,NOW,0);
             for(int z=0;z<3;z++)if(id("select count(*) from product_variants where product_id=? and size_name=?",product,List.of("S","M","L").get(z))==0)insert("product_variants","product_id,size_name,extra_price,is_active,stock_quantity,version,created_at,updated_at",product,List.of("S","M","L").get(z),z*5000,true,200,0,NOW,NOW);
             for(long top:tops)if(id("select count(*) from product_toppings where product_id=? and topping_id=?",product,top)==0)insert("product_toppings","product_id,topping_id",product,top);
           }n++;

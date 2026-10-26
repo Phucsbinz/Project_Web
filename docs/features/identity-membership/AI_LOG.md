@@ -135,3 +135,7 @@ Kết quả cuối của đợt UI/data: 161 test đạt, build WAR thành công
 ## 26/10/2026 — Thanh đổi luồng chọn chi nhánh
 
 Yêu cầu: chỉ chọn chi nhánh khi lên đơn/thanh toán; chọn nước không hiển thị chi nhánh; giao diện theo ảnh tham chiếu có popup tùy chọn. Đã thêm giỏ draft không ràng buộc branch trong UI, bước chọn branch ở checkout đối chiếu toàn giỏ transaction/version/stock rồi lấy báo giá. Dùng catalog_key explicit cùng owner/danh mục để gộp 90 bản ghi demo thành 30 món; giữ dữ liệu và đơn cũ. Có form quản trị mã món, popup nút size/đường/đá/topping và giỏ tạm tính thực. Chi tiết migration/API/test ở docs/features/order-payment/BRANCH_SELECTION_20261026.md. 167 tests toàn bộ đạt, thêm smoke JSP cuối đạt 6; kết quả browser lưu docs/demo. Không commit/push.
+
+## 26/10/2026 — Rút gọn chữ trên menu
+
+Thanh yêu cầu bỏ dòng ghi chú trong mô tả popup và đổi nhãn Xem và tùy chọn. Đổi thành Chọn món; bỏ boilerplate pha theo tùy chọn/ghi chú ảnh AI khỏi đúng 90 sản phẩm của owner demo, giữ mô tả hương vị và nguồn gốc/demo trong tài liệu. Seed mới chỉ dùng mô tả món từ menu.json. CatalogViewTest 5 tests và verify/build WAR đạt. Mở lại server. Cập nhật bổ sung theo yêu cầu push identify đang thực hiện.
