@@ -155,3 +155,11 @@ Thanh yêu cầu bỏ dòng ghi chú trong mô tả popup và đổi nhãn Xem v
 - Yêu cầu: thay Gmail gửi OTP bằng jskosiskeekdj@gmail.com và App Password được cung cấp; người dùng cũng yêu cầu push thông tin SMTP.
 - Đã thay thông tin trong .local/mail.properties, kiểm tra STARTTLS xác minh chứng chỉ và SMTP AUTH trả 235, không gửi email. Server đã restart để nạp file mới. MailOtpDeliveryTest: 3 đạt, 0 failure/error/skipped.
 - Hệ thống automatic approval review chặn commit/push mật khẩu ứng dụng đang hoạt động do nguy cơ lộ quyền truy cập tài khoản lâu dài. Không thử lách giới hạn. Giữ file cục bộ bị Git bỏ qua; chỉ push địa chỉ mặc định, công cụ cấu hình và hướng dẫn không chứa bí mật.
+
+## 2026-10-26 — Merge UI mới từ integration/utetra
+
+- Thanh yêu cầu lấy source/UI mới từ utetra rồi xác nhận phải merge. Đã fetch origin, merge origin/integration/utetra c15af04 vào identify; commit merge 152f40b, không conflict. Không push.
+- Đã đọc quy ước Shared UI; sau merge vẫn một app.jsp/Bootstrap/theme, 21 file chung khớp chính xác nguồn integration/utetra. Giữ cấu hình mail hiện tại, không đổi dữ liệu cloud để làm UI.
+- Maven verify sau merge: 167 tests, 0 failure/error/skipped, WAR build thành công. Lần đầu thiếu quyền loopback cho Tomcat; chạy lại với quyền cần thiết đã đạt.
+- Edge/Tomcat/SiteMesh fixture H2 riêng: 158 lượt render/navigation/responsive cho Guest/User/Vendor/Manager/Admin/Shipper ở 1440 và 390px, không lỗi JS hoặc kiểm tra giao diện thất bại. Đã xem ảnh địa chỉ mobile. Ảnh kiểm lần này giữ trong .local, không ghi đè chứng cứ của nhánh nguồn.
+- Server MySQL thật chạy lại trên cổng 8080; thêm 6 checks trang chủ/font/footer/popup/size/quantity/giá/report desktop-mobile đạt; không đặt đơn hoặc gửi OTP. Kết quả cấu trúc tại MERGE_UTETRA_20261026.json. Không khẳng định nghiệm thu mọi mutation/provider.
