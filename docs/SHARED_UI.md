@@ -1,5 +1,9 @@
 # UTETra — Một layout dùng chung cho toàn bộ nhóm
 
+## Sửa font tiếng Việt — 26/10/2026
+
+Theo phản hồi về chữ “Nhiều niềm vui.”, thay các khai báo Georgia trong theme và CSS trang chủ bằng Be Vietnam Pro local; các câu nhấn dùng kiểu normal/weight 500. Header/footer và các chữ dùng cùng font được đồng nhất trong `utetra.css`, không tạo bộ font hoặc layout theo role. `app.jsp` tăng cache version CSS. Khi tích hợp cần đồng bộ các file chung này cùng bundle. Chi tiết và kiểm chứng: [VIETNAMESE_FONT_FIX_20261026.md](VIETNAMESE_FONT_FIX_20261026.md).
+
 ## Modern Matcha — bản local 26/10/2026
 
 Trang chủ mới dùng `catalog/home.jsp`, CSS scope `.catalog-homepage` và các fragment catalog hiện có. Header vẫn nằm duy nhất ở `layouts/app.jsp`, bổ sung form tìm kiếm GET `/menu`; style header tìm kiếm đặt trong `utetra.css`. Hai file này đã thuộc `SHARED_UI_FILES.txt`; cần tích hợp và đồng bộ cùng bundle khi phát hành từ main, không sao chép header vào JSP chức năng. Không đổi palette/provider/datasource/JWT hoặc tạo layout theo role. Chưa commit/push hay tự đồng bộ các nhánh. Phạm vi, endpoint và kết quả kiểm thực tế được ghi ở [MODERN_MATCHA_20261026.md](MODERN_MATCHA_20261026.md).

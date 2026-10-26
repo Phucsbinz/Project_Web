@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="vi"><head><title>UTETra · Một chút matcha, một ngày thật khác</title>
-<link rel="stylesheet" href="<c:url value='/assets/css/catalog-home.css?v=modern-matcha'/>">
+<link rel="stylesheet" href="<c:url value='/assets/css/catalog-home.css?v=modern-matcha-vietnamese-font'/>">
 </head><body>
 <div class="catalog-homepage">
   <section class="matcha-hero" aria-labelledby="home-title">

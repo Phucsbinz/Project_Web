@@ -1,0 +1,307 @@
+{
+  "mode": "isolated H2, local font files, actual Chromium platform font inspection",
+  "checks": [
+    {
+      "width": 390,
+      "selector": "#home-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 9
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "selector": "#highlights-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 12
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "selector": "#offers-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 12
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "selector": "#story-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 20
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "selector": "#branches-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 15
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "selector": ".footer-brand em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 11
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "selector": ".navbar-brand",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro",
+          "postScriptName": "BeVietnamPro-Bold",
+          "isCustomFont": true,
+          "glyphCount": 6
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "selector": ".footer-logo",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro",
+          "postScriptName": "BeVietnamPro-Bold",
+          "isCustomFont": true,
+          "glyphCount": 7
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "selector": "#home-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 9
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "selector": "#highlights-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 13
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "selector": "#offers-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 12
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "selector": "#story-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 20
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "selector": "#branches-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 15
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "selector": ".footer-brand em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 11
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "selector": ".navbar-brand",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro",
+          "postScriptName": "BeVietnamPro-Bold",
+          "isCustomFont": true,
+          "glyphCount": 6
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "selector": ".footer-logo",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro",
+          "postScriptName": "BeVietnamPro-Bold",
+          "isCustomFont": true,
+          "glyphCount": 7
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "selector": "#home-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 10
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "selector": "#highlights-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 13
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "selector": "#offers-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 12
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "selector": "#story-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 20
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "selector": "#branches-title em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 15
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "selector": ".footer-brand em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 11
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "selector": ".navbar-brand",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro",
+          "postScriptName": "BeVietnamPro-Bold",
+          "isCustomFont": true,
+          "glyphCount": 6
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "selector": ".footer-logo",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro",
+          "postScriptName": "BeVietnamPro-Bold",
+          "isCustomFont": true,
+          "glyphCount": 7
+        }
+      ]
+    },
+    {
+      "route": "/auth/login",
+      "selector": ".auth-art h2 em",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro Medium",
+          "postScriptName": "BeVietnamPro-Medium",
+          "isCustomFont": true,
+          "glyphCount": 17
+        }
+      ]
+    }
+  ],
+  "javascriptErrors": [],
+  "passed": true
+}

@@ -7,7 +7,7 @@
 <title><sitemesh:write property="title"/></title>
 <link rel="icon" type="image/svg+xml" href="<c:url value='/assets/images/utetra-mark.svg'/>">
 <link rel="preload" href="<c:url value='/assets/vendor/fonts/be-vietnam-pro/BeVietnamPro-Regular.ttf'/>" as="font" type="font/ttf" crossorigin>
-<link rel="stylesheet" href="<c:url value='/assets/vendor/bootstrap/bootstrap.min.css'/>"><link rel="stylesheet" href="<c:url value='/assets/css/utetra.css?v=20261026-modern-matcha'/>">
+<link rel="stylesheet" href="<c:url value='/assets/vendor/bootstrap/bootstrap.min.css'/>"><link rel="stylesheet" href="<c:url value='/assets/css/utetra.css?v=20261026-vietnamese-font'/>">
 <sitemesh:write property="head"/></head><body class="${workspace ? 'is-workspace' : 'is-storefront'}">
 <svg xmlns="http://www.w3.org/2000/svg" class="icon-library" aria-hidden="true"><defs>
 <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4C9 2 3 7 5 14c2 7 13 7 15-10Z"/><path d="m4 21 11-12M9 15l-1-5m5 1 4 1"/></symbol>

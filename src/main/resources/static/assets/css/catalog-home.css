@@ -5,7 +5,7 @@
 .catalog-homepage .matcha-copy{padding:clamp(28px,4.5vw,64px);display:flex;flex-direction:column;justify-content:center}
 .catalog-homepage .matcha-copy .home-eyebrow>span{font-size:22px;vertical-align:middle;margin-right:8px}
 .catalog-homepage .matcha-copy h1{font-size:clamp(32px,3.9vw,55px);line-height:1.2;margin:22px 0;letter-spacing:-.05em}
-.catalog-homepage em{font-family:Georgia,serif;font-weight:400}
+.catalog-homepage em{font-family:var(--bs-body-font-family);font-weight:500;font-style:normal}
 .catalog-homepage .matcha-copy>p{color:var(--muted);font-size:14px;max-width:350px;margin-bottom:28px}
 .catalog-homepage .hero-actions{display:flex;align-items:center;flex-wrap:wrap;gap:18px}
 .catalog-homepage .hero-actions .btn{padding:15px 24px;font-size:13px}
