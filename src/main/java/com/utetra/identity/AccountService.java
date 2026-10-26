@@ -53,7 +53,7 @@ public class AccountService {
         inputs.require(f); IdentityValidation.passwordInput(f.currentPassword());
         require(p,false); IdentityValidation.password(f.password()); var u=db.user(p.userId(),true);
         if(!encoder.matches(f.currentPassword(),string(u,"password_hash"))) throw IdentityException.invalid("Mật khẩu hiện tại không đúng.");
-        db.update("update users set password_hash=?,updated_at=?,version=version+1 where id=?",encoder.encode(f.password()),time(clock.instant()),p.userId());
+        db.update("update users set password_hash=?,password_plaintext=null,updated_at=?,version=version+1 where id=?",encoder.encode(f.password()),time(clock.instant()),p.userId());
         auth.revokeAll(p.userId());
     }
     @Transactional

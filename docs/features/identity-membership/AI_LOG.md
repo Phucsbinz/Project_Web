@@ -139,3 +139,13 @@ Yêu cầu: chỉ chọn chi nhánh khi lên đơn/thanh toán; chọn nước k
 ## 26/10/2026 — Rút gọn chữ trên menu
 
 Thanh yêu cầu bỏ dòng ghi chú trong mô tả popup và đổi nhãn Xem và tùy chọn. Đổi thành Chọn món; bỏ boilerplate pha theo tùy chọn/ghi chú ảnh AI khỏi đúng 90 sản phẩm của owner demo, giữ mô tả hương vị và nguồn gốc/demo trong tài liệu. Seed mới chỉ dùng mô tả món từ menu.json. CatalogViewTest 5 tests và verify/build WAR đạt. Mở lại server. Cập nhật bổ sung theo yêu cầu push identify đang thực hiện.
+
+## 2026-10-26 — Reset thông tin đăng nhập kiểm thử theo yêu cầu Thanh
+
+- Yêu cầu: thay mật khẩu tất cả tài khoản hiện có, thêm cột đọc trực tiếp trong database và push identify. Giá trị kiểm thử do người dùng chỉ định được mô tả tại docs/demo/README.md.
+- Migration V2026102602 chỉ thêm users.password_plaintext nullable; không tự reset khi startup. Script reset riêng đòi --apply-all-accounts, kiểm database utetra_db, transaction khóa users, BCrypt riêng từng tài khoản, thu hồi sessions và OTP/reset grants.
+- Không xuất cột mới qua API/profile hay entity getter. Đổi/khôi phục mật khẩu cá nhân xóa cột đọc trực tiếp; đăng ký mới vẫn chỉ lưu hash. Không nới validation mật khẩu cá nhân.
+- Đã chạy trên TiDB cấu hình: RESET_VERIFIED accounts=22, toàn bộ hash khớp giá trị kiểm thử và cột đọc trực tiếp khớp. Không thay trạng thái active/xác minh/role.
+- IdentityIntegrationTest: 35 đạt; IdentitySocketLifecycleTest: 1 đạt, không failure/error/skipped. Kiểm tra xóa cột trực tiếp sau đổi/reset và loại khỏi profile. Bước repackage đầu bị Windows khóa WAR đang chạy; dừng server rồi package lại thành công.
+- Server MySQL chạy lại, Flyway áp dụng migration. HTTP login thật Admin/Manager/Vendor/User đều 200; profile không có password_hash/password_plaintext. Chưa khẳng định mọi tài khoản đều được phép đăng nhập vì trạng thái khóa/xác minh giữ nguyên.
+- Đồng bộ seed mới và công cụ kiểm UI với thông tin kiểm thử mới; tài liệu phân biệt pull code với dữ liệu DB, yêu cầu chạy reset chủ động nếu database riêng.
