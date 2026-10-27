@@ -1,5 +1,7 @@
 # UTETra — Kế hoạch dự án theo quy định cuối kỳ
 
+> CSKH UC-CSKH-01 được thực hiện trên integration, gồm User ↔ đội Manager của chi nhánh hoặc đội Admin, không staff–staff. Source/test/setup tại docs/features/customer-support. Trạng thái role mới nhất: docs/ROLE_REQUIREMENTS_20261027.md; số đếm DB thực: docs/DB_AUDIT_20261027.md.
+
 > Bổ sung cuối lượt 24/10: VNPAY có adapter và test giao thức, còn merchant sandbox để nghiệm thu; Manager CRUD carrier theo shop. Xem [trạng thái theo yêu cầu thầy](docs/FINAL_REQUIREMENTS_STATUS.md).
 
 > Bổ sung tiếp 24/10: [JWT DB và checkout realtime](docs/features/order-payment/REALTIME_CHECKOUT_JWT.md) đã có JTI/hash/hạn access token trong DB, tồn hữu hạn theo size, chống tranh tồn/voucher, thông báo sau commit và polling. Cần nhập tồn theo size để bật kiểm số lượng; nhánh thành viên phải merge đầy đủ source integration trước khi chạy chung DB. Đây không phải tích hợp ví điện tử.

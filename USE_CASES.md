@@ -1,5 +1,7 @@
 # UTETra — Use case theo quy định giảng viên
 
+> UC-CSKH-01: User mở hội thoại Admin/chi nhánh; nhân viên trả lời trong scope, lưu DB và WebSocket private sau commit. Không có chat staff–staff. Contract và kiểm quyền tại docs/features/customer-support/UC-CSKH-01.md. Phần nhập địa chỉ tự do tại checkout được giữ; kiểm role/bảo mật mới nhất tại docs/ROLE_REQUIREMENTS_20261027.md.
+
 > UC-ORD-06 đã có VnpaySettings/Service/Controller và test, chưa nghiệm thu merchant thật. UC-MGR-06 đã có CRUD carrier theo shop. Xem [trạng thái cuối kỳ](docs/FINAL_REQUIREMENTS_STATUS.md).
 
 > Bổ sung 24/10 cho auth/checkout/realtime: [JWT DB, tranh tồn/quota và WebSocket checkout](docs/features/order-payment/REALTIME_CHECKOUT_JWT.md). Không tăng số UC để tự tính tỷ lệ đạt; đây là mở rộng các luồng đăng nhập/refresh/logout, checkout, voucher, hủy đơn, quản lý sản phẩm và realtime đã đặc tả.

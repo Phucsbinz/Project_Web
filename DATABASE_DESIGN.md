@@ -1,5 +1,7 @@
 # UTETra — Thiết kế dữ liệu theo yêu cầu cuối kỳ
 
+> Migration 2026102704 thêm support_conversations và support_messages với FK users/stores, unique customer/scope và UUID retry; migration 2026102705 bỏ cột test password_plaintext, không thay password_hash BCrypt. Đã áp dụng trên utetra_db: 17 migration, 51 bảng gồm Flyway; snapshot/số dòng tại docs/DB_AUDIT_20261027.json.
+
 > Migration `2026102403`: `carriers.managed_store_id` nullable FK stores; NULL là carrier global do Admin quản lý, có shop là carrier riêng. Scope không được đổi bằng request; rate và checkout kiểm đúng shop.
 
 > Migration bổ sung `V2026102402__jwt_inventory.sql`: `auth_sessions.access_token_id/access_token_hash/access_expires_at`; `product_variants.stock_quantity` nullable (NULL chưa theo dõi hữu hạn) và `version`; `order_items.stock_reserved` mặc định false. Không lưu access JWT nguyên văn; một access JTI hiện hành mỗi session. Chi tiết transaction/hoàn tồn/compatibility tại [REALTIME_CHECKOUT_JWT](docs/features/order-payment/REALTIME_CHECKOUT_JWT.md).
