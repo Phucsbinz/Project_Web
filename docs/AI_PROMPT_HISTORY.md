@@ -1062,3 +1062,13 @@ Kiểm kê cloud bằng SELECT COUNT(*) và metadata: 51 bảng vật lý (50 �
 Tài liệu: [ROLE_REQUIREMENTS_20261027](ROLE_REQUIREMENTS_20261027.md), [CSKH](features/customer-support/README.md), [DB_AUDIT_20261027](DB_AUDIT_20261027.md). Hình kiến trúc/source được dựng bằng script từ code, không dùng ImageGen; hình UI là fixture H2. Chưa khẳng định toàn bộ provider/DOCX/rubric đã hoàn tất.
 
 Phát hành đồng bộ integration sau khi DB chung áp dụng bỏ cột: source không còn mapping/tham chiếu password_plaintext, giữ BCrypt và tài khoản test; CSKH/history/WS/role audit cùng kiểm kê được đưa vào integration. Không push main/identify/feature khác. Ảnh UI cuối đã đưa scroll về đầu trước chụp để không có artifact sticky-header; 5 browser scenarios chạy lại đạt. Tool kiểm kê mới chạy lại đọc-only thành công.
+
+## ORDER-PUBLISH-20261027 — Đồng bộ bản tích hợp sang nhánh order
+
+Prompt nguyên văn:
+
+```text
+push lên nhánh order của tôi luôn
+```
+
+Đã fetch và xác nhận origin/feature/order-payment không có commit riêng ngoài integration; fast-forward nhánh order từ e200a64 tới a93e1c1, giữ toàn bộ lịch sử/bản tích hợp đã kiểm 206 test và 5 browser H2 scenarios. Chỉ thêm nhật ký yêu cầu này rồi push feature/order-payment, không force push hoặc sửa main/integration/identify. Giữ nguyên trạng thái xóa ảnh nguồn QR cục bộ có trước. Không chạy lại test/provider vì source ứng dụng giữ nguyên; SHA remote được đối chiếu sau push.
