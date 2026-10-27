@@ -9,7 +9,6 @@ public class User {
     @Column(nullable=false,unique=true,length=50) private String username;
     @Column(nullable=false,unique=true,length=254) private String email;
     @Column(name="password_hash",nullable=false,length=255) private String passwordHash;
-    @Column(name="password_plaintext",length=72) private String passwordPlaintext;
     @Column(name="full_name",nullable=false,length=100) private String fullName;
     @Column(length=20) private String phone;
     @Column(name="avatar_url",length=1000) private String avatarUrl;

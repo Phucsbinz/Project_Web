@@ -9,7 +9,7 @@ import org.springframework.security.messaging.access.intercept.MessageMatcherDel
 public class WebSocketSecurityConfig {
     @Bean AuthorizationManager<Message<?>> messageAuthorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder messages) {
         messages.nullDestMatcher().authenticated()
-            .simpSubscribeDestMatchers("/user/queue/orders","/user/queue/notifications","/topic/stores/*/orders","/topic/admin/orders","/topic/stores/*/checkout","/topic/checkout/promotions").authenticated()
+            .simpSubscribeDestMatchers("/user/queue/orders","/user/queue/notifications","/user/queue/support","/topic/stores/*/orders","/topic/admin/orders","/topic/stores/*/checkout","/topic/checkout/promotions").authenticated()
             .anyMessage().denyAll();
         return messages.build();
     }

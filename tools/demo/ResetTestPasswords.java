@@ -22,10 +22,10 @@ class ResetTestPasswords {
                 try (var statement = connection.createStatement(); var rows = statement.executeQuery("select id from users order by id for update")) {
                     while (rows.next()) accounts.add(rows.getLong(1));
                 }
-                try (var update = connection.prepareStatement("update users set password_hash=?,password_plaintext=?,updated_at=current_timestamp(6),version=version+1 where id=?")) {
+                try (var update = connection.prepareStatement("update users set password_hash=?,updated_at=current_timestamp(6),version=version+1 where id=?")) {
                     for (long id : accounts) {
                         update.setString(1, encoder.encode("123456"));
-                        update.setString(2, "123456"); update.setLong(3, id); update.executeUpdate();
+                        update.setLong(2, id); update.executeUpdate();
                     }
                 }
                 try (var statement = connection.createStatement()) {
@@ -33,9 +33,9 @@ class ResetTestPasswords {
                     statement.executeUpdate("update otp_challenges set revoked_at=current_timestamp(6),reset_grant_hash=null,version=version+1 where revoked_at is null");
                 }
                 int verified = 0;
-                try (var statement = connection.createStatement(); var rows = statement.executeQuery("select password_hash,password_plaintext from users")) {
+                try (var statement = connection.createStatement(); var rows = statement.executeQuery("select password_hash from users")) {
                     while (rows.next()) {
-                        if (!encoder.matches("123456", rows.getString(1)) || !"123456".equals(rows.getString(2)))
+                        if (!encoder.matches("123456", rows.getString(1)))
                             throw new IllegalStateException("Password verification failed");
                         verified++;
                     }

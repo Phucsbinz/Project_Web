@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .dispatcherTypeMatchers(DispatcherType.FORWARD,DispatcherType.ERROR).permitAll()
                 .requestMatchers("/payments/vnpay/ipn","/payments/vnpay/return").permitAll()
                 .requestMatchers("/local-wallet/**","/","/menu","/products/**","/stores/**","/assets/**","/auth/**","/error","/api/system/health").permitAll()
+                .requestMatchers("/support","/api/support/**").hasAnyRole("USER","MANAGER","ADMIN")
                 .requestMatchers("/admin/**","/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/manager/**","/api/manager/**").hasAnyRole("MANAGER","ADMIN")
                 .requestMatchers("/vendor/**","/api/vendor/**").hasRole("VENDOR")

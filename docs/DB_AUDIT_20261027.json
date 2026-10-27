@@ -1,0 +1,4802 @@
+{
+  "database": "utetra_db",
+  "migrations": [
+    {
+      "description": "identity baseline",
+      "version": "1",
+      "success": true
+    },
+    {
+      "description": "order payment",
+      "version": "2",
+      "success": true
+    },
+    {
+      "description": "catalog sales",
+      "version": "3",
+      "success": true
+    },
+    {
+      "description": "identity membership",
+      "version": "2026101701",
+      "success": true
+    },
+    {
+      "description": "identity validation guards",
+      "version": "2026102001",
+      "success": true
+    },
+    {
+      "description": "integrated foreign keys",
+      "version": "2026102002",
+      "success": true
+    },
+    {
+      "description": "bank transfer receipt",
+      "version": "2026102401",
+      "success": true
+    },
+    {
+      "description": "jwt inventory",
+      "version": "2026102402",
+      "success": true
+    },
+    {
+      "description": "scoped carriers",
+      "version": "2026102403",
+      "success": true
+    },
+    {
+      "description": "shared drink catalog",
+      "version": "2026102601",
+      "success": true
+    },
+    {
+      "description": "readable test password",
+      "version": "2026102602",
+      "success": true
+    },
+    {
+      "description": "group orders",
+      "version": "2026102603",
+      "success": true
+    },
+    {
+      "description": "cart selection",
+      "version": "2026102701",
+      "success": true
+    },
+    {
+      "description": "group member confirmation",
+      "version": "2026102702",
+      "success": true
+    },
+    {
+      "description": "local qr wallet",
+      "version": "2026102703",
+      "success": true
+    },
+    {
+      "description": "customer support",
+      "version": "2026102704",
+      "success": true
+    },
+    {
+      "description": "remove plaintext password",
+      "version": "2026102705",
+      "success": true
+    }
+  ],
+  "capturedAtUtc": "2026-10-27T15:09:48.500288200Z",
+  "physicalTableCount": 51,
+  "applicationTableCount": 50,
+  "views": [],
+  "tables": [
+    {
+      "name": "audit_logs",
+      "rows": 421,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "actor_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "action",
+          "type": "varchar(50)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "entity_type",
+          "type": "varchar(50)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "entity_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "summary",
+          "type": "varchar(1000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "actor_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/AuditService.java",
+        "src/main/java/com/utetra/order/service/OrderSupport.java",
+        "src/main/java/com/utetra/entity/catalog/CatalogAudit.java"
+      ]
+    },
+    {
+      "name": "auth_sessions",
+      "rows": 95,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "refresh_token_hash",
+          "type": "varchar(64)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "expires_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "last_refreshed_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "revoked_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "access_token_id",
+          "type": "varchar(36)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "access_token_hash",
+          "type": "varchar(64)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "access_expires_at",
+          "type": "timestamp(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/entity/AuthSession.java",
+        "src/main/java/com/utetra/identity/AccountService.java",
+        "src/main/java/com/utetra/identity/AuthService.java",
+        "src/main/java/com/utetra/repository/AccessTokenRegistry.java",
+        "src/main/java/com/utetra/repository/catalog/StoreOperationsRepository.java"
+      ]
+    },
+    {
+      "name": "carrier_area_rates",
+      "rows": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "carrier_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "delivery_area_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "additional_fee",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "carriers",
+          "column": "carrier_id",
+          "target": "id"
+        },
+        {
+          "table": "store_delivery_areas",
+          "column": "delivery_area_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/service/StoreService.java",
+        "src/main/java/com/utetra/repository/catalog/StoreOperationsRepository.java",
+        "src/main/java/com/utetra/order/entity/CarrierAreaRate.java",
+        "src/main/java/com/utetra/order/service/OperationsService.java"
+      ]
+    },
+    {
+      "name": "carriers",
+      "rows": 1,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "base_fee",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "managed_store_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "stores",
+          "column": "managed_store_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/service/StoreService.java",
+        "src/main/java/com/utetra/repository/catalog/StoreOperationsRepository.java",
+        "src/main/java/com/utetra/order/entity/Carrier.java",
+        "src/main/java/com/utetra/order/service/OperationsService.java",
+        "src/main/java/com/utetra/order/web/OperationsController.java"
+      ]
+    },
+    {
+      "name": "cart_item_toppings",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "cart_item_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "topping_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "cart_items",
+          "column": "cart_item_id",
+          "target": "id"
+        },
+        {
+          "table": "toppings",
+          "column": "topping_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/CartItemTopping.java"
+      ]
+    },
+    {
+      "name": "cart_items",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "cart_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "variant_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "sugar_level",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "ice_level",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "quantity",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "note",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "configuration_hash",
+          "type": "varchar(64)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_selected",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "carts",
+          "column": "cart_id",
+          "target": "id"
+        },
+        {
+          "table": "product_variants",
+          "column": "variant_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/CartItem.java",
+        "src/main/java/com/utetra/order/service/CartService.java"
+      ]
+    },
+    {
+      "name": "carts",
+      "rows": 10,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "last_merge_key",
+          "type": "varchar(36)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "group_order_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "activity_revision",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "group_orders",
+          "column": "group_order_id",
+          "target": "id"
+        },
+        {
+          "table": "stores",
+          "column": "store_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/config/CartExpiryConfig.java",
+        "src/main/java/com/utetra/order/entity/Cart.java",
+        "src/main/java/com/utetra/order/service/CartService.java",
+        "src/main/java/com/utetra/order/service/GroupOrderService.java",
+        "src/main/java/com/utetra/order/service/GuestCartService.java",
+        "src/main/java/com/utetra/order/web/CartController.java",
+        "src/main/java/com/utetra/order/web/CheckoutController.java"
+      ]
+    },
+    {
+      "name": "categories",
+      "rows": 6,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "slug",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "description",
+          "type": "varchar(4000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "display_order",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/controller/CatalogManagementController.java",
+        "src/main/java/com/utetra/service/CatalogService.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogQueryRepository.java",
+        "src/main/java/com/utetra/order/repository/CommerceReferenceRepository.java",
+        "src/main/java/com/utetra/order/service/CartService.java",
+        "src/main/java/com/utetra/entity/catalog/Category.java",
+        "src/main/java/com/utetra/controller/publicweb/CatalogController.java"
+      ]
+    },
+    {
+      "name": "comment_media",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "comment_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "secure_url",
+          "type": "varchar(1000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "public_id",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "resource_type",
+          "type": "varchar(10)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "display_order",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "product_comments",
+          "column": "comment_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/entity/CommentMedia.java"
+      ]
+    },
+    {
+      "name": "commission_policies",
+      "rows": 1,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "rate_percent",
+          "type": "decimal(5,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/repository/catalog/StoreOperationsRepository.java",
+        "src/main/java/com/utetra/order/entity/CommissionPolicy.java",
+        "src/main/java/com/utetra/order/service/OperationsService.java"
+      ]
+    },
+    {
+      "name": "coupon_redemptions",
+      "rows": 2,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "promotion_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "discount_snapshot",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "funded_by_snapshot",
+          "type": "varchar(10)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "promotion_kind_snapshot",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "promotion_name_snapshot",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "released_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        },
+        {
+          "table": "promotions",
+          "column": "promotion_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/CouponRedemption.java",
+        "src/main/java/com/utetra/order/service/CheckoutAvailabilityService.java",
+        "src/main/java/com/utetra/order/service/OrderPromotionService.java"
+      ]
+    },
+    {
+      "name": "delivery_assignments",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "shipper_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "assigned_by",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "assigned_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "completed_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "assigned_by",
+          "target": "id"
+        },
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "shipper_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/DeliveryAssignment.java"
+      ]
+    },
+    {
+      "name": "delivery_events",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "assignment_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "actor_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "type",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "note",
+          "type": "varchar(500)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "actor_id",
+          "target": "id"
+        },
+        {
+          "table": "delivery_assignments",
+          "column": "assignment_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/DeliveryEvent.java",
+        "src/main/java/com/utetra/order/service/OperationsService.java"
+      ]
+    },
+    {
+      "name": "flyway_schema_history",
+      "rows": 17,
+      "columns": [
+        {
+          "name": "installed_rank",
+          "type": "int",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "varchar(50)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "description",
+          "type": "varchar(200)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "type",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "script",
+          "type": "varchar(1000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "checksum",
+          "type": "int",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "installed_by",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "installed_on",
+          "type": "timestamp",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "execution_time",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "success",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [],
+      "runtimeSourceReferences": []
+    },
+    {
+      "name": "group_order_members",
+      "rows": 7,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "group_order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "display_name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "items_json",
+          "type": "text",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_confirmed",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "billed_subtotal",
+          "type": "decimal(14,2)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "discount_share",
+          "type": "decimal(14,2)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "shipping_share",
+          "type": "decimal(14,2)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "amount_due",
+          "type": "decimal(14,2)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "group_orders",
+          "column": "group_order_id",
+          "target": "id"
+        },
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/GroupOrderMember.java",
+        "src/main/java/com/utetra/order/service/GroupOrderService.java",
+        "src/main/java/com/utetra/order/service/LocalQrPaymentService.java",
+        "src/main/java/com/utetra/order/web/CheckoutController.java"
+      ]
+    },
+    {
+      "name": "group_orders",
+      "rows": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "host_user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "invite_token",
+          "type": "varchar(36)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "expires_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "payment_mode",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "host_user_id",
+          "target": "id"
+        },
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/GroupOrder.java",
+        "src/main/java/com/utetra/order/service/GroupOrderService.java",
+        "src/main/java/com/utetra/order/service/LocalQrPaymentService.java",
+        "src/main/java/com/utetra/order/web/CheckoutController.java"
+      ]
+    },
+    {
+      "name": "local_qr_payments",
+      "rows": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "public_id",
+          "type": "varchar(36)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "token_hash",
+          "type": "varchar(64)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "amount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "expires_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "paid_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/LocalQrPayment.java",
+        "src/main/java/com/utetra/order/service/LocalQrPaymentService.java"
+      ]
+    },
+    {
+      "name": "loyalty_accounts",
+      "rows": 8,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "balance",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "debt",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "lifetime_earned",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/LoyaltyService.java",
+        "src/main/java/com/utetra/identity/entity/LoyaltyAccounts.java"
+      ]
+    },
+    {
+      "name": "loyalty_transactions",
+      "rows": 99,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "account_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "type",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "points_delta",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "balance_after",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "debt_after",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "loyalty_accounts",
+          "column": "account_id",
+          "target": "id"
+        },
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/LoyaltyService.java",
+        "src/main/java/com/utetra/identity/entity/LoyaltyTransactions.java"
+      ]
+    },
+    {
+      "name": "notifications",
+      "rows": 1542,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "event_key",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "type",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "title",
+          "type": "varchar(200)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "content",
+          "type": "varchar(500)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "read_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/config/WebSocketConfig.java",
+        "src/main/java/com/utetra/config/WebSocketSecurityConfig.java",
+        "src/main/java/com/utetra/order/entity/Notification.java",
+        "src/main/java/com/utetra/order/service/OperationsService.java",
+        "src/main/java/com/utetra/order/service/OrderSupport.java",
+        "src/main/java/com/utetra/order/web/OperationsController.java"
+      ]
+    },
+    {
+      "name": "order_item_toppings",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_item_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "topping_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "topping_name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "unit_price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "order_items",
+          "column": "order_item_id",
+          "target": "id"
+        },
+        {
+          "table": "toppings",
+          "column": "topping_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/OrderItemTopping.java"
+      ]
+    },
+    {
+      "name": "order_items",
+      "rows": 139,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "variant_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "product_name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "size_name",
+          "type": "varchar(5)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "base_price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "extra_price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "drink_unit_price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "topping_unit_total",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "quantity",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "sugar_level",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "ice_level",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "note",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "line_total",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "discount_allocated",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "stock_reserved",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        },
+        {
+          "table": "product_variants",
+          "column": "variant_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/CommerceIdentityAdapter.java",
+        "src/main/java/com/utetra/identity/CommunityService.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogQueryRepository.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogStatisticsRepository.java",
+        "src/main/java/com/utetra/order/entity/OrderItem.java"
+      ]
+    },
+    {
+      "name": "order_status_history",
+      "rows": 514,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "from_status",
+          "type": "varchar(30)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "to_status",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "event_type",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "changed_by",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "reason",
+          "type": "varchar(500)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "order_version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "changed_by",
+          "target": "id"
+        },
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/OrderStatusHistory.java"
+      ]
+    },
+    {
+      "name": "orders",
+      "rows": 108,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_code",
+          "type": "varchar(40)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "delivery_area_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "carrier_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "commission_policy_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "checkout_key",
+          "type": "varchar(36)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "request_hash",
+          "type": "varchar(64)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "recipient_name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "recipient_phone",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "delivery_address",
+          "type": "varchar(500)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "store_name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "delivery_area_name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "carrier_name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "subtotal",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "product_discount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "points_discount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "shipping_gross",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "shipping_discount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "final_amount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "commission_rate",
+          "type": "decimal(5,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "commission_amount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "store_net",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "points_used",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "points_earned",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "payment_method",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "payment_status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "note",
+          "type": "varchar(500)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "cancel_reason",
+          "type": "varchar(500)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "delivered_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "cancelled_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "paid_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "payment_confirmed_by",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "group_order_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "group_participants",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "group_discount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "carriers",
+          "column": "carrier_id",
+          "target": "id"
+        },
+        {
+          "table": "commission_policies",
+          "column": "commission_policy_id",
+          "target": "id"
+        },
+        {
+          "table": "store_delivery_areas",
+          "column": "delivery_area_id",
+          "target": "id"
+        },
+        {
+          "table": "group_orders",
+          "column": "group_order_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "payment_confirmed_by",
+          "target": "id"
+        },
+        {
+          "table": "stores",
+          "column": "store_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/config/SecurityConfig.java",
+        "src/main/java/com/utetra/config/WebSocketConfig.java",
+        "src/main/java/com/utetra/config/WebSocketSecurityConfig.java",
+        "src/main/java/com/utetra/identity/AuditService.java",
+        "src/main/java/com/utetra/identity/CommerceIdentityAdapter.java",
+        "src/main/java/com/utetra/identity/CommunityService.java",
+        "src/main/java/com/utetra/identity/UserManagementService.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogQueryRepository.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogStatisticsRepository.java",
+        "src/main/java/com/utetra/order/entity/Order.java",
+        "src/main/java/com/utetra/order/service/GroupOrderService.java",
+        "src/main/java/com/utetra/order/service/OperationsService.java",
+        "src/main/java/com/utetra/order/service/OrderSocketGuard.java",
+        "src/main/java/com/utetra/order/service/OrderSupport.java",
+        "src/main/java/com/utetra/order/web/GroupOrderController.java",
+        "src/main/java/com/utetra/order/web/LocalQrController.java",
+        "src/main/java/com/utetra/order/web/OperationsController.java",
+        "src/main/java/com/utetra/order/web/OrderController.java",
+        "src/main/java/com/utetra/order/web/VnpayController.java",
+        "src/main/java/com/utetra/controller/publicweb/CatalogController.java"
+      ]
+    },
+    {
+      "name": "otp_challenges",
+      "rows": 6,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "email",
+          "type": "varchar(254)",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "purpose",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "otp_hash",
+          "type": "varchar(64)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "attempts",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "expires_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "consumed_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "revoked_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "reset_grant_hash",
+          "type": "varchar(64)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/AuthService.java",
+        "src/main/java/com/utetra/identity/OtpService.java",
+        "src/main/java/com/utetra/identity/entity/OtpChallenges.java"
+      ]
+    },
+    {
+      "name": "payment_callback_events",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "payment_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "provider",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "event_key",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "payload_hash",
+          "type": "varchar(64)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "verified",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "outcome",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "received_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "processed_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "payment_transactions",
+          "column": "payment_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/PaymentCallbackEvent.java"
+      ]
+    },
+    {
+      "name": "payment_transactions",
+      "rows": 108,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "provider",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "txn_ref",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "provider_txn_id",
+          "type": "varchar(100)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "amount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "paid_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "expires_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/PaymentTransaction.java"
+      ]
+    },
+    {
+      "name": "product_comments",
+      "rows": 90,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "author_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "order_item_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "content",
+          "type": "varchar(2000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "author_id",
+          "target": "id"
+        },
+        {
+          "table": "order_items",
+          "column": "order_item_id",
+          "target": "id"
+        },
+        {
+          "table": "products",
+          "column": "product_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/AuditService.java",
+        "src/main/java/com/utetra/identity/CommunityService.java",
+        "src/main/java/com/utetra/identity/UserManagementService.java",
+        "src/main/java/com/utetra/identity/entity/ProductComments.java"
+      ]
+    },
+    {
+      "name": "product_favorites",
+      "rows": 90,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "products",
+          "column": "product_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/CommunityService.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogQueryRepository.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogStatisticsRepository.java",
+        "src/main/java/com/utetra/identity/entity/ProductFavorites.java"
+      ]
+    },
+    {
+      "name": "product_toppings",
+      "rows": 270,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "topping_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "products",
+          "column": "product_id",
+          "target": "id"
+        },
+        {
+          "table": "toppings",
+          "column": "topping_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/repository/CommerceReferenceRepository.java",
+        "src/main/java/com/utetra/order/service/CartService.java",
+        "src/main/java/com/utetra/entity/catalog/ProductTopping.java"
+      ]
+    },
+    {
+      "name": "product_variants",
+      "rows": 270,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "size_name",
+          "type": "varchar(5)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "extra_price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "stock_quantity",
+          "type": "int",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "products",
+          "column": "product_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/CommerceIdentityAdapter.java",
+        "src/main/java/com/utetra/identity/CommunityService.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogQueryRepository.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogStatisticsRepository.java",
+        "src/main/java/com/utetra/order/repository/CommerceReferenceRepository.java",
+        "src/main/java/com/utetra/order/service/CartService.java",
+        "src/main/java/com/utetra/order/service/CheckoutAvailabilityService.java",
+        "src/main/java/com/utetra/order/service/GroupOrderService.java",
+        "src/main/java/com/utetra/order/service/GuestCartService.java",
+        "src/main/java/com/utetra/order/service/OrderInventoryService.java",
+        "src/main/java/com/utetra/entity/catalog/ProductVariant.java"
+      ]
+    },
+    {
+      "name": "product_views",
+      "rows": 99,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "last_viewed_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "view_count",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "products",
+          "column": "product_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/CommunityService.java",
+        "src/main/java/com/utetra/identity/entity/ProductViews.java"
+      ]
+    },
+    {
+      "name": "products",
+      "rows": 90,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "category_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "slug",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "description",
+          "type": "varchar(4000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "base_price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_available",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_featured",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "catalog_key",
+          "type": "varchar(150)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "categories",
+          "column": "category_id",
+          "target": "id"
+        },
+        {
+          "table": "stores",
+          "column": "store_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/config/SecurityConfig.java",
+        "src/main/java/com/utetra/controller/CatalogManagementController.java",
+        "src/main/java/com/utetra/identity/CommerceIdentityAdapter.java",
+        "src/main/java/com/utetra/identity/CommunityController.java",
+        "src/main/java/com/utetra/identity/CommunityService.java",
+        "src/main/java/com/utetra/service/CatalogMediaService.java",
+        "src/main/java/com/utetra/service/CatalogService.java",
+        "src/main/java/com/utetra/service/PromotionService.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogQueryRepository.java",
+        "src/main/java/com/utetra/order/repository/CommerceReferenceRepository.java",
+        "src/main/java/com/utetra/order/service/CartService.java",
+        "src/main/java/com/utetra/order/service/CheckoutAvailabilityService.java",
+        "src/main/java/com/utetra/order/service/CheckoutService.java",
+        "src/main/java/com/utetra/order/service/GroupOrderService.java",
+        "src/main/java/com/utetra/order/service/GuestCartService.java",
+        "src/main/java/com/utetra/order/service/OrderPromotionService.java",
+        "src/main/java/com/utetra/entity/catalog/Product.java",
+        "src/main/java/com/utetra/controller/publicweb/CatalogController.java"
+      ]
+    },
+    {
+      "name": "promotion_products",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "promotion_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "products",
+          "column": "product_id",
+          "target": "id"
+        },
+        {
+          "table": "promotions",
+          "column": "promotion_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/service/OrderPromotionService.java",
+        "src/main/java/com/utetra/entity/catalog/PromotionProduct.java"
+      ]
+    },
+    {
+      "name": "promotions",
+      "rows": 2,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "created_by",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "scope",
+          "type": "varchar(10)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "kind",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "code",
+          "type": "varchar(50)",
+          "nullable": "YES",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "percent",
+          "type": "decimal(5,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "max_discount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "min_order",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "usage_limit",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "per_user_limit",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "starts_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "ends_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "funded_by",
+          "type": "varchar(10)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "created_by",
+          "target": "id"
+        },
+        {
+          "table": "stores",
+          "column": "store_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/config/WebSocketConfig.java",
+        "src/main/java/com/utetra/config/WebSocketSecurityConfig.java",
+        "src/main/java/com/utetra/controller/CatalogManagementController.java",
+        "src/main/java/com/utetra/identity/AuditService.java",
+        "src/main/java/com/utetra/identity/UserManagementService.java",
+        "src/main/java/com/utetra/service/PromotionService.java",
+        "src/main/java/com/utetra/order/service/CheckoutAvailabilityEvents.java",
+        "src/main/java/com/utetra/order/service/CheckoutAvailabilityService.java",
+        "src/main/java/com/utetra/order/service/CheckoutService.java",
+        "src/main/java/com/utetra/order/service/OperationsService.java",
+        "src/main/java/com/utetra/order/service/OrderPromotionService.java",
+        "src/main/java/com/utetra/entity/catalog/Promotion.java",
+        "src/main/java/com/utetra/controller/publicweb/CatalogController.java"
+      ]
+    },
+    {
+      "name": "refund_transactions",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "payment_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "return_request_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "refund_ref",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "provider_ref",
+          "type": "varchar(100)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "amount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "reason",
+          "type": "varchar(1000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "evidence_ref",
+          "type": "varchar(500)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "approved_by",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "completed_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "approved_by",
+          "target": "id"
+        },
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        },
+        {
+          "table": "payment_transactions",
+          "column": "payment_id",
+          "target": "id"
+        },
+        {
+          "table": "return_requests",
+          "column": "return_request_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/RefundTransaction.java",
+        "src/main/java/com/utetra/order/service/OperationsService.java"
+      ]
+    },
+    {
+      "name": "return_requests",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "requested_by",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "reason",
+          "type": "varchar(2000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "evidence_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "evidence_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "waive_physical_return",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "reviewed_by",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "decision_reason",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "requested_by",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "reviewed_by",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/ReturnRequest.java"
+      ]
+    },
+    {
+      "name": "review_media",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "review_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "secure_url",
+          "type": "varchar(1000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "public_id",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "resource_type",
+          "type": "varchar(10)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "display_order",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "reviews",
+          "column": "review_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/entity/ReviewMedia.java"
+      ]
+    },
+    {
+      "name": "reviews",
+      "rows": 90,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "author_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "order_item_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "stars",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "content",
+          "type": "varchar(2000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "author_id",
+          "target": "id"
+        },
+        {
+          "table": "order_items",
+          "column": "order_item_id",
+          "target": "id"
+        },
+        {
+          "table": "products",
+          "column": "product_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/config/SecurityConfig.java",
+        "src/main/java/com/utetra/identity/AuditService.java",
+        "src/main/java/com/utetra/identity/CommunityController.java",
+        "src/main/java/com/utetra/identity/CommunityService.java",
+        "src/main/java/com/utetra/identity/IdentityPages.java",
+        "src/main/java/com/utetra/identity/UserManagementController.java",
+        "src/main/java/com/utetra/identity/UserManagementService.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogQueryRepository.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogStatisticsRepository.java",
+        "src/main/java/com/utetra/identity/entity/Reviews.java"
+      ]
+    },
+    {
+      "name": "roles",
+      "rows": 5,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "name",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "description",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/entity/Role.java",
+        "src/main/java/com/utetra/identity/AccountService.java",
+        "src/main/java/com/utetra/identity/AuthService.java",
+        "src/main/java/com/utetra/identity/IdentityRepository.java",
+        "src/main/java/com/utetra/identity/OtpService.java",
+        "src/main/java/com/utetra/identity/UserManagementService.java",
+        "src/main/java/com/utetra/support/SupportRepository.java",
+        "src/main/java/com/utetra/repository/catalog/StoreOperationsRepository.java",
+        "src/main/java/com/utetra/order/repository/CommerceReferenceRepository.java"
+      ]
+    },
+    {
+      "name": "store_delivery_areas",
+      "rows": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "area_code",
+          "type": "varchar(50)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "stores",
+          "column": "store_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/repository/catalog/StoreOperationsRepository.java",
+        "src/main/java/com/utetra/order/repository/CommerceReferenceRepository.java",
+        "src/main/java/com/utetra/order/service/OperationsService.java",
+        "src/main/java/com/utetra/entity/catalog/StoreDeliveryArea.java"
+      ]
+    },
+    {
+      "name": "store_memberships",
+      "rows": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "member_role",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "assigned_by",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "assigned_by",
+          "target": "id"
+        },
+        {
+          "table": "stores",
+          "column": "store_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/CommerceIdentityAdapter.java",
+        "src/main/java/com/utetra/identity/IdentityStoreAccessPolicy.java",
+        "src/main/java/com/utetra/identity/UserManagementService.java",
+        "src/main/java/com/utetra/support/SupportRepository.java",
+        "src/main/java/com/utetra/order/repository/CommerceReferenceRepository.java",
+        "src/main/java/com/utetra/entity/catalog/StoreMembership.java"
+      ]
+    },
+    {
+      "name": "store_registration_requests",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "applicant_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "note",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "reviewed_by",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "reviewed_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "applicant_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "reviewed_by",
+          "target": "id"
+        },
+        {
+          "table": "stores",
+          "column": "store_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/entity/catalog/StoreRegistrationRequest.java"
+      ]
+    },
+    {
+      "name": "store_settlements",
+      "rows": 99,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "goods_net",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "commission_rate",
+          "type": "decimal(5,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "commission_amount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "shipping_net",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "store_net",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "refunded_goods",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "refunded_shipping",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "commission_reversed",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "column": "order_id",
+          "target": "id"
+        },
+        {
+          "table": "stores",
+          "column": "store_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/entity/StoreSettlement.java",
+        "src/main/java/com/utetra/order/service/OperationsService.java"
+      ]
+    },
+    {
+      "name": "store_toppings",
+      "rows": 9,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "topping_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "is_available",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "stores",
+          "column": "store_id",
+          "target": "id"
+        },
+        {
+          "table": "toppings",
+          "column": "topping_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/order/repository/CommerceReferenceRepository.java",
+        "src/main/java/com/utetra/entity/catalog/StoreTopping.java"
+      ]
+    },
+    {
+      "name": "stores",
+      "rows": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "owner_user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "commission_policy_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "slug",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "address",
+          "type": "varchar(500)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "phone",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "description",
+          "type": "varchar(4000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "banner_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "banner_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "open_time",
+          "type": "time",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "close_time",
+          "type": "time",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "accepting_orders",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "commission_policies",
+          "column": "commission_policy_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "owner_user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/config/SecurityConfig.java",
+        "src/main/java/com/utetra/config/WebSocketConfig.java",
+        "src/main/java/com/utetra/config/WebSocketSecurityConfig.java",
+        "src/main/java/com/utetra/controller/CatalogManagementController.java",
+        "src/main/java/com/utetra/identity/AuditService.java",
+        "src/main/java/com/utetra/identity/CommerceIdentityAdapter.java",
+        "src/main/java/com/utetra/identity/CommunityService.java",
+        "src/main/java/com/utetra/identity/IdentityStoreAccessPolicy.java",
+        "src/main/java/com/utetra/identity/UserManagementService.java",
+        "src/main/java/com/utetra/service/CatalogGuard.java",
+        "src/main/java/com/utetra/service/CatalogMediaService.java",
+        "src/main/java/com/utetra/service/CatalogService.java",
+        "src/main/java/com/utetra/service/PromotionService.java",
+        "src/main/java/com/utetra/service/StoreService.java",
+        "src/main/java/com/utetra/support/SupportRepository.java",
+        "src/main/java/com/utetra/support/SupportService.java",
+        "src/main/java/com/utetra/repository/catalog/CatalogQueryRepository.java",
+        "src/main/java/com/utetra/order/repository/CommerceReferenceRepository.java",
+        "src/main/java/com/utetra/order/service/CartService.java",
+        "src/main/java/com/utetra/order/service/CheckoutAvailabilityEvents.java",
+        "src/main/java/com/utetra/order/service/GroupOrderService.java",
+        "src/main/java/com/utetra/order/service/OperationsService.java",
+        "src/main/java/com/utetra/order/service/OrderSocketGuard.java",
+        "src/main/java/com/utetra/order/service/OrderSupport.java",
+        "src/main/java/com/utetra/order/service/OrderWorkflowService.java",
+        "src/main/java/com/utetra/order/web/CheckoutController.java",
+        "src/main/java/com/utetra/order/web/OperationsController.java",
+        "src/main/java/com/utetra/entity/catalog/Store.java",
+        "src/main/java/com/utetra/controller/publicweb/CatalogController.java"
+      ]
+    },
+    {
+      "name": "support_conversations",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "varchar(36)",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": ""
+        },
+        {
+          "name": "customer_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "scope_key",
+          "type": "varchar(40)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "channel",
+          "type": "varchar(10)",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "last_message_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "customer_id",
+          "target": "id"
+        },
+        {
+          "table": "stores",
+          "column": "store_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/support/SupportConversation.java",
+        "src/main/java/com/utetra/support/SupportRepository.java"
+      ]
+    },
+    {
+      "name": "support_messages",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "conversation_id",
+          "type": "varchar(36)",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "sender_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "sender_role",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "client_message_id",
+          "type": "varchar(36)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "body",
+          "type": "varchar(2000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "support_conversations",
+          "column": "conversation_id",
+          "target": "id"
+        },
+        {
+          "table": "users",
+          "column": "sender_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/support/SupportMessage.java",
+        "src/main/java/com/utetra/support/SupportRepository.java"
+      ]
+    },
+    {
+      "name": "toppings",
+      "rows": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/controller/CatalogManagementController.java",
+        "src/main/java/com/utetra/dto/CatalogViews.java",
+        "src/main/java/com/utetra/service/CatalogService.java",
+        "src/main/java/com/utetra/order/repository/CommerceReferenceRepository.java",
+        "src/main/java/com/utetra/order/repository/OrderDataRepository.java",
+        "src/main/java/com/utetra/order/service/CartService.java",
+        "src/main/java/com/utetra/order/service/CheckoutService.java",
+        "src/main/java/com/utetra/order/service/GroupOrderService.java",
+        "src/main/java/com/utetra/order/service/OrderWorkflowService.java",
+        "src/main/java/com/utetra/entity/catalog/Topping.java",
+        "src/main/java/com/utetra/controller/publicweb/CatalogController.java"
+      ]
+    },
+    {
+      "name": "user_addresses",
+      "rows": 9,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "recipient_name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "phone",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "address_detail",
+          "type": "varchar(500)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_default",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "column": "user_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/identity/AccountService.java",
+        "src/main/java/com/utetra/order/repository/CommerceReferenceRepository.java",
+        "src/main/java/com/utetra/order/service/OperationsService.java",
+        "src/main/java/com/utetra/identity/entity/UserAddresses.java"
+      ]
+    },
+    {
+      "name": "users",
+      "rows": 23,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "role_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "username",
+          "type": "varchar(50)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "email",
+          "type": "varchar(254)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "password_hash",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "full_name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "phone",
+          "type": "varchar(20)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "avatar_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "avatar_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "email_verified_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "roles",
+          "column": "role_id",
+          "target": "id"
+        }
+      ],
+      "runtimeSourceReferences": [
+        "src/main/java/com/utetra/config/AuthenticationConfig.java",
+        "src/main/java/com/utetra/controller/NavigationAdvice.java",
+        "src/main/java/com/utetra/entity/User.java",
+        "src/main/java/com/utetra/identity/AccountService.java",
+        "src/main/java/com/utetra/identity/AuditService.java",
+        "src/main/java/com/utetra/identity/AuthService.java",
+        "src/main/java/com/utetra/identity/CommunityService.java",
+        "src/main/java/com/utetra/identity/IdentityPages.java",
+        "src/main/java/com/utetra/identity/IdentityRepository.java",
+        "src/main/java/com/utetra/identity/OtpService.java",
+        "src/main/java/com/utetra/identity/UserManagementController.java",
+        "src/main/java/com/utetra/identity/UserManagementService.java",
+        "src/main/java/com/utetra/service/CatalogGuard.java",
+        "src/main/java/com/utetra/support/SupportRepository.java",
+        "src/main/java/com/utetra/repository/catalog/StoreOperationsRepository.java",
+        "src/main/java/com/utetra/order/repository/CommerceReferenceRepository.java",
+        "src/main/java/com/utetra/order/service/CartService.java",
+        "src/main/java/com/utetra/order/service/GroupOrderService.java"
+      ]
+    }
+  ],
+  "caseInsensitiveDuplicateNameGroups": [],
+  "identicalColumnAndForeignKeyGroups": [],
+  "emptyTableCount": 14,
+  "emptyTables": [
+    "cart_item_toppings",
+    "cart_items",
+    "comment_media",
+    "delivery_assignments",
+    "delivery_events",
+    "order_item_toppings",
+    "payment_callback_events",
+    "promotion_products",
+    "refund_transactions",
+    "return_requests",
+    "review_media",
+    "store_registration_requests",
+    "support_conversations",
+    "support_messages"
+  ]
+}

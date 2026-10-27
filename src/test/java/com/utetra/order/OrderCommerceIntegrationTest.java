@@ -650,7 +650,7 @@ class OrderCommerceIntegrationTest {
     var checkoutPage = http.exchange("/checkout?branch=1", HttpMethod.GET,
         new HttpEntity<>(browserHeaders(buyer)), String.class);
     assertThat(checkoutPage.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(checkoutPage.getBody()).contains("value=\"LOCAL_QR\"");
+    assertThat(checkoutPage.getBody()).contains("value=\"LOCAL_QR\"","value=\"BANK_TRANSFER\"");
   }
 
   @Test

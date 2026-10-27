@@ -1,5 +1,7 @@
 # UTETra — Hồ sơ và cấu hình chung của nhóm
 
+> Mới nhất 27/10: [đối chiếu role/nhập địa chỉ/CSKH/bảo mật](ROLE_REQUIREMENTS_20261027.md), [kiểm kê DB thực 51 bảng và 14 bảng trống](DB_AUDIT_20261027.md), [hướng dẫn CSKH](features/customer-support/README.md). Clean verify 206 test và 5 browser scenarios đạt; 2704/2705 đã áp dụng cloud, hash 23 tài khoản không đổi.
+
 Tích hợp UI tất cả module: [phạm vi vai trò, ảnh và kiểm tra desktop/mobile](ALL_MODULE_UI_20261026.md).
 
 Giao diện tham chiếu 26/10: [màu/font, hình desktop–mobile và kết quả kiểm tra](UI_REFERENCE_REFINEMENT_20261026.md). Bản thử trên integration, chưa phát hành sang main.

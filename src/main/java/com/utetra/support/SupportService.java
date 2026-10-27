@@ -1,0 +1,24 @@
+package com.utetra.support;
+import com.utetra.security.UtetraPrincipal;
+import com.utetra.service.SessionIdentityService;
+import java.time.*;
+import java.util.*;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.*;
+@Service @Transactional(readOnly=true)
+public class SupportService {
+ private final SupportRepository repo; private final SessionIdentityService identity;private final Clock clock;private final ApplicationEventPublisher events;
+ public SupportService(SupportRepository repo,SessionIdentityService identity,Clock clock,ApplicationEventPublisher events){this.repo=repo;this.identity=identity;this.clock=clock;this.events=events;}
+ public void require(UtetraPrincipal p){if(p==null || !identity.isCurrent(p))throw new SupportProblem(HttpStatus.UNAUTHORIZED,"Phiên đăng nhập đã hết hạn.");if(!Set.of("ROLE_USER","ROLE_MANAGER","ROLE_ADMIN").contains(p.role()))throw SupportProblem.denied();}
+ private String uuid(String value){try{if(value==null || !value.matches("[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}"))throw new IllegalArgumentException();return UUID.fromString(value).toString();}catch(IllegalArgumentException ex){throw SupportProblem.invalid("Mã hội thoại hoặc mã tin nhắn không hợp lệ.");}}
+ public Map<String,Object> targets(UtetraPrincipal p){require(p);if(!p.role().equals("ROLE_USER"))throw SupportProblem.denied();return Map.of("stores",repo.targets(),"adminAvailable",repo.adminAvailable());}
+ public Map<String,Object> list(UtetraPrincipal p,int page){require(p);if(page<0 || page>10000)throw SupportProblem.invalid("Trang không hợp lệ.");var items=repo.conversations(p,page);return Map.of("items",items.size()>30?items.subList(0,30):items,"hasMore",items.size()>30,"page",page);}
+ private Map<String,Object> allowed(UtetraPrincipal p,String id,boolean lock){require(p);var thread=repo.accessible(p,uuid(id),lock);if(thread==null)throw SupportProblem.missing();return thread;}
+ @Transactional(isolation=Isolation.READ_COMMITTED)
+ public Map<String,Object> open(UtetraPrincipal p,Long store){require(p);if(!p.role().equals("ROLE_USER"))throw SupportProblem.denied();if(store!=null && store<=0)throw SupportProblem.invalid("Chi nhánh không hợp lệ.");repo.lockCustomer(p.userId());if(!repo.targetAvailable(store))throw SupportProblem.invalid("Kênh CSKH hiện chưa có nhân viên phụ trách hoạt động.");String scope=store==null?"ADMIN":"STORE:"+store;var existing=repo.existing(p.userId(),scope);if(existing!=null)return allowed(p,existing.get("id").toString(),false);var t=new SupportConversation();t.id=UUID.randomUUID().toString();t.customerId=p.userId();t.storeId=store;t.scopeKey=scope;t.channel=store==null?"ADMIN":"BRANCH";t.createdAt=t.updatedAt=clock.instant();repo.insert(t);events.publishEvent(new SupportEvents.Changed(t.id,0));return allowed(p,t.id,false);}
+ public Map<String,Object> messages(UtetraPrincipal p,String id,Long before,Long after){var thread=allowed(p,id,false);if((before!=null && before<=0)||(after!=null && after<0)||(before!=null && after!=null))throw SupportProblem.invalid("Mốc tin nhắn không hợp lệ.");var rows=new ArrayList<>(repo.messages(thread.get("id").toString(),before,after));boolean more=rows.size()>50;if(more)rows.removeLast();if(after==null)Collections.reverse(rows);return Map.of("conversation",thread,"items",rows,"hasMore",more);}
+ @Transactional(isolation=Isolation.READ_COMMITTED)
+ public Map<String,Object> send(UtetraPrincipal p,String id,String body,String nonce){String threadId=uuid(id),clientId=uuid(nonce);allowed(p,threadId,true);if(body==null)throw SupportProblem.invalid("Nhập nội dung tin nhắn.");body=body.strip();int count=body.codePointCount(0,body.length());if(count<1 || count>2000 || body.codePoints().allMatch(c->Character.isWhitespace(c)||Character.isSpaceChar(c)) || body.codePoints().anyMatch(c->(c>=0xD800&&c<=0xDFFF)||Character.isISOControl(c)&&c!='\n'&&c!='\r'&&c!='\t'))throw SupportProblem.invalid("Tin nhắn cần từ 1 đến 2000 ký tự hợp lệ.");var previous=repo.retry(threadId,p.userId(),clientId);if(previous!=null){if(!body.equals(previous.get("body")))throw new SupportProblem(HttpStatus.CONFLICT,"Mã gửi lại đã dùng cho nội dung khác.");return repo.message(threadId,((Number)previous.get("id")).longValue());}if(repo.recentCount(p.userId(),clock.instant().minusSeconds(60))>=60)throw new SupportProblem(HttpStatus.TOO_MANY_REQUESTS,"Bạn gửi quá nhanh. Vui lòng thử lại sau.");var m=new SupportMessage();m.conversationId=threadId;m.senderId=p.userId();m.senderRole=p.role();m.clientMessageId=clientId;m.body=body;m.createdAt=clock.instant();repo.insert(m);events.publishEvent(new SupportEvents.Changed(threadId,m.id));return repo.message(threadId,m.id);}
+}

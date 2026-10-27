@@ -40,6 +40,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         });
     }
     private boolean allowed(UtetraPrincipal principal,String destination) {
+        if("/user/queue/support".equals(destination)) return java.util.Set.of("ROLE_USER","ROLE_MANAGER","ROLE_ADMIN").contains(principal.role());
         // These topics contain public availability IDs only, never order/identity data.
         if("/topic/checkout/promotions".equals(destination)
             || destination!=null && destination.matches("/topic/stores/[0-9]+/checkout")) return true;

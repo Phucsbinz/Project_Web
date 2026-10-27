@@ -1,0 +1,21 @@
+{
+  "basis": "integration working tree 27/10/2026; code-native illustrations, not runtime screenshots",
+  "files": [
+    "flow-support.png",
+    "source-access-control.png"
+  ],
+  "sources": [
+    {
+      "path": "src/main/java/com/utetra/support/SupportService.java",
+      "line": 14
+    },
+    {
+      "path": "src/main/java/com/utetra/support/SupportService.java",
+      "line": 18
+    },
+    {
+      "path": "src/main/java/com/utetra/support/SupportRepository.java",
+      "line": 13
+    }
+  ]
+}

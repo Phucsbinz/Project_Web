@@ -1,5 +1,7 @@
 # UTETra — Một layout dùng chung cho toàn bộ nhóm
 
+> CSKH 27/10: các trang /support, /manager/support, /admin/support dùng app.jsp chung và support.css scope support-page. Dropdown/sidebar/footer thêm đường dẫn đúng role; backend SupportService và private queue kiểm quyền độc lập. Khi chuyển tính năng sang nhánh khác phải ghép cả module/migration/security theo docs/features/customer-support, không chỉ chép link/JSP.
+
 ## Sửa font tiếng Việt — 26/10/2026
 
 Theo phản hồi về chữ “Nhiều niềm vui.”, thay các khai báo Georgia trong theme và CSS trang chủ bằng Be Vietnam Pro local; các câu nhấn dùng kiểu normal/weight 500. Header/footer và các chữ dùng cùng font được đồng nhất trong `utetra.css`, không tạo bộ font hoặc layout theo role. `app.jsp` tăng cache version CSS. Khi tích hợp cần đồng bộ các file chung này cùng bundle. Chi tiết và kiểm chứng: [VIETNAMESE_FONT_FIX_20261026.md](VIETNAMESE_FONT_FIX_20261026.md).

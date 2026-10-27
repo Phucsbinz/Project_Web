@@ -1,0 +1,18 @@
+{
+  "fixture": "isolated H2; no email, Cloudinary, bank or merchant transaction",
+  "checks": [
+    "User/assigned Manager exchange with private STOMP hints; other User/Admin cannot read branch thread; staff cannot start chats; HTML stays text",
+    "Separate User/Admin conversation and reply; unrelated customer receives no hints",
+    "Broker rejects forged subscription to another user queue",
+    "User/Manager/Admin chat pages: one decorator, no horizontal overflow at 390/1440px",
+    "Typed address saved to buyer, quoted and snapshotted in H2 COD order; other buyer cannot read it"
+  ],
+  "pageErrors": [],
+  "supportHintCounts": {
+    "user": 6,
+    "manager": 3,
+    "admin": 3,
+    "other": 0
+  },
+  "limits": "Text CSKH and address/COD test, not real support or provider transactions."
+}

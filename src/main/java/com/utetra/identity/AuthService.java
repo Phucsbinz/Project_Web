@@ -74,7 +74,7 @@ public class AuthService {
         var c=db.one("select * from otp_challenges where id=? for update",id);
         if(!flag(u,"is_active") || u.get("email_verified_at")==null || !"PASSWORD_RESET".equals(string(c,"purpose")) || c.get("consumed_at")==null || c.get("revoked_at")!=null
             || !instant(c,"expires_at").isAfter(clock.instant()) || !secrets.matches(string(c,"reset_grant_hash"),secrets.hash(grant))) throw credentials();
-        db.update("update users set password_hash=?,password_plaintext=null,updated_at=?,version=version+1 where id=?",encoder.encode(password),time(clock.instant()),number(u,"id"));
+        db.update("update users set password_hash=?,updated_at=?,version=version+1 where id=?",encoder.encode(password),time(clock.instant()),number(u,"id"));
         db.update("update otp_challenges set reset_grant_hash=null,revoked_at=?,version=version+1 where user_id=? and revoked_at is null",time(clock.instant()),number(u,"id"));
         revokeAll(number(u,"id"));
     }

@@ -1,0 +1,53 @@
+package com.utetra.order;
+import com.utetra.support.*;
+import com.utetra.security.*;
+import com.utetra.order.service.*;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.http.*;
+import java.util.*;
+import java.util.concurrent.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+@SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@Import(OrderCommerceIntegrationTest.TimeConfiguration.class)
+class SupportIntegrationTest {
+ @Autowired SupportService support;
+ @Autowired JdbcTemplate jdbc;
+ @Autowired JwtService jwt;
+ @Autowired PasswordEncoder passwords;
+ @Autowired OrderCommerceIntegrationTest.MutableClock clock;
+ @Autowired TestRestTemplate http;
+ @Autowired PlatformTransactionManager tx;
+ @MockitoSpyBean SimpMessagingTemplate broker;
+ private final Map<Integer,UtetraPrincipal> people=new HashMap<>();
+ private final Map<Integer,String> tokens=new HashMap<>();
+ @BeforeEach void fixture(){var fixture=new OrderCommerceIntegrationTest();fixture.jdbc=jdbc;fixture.passwords=passwords;fixture.time=clock;fixture.fixture();people.clear();tokens.clear();for(int i=1;i<=6;i++){String role=i==1||i==6?"ROLE_USER":i==2?"ROLE_VENDOR":i==3?"ROLE_MANAGER":i==4?"ROLE_ADMIN":"ROLE_SHIPPER";String token=jwt.issue((long)i,(long)i,role);tokens.put(i,token);people.put(i,jwt.verify(token));}clearInvocations(broker);}
+ private String open(int user,Long store){return support.open(people.get(user),store).get("id").toString();}
+ private List<?> list(int user){return (List<?>)support.list(people.get(user),0).get("items");}
+ private Map<String,Object> send(int user,String thread,String text){return support.send(people.get(user),thread,text,UUID.randomUUID().toString());}
+ private void denied(org.assertj.core.api.ThrowableAssert.ThrowingCallable action){assertThatThrownBy(action).isInstanceOf(SupportProblem.class);}
+ @Test void onlyCustomersStartThreadsAndStaffNeverHaveAStaffChat(){String admin=open(1,null),branch=open(1,1L);assertThat(open(1,null)).isEqualTo(admin);assertThat(list(1)).hasSize(2);assertThat(list(4)).hasSize(1);assertThat(list(3)).hasSize(1);assertThat(list(6)).isEmpty();for(int staff:List.of(2,3,4,5)){denied(()->open(staff,null));denied(()->open(staff,1L));}denied(()->send(4,branch,"No admin-to-manager thread"));denied(()->send(3,admin,"No manager-to-admin thread"));denied(()->send(6,branch,"Not my thread"));denied(()->support.messages(people.get(6),branch,null,null));denied(()->support.list(people.get(2),0));denied(()->support.list(people.get(5),0));}
+ @Test void branchScopeAndCurrentCustomerRoleAreRechecked(){String branch=open(1,1L);send(3,branch,"Xin chào khách hàng");jdbc.update("update store_memberships set is_active=false where user_id=3");assertThat(list(3)).isEmpty();denied(()->support.messages(people.get(3),branch,null,null));denied(()->send(3,branch,"Lost scope"));jdbc.update("update store_memberships set is_active=true where user_id=3");jdbc.update("update users set role_id=(select id from roles where name='ROLE_MANAGER') where id=1");assertThat(list(3)).isEmpty();denied(()->send(3,branch,"Customer is now staff"));}
+ @Test void differentCustomersAreIsolatedAndOnlyAnAssignedManagerCanReply(){String a=open(1,1L),b=open(6,1L);send(1,a,"My private order question");assertThat(((List<?>)support.messages(people.get(6),b,null,null).get("items"))).isEmpty();denied(()->support.messages(people.get(6),a,null,null));denied(()->open(1,2L));jdbc.update("insert into store_memberships(user_id,store_id,member_role,is_active,assigned_by,created_at,updated_at) values(3,2,'MANAGER',true,4,?,?)",clock.instant(),clock.instant());String second=open(1,2L);assertThat(list(3)).hasSize(3);send(3,second,"Branch two reply");jdbc.update("update store_memberships set is_active=false where user_id=3 and store_id=1");assertThat(list(3)).hasSize(1);denied(()->send(3,a,"Wrong assigned store"));}
+ @Test void messageRetriesAreIdempotentAndSenderIsTheAuthenticatedUser(){String t=open(1,1L),nonce=UUID.randomUUID().toString();var first=support.send(people.get(1),t,"<script>bad()</script> Xin chào",nonce);var retry=support.send(people.get(1),t,"<script>bad()</script> Xin chào",nonce);assertThat(retry.get("id")).isEqualTo(first.get("id"));assertThat(((Number)first.get("sender_id")).longValue()).isEqualTo(1);assertThat(first.get("sender_role")).isEqualTo("ROLE_USER");assertThat(jdbc.queryForObject("select count(*) from support_messages",Long.class)).isEqualTo(1);denied(()->support.send(people.get(1),t,"Different text",nonce));denied(()->support.send(people.get(1),t," ",UUID.randomUUID().toString()));denied(()->send(1,t,"a".repeat(2001)));denied(()->send(1,t,"\u00a0\u00a0"));denied(()->support.send(people.get(1),t,"Hello","invalid"));}
+ @Test void paginationReturnsNewestThenOlderAndCatchupWithoutLeakingOtherThreads(){String t=open(1,null),other=open(6,null);send(6,other,"Other customer's private message");for(int i=1;i<=55;i++)send(1,t,"Message "+i);var latest=support.messages(people.get(1),t,null,null);var rows=(List<Map<String,Object>>)latest.get("items");assertThat(rows).hasSize(50);assertThat(latest.get("hasMore")).isEqualTo(true);long first=((Number)rows.getFirst().get("id")).longValue();var older=(List<Map<String,Object>>)support.messages(people.get(1),t,first,null).get("items");assertThat(older).hasSize(5);assertThat(older.getFirst().get("body")).isEqualTo("Message 1");var catchup=support.messages(people.get(1),t,null,0L);assertThat((List<?>)catchup.get("items")).hasSize(50);assertThat(catchup.get("hasMore")).isEqualTo(true);denied(()->support.messages(people.get(1),t,first,0L));}
+ @Test void concurrentRetriesCreateOnlyOneMessage()throws Exception{String t=open(1,1L),nonce=UUID.randomUUID().toString();var pool=Executors.newFixedThreadPool(2);var go=new CountDownLatch(1);try{Callable<Object> work=()->{go.await();return support.send(people.get(1),t,"Exactly once",nonce).get("id");};var a=pool.submit(work);var b=pool.submit(work);go.countDown();assertThat(a.get(10,TimeUnit.SECONDS)).isEqualTo(b.get(10,TimeUnit.SECONDS));assertThat(jdbc.queryForObject("select count(*) from support_messages",Long.class)).isEqualTo(1);}finally{pool.shutdownNow();}}
+ @Test void rollbackDoesNotPublishAndCommitTargetsOnlyThePrivateParticipants(){String t=open(1,1L);clearInvocations(broker);new TransactionTemplate(tx).executeWithoutResult(status->{send(1,t,"Rollback this message");status.setRollbackOnly();});assertThat(jdbc.queryForObject("select count(*) from support_messages",Long.class)).isZero();verify(broker,never()).convertAndSendToUser(anyString(),eq("/queue/support"),any());send(1,t,"Committed");verify(broker).convertAndSendToUser(eq("1"),eq("/queue/support"),argThat(value->value instanceof Map<?,?> hint && hint.keySet().equals(Set.of("conversationId","messageId"))));verify(broker).convertAndSendToUser(eq("3"),eq("/queue/support"),any());verify(broker,never()).convertAndSendToUser(eq("4"),eq("/queue/support"),any());}
+ @Test void revokedOrDisabledSessionsCannotReadOrReply(){String t=open(1,null);jdbc.update("update auth_sessions set revoked_at=? where id=1",clock.instant());denied(()->send(1,t,"Revoked"));denied(()->support.list(people.get(1),0));jdbc.update("update users set is_active=false where id=4");denied(()->support.messages(people.get(4),t,null,null));}
+ @Test void supportPagesRenderInTheSingleDecoratorAndMutationsRequireCsrf(){for(int id:List.of(1,3,4)){String path=id==1?"/support":id==3?"/manager/support":"/admin/support";var headers=new HttpHeaders();headers.setBearerAuth(tokens.get(id));var response=http.exchange(path,HttpMethod.GET,new HttpEntity<>(headers),String.class);assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);assertThat(response.getBody()).contains("support-app","support.js","navbar-brand","site-footer").doesNotContain("<%@","<c:if");headers.setContentType(MediaType.APPLICATION_JSON);assertThat(http.exchange("/api/support/conversations",HttpMethod.POST,new HttpEntity<>(Map.of("storeId",1),headers),String.class).getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);}}
+
+ private HttpHeaders postHeaders(int user){var headers=new HttpHeaders();headers.setBearerAuth(tokens.get(user));var csrf=http.exchange("/products/csrf",HttpMethod.GET,new HttpEntity<>(headers),Map.class);headers.set(csrf.getBody().get("headerName").toString(),csrf.getBody().get("token").toString());var cookies=csrf.getHeaders().get(HttpHeaders.SET_COOKIE);if(cookies!=null)headers.set(HttpHeaders.COOKIE,String.join("; ",cookies.stream().map(c->c.split(";",2)[0]).toList()));headers.setContentType(MediaType.APPLICATION_JSON);return headers;}
+ @Test void validCsrfStillCannotStartStaffChatsOrSpoofTheMessageSender(){var user=postHeaders(1);var thread=http.exchange("/api/support/conversations",HttpMethod.POST,new HttpEntity<>(Map.of("storeId",1,"customerId",6),user),Map.class);assertThat(thread.getStatusCode()).isEqualTo(HttpStatus.OK);assertThat(((Number)thread.getBody().get("customer_id")).longValue()).isEqualTo(1);String id=thread.getBody().get("id").toString();var message=http.exchange("/api/support/conversations/"+id+"/messages",HttpMethod.POST,new HttpEntity<>(Map.of("body","User question","clientMessageId",UUID.randomUUID().toString(),"senderId",4),user),Map.class);assertThat(message.getStatusCode()).isEqualTo(HttpStatus.OK);assertThat(((Number)message.getBody().get("sender_id")).longValue()).isEqualTo(1);for(int staff:List.of(3,4)){var response=http.exchange("/api/support/conversations",HttpMethod.POST,new HttpEntity<>(Map.of("storeId",1),postHeaders(staff)),Map.class);assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);}var headers=new HttpHeaders();headers.setBearerAuth(tokens.get(2));headers.setAccept(List.of(MediaType.APPLICATION_JSON));assertThat(http.exchange("/api/support/conversations",HttpMethod.GET,new HttpEntity<>(headers),String.class).getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);}
+}

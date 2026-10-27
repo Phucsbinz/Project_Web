@@ -973,3 +973,92 @@ Prompt Thanh: đã hủy nhóm nhưng thành viên vẫn ở được trong nhó
 Nguyên nhân: group view trước đó vẫn hiển thị danh sách thành viên ở trạng thái readonly và popup Tiếp tục lại mở chính nhóm đã đóng.
 Sửa: view terminal CANCELLED/EXPIRED trả joined=false, memberCount=0/members rỗng; giữ snapshot DB chỉ phục vụ lịch sử và notification. Nhóm terminal không còn trong mine/list Nhóm của bạn. HTML GET link cũ redirect /group-orders/new; host hủy cũng về danh sách. Poll trang nhóm và lifecycle kiểm trạng thái đóng, đẩy khỏi cả /group-orders/token và /menu?group=token; popup được hiện trên trang danh sách và Tiếp tục không quay lại nhóm đóng. Sự kiện hủy/hết hạn vẫn lấy từ lịch sử riêng nên không mất thông báo khi bỏ khỏi list active. Không xóa dữ liệu giao dịch/đơn hàng.
 Kiểm thực: 82 commerce tests qua, WAR build thành công; 16 shopping browser scenarios qua, gồm member đang trong nhóm khi host hủy tự ra danh sách, popup đúng mã nhóm, thử link cũ vẫn bị chuyển ra; expiry tương tự. Shared UI/diff check qua. Server mở lại; chưa commit/push.
+
+## FETCH-ALL-20261027 — Pull các nhánh
+
+Prompt nguyên văn:
+
+```text
+pull các nhánh về
+```
+
+Đã fetch origin --prune tất cả nhánh. identify fast-forward ba355e0 → efddd5f (9 commit), integration/utetra fast-forward c15af04 → 9bc3cfb (2 commit); các nhánh còn lại khớp remote. Giữ nguyên thay đổi xóa ảnh nguồn QR cục bộ có trước, không restore hoặc commit nó. Không merge giữa các nhánh, không push hoặc chạy lại test/ứng dụng trong lượt chỉ pull này.
+
+## ROLE-SUPPORT-20261027 — Địa chỉ, các role, CSKH và bảo mật
+
+Prompt nguyên văn:
+
+```text
+bạn tôi vừa sửa code bên phần order của tôi để sửa phần nhập địa chỉ giao hàng bản cũ nó không cho nhập mà chỉ cho chọn địa chỉ và xem thử có đầy đủ các role này chưa và bổ sung đi Guest: Giao diện Trang chủ (hiển thị sản phẩm bán trên 10 sản phẩm của các shop (sắp xếp theo thứ tự từ lớn đến nhỏ)
+User: Giao diện trang chủ, trang sản phẩm theo danh mục, 20 (sản phẩm mới, bán chạy, đánh giá, yêu thích) nhất được phân trang (hoặc lazy loading), trang profile user (có quản lý địa chỉ nhận hàng khác nhau nếu làm đề tài về Bán hàng), trang chi tiết sản phẩm, giỏ hàng được lưu trên database, thanh toán(COD, VNPAY hoặc MOMO), quản lý lịch sử mua hàng theo trạng thái (đơn hàng mới, đã xác nhận, đang giao, đã giao, hủy, trả hàng- hoàn tiền), thích sản phẩm, sản phẩm đã xem, đánh giá sản phẩm đã mua, bình luận (text (tối thiểu 50 ký tự), hình ảnh/video) sản phẩm đã mua, chọn mã giảm giá,...
+Vendor (Seller): có các quyền của User và thêm các chức năng: đăng ký shop, quản lý trang chủ shop, quản lý sản phẩm của mình, quản lý đơn hàng của shop theo trạng thái (đơn hàng mới, đã xác nhận, đã lấy hàng, đang giao, đã giao, hủy, trả hàng- hoàn tiền), tạo chương trình khuyến mãi, quản lý doanh thu của shop.
+Manager: Quản lý từng cửa hàng: tìm kiếm và quản lý user, quản lý sản phẩm của từng shop, Quản lý doanh mục, quản lý chiết khấu app cho các shop, quản lý chương trình khuyến mãi (giảm % sản phẩm, giảm phí vận chuyển), quản lý nhà vận chuyển (tên nhà vận chuyển, phí vận chuyển)..
+Admin: tìm kiếm và quản lý user, quản lý sản phẩm của từng shop, Quản lý doanh mục, quản lý chiết khấu app cho các shop, quản lý chương trình khuyến mãi (giảm % sản phẩm, giảm phí vận chuyển), quản lý nhà vận chuyển (tên nhà vận chuyển, phí vận chuyển).
+Shipper (phần thêm): Quản lý đơn hàng được phân công đi giao, thống kê đơn hàng được phân công giao. và làm thêm chức năng cskh cho phép người dùng user bình thường chat với quản lý các chi nhánh và cho phép chat với admin còn role quản lý chi nhánh có phần cskh để chat với khách hàng tương tự role admin cũng vậy nhưng không cho phép các admin hay quản lý chi nhánh nhắn với nhau
+```
+
+Các prompt tiếp nối nguyên văn, theo thứ tự:
+
+```text
+sửa trên nhánh intergration luôn
+```
+
+```text
+bạn push code mới bên nhánnh identity rồi merge vô nhánh intergration rồi làm tiếp đi
+```
+
+```text
+cskh dùng web socket nha
+```
+
+```text
+lưu nội dung chat vào db luôn
+```
+
+```text
+hiện tại bảo mật đang sài gì á
+```
+
+```text
+có sài cookie session để lưu trạng thái người dùng với để phân quyền k tại jwt chỉ làm ở backend á
+```
+
+```text
+vậy hiện bạn đang phân quyền bằng gì
+```
+
+```text
+nói chung làm sao đừng làm vi phạm quy định của thầy tôi là được
+```
+
+```text
+ụa mật khẩu trước đó không được băm à
+```
+
+```text
+ê có khi là tk mk bạn tôi để đó cho chúng tôi test á
+```
+
+```text
+thay vì lưu bản rõ cạnh hash trong DB. Và hiện mình chưa áp dụng thay đổi này lên DB cloud. ụa là 1 bên mk đã băm và 1 bên mk không băm à
+```
+
+```text
+xóa cột bản rõ mk đi
+```
+
+```text
+bạn check xem db hiện tại đang sài bao nhiêu table thật sự và có mấy table trùng và các table chưa nhập data
+```
+
+Kết quả thực: identify efddd5f đã có trên GitHub, push báo up to date; ghép vào integration bằng bdbeeca, giải quyết năm xung đột giữ cả storefront và đặt nhóm. Thêm CSKH User ↔ Manager/Admin, cấm staff tự mở conversation, kiểm scope, JPA DB history/UUID idempotency, WebSocket private sau commit và UI chung. Khôi phục Top 20 trên home và lựa chọn bank phù hợp; nhập địa chỉ tự do được thử tới tạo COD/snapshot.
+
+Bảo mật: trước đó đã dùng BCrypt nhưng tool test ghi thêm plaintext. Theo yêu cầu xóa cột, bỏ mapping/tham chiếu/tool write, giữ migration cũ và thêm 2705; sau đó đã chạy Flyway trên utetra_db: 2704/2705 áp dụng, 17 migration thành công. Cột plaintext không còn; 23 tài khoản và toàn bộ ID/password_hash giữ nguyên. Không reset mật khẩu hoặc xóa tài khoản demo.
+
+Kiểm: clean verify 206 tests, 0 failures/errors/skipped; 5 browser scenarios H2 với real STOMP hints, HTML chỉ là text, queue giả bị chặn, scope riêng và địa chỉ mới được lưu vào COD. Các lỗi selector của kịch bản thử được sửa đúng scope/radio mới; một test home cũ đổi theo yêu cầu Top 20. Không gọi bank/merchant/Cloudinary/email thật.
+
+Kiểm kê cloud bằng SELECT COUNT(*) và metadata: 51 bảng vật lý (50 ứng dụng + Flyway), 14 bảng 0 dòng, không có nhóm trùng tên hoặc cấu trúc cột/FK giống hệt. Không tự xóa/gộp bảng, không bịa seed để làm đầy. Tool gặp TiDB không hỗ trợ JDBC READ ONLY hint; bỏ hint ở tool, không bật biến global, chỉ SELECT trong transaction. Lần đầu helper Flyway dùng logger không hỗ trợ, chưa mutate DB ở lần lỗi; đã sửa và xác nhận kết quả thật. Không ghi credential, token hoặc hash thực vào tài liệu.
+
+Tài liệu: [ROLE_REQUIREMENTS_20261027](ROLE_REQUIREMENTS_20261027.md), [CSKH](features/customer-support/README.md), [DB_AUDIT_20261027](DB_AUDIT_20261027.md). Hình kiến trúc/source được dựng bằng script từ code, không dùng ImageGen; hình UI là fixture H2. Chưa khẳng định toàn bộ provider/DOCX/rubric đã hoàn tất.
+
+Phát hành đồng bộ integration sau khi DB chung áp dụng bỏ cột: source không còn mapping/tham chiếu password_plaintext, giữ BCrypt và tài khoản test; CSKH/history/WS/role audit cùng kiểm kê được đưa vào integration. Không push main/identify/feature khác. Ảnh UI cuối đã đưa scroll về đầu trước chụp để không có artifact sticky-header; 5 browser scenarios chạy lại đạt. Tool kiểm kê mới chạy lại đọc-only thành công.

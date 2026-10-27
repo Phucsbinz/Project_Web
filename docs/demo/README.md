@@ -68,7 +68,7 @@ Bản chọn chi nhánh tại checkout: toàn bộ 167 test đạt, 6 smoke/rend
 
 ## Reset mật khẩu kiểm thử toàn bộ tài khoản
 
-Migration mới chỉ thêm cột nullable `users.password_plaintext`, không tự reset mật khẩu khi khởi động. Lệnh sau thay mật khẩu tất cả tài khoản hiện có thành `123456`, lưu BCrypt riêng cho từng tài khoản và giá trị đọc trực tiếp trong cột này; đồng thời thu hồi phiên đăng nhập và OTP/reset grant cũ. Đây là thông tin đăng nhập công khai phục vụ kiểm thử, không dùng cho hệ thống thật.
+Bản tích hợp từ migration 2026102705 chỉ lưu BCrypt trong password_hash; cơ chế tham chiếu mật khẩu rõ đã bỏ. Tool reset test cũng chỉ ghi hash.
 
 Sau khi pull nhánh `identify`, build và khởi động bản mới để Flyway áp dụng migration, tạo dependency classpath như hướng dẫn phía trên, rồi chạy khi có chủ đích:
 
@@ -79,7 +79,7 @@ python tools/reset_test_passwords.py --apply-all-accounts # reset mọi tài kho
 
 Git chỉ đồng bộ code và migration, không đồng bộ dữ liệu DB. Người dùng chung đúng database TiDB đã reset không cần chạy lại lệnh. Người dùng database riêng cần áp dụng migration rồi chủ động chạy lệnh. Không đổi datasource để sử dụng script. Script không bật tài khoản bị khóa hoặc xác minh email thay người dùng.
 
-Cột `password_plaintext` không xuất qua API hồ sơ. Khi tài khoản đổi/khôi phục mật khẩu, cột được xóa; mật khẩu cá nhân mới chỉ lưu BCrypt. Tài khoản đăng ký mới không lưu mật khẩu trực tiếp. Chính sách mật khẩu cho đăng ký/đổi/khôi phục vẫn giữ nguyên.
+Bản tích hợp từ migration 2026102705 chỉ lưu BCrypt trong password_hash; cơ chế tham chiếu mật khẩu rõ đã bỏ. Tool reset test cũng chỉ ghi hash.
 
 ## Phản hồi đúng món — 26/10/2026
 

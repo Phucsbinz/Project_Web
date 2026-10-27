@@ -1,0 +1,12 @@
+{
+  "command": "py -3 tools/run_verify.py",
+  "result": "BUILD SUCCESS",
+  "finishedAt": "2026-10-27T21:53:25+07:00",
+  "suites": 22,
+  "tests": 206,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "migrationsInSource": 17,
+  "scope": "Working tree on integration; H2 tests only, no cloud migration/password reset/provider transaction."
+}

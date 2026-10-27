@@ -50,7 +50,8 @@ class CatalogViewTest {
         var home=client.exchange("/",HttpMethod.GET,new HttpEntity<>(headers),String.class);
         assertThat(home.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(home.getBody()).contains("catalog-homepage","Xem thực đơn","href=\"/menu\"","home-bestsellers","home-new","home-branches","drink-modal","header-search","Shop demo")
-            .doesNotContain("catalog-filters","catalog-group","20 món mới nhất");
+            .contains("20 món mới nhất","20 món bán chạy","20 món đánh giá cao","20 món được yêu thích")
+            .doesNotContain("catalog-filters","catalog-group");
         for(String group:List.of("newest","sold","rating","favorites")) {
             var menu=client.exchange("/menu?top=true&sort="+group,HttpMethod.GET,new HttpEntity<>(headers),String.class);
             assertThat(menu.getStatusCode()).as(group).isEqualTo(HttpStatus.OK);

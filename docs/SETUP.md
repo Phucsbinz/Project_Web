@@ -1,5 +1,7 @@
 # Thiết lập bản tích hợp UTETra
 
+> Cập nhật 27/10: source có 17 Flyway migrations, mới nhất 2026102705. DB cloud utetra_db đã áp dụng CSKH 2704 và bỏ plaintext 2705 theo yêu cầu; giữ 23 tài khoản/hash. Không sửa checksum migration cũ hoặc chạy reset password tool để cập nhật schema. CSKH dùng JWT/WebSocket hiện có, không thêm secret/provider. Setup/contract: features/customer-support/README.md.
+
 Cập nhật 24/10/2026. Đây là hướng dẫn bản integration có code catalog, identity và order; thay hướng dẫn baseline ba bảng cũ. Không coi việc khởi động thành công là đã nghiệm thu email, media hoặc thanh toán thật.
 
 ## 1. Chuẩn bị và nhận source

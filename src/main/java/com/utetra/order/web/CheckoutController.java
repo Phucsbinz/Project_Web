@@ -44,7 +44,7 @@ public class CheckoutController {
     model.addAttribute("branchReady",branch!=null && branch>0 && branch.equals(((Number)cart.get("storeId")).longValue()));
     model.addAttribute("choices", operations.checkoutChoices(OrderWebSupport.actor()));
     model.addAttribute("localQrEnabled", localQr.available());
-    model.addAttribute("bankEnabled", false);
+    model.addAttribute("bankEnabled", bank.available());
     model.addAttribute("vnpayEnabled",vnpay.available());
     model.addAttribute("availability", availability.snapshot(OrderWebSupport.actor()));
     return "order/checkout";
