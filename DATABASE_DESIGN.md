@@ -833,3 +833,7 @@ Group.payment_mode do host quyết định HOST/INDIVIDUAL, sau chốt bất bi�
 
 
 Cập nhật 27/10/2026 theo yêu cầu Thanh: QR cho đơn mới dùng LOCAL_QR (ví giả lập, không tiền thật), local_qr_payments theo từng người. Đơn nhóm chia phần chỉ được CONFIRMED khi tất cả phần thanh toán thành công. Hướng dẫn/contract mới thay phần QR chuyển khoản trước đó: docs/features/order-payment/LOCAL_QR_WALLET_20261027.md.
+
+
+## 28/10/2026 — Xác nhận nhận hàng
+orders.received_at (nullable DATETIME(6)) ghi thời điểm chính chủ đơn xác nhận nhận hàng, tách trạng thái DELIVERED; migration V2026102801.

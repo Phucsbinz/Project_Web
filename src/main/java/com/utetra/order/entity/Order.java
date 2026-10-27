@@ -17,6 +17,8 @@ public class Order {
   @Column(name="group_participants",nullable=false) public int groupParticipants;
   @Column(name="group_discount",nullable=false,precision=14,scale=2) public BigDecimal groupDiscount=BigDecimal.ZERO;
 
+  @Column(name="received_at") public Instant receivedAt;
+
   @Version public long version;
 
   public long getVersion() {

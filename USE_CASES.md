@@ -208,3 +208,11 @@ Cập nhật 27/10/2026 theo yêu cầu Thanh: QR cho đơn mới dùng LOCAL_QR
 
 
 Cập nhật 27/10/2026: hủy và hết hạn có popup riêng cho thành viên; mã nhóm/host/time/status và badge Chủ nhóm. Nhãn QR trung tính, cơ chế nội bộ không đổi. Xem docs/features/order-payment/GROUP_LIFECYCLE_20261027.md.
+
+
+## 28/10/2026 — Xác nhận nhận hàng
+Khách xác nhận Đã nhận hàng khi đơn của mình DELIVERED/PAID; xem danh sách đã xác nhận. Đánh giá shipper hoãn theo yêu cầu Thanh; feature shipper chưa bật.
+
+
+## 28/10/2026 — Theo dõi đơn nhóm
+Thành viên có món trong đơn xem đơn nhóm tại Đơn mua của tôi, chi tiết/lịch sử/trạng thái; nhận thông báo cập nhật sau commit. Thao tác hủy/nhận/trả hàng giữ quyền chủ đơn/operator theo workflow hiện hành.

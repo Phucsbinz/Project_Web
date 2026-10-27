@@ -1,0 +1,1 @@
+ALTER TABLE orders ADD COLUMN received_at DATETIME(6) NULL;

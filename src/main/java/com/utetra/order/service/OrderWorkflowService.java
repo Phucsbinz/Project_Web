@@ -61,7 +61,7 @@ public class OrderWorkflowService {
 
   public void readable(Actor actor, Order o) {
     refs.requireCurrent(actor, false);
-    if (actor.buyer() && o.userId == actor.userId()) return;
+    if (actor.buyer() && (o.userId == actor.userId() || o.groupOrderId!=null&&!data.query(GroupOrderMember.class,"where e.groupOrderId=:group and e.orderId=:order and e.userId=:user",Map.of("group",o.groupOrderId,"order",o.id,"user",actor.userId()),false,1).isEmpty())) return;
     if (refs.operates(actor, o.storeId)) return;
     if (shipperEnabled
         && actor.is("SHIPPER")
@@ -81,6 +81,10 @@ public class OrderWorkflowService {
     Order o = data.require(Order.class, id, false);
     readable(actor, o);
     Map<String, Object> result = new LinkedHashMap<>(support.view(o));
+    result.put("owner",o.userId==actor.userId());result.put("groupOrder",o.groupOrderId!=null);
+    result.put("qrPayer","LOCAL_QR".equals(o.paymentMethod)&&!data.query(LocalQrPayment.class,"where e.orderId=:order and e.userId=:user",Map.of("order",o.id,"user",actor.userId()),false,1).isEmpty());
+    if(o.groupOrderId!=null)result.put("groupToken",refs.one("select invite_token from group_orders where id=?",o.groupOrderId).get("invite_token"));
+    result.put("received",o.receivedAt!=null);result.put("receivedAt",o.receivedAt==null?"":o.receivedAt.toString());
     result.put("recipientName", o.recipientName);
     result.put("recipientPhone", o.recipientPhone);
     result.put("deliveryAddress", o.deliveryAddress);
@@ -169,7 +173,7 @@ public class OrderWorkflowService {
     Map<String, Object> params = new HashMap<>();
     if ("buyer".equals(mode)) {
       support.buyer(actor);
-      where = "where e.userId=:user";
+      where = "where (e.userId=:user or exists (select m.id from GroupOrderMember m where m.orderId=e.id and m.groupOrderId=e.groupOrderId and m.userId=:user))";
       params.put("user", actor.userId());
     } else if ("shipper".equals(mode)) {
       shipper(actor);
@@ -199,7 +203,7 @@ public class OrderWorkflowService {
       where = "where e.storeId in :ids";
       params.put("ids", ids);
     }
-    if (status != null && !status.isBlank()) {
+    if("RECEIVED".equals(status)){where+=" and e.receivedAt is not null";}else if (status != null && !status.isBlank()) {
       if (!Set.of(
               "NEW",
               "CONFIRMED",
@@ -231,6 +235,15 @@ public class OrderWorkflowService {
   private void version(Order o, long version) {
     if (o.version != version)
       throw OrderProblem.conflict("Đơn đã thay đổi; hãy tải lại trước khi thao tác.");
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public Map<String,Object> confirmReceived(Actor actor,long id){
+    support.buyer(actor);refs.requireCurrent(actor,false);var order=data.require(Order.class,id,true);
+    if(!order.userId.equals(actor.userId()))throw OrderProblem.forbidden();
+    if(order.receivedAt!=null)return read(actor,id);
+    if(!"DELIVERED".equals(order.status)||!"PAID".equals(order.paymentStatus))throw OrderProblem.conflict("Chỉ xác nhận nhận hàng khi đơn đã giao và hoàn tất thanh toán.");
+    order.receivedAt=clock.instant();order.updatedAt=clock.instant();support.event(order,actor,order.status,"CUSTOMER_RECEIVED","Khách hàng đã xác nhận nhận hàng.");data.flush();return read(actor,id);
   }
 
   @Transactional(isolation = Isolation.READ_COMMITTED)

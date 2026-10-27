@@ -162,6 +162,7 @@ public class CheckoutService {
             products,
             lock);
     var group=groups.benefit(actor,cart,subtotal,lock);
+    if(group.id()!=null&&"COD".equals(paymentMethod))group=new GroupOrderService.Benefit(group.id(),group.participants(),group.amount(),"HOST");
     if("INDIVIDUAL".equals(group.paymentMode())&&(!Set.of("COD","BANK_TRANSFER","LOCAL_QR").contains(paymentMethod)||request.points()!=0))throw OrderProblem.invalid("Chia phần thanh toán dùng COD hoặc QR, không dùng điểm riêng của chủ nhóm.");
     if(group.amount().signum()>0) {
       if(request.productPromotionId()!=null)throw OrderProblem.invalid("Ưu đãi nhóm không cộng dồn mã giảm giá sản phẩm. Hãy bỏ mã sản phẩm để tiếp tục.");

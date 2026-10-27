@@ -1062,3 +1062,23 @@ Kiểm kê cloud bằng SELECT COUNT(*) và metadata: 51 bảng vật lý (50 �
 Tài liệu: [ROLE_REQUIREMENTS_20261027](ROLE_REQUIREMENTS_20261027.md), [CSKH](features/customer-support/README.md), [DB_AUDIT_20261027](DB_AUDIT_20261027.md). Hình kiến trúc/source được dựng bằng script từ code, không dùng ImageGen; hình UI là fixture H2. Chưa khẳng định toàn bộ provider/DOCX/rubric đã hoàn tất.
 
 Phát hành đồng bộ integration sau khi DB chung áp dụng bỏ cột: source không còn mapping/tham chiếu password_plaintext, giữ BCrypt và tài khoản test; CSKH/history/WS/role audit cùng kiểm kê được đưa vào integration. Không push main/identify/feature khác. Ảnh UI cuối đã đưa scroll về đầu trước chụp để không có artifact sticky-header; 5 browser scenarios chạy lại đạt. Tool kiểm kê mới chạy lại đọc-only thành công.
+
+
+## 28/10/2026 — Merge integration, QR Internet, countdown 10 phút
+Prompt: Thanh yêu cầu merge source integration trước, giữ UI mới; QR mọi thiết bị Internet, trang thanh toán chuyên nghiệp, quay về nhóm và hiển thị tiến độ, 10 phút đếm ngược, nhắc nhận đơn/để ý điện thoại. Thực hiện và kiểm chứng: QR_INTERNET_20261028.md trong docs/features/order-payment. Chưa push; không ghi khóa/token/mật khẩu.
+
+
+## 28/10/2026 — CTA, typography, COD chủ nhóm và popup theo vai trò
+Thanh yêu cầu ba nút Khám phá thực đơn / Đặt đơn / Đặt đơn nhóm; tiêu đề đồng nhất font/weight; chủ nhóm nhận nhắc điện thoại, thành viên nhận đặt thành công. COD chuyển HOST ở quote và khi tạo đơn, giữ chia tiền QR. Khách có danh sách/chi tiết/lịch sử; chi tiết tự tải trạng thái mới khi không thao tác form/modal. Kiểm chứng ghi tại GROUP_CHECKOUT_REFINEMENT_20261028.md. Không push.
+
+
+## 28/10/2026 — Quản trị dễ dùng, dropdown rõ ràng
+Prompt: Thanh yêu cầu dễ thao tác quản trị và nút/dấu mở danh sách. Thay đổi và kiểm chứng tại ADMIN_USABILITY_20261028.md. Giữ layout/theme/quyền hiện hành; không push.
+
+
+## 28/10/2026 — Thành viên xem trạng thái đơn nhóm
+Prompt: trạng thái đơn thì thành viên cũng phải coi được. Mở quyền đọc đúng participant snapshot, danh sách/chi tiết/link theo dõi và thông báo; không mở quyền thao tác chủ nhóm. Thực hiện và kiểm chứng tại docs/features/order-payment/GROUP_MEMBER_TRACKING_20261028.md. Chưa push.
+
+
+## 28/10/2026 — Phát hành integration/utetra
+Thanh yêu cầu push các thay đổi đã duyệt lên integration. Đã fetch xác nhận origin/integration/utetra cùng base a93e1c1; chuyển sang local integration/utetra để phát hành, không push identify. Full Maven test cuối: 208 tests, 0 failures/errors. Các lượt browser gần nhất: 18 shopping và 17 admin scenarios qua; Shared UI checker và diff --check qua. Commit chỉ gồm source/migration/tài liệu/công cụ kiểm; không thêm cấu hình local, khóa QR, metadata tunnel hoặc binary. Trạng thái push được xác nhận trực tiếp ở phản hồi phát hành.
