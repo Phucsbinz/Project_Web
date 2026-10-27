@@ -11,6 +11,7 @@ window.orders = {
     const result = json ? await response.json() : {};
     if (!response.ok) throw new Error(result.error || result.message || 'Thao tác thất bại. Hãy tải lại dữ liệu.');
     if (!json) throw new Error('Phản hồi không hợp lệ. Hãy kiểm tra trạng thái đơn trước khi thử lại.');
+    if(path.startsWith('/cart/') || path==='/checkout')window.dispatchEvent(new Event('utetra:cart-changed'));
     return result;
   },
   message(text, error = false) {

@@ -11,25 +11,31 @@ import org.springframework.transaction.annotation.Transactional;
 public class GuestCartService {
   public static final class Snapshot implements Serializable {
     public final List<Item> items = new ArrayList<>();
-    public final String mergeKey = UUID.randomUUID().toString();
+    public String mergeKey = UUID.randomUUID().toString();
     public long version;
     public boolean draft;
+    public java.time.Instant updatedAt;
+    public final Set<String> unselected=new HashSet<>();
   }
 
   private final CartService carts;
   private final CommerceReferenceRepository refs;
+  private final java.time.Clock clock;
 
-  public GuestCartService(CartService carts, CommerceReferenceRepository refs) {
+  public GuestCartService(CartService carts, CommerceReferenceRepository refs,java.time.Clock clock) {
     this.carts = carts;
-    this.refs = refs;
+    this.refs = refs;this.clock=clock;
   }
 
   @Transactional(readOnly = true)
   public Map<String, Object> view(Snapshot g) {
     synchronized (g) {
+      expire(g);
       return Map.of(
+          "serverNow",clock.instant().toString(),
+          "expiresAt",g.updatedAt==null?"":g.updatedAt.plus(com.utetra.order.repository.OrderDataRepository.CART_TTL).toString(),
           "items",
-          g.items.stream().map(item -> carts.itemView(carts.configuration(item), item)).toList(),
+          g.items.stream().map(item -> {var row=carts.itemView(carts.configuration(item), item);row.put("selected",!g.unselected.contains(carts.configuration(item)));return row;}).toList(),
           "version",
           g.version);
     }
@@ -46,6 +52,7 @@ public class GuestCartService {
   private Map<String,Object> add(Snapshot g,Item raw,boolean draft) {
     Item item = draft?carts.validateDraft(raw):carts.validate(raw);
     synchronized (g) {
+      expire(g);
       if (!draft && !g.items.isEmpty() && store(item.variantId()) != store(g.items.getFirst().variantId()))
         throw OrderProblem.conflict(
             "Giỏ thuộc cửa hàng khác; xác nhận xóa giỏ trước khi đổi shop.");
@@ -67,11 +74,15 @@ public class GuestCartService {
                 old.quantity() + item.quantity(),
                 old.note()));
       } else g.items.add(item);
+      g.unselected.remove(hash);g.updatedAt=clock.instant();
       g.draft |= draft;
       g.version++;
       return view(g);
     }
   }
+
+  public void expire(Snapshot g){synchronized(g){if(g.updatedAt==null&&!g.items.isEmpty())g.updatedAt=clock.instant();if(g.updatedAt!=null&&!g.updatedAt.plus(com.utetra.order.repository.OrderDataRepository.CART_TTL).isAfter(clock.instant())){g.items.clear();g.unselected.clear();g.draft=false;g.updatedAt=null;g.mergeKey=UUID.randomUUID().toString();g.version++;}}}
+  public Map<String,Object> select(Snapshot g,Set<String> ids,long version){synchronized(g){expire(g);if(version!=g.version)throw OrderProblem.conflict("Giỏ đã đổi hoặc hết hạn.");var all=g.items.stream().map(carts::configuration).collect(java.util.stream.Collectors.toSet());if(!all.containsAll(ids))throw OrderProblem.invalid("Món không thuộc giỏ.");g.unselected.clear();all.stream().filter(id->!ids.contains(id)).forEach(g.unselected::add);g.updatedAt=clock.instant();g.version++;return view(g);}}
 
   private long store(long variant) {
     return CommerceReferenceRepository.number(
@@ -92,6 +103,7 @@ public class GuestCartService {
   public Map<String, Object> change(
       Snapshot g, String id, int quantity, long version, boolean remove) {
     synchronized (g) {
+      expire(g);
       if (g.version != version) throw OrderProblem.conflict("Giỏ đã thay đổi.");
       int index = index(g, id, true);
       Item old = g.items.get(index);
@@ -106,6 +118,7 @@ public class GuestCartService {
             new Item(
                 old.variantId(), old.sugar(), old.ice(), old.toppingIds(), quantity, old.note()));
       }
+      if(remove)g.unselected.remove(id);g.updatedAt=clock.instant();
       g.version++;
       return view(g);
     }

@@ -101,3 +101,37 @@ Bản tích hợp dùng chung cả Guest/User, tài khoản/OTP, Vendor, Manager
 Sidebar desktop cuộn độc lập khi dài; mobile dùng menu xuống dòng. Bộ chọn shop của catalog wrap trên màn hình nhỏ. Shipper report dùng cùng KPI/card/font/màu và bộ lọc ngày responsive. Nội dung catalog vẫn ở catalog/manage.jsp, shipper ở order/shipper-report.jsp, cùng được app.jsp decorate.
 
 Kiểm đầy đủ và đường dẫn ảnh: ALL_MODULE_UI_20261026.md. Công cụ `py -3 tools/check_all_ui.py` dựng H2 fixture riêng, bật Shipper riêng fixture và tự dừng server sau kiểm. Phải package/test trước để có classpath và JDK 21; không chạy fixture trên datasource cloud. Không thay features.shipper.enabled của cấu hình dùng chung chỉ để lấy ảnh.
+
+## Giỏ hàng và badge — 26/10/2026
+
+Theo yêu cầu Thanh, app.jsp bổ sung badge giỏ cho desktop/mobile, site-ui.js đọc endpoint count nhẹ và nhận event cập nhật; utetra.css chỉ thêm kiểu badge dùng token chung. Giỏ/đơn nhóm dùng cart.css scope .cart-page/.group-page và cart.js, JSP ở order. Không tạo layout hoặc Bootstrap thứ hai. Home vẫn dùng cùng UI, chỉ thay cách tải dữ liệu theo lô. Ghi chi tiết tại docs/features/order-payment/GROUP_ORDERS_20261026.md.
+
+## Rà typography tiếng Việt — 26/10/2026
+
+Thanh yêu cầu sửa đầy đủ lỗi font. Giữ Be Vietnam Pro đóng gói và wordmark/nhấn trang trí Georgia của theme hiện tại. utetra.css chuẩn hóa các weight 650/750/800/850 thành weight thực 600/700, nới line-height/letter-spacing tiêu đề (cả Bootstrap .h1–.h6), nhãn form, bảng, sidebar và phản hồi. app.jsp preload SemiBold, tăng cache version. Tiêu đề popup cho wrap, dành chỗ cho nút đóng và khoảng cao cho dấu tiếng Việt; không chép layout hay thêm font CDN.
+
+`python tools/check_font_coverage.py` đọc cmap TTF kiểm 146 ký tự tiếng Việt ở 4 mức weight. Audit UI hiện kiểm cả font body/h1 từng trang; kiểm font không thay kiểm render/overflow thực tế. Trạng thái/bằng chứng: docs/demo/FEEDBACK_TYPOGRAPHY_20261026.json.
+
+## Nhắc hạn giỏ và form checkout — 27/10/2026
+
+site-ui.js hiển thị toast thêm giỏ với dòng nhắc 1 giờ, dùng site-toast chung của app.jsp; utetra.js có UUID fallback cho HTTP LAN. Giỏ checkbox/tổng/countdown ở cart.css/cart.js, form checkout ở module order. Giữ một decorator/theme; không gộp toast với sự kiện sửa/xóa giỏ. Hành vi server và local/LAN: docs/features/order-payment/CART_SELECTION_EXPIRY_20261027.md.
+
+
+## Popup xác nhận — 27/10/2026
+site-ui.js cung cấp utetraConfirm dùng Bootstrap modal chung cho xác nhận giỏ, nhóm, địa chỉ và thao tác quản lý; thay hộp thoại trình duyệt. app.jsp tăng cache version. Không thêm layout/theme hoặc thư viện. Hero đặt nút nhóm cạnh đặt món; module nhóm mở checkout hiện có. 77 tests và 11 shopping browser scenarios đã qua.
+
+
+## Popup đơn nhóm — 27/10/2026
+app.jsp thêm data-current-role và tăng cache version; site-ui.js dùng popup Bootstrap chung, kiểm thông báo bill của thành viên đang đăng nhập trên trang khách. Chuẩn hóa role ROLE_ prefix. Không thêm layout/framework; 11 shopping UI scenarios qua. Chi tiết GROUP_SPLIT_QR_POPUP_20261027.md.
+
+
+## Tên người dùng ở header — 27/10/2026
+Theo yêu cầu Thanh, NavigationAdvice cung cấp tên hồ sơ hiện tại cho app.jsp; nút tài khoản hiện tên đã escape, một dòng/ellipsis trong utetra.css. Bộ thay đổi chung nằm trong manifest hiện có, không tạo menu/layout riêng.
+
+
+## Ví QR local — 27/10/2026
+app.jsp tăng cache version, site-ui.js không chen thông báo vào trang QR/ví. Hai JSP local-qr/local-wallet dùng duy nhất SiteMesh hiện có, CSS scope local-qr-page/local-wallet-page. Không layout/framework thứ hai. ZXing sinh SVG server-side, không tải QR từ bên thứ ba. Xem LOCAL_QR_WALLET_20261027.md.
+
+
+## Lifecycle nhóm — 27/10/2026
+site-ui.js thêm popup hủy/hết hạn, dùng modal Bootstrap chung và busy flag tránh chồng dialog. Lifecycle vẫn hoạt động trên trang QR; app.jsp tăng cache version. Thẻ nhóm/badge host ở JSP module và CSS scoped cart/group. Không thêm layout hoặc framework.

@@ -17,7 +17,8 @@ public class CatalogQueryRepository {
         MapSqlParameterSource args=new MapSqlParameterSource();
         StringBuilder from=new StringBuilder(" from products p join categories c on c.id=p.category_id join stores s on s.id=p.store_id");
         boolean global=storeId==null;
-        boolean sold=statistics.tables("orders","order_items"),rated=statistics.tables("reviews"),liked=statistics.tables("product_favorites");
+        var existing=statistics.availableTables();
+        boolean sold=existing.containsAll(List.of("orders","order_items")),rated=existing.contains("reviews"),liked=existing.contains("product_favorites");
         if(sold) from.append(global
             ? " left join (select sp.category_id,coalesce(sp.catalog_key,concat('product:',sp.id)) name_key,ss.owner_user_id,sum(i.quantity) metric from order_items i join orders o on o.id=i.order_id join product_variants v on v.id=i.variant_id join products sp on sp.id=v.product_id join stores ss on ss.id=sp.store_id where o.status='DELIVERED' and o.payment_status='PAID' group by sp.category_id,coalesce(sp.catalog_key,concat('product:',sp.id)),ss.owner_user_id) sales on sales.category_id=p.category_id and sales.name_key=coalesce(p.catalog_key,concat('product:',p.id)) and sales.owner_user_id=s.owner_user_id"
             : " left join (select v.product_id,sum(i.quantity) metric from order_items i join orders o on o.id=i.order_id join product_variants v on v.id=i.variant_id where o.status='DELIVERED' and o.payment_status='PAID' group by v.product_id) sales on sales.product_id=p.id");

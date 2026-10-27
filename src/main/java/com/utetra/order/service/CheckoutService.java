@@ -24,6 +24,8 @@ public class CheckoutService {
   private final BankTransferSettings bank;
   private final OrderInventoryService inventory;
   private final VnpaySettings vnpay;
+  private final GroupOrderService groups;
+  private final LocalQrPaymentService localQr;
 
   public CheckoutService(
       OrderDataRepository data,
@@ -31,7 +33,7 @@ public class CheckoutService {
       OrderSupport support,
       OrderPromotionService promos,
       OrderLoyaltyBridge loyalty,
-      Clock clock, BankTransferSettings bank, OrderInventoryService inventory,VnpaySettings vnpay) {
+      Clock clock, BankTransferSettings bank, OrderInventoryService inventory,VnpaySettings vnpay,GroupOrderService groups,LocalQrPaymentService localQr) {
     this.data = data;
     this.refs = refs;
     this.support = support;
@@ -40,9 +42,10 @@ public class CheckoutService {
     this.clock = clock;
     this.bank = bank;
     this.inventory = inventory;
-    this.vnpay = vnpay;
+    this.vnpay = vnpay;this.groups=groups;this.localQr=localQr;
   }
   private String method(Checkout request) {
+    if("LOCAL_QR".equals(request.paymentMethod())){if(!localQr.available())throw OrderProblem.conflict("Ví QR local chưa bật.");return "LOCAL_QR";}
     if("VNPAY".equals(request.paymentMethod())) {
       if(!vnpay.available()) throw OrderProblem.conflict("VNPAY chưa được cấu hình merchant.");
       return "VNPAY";
@@ -66,6 +69,7 @@ public class CheckoutService {
       CommissionPolicy commission,
       List<Line> lines,
       BigDecimal subtotal,
+      GroupOrderService.Benefit group,
       BigDecimal productDiscount,
       BigDecimal shipping,
       BigDecimal shippingDiscount,
@@ -80,7 +84,7 @@ public class CheckoutService {
     String paymentMethod = method(request);
     if (request.points() < 0) throw OrderProblem.invalid("Điểm không hợp lệ.");
     Cart cart = data.cart(actor.userId(), lock);
-    if (cart == null || data.cartItems(cart.id).isEmpty())
+    if (cart == null || data.selectedItems(cart.id).isEmpty())
       throw OrderProblem.invalid("Giỏ hàng trống.");
     var store = refs.store(cart.storeId, lock);
     var address = refs.address(actor.userId(), request.addressId());
@@ -107,7 +111,7 @@ public class CheckoutService {
     Map<Long, BigDecimal> products = new TreeMap<>();
     BigDecimal subtotal = BigDecimal.ZERO;
     int units = 0;
-    for (var item : data.cartItems(cart.id)) {
+    for (var item : data.selectedItems(cart.id)) {
       var v = refs.saleVariant(item.variantId, lock, clock);
       if (number(v, "store_id") != cart.storeId)
         throw OrderProblem.invalid("Món không thuộc cửa hàng của giỏ.");
@@ -157,6 +161,12 @@ public class CheckoutService {
             subtotal,
             products,
             lock);
+    var group=groups.benefit(actor,cart,subtotal,lock);
+    if("INDIVIDUAL".equals(group.paymentMode())&&(!Set.of("COD","BANK_TRANSFER","LOCAL_QR").contains(paymentMethod)||request.points()!=0))throw OrderProblem.invalid("Chia phần thanh toán dùng COD hoặc QR, không dùng điểm riêng của chủ nhóm.");
+    if(group.amount().signum()>0) {
+      if(request.productPromotionId()!=null)throw OrderProblem.invalid("Ưu đãi nhóm không cộng dồn mã giảm giá sản phẩm. Hãy bỏ mã sản phẩm để tiếp tục.");
+      productDiscount=group.amount();
+    }
     BigDecimal shippingDiscount =
         promos.discount(
             request.shippingPromotionId(),
@@ -187,6 +197,7 @@ public class CheckoutService {
     var payload = new LinkedHashMap<String, Object>();
     payload.put("paymentMethod", paymentMethod);
     payload.put("store", store);
+    payload.put("group",List.of(group.id()==null?0:group.id(),group.participants(),group.amount(),group.paymentMode()));
     payload.put("address", address);
     payload.put("area", area);
     payload.put("carrier", List.of(carrier.id, carrier.name, carrier.version));
@@ -214,6 +225,7 @@ public class CheckoutService {
         commission,
         lines,
         subtotal,
+        group,
         productDiscount,
         shipping,
         shippingDiscount,
@@ -228,6 +240,7 @@ public class CheckoutService {
   public Map<String, Object> quote(Actor actor, Checkout request) {
     Quote q = calculate(actor, request, false);
     return Map.of(
+        "group",Map.of("participants",q.group.participants(),"discount",q.group.amount(),"paymentMode",q.group.paymentMode()),
         "subtotal",
         q.subtotal,
         "productDiscount",
@@ -286,6 +299,7 @@ public class CheckoutService {
     o.carrierName = q.carrier.name;
     o.subtotal = q.subtotal;
     o.productDiscount = q.productDiscount;
+    o.groupOrderId=q.group.id();o.groupParticipants=q.group.participants();o.groupDiscount=q.group.amount();
     o.pointsDiscount = q.pointsDiscount;
     o.shippingGross = q.shipping;
     o.shippingDiscount = q.shippingDiscount;
@@ -353,7 +367,10 @@ public class CheckoutService {
     p.updatedAt = clock.instant();
     if("VNPAY".equals(o.paymentMethod)) p.expiresAt=clock.instant().plus(vnpay.timeout());
     data.save(p);
-    data.clear(q.cart);
+    groups.ordered(q.cart,o.id);
+    if("LOCAL_QR".equals(o.paymentMethod))localQr.create(o);
+    for(var line:q.lines){for(var top:data.cartToppings(line.item.id))data.remove(top);data.remove(line.item);}
+    q.cart.updatedAt=clock.instant();q.cart.activityRevision++;
     support.event(o, actor, null, "CREATED", "");
     return support.view(o);
   }

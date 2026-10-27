@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
   private final CartService carts;
   private final GuestCartService guests;
+  private final GroupOrderService groups;
 
-  public CartController(CartService carts, GuestCartService guests) {
+  public CartController(CartService carts, GuestCartService guests,GroupOrderService groups) {
     this.carts = carts;
-    this.guests = guests;
+    this.guests = guests;this.groups=groups;
   }
 
   private GuestCartService.Snapshot guest(HttpSession session) {
@@ -27,7 +28,7 @@ public class CartController {
         g = new GuestCartService.Snapshot();
         session.setAttribute("utetra.cart", g);
       }
-      return g;
+      guests.expire(g);return g;
     }
   }
 
@@ -35,6 +36,11 @@ public class CartController {
   public String page(Model model, HttpServletRequest request) {
     model.addAttribute("cart", view(request));
     model.addAttribute("signedIn", OrderWebSupport.optional() != null);
+    model.addAttribute("groups",OrderWebSupport.optional()==null?List.of():groups.mine(OrderWebSupport.actor()));
+    var items=(List<?>)((Map<?,?>)model.getAttribute("cart")).get("items");
+    java.math.BigDecimal subtotal=java.math.BigDecimal.ZERO;
+    for(var raw:items){var item=(Map<?,?>)raw;if(!Boolean.FALSE.equals(item.get("selected"))&&item.get("subtotal")!=null)subtotal=subtotal.add(new java.math.BigDecimal(item.get("subtotal").toString()));}
+    model.addAttribute("subtotal",subtotal);
     return "order/cart";
   }
 
@@ -43,6 +49,20 @@ public class CartController {
   public Map<String, Object> view(HttpServletRequest request) {
     Actor actor = OrderWebSupport.optional();
     return actor != null ? carts.view(actor) : guests.view(guest(request.getSession()));
+  }
+
+  @GetMapping("/count") @ResponseBody
+  public Map<String,Object> count(HttpServletRequest request) {
+    Actor actor=OrderWebSupport.optional();
+    if(actor!=null)return carts.count(actor);
+    var snapshot=guest(request.getSession());synchronized(snapshot){return Map.of("count",snapshot.items.size(),"cups",snapshot.items.stream().mapToInt(Item::quantity).sum());}
+  }
+
+  public record Selection(@jakarta.validation.constraints.NotNull @jakarta.validation.constraints.Size(max=50) List<@jakarta.validation.constraints.NotBlank String> ids,@jakarta.validation.constraints.PositiveOrZero long version){}
+  @PostMapping("/selection") @ResponseBody
+  public Map<String,Object> selection(@Valid @RequestBody Selection input,HttpServletRequest request){
+    var actor=OrderWebSupport.optional();if(actor==null)return guests.select(guest(request.getSession()),Set.copyOf(input.ids()),input.version());
+    try{return carts.select(actor,input.ids().stream().map(Long::parseLong).collect(java.util.stream.Collectors.toSet()),input.version());}catch(NumberFormatException error){throw OrderProblem.invalid("Mã món không hợp lệ.");}
   }
 
   @PostMapping("/draft/items") @ResponseBody
@@ -93,8 +113,10 @@ public class CartController {
     var g = guest(request.getSession());
     Map<String, Object> result;
     synchronized (g) {
+      guests.expire(g);
       result = g.draft?carts.mergeDraft(actor,List.copyOf(g.items),g.mergeKey):carts.merge(actor, List.copyOf(g.items), g.mergeKey);
     }
+    if(!g.unselected.isEmpty())result=carts.applyGuestExclusions(actor,Set.copyOf(g.unselected));
     request.getSession().removeAttribute("utetra.cart");
     return result;
   }

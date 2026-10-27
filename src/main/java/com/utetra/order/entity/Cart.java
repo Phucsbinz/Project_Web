@@ -12,6 +12,10 @@ public class Cart {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
+  @Column(name="group_order_id") public Long groupOrderId;
+
+  @Column(name="activity_revision",nullable=false) public long activityRevision;
+
   @Version public long version;
 
   public long getVersion() {

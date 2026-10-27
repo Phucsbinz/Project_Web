@@ -44,7 +44,7 @@ public final class OrderRequests {
       @Min(0) @JsonDeserialize(using = StrictNumbers.IntValue.class) int points,
       @NotBlank String quoteHash,
       @Size(max = 500) String note,
-      @Pattern(regexp = "COD|BANK_TRANSFER|VNPAY") String paymentMethod) {
+      @Pattern(regexp = "COD|BANK_TRANSFER|VNPAY|LOCAL_QR") String paymentMethod) {
     public Checkout(String key, long addressId, long areaId, long carrierId,
         Long productPromotionId, Long shippingPromotionId, int points, String quoteHash, String note) {
       this(key, addressId, areaId, carrierId, productPromotionId, shippingPromotionId,

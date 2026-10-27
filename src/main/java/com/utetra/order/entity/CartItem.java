@@ -23,6 +23,8 @@ public class CartItem {
   @Column(name = "ice_level", nullable = false)
   public int iceLevel;
 
+  @Column(name="is_selected",nullable=false) public boolean selected=true;
+
   @Column(name = "quantity", nullable = false)
   public int quantity;
 

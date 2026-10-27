@@ -1,0 +1,56 @@
+{
+  "branch": "identify",
+  "full_verify": {
+    "tests": 176,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "scope": "Full suite before final group-detail presentation and batch import refinement"
+  },
+  "final_targeted_verify": {
+    "tests": 70,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": [
+      "OrderCommerceIntegrationTest (62)",
+      "CatalogViewTest (5)",
+      "BaselineViewTest (3)"
+    ],
+    "build": "WAR verify succeeded"
+  },
+  "shopping_browser": {
+    "checks": [
+      "Guest popup updates header badge immediately",
+      "Stepper updates quantity and totals; badge counts lines rather than cups",
+      "Clearing guest cart updates empty state and hides badge",
+      "Customer login returns home; vendor destination preserved",
+      "Three distinct contributors, host-only finalization and group page responsive",
+      "Finalized cart has real images/prices and responsive summary at 390/1440px",
+      "Group discount is applied by checkout, order saved in isolated H2, badge clears after checkout"
+    ],
+    "errors": [],
+    "fixture": "Isolated H2 only; no cloud orders or provider calls"
+  },
+  "homepage_response_seconds": {
+    "before": [
+      16.95,
+      15.981
+    ],
+    "after": [
+      5.92,
+      1.578
+    ],
+    "method": "Authenticated GET / on same configured MySQL database; first and repeat request; HTML response only, not image download",
+    "login_redirect": "/"
+  },
+  "shared_ui": "One SiteMesh layout, 21 shared files; no second framework",
+  "server": "http://127.0.0.1:8080/cart",
+  "migration": "V2026102603 applied on configured DB via application startup; no existing data reset",
+  "pushed": false,
+  "limits": [
+    "No real cloud group order was placed. End-to-end group checkout used isolated H2.",
+    "No real payment/provider or OTP delivery was invoked.",
+    "Warm response timing is an observed measurement, not a latency SLA."
+  ]
+}

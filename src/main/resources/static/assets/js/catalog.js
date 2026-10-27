@@ -38,9 +38,14 @@
     ['variantId','quantity','sugarLevel','iceLevel'].forEach(key => data[key] = Number(data[key]));
     data.toppingIds = new FormData(drink).getAll('toppingIds').map(Number);
     button.disabled = true; result.textContent = 'Đang tính giá…';
-    try { await send('/cart/draft/items', {variantId:data.variantId,sugar:data.sugarLevel,ice:data.iceLevel,toppingIds:data.toppingIds,quantity:data.quantity,note:''}); result.textContent = 'Đã thêm vào giỏ hàng. Bạn sẽ chọn chi nhánh khi lên đơn.'; window.dispatchEvent(new Event('utetra:cart-changed')); if(window.parent!==window)window.parent.postMessage({type:'utetra:cart-changed'},location.origin); }
+    try {
+      const item={variantId:data.variantId,sugar:data.sugarLevel,ice:data.iceLevel,toppingIds:data.toppingIds,quantity:data.quantity,note:''},group=drink.dataset.group;
+      if(group){const response=await fetch(context+'/group-orders/'+encodeURIComponent(group)+'/data',{headers:{Accept:'application/json'},cache:'no-store'});if(!response.ok)throw new Error('Không thể mở nhóm. Hãy quay lại nhóm và thử lại.');const state=await response.json();await send('/group-orders/'+encodeURIComponent(group)+'/items',{version:state.version,item});result.textContent='Đã thêm món vào nhóm. Quay lại nhóm để xem các món đã chọn.';if(window.parent!==window)window.parent.postMessage({type:'utetra:group-item-added'},location.origin);}
+      else{await send('/cart/draft/items',item);result.textContent='Đã thêm vào giỏ hàng.';window.dispatchEvent(new Event('utetra:cart-changed'));window.dispatchEvent(new Event('utetra:cart-added'));if(window.parent!==window){window.parent.postMessage({type:'utetra:cart-changed'},location.origin);window.parent.postMessage({type:'utetra:cart-added'},location.origin);}}
+    }
     catch(error) { result.textContent = error.message; } finally { button.disabled = false; }
   });
+  if(drink){const submit=drink.querySelector('[data-product-submit]');if(submit)submit.disabled=submit.dataset.available!=='true';drink.dataset.ready='true';}
   const registration = document.querySelector('#registration-form');
   if (registration) registration.addEventListener('submit', async event => {
     event.preventDefault(); const button = registration.querySelector('button'); const result = registration.querySelector('output');
@@ -78,11 +83,14 @@
   document.addEventListener('click',event=>{
     const link=event.target.closest('.product-card .card-footer a');if(!link || event.ctrlKey || event.metaKey || event.shiftKey || event.button!==0)return;
     const url=new URL(link.href,location.href);if(url.origin!==location.origin || !/\/products\/[0-9]+$/.test(url.pathname))return;
-    event.preventDefault();url.searchParams.set('quick','1');frame.src=url.href;bootstrap.Modal.getOrCreateInstance(modal).show();
+    event.preventDefault();const group=new URLSearchParams(location.search).get('group');if(group)url.searchParams.set('group',group);url.searchParams.set('quick','1');frame.src=url.href;bootstrap.Modal.getOrCreateInstance(modal).show();
   });
-  modal.addEventListener('hidden.bs.modal',()=>{frame.src='about:blank';});
+  let closeAfterShow=false,shown=false;
+  modal.addEventListener('show.bs.modal',()=>{shown=false;closeAfterShow=false;});
+  modal.addEventListener('shown.bs.modal',()=>{shown=true;if(closeAfterShow)bootstrap.Modal.getOrCreateInstance(modal).hide();});
+  modal.addEventListener('hidden.bs.modal',()=>{shown=false;closeAfterShow=false;frame.src='about:blank';});
   window.addEventListener('message',event=>{
-    if(event.origin!==location.origin || event.source!==frame.contentWindow || event.data?.type!=='utetra:cart-changed')return;
-    refresh();bootstrap.Modal.getOrCreateInstance(modal).hide();
+    if(event.origin!==location.origin || event.source!==frame.contentWindow || !['utetra:cart-changed','utetra:group-item-added'].includes(event.data?.type))return;
+    if(event.data.type==='utetra:group-item-added'){const toast=document.getElementById('site-toast');if(toast){toast.textContent='Đã thêm món vào nhóm. Về nhóm để xem các món đã chọn.';toast.hidden=false;setTimeout(()=>toast.hidden=true,6500);}}else refresh();if(shown)bootstrap.Modal.getOrCreateInstance(modal).hide();else closeAfterShow=true;
   });
 })();

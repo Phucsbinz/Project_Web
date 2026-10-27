@@ -61,8 +61,35 @@ public class CatalogService {
         require((min==null || min.signum()>=0) && (max==null || max.signum()>=0) && (min==null || max==null || min.compareTo(max)<=0),"Khoảng giá không hợp lệ");
         require(Set.of("newest","price_asc","price_desc","sold","rating","favorites").contains(sort),"Kiểu sắp xếp không hợp lệ");
         var result=queries.search(keyword,categoryId,storeId,min,max,sort,page,size,guestTop,top20);
-        var items=result.items().stream().map(x -> view(found(products.findById(x.id())),x.sold(),x.rating(),x.favorites())).toList();
+        var items=views(result.items());
         return new PageView<>(items,page,size,result.total(),(result.total()+size-1)/size);
+    }
+    public Map<String,PageView<ProductView>> homeGroups(Long storeId) {
+        Map<String,CatalogQueryRepository.Result> ranked=new LinkedHashMap<>();
+        for(String sort:List.of("newest","sold","rating","favorites")) ranked.put(sort,queries.search("",null,storeId,null,null,sort,0,20,false,true));
+        var unique=new LinkedHashMap<Long,CatalogQueryRepository.RankedProduct>();
+        ranked.values().forEach(r -> r.items().forEach(p -> unique.putIfAbsent(p.id(),p)));
+        Map<Long,ProductView> loaded=new HashMap<>();views(new ArrayList<>(unique.values())).forEach(p -> loaded.put(p.id(),p));
+        Map<String,PageView<ProductView>> result=new LinkedHashMap<>();
+        ranked.forEach((sort,r) -> result.put(sort,new PageView<>(r.items().stream().map(p -> loaded.get(p.id())).toList(),0,20,r.total(),(r.total()+19)/20)));
+        return result;
+    }
+    private List<ProductView> views(List<CatalogQueryRepository.RankedProduct> ranked) {
+        if(ranked.isEmpty())return List.of();
+        var ids=ranked.stream().map(CatalogQueryRepository.RankedProduct::id).toList();
+        Map<Long,Product> byId=new HashMap<>();products.findAllById(ids).forEach(p -> byId.put(p.getId(),p));
+        var storeIds=byId.values().stream().map(Product::getStoreId).distinct().toList();
+        var available=stock.findByStoreIdIn(storeIds).stream().filter(StoreTopping::getAvailable).collect(java.util.stream.Collectors.groupingBy(StoreTopping::getStoreId,java.util.stream.Collectors.mapping(StoreTopping::getToppingId,java.util.stream.Collectors.toSet())));
+        var allLinks=links.findByProductIdIn(ids).stream().collect(java.util.stream.Collectors.groupingBy(ProductTopping::getProductId));
+        var allVariants=variants.findByProductIdIn(ids).stream().collect(java.util.stream.Collectors.groupingBy(ProductVariant::getProductId));
+        Map<Long,Topping> allTops=new HashMap<>();toppings.findAllById(allLinks.values().stream().flatMap(Collection::stream).map(ProductTopping::getToppingId).distinct().toList()).forEach(t -> allTops.put(t.getId(),t));
+        return ranked.stream().map(r -> {
+            var p=found(Optional.ofNullable(byId.get(r.id())));
+            var topIds=allLinks.getOrDefault(p.getId(),List.of()).stream().map(ProductTopping::getToppingId).collect(java.util.stream.Collectors.toSet());
+            var options=topIds.stream().sorted().map(allTops::get).filter(Objects::nonNull).filter(t -> t.getActive() && available.getOrDefault(p.getStoreId(),Set.of()).contains(t.getId())).map(this::toppingView).toList();
+            var sizes=allVariants.getOrDefault(p.getId(),List.of()).stream().sorted(Comparator.comparing(ProductVariant::getId)).map(v -> new VariantView(v.getId(),v.getSizeName(),v.getExtraPrice(),v.getActive(),v.getStockQuantity(),v.getVersion())).toList();
+            return new ProductView(p.getId(),p.getStoreId(),p.getCategoryId(),p.getName(),p.getSlug(),p.getDescription(),p.getBasePrice(),p.getImageUrl(),p.getActive(),p.getAvailable(),p.getFeatured(),p.getVersion(),p.getCreatedAt(),sizes,options,topIds,r.sold(),r.rating(),r.favorites(),p.getCatalogKey());
+        }).toList();
     }
     public ProductView detail(Long id) {
         var p=found(products.findById(id)); require(visible(p),"Sản phẩm không được bán");

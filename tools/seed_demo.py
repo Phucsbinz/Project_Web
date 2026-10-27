@@ -21,7 +21,7 @@ classes.mkdir(exist_ok=True)
 classpath = str(root / 'target/classes') + os.pathsep + classpath_file.read_text(encoding='utf-8').strip()
 subprocess.run([str(java.with_name('javac.exe' if os.name == 'nt' else 'javac')),
                 '-encoding', 'UTF-8', '-cp', classpath, '-d', str(classes),
-                str(root / 'tools/demo/SeedDemo.java'), str(root / 'tools/demo/ShowcaseOrders.java'), str(root / 'tools/demo/AssignCatalogKeys.java')], cwd=root, check=True)
+                str(root / 'tools/demo/FeedbackCopy.java'), str(root / 'tools/demo/SeedDemo.java'), str(root / 'tools/demo/ShowcaseOrders.java'), str(root / 'tools/demo/AssignCatalogKeys.java')], cwd=root, check=True)
 logfile = root / '.local/demo-seed.log'
 with logfile.open('wb') as log:
     for entry in ['SeedDemo', 'AssignCatalogKeys', 'ShowcaseOrders']:

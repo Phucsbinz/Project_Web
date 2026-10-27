@@ -82,6 +82,18 @@ class CatalogIntegrationTest {
     PromotionInput promo(Long shop,Set<Long> ids,BigDecimal percent,long version) {
         return new PromotionInput(shop,"Ưu đãi","TEST10","PRODUCT_PERCENT",percent,money(100000),money(0),100,1,clock.instant().minusSeconds(60),clock.instant().plusSeconds(3600),true,ids,version);
     }
+    @Test void homepageHydratesAllRankingSectionsInOneBoundedBatch() {
+        for(int n=0;n<12;n++)catalog.saveProduct(admin,null,productInput(storeId,"home-batch-"+n,0));
+        em.flush();em.clear();
+        var stats=em.getEntityManagerFactory().unwrap(org.hibernate.SessionFactory.class).getStatistics();
+        boolean enabled=stats.isStatisticsEnabled();stats.setStatisticsEnabled(true);stats.clear();
+        try {
+            var sections=catalog.homeGroups(null);
+            assertThat(sections.keySet()).containsExactly("newest","sold","rating","favorites");
+            sections.values().forEach(section->{assertThat(section.items()).hasSize(12);section.items().forEach(p->{assertThat(p.variants()).hasSize(1);assertThat(p.toppings()).hasSize(1);});});
+            assertThat(stats.getPrepareStatementCount()).isLessThanOrEqualTo(6);
+        } finally {stats.setStatisticsEnabled(enabled);}
+    }
     @Test void approvalPromotesBuyerAndRejectsReplay() {
         assertThat(jdbc.queryForObject("select r.name from users u join roles r on r.id=u.role_id where u.id=105",String.class)).isEqualTo("ROLE_VENDOR");
         var current=storeRepo.findById(storeId).orElseThrow();

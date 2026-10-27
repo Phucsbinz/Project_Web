@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
-    public record Tokens(String access,String refresh) {}
+    public record Tokens(String access,String refresh,String role) {}
     private final IdentityRepository db; private final PasswordEncoder encoder; private final SecretTokens secrets;
     private final JwtService jwt; private final OtpService otp; private final Clock clock; private final Duration refreshDuration;
     private final String dummy;
@@ -45,7 +45,7 @@ public class AuthService {
         if(!flag(u,"is_active") || u.get("email_verified_at")==null) throw credentials();
         Instant now=clock.instant(); String raw=secrets.random();
         long id=db.insert("insert into auth_sessions(user_id,refresh_token_hash,created_at,expires_at,version) values(?,?,?,?,0)",number(u,"id"),secrets.hash(raw),time(now),time(now.plus(refreshDuration)));
-        return new Tokens(jwt.issue(number(u,"id"),id,string(u,"role_name")),id+"."+raw);
+        return new Tokens(jwt.issue(number(u,"id"),id,string(u,"role_name")),id+"."+raw,string(u,"role_name"));
     }
     @Transactional
     public Tokens refresh(String value) {
@@ -56,7 +56,7 @@ public class AuthService {
         if(s.get("revoked_at")!=null || !instant(s,"expires_at").isAfter(now) || !flag(u,"is_active") || u.get("email_verified_at")==null || !secrets.matches(string(s,"refresh_token_hash"),secrets.hash(raw))) throw credentials();
         String next=secrets.random();
         db.update("update auth_sessions set refresh_token_hash=?,last_refreshed_at=?,version=version+1 where id=?",secrets.hash(next),time(now),id);
-        return new Tokens(jwt.issue(number(u,"id"),id,string(u,"role_name")),id+"."+next);
+        return new Tokens(jwt.issue(number(u,"id"),id,string(u,"role_name")),id+"."+next,string(u,"role_name"));
     }
     @Transactional
     public void logout(UtetraPrincipal principal,String refresh) {

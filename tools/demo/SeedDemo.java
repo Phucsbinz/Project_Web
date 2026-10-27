@@ -51,27 +51,27 @@ class SeedDemo {
         for(int i=0;i<buyers.length;i++)buyers[i]=user("demo."+List.of("thanh","minhanh","ngoclinh","hoangnam","thuha","giahuy","khanhvy","quanghung").get(i),names[i],"ROLE_USER",hash,10+i);
         long policy=existing("commission_policies","name","UTETra Demo · chiết khấu 5%");
         if(policy==0)policy=insert("commission_policies","name,rate_percent,is_active,created_at,updated_at,version","UTETra Demo · chiết khấu 5%",5,true,NOW,NOW,0);
-        carrier[0]=existing("carriers","name","UTETra Demo Delivery");
-        if(carrier[0]==0)carrier[0]=insert("carriers","name,base_fee,is_active,created_at,updated_at,version","UTETra Demo Delivery",12000,true,NOW,NOW,0);
+        carrier[0]=existing("carriers","name","UTETra Delivery");
+        if(carrier[0]==0)carrier[0]=insert("carriers","name,base_fee,is_active,created_at,updated_at,version","UTETra Delivery",12000,true,NOW,NOW,0);
         String[] branch={"Thủ Đức","Bình Thạnh","Quận 1"};
         String[] slug={"demo-thu-duc","demo-binh-thanh","demo-quan-1"};
-        String[] address={"Khu vực Võ Văn Ngân, TP. Thủ Đức, TP.HCM (chi nhánh mô phỏng)","Khu vực Xô Viết Nghệ Tĩnh, Bình Thạnh, TP.HCM (chi nhánh mô phỏng)","Khu vực Nguyễn Huệ, Quận 1, TP.HCM (chi nhánh mô phỏng)"};
+        String[] address={"Khu vực Võ Văn Ngân, TP. Thủ Đức, TP.HCM","Khu vực Xô Viết Nghệ Tĩnh, Bình Thạnh, TP.HCM","Khu vực Nguyễn Huệ, Quận 1, TP.HCM"};
         for(int i=0;i<3;i++){
           stores[i]=existing("stores","slug",slug[i]);
-          if(stores[i]==0)stores[i]=insert("stores","owner_user_id,commission_policy_id,name,slug,address,phone,description,image_url,banner_url,open_time,close_time,status,accepting_orders,created_at,updated_at,version",vendor[0],policy,"UTETra "+branch[i],slug[i],address[i],"0908000003","Chi nhánh demo UTETra: trà thơm, cà phê và những cuộc hẹn. Không phải địa điểm kinh doanh thật.","/assets/images/utetra-tea-ritual-branded.png","/assets/images/utetra-tea-ritual-branded.png",Time.valueOf("00:00:00"),Time.valueOf("23:59:59"),"ACTIVE",true,NOW,NOW,0);
+          if(stores[i]==0)stores[i]=insert("stores","owner_user_id,commission_policy_id,name,slug,address,phone,description,image_url,banner_url,open_time,close_time,status,accepting_orders,created_at,updated_at,version",vendor[0],policy,"UTETra "+branch[i],slug[i],address[i],"0908000003","UTETra: trà thơm, cà phê và những cuộc hẹn.","/assets/images/utetra-tea-ritual-branded.png","/assets/images/utetra-tea-ritual-branded.png",Time.valueOf("00:00:00"),Time.valueOf("23:59:59"),"ACTIVE",true,NOW,NOW,0);
           if(id("select count(*) from store_memberships where user_id=? and store_id=?",manager[0],stores[i])==0)insert("store_memberships","user_id,store_id,member_role,is_active,assigned_by,created_at,updated_at",manager[0],stores[i],"MANAGER",true,admin[0],NOW,NOW);
           var found=db.queryForList("select id from store_delivery_areas where store_id=? and area_code=?",Long.class,stores[i],"DEMO_LOCAL");
           areas[i]=found.isEmpty()?insert("store_delivery_areas","store_id,area_code,name,is_active,created_at,updated_at",stores[i],"DEMO_LOCAL","Nội khu "+branch[i],true,NOW,NOW):found.getFirst();
           if(id("select count(*) from carrier_area_rates where carrier_id=? and delivery_area_id=?",carrier[0],areas[i])==0)insert("carrier_area_rates","carrier_id,delivery_area_id,additional_fee,is_active,created_at,updated_at",carrier[0],areas[i],3000,true,NOW,NOW);
         }
-        for(int i=0;i<buyers.length;i++)if(id("select count(*) from user_addresses where user_id=?",buyers[i])==0)insert("user_addresses","user_id,recipient_name,phone,address_detail,is_default,created_at,updated_at",buyers[i],names[i],"090800"+String.format("%04d",10+i),"Địa chỉ nhận hàng demo tại TP.HCM — không giao hàng thực tế",true,NOW,NOW);
+        for(int i=0;i<buyers.length;i++)if(id("select count(*) from user_addresses where user_id=?",buyers[i])==0)insert("user_addresses","user_id,recipient_name,phone,address_detail,is_default,created_at,updated_at",buyers[i],names[i],"090800"+String.format("%04d",10+i),"TP. Hồ Chí Minh",true,NOW,NOW);
         long[] tops=new long[3];String[] tn={"Trân châu đen","Trân châu trắng","Thạch vải"};
         for(int i=0;i<3;i++){tops[i]=existing("toppings","name",tn[i]);if(tops[i]==0)tops[i]=insert("toppings","name,price,is_active,created_at,updated_at",tn[i],5000+i*1000,true,NOW,NOW);for(long st:stores)if(id("select count(*) from store_toppings where store_id=? and topping_id=?",st,tops[i])==0)insert("store_toppings","store_id,topping_id,is_available,created_at,updated_at",st,tops[i],true,NOW,NOW);}
         int n=0;
         for(var item:menu){
           String category=item.get("category").asText(),catSlug="demo-category-"+List.of("Trà sữa","Trà trái cây","Matcha & trà rang","Cà phê","Trà nguyên lá","Đá xay & chocolate").indexOf(category);
           long cat=existing("categories","slug",catSlug);
-          if(cat==0)cat=insert("categories","name,slug,description,image_url,display_order,is_active,created_at,updated_at",category,catSlug,"Danh mục đồ uống UTETra — dữ liệu demo",item.get("image").asText(),n,true,NOW,NOW);
+          if(cat==0)cat=insert("categories","name,slug,description,image_url,display_order,is_active,created_at,updated_at",category,catSlug,"Danh mục đồ uống UTETra",item.get("image").asText(),n,true,NOW,NOW);
           for(int st=0;st<3;st++){
             String ps="demo-"+item.get("slug").asText()+"-"+st;
             long product=existing("products","slug",ps);
@@ -98,20 +98,21 @@ class SeedDemo {
         if(prior.isEmpty()){
           carts.clear(buyer);
           long variant=id("select id from product_variants where product_id=? and size_name=?",product,List.of("S","M","L").get(mi%3));
-          carts.add(buyer,new Item(variant,List.of(0,30,50,70,100).get(mi%5),50,List.of(),1+mi%3,"Đơn demo UTETra — không giao hàng thực tế"));
+          carts.add(buyer,new Item(variant,List.of(0,30,50,70,100).get(mi%5),50,List.of(),1+mi%3,""));
           long address=id("select id from user_addresses where user_id=? order by id limit 1",buyer.userId());
-          var request=new Checkout(key,address,areas[st],carrier[0],null,null,0,"pending","Đơn dữ liệu mẫu", "COD");
+          var request=new Checkout(key,address,areas[st],carrier[0],null,null,0,"pending","", "COD");
           String quote=checkout.quote(buyer,request).get("hash").toString();
-          var result=checkout.checkout(buyer,new Checkout(key,address,areas[st],carrier[0],null,null,0,quote,"Đơn dữ liệu mẫu", "COD"));
+          var result=checkout.checkout(buyer,new Checkout(key,address,areas[st],carrier[0],null,null,0,quote,"", "COD"));
           order=((Number)result.get("id")).longValue();created++;
         } else order=prior.getFirst();
         var states=List.of("NEW","CONFIRMED","PICKED_UP","DELIVERING","DELIVERED");
         int current=states.indexOf(db.queryForObject("select status from orders where id=?",String.class,order));
         if(current<0)throw new IllegalStateException("Demo order changed outside expected workflow");
-        for(int step=current+1;step<states.size();step++)flow.transition(operator,order,new Transition(states.get(step),version(order),"Kịch bản demo hợp lệ",states.get(step).equals("DELIVERED")));
+        for(int step=current+1;step<states.size();step++)flow.transition(operator,order,new Transition(states.get(step),version(order),"Cập nhật trạng thái đơn hàng",states.get(step).equals("DELIVERED")));
         long orderItem=id("select id from order_items where order_id=? order by id limit 1",order);
-        if(id("select count(*) from reviews where order_item_id=?",orderItem)==0)community.review(principals[bi],new IdentityForms.Review(product,orderItem,mi%5==0?4:5,"Hương vị cân bằng, món được đóng gói cẩn thận. Trải nghiệm đơn hàng mẫu UTETra."),List.of());
-        if(id("select count(*) from product_comments where order_item_id=?",orderItem)==0)community.comment(principals[bi],new IdentityForms.Comment(product,orderItem,"Mình chọn "+menu.get(mi).get("name").asText()+" và thấy vị trà thơm, độ ngọt vừa phải. Đóng gói chắc chắn, món đến đủ theo lựa chọn size và đá. Đây là trải nghiệm mô phỏng của tài khoản demo."),List.of());
+        var purchased=db.queryForMap("select size_name,sugar_level,ice_level from order_items where id=?",orderItem);
+        if(id("select count(*) from reviews where order_item_id=?",orderItem)==0)community.review(principals[bi],new IdentityForms.Review(product,orderItem,mi%5==0?4:5,FeedbackCopy.render(menu.get(mi),false,st,purchased.get("size_name").toString(),((Number)purchased.get("sugar_level")).intValue(),((Number)purchased.get("ice_level")).intValue())),List.of());
+        if(id("select count(*) from product_comments where order_item_id=?",orderItem)==0)community.comment(principals[bi],new IdentityForms.Comment(product,orderItem,FeedbackCopy.render(menu.get(mi),true,st,purchased.get("size_name").toString(),((Number)purchased.get("sugar_level")).intValue(),((Number)purchased.get("ice_level")).intValue())),List.of());
         community.favorite(principals[bi],product,true);community.viewed(principals[bi],product);
       }
       // Additional active/cancelled states are created through the same checkout/workflow guards.
@@ -123,11 +124,11 @@ class SeedDemo {
         carts.add(buyer,new Item(id("select id from product_variants where product_id=? and size_name='M'",product),50,50,List.of(),2,"Đơn kiểm thử trạng thái"));
         long address=id("select id from user_addresses where user_id=? order by id limit 1",buyer.userId());
         String method=(n==4||n==6)?"BANK_TRANSFER":"COD";
-        var q=new Checkout(key,address,areas[st],carrier[0],null,null,0,"pending","Đơn demo trạng thái",method);
-        var order=checkout.checkout(buyer,new Checkout(key,address,areas[st],carrier[0],null,null,0,checkout.quote(buyer,q).get("hash").toString(),"Đơn demo trạng thái",method));long oid=((Number)order.get("id")).longValue();
+        var q=new Checkout(key,address,areas[st],carrier[0],null,null,0,"pending","",method);
+        var order=checkout.checkout(buyer,new Checkout(key,address,areas[st],carrier[0],null,null,0,checkout.quote(buyer,q).get("hash").toString(),"",method));long oid=((Number)order.get("id")).longValue();
         if(n==5)flow.cancel(buyer,oid,version(oid),"Khách demo yêu cầu hủy trước chuẩn bị");
         else if(n==6)ctx.getBean(BankTransferService.class).confirm(operator,oid,new BankConfirmation("DEMO-UTETRA-"+oid,db.queryForObject("select final_amount from orders where id=?",java.math.BigDecimal.class,oid),version(oid)));
-        else if(n<4)for(int step=0;step<n%4;step++)flow.transition(operator,oid,new Transition(List.of("CONFIRMED","PICKED_UP","DELIVERING").get(step),version(oid),"Đơn demo đang xử lý",false));
+        else if(n<4)for(int step=0;step<n%4;step++)flow.transition(operator,oid,new Transition(List.of("CONFIRMED","PICKED_UP","DELIVERING").get(step),version(oid),"Đơn đang xử lý",false));
       }
       for(var p:principals)auth.logout(p,null);
       System.out.println("DEMO_SEED_SUCCESS newDeliveredOrders="+created);

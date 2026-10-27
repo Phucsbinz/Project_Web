@@ -8,6 +8,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class OrderDataRepository {
   @PersistenceContext private EntityManager em;
+  private final java.time.Clock clock;
+  public OrderDataRepository(java.time.Clock clock){this.clock=clock;}
+  public static final java.time.Duration CART_TTL=java.time.Duration.ofHours(1);
+  public java.time.Instant expiresAt(Cart cart){return cart.updatedAt.plus(CART_TTL);}
+
 
   public <T> T save(T value) {
     em.persist(value);
@@ -38,10 +43,15 @@ public class OrderDataRepository {
   }
 
   public Cart cart(long userId, boolean lock) {
-    return query(Cart.class, "where e.userId=:user", Map.of("user", userId), lock, 1).stream()
-        .findFirst()
-        .orElse(null);
+    Cart cart=query(Cart.class, "where e.userId=:user", Map.of("user", userId), lock, 1).stream().findFirst().orElse(null);
+    if(cart!=null && !expiresAt(cart).isAfter(clock.instant())) {
+      if(!lock)return null;
+      if(cart.groupOrderId!=null){var group=require(GroupOrder.class,cart.groupOrderId,true);if(java.util.Set.of("OPEN","LOCKED").contains(group.status))group.status="EXPIRED";cart.groupOrderId=null;}
+      clear(cart);em.flush();
+    }
+    return cart;
   }
+  public List<CartItem> selectedItems(long cartId){return cartItems(cartId).stream().filter(i->i.selected).toList();}
 
   public List<CartItem> cartItems(long cartId) {
     return query(
@@ -92,6 +102,6 @@ public class OrderDataRepository {
       for (var top : cartToppings(line.id)) remove(top);
       remove(line);
     }
-    cart.updatedAt = java.time.Instant.now();
+    cart.updatedAt = clock.instant();cart.activityRevision++;
   }
 }

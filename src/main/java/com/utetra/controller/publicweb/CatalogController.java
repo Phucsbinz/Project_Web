@@ -19,8 +19,9 @@ public class CatalogController {
     private final StoreService stores;
     private final PromotionService promotions;
     private final ObjectMapper mapper;
-    public CatalogController(CatalogService catalog,StoreService stores,PromotionService promotions,ObjectMapper mapper) {
-        this.catalog=catalog; this.stores=stores; this.promotions=promotions; this.mapper=mapper;
+    private final com.utetra.order.service.GroupOrderService groups;
+    public CatalogController(CatalogService catalog,StoreService stores,PromotionService promotions,ObjectMapper mapper,com.utetra.order.service.GroupOrderService groups) {
+        this.catalog=catalog; this.stores=stores; this.promotions=promotions; this.mapper=mapper;this.groups=groups;
     }
     private Object bean(Object o) { return mapper.convertValue(o,new TypeReference<Object>() {}); }
     @GetMapping("/products/lookups") @ResponseBody public Object lookups() { return Map.of("categories",catalog.categories(false,null)); }
@@ -31,19 +32,29 @@ public class CatalogController {
         @RequestParam(required=false) Long categoryId,@RequestParam(required=false) Long storeId,
         @RequestParam(required=false) BigDecimal min,@RequestParam(required=false) BigDecimal max,
         @RequestParam(defaultValue="newest") String sort,@RequestParam(defaultValue="0") int page,
-        @RequestParam(defaultValue="12") int size,@RequestParam(defaultValue="false") boolean top,
+        @RequestParam(defaultValue="12") int size,@RequestParam(defaultValue="false") boolean top,@RequestParam(required=false) String group,
         @AuthenticationPrincipal UtetraPrincipal principal,jakarta.servlet.http.HttpServletRequest request,Model model) {
         boolean home="/".equals(request.getServletPath());
+        if(group!=null&&!group.isBlank()){
+            if(principal==null)return "redirect:/group-orders/"+java.net.URLEncoder.encode(group,java.nio.charset.StandardCharsets.UTF_8);
+            var state=groups.view(new com.utetra.order.dto.OrderRequests.Actor(principal.userId(),principal.role()),group);
+            if(!Boolean.TRUE.equals(state.get("joined"))||!"OPEN".equals(state.get("status"))||Boolean.TRUE.equals(state.get("expired")))return "redirect:/group-orders/"+group;
+            model.addAttribute("groupToken",group);
+        }
         model.addAttribute("result",bean(catalog.search(keyword,categoryId,storeId,min,max,home?"sold":sort,page,size,home && principal==null,top)));
         if(home && principal!=null) {
-            Map<String,Object> groups=new LinkedHashMap<>();
-            for(String group:List.of("newest","sold","rating","favorites")) groups.put(group,bean(catalog.search("",null,storeId,null,null,group,0,20,false,true)));
-            model.addAttribute("groups",groups);
+            model.addAttribute("groups",bean(catalog.homeGroups(storeId)));
         }
-        model.addAttribute("categories",bean(catalog.categories(false,null))); model.addAttribute("stores",bean(stores.publicStores()));
+        model.addAttribute("categories",bean(catalog.categories(false,null))); model.addAttribute("stores",List.of());
         return "catalog/menu";
     }
-    @GetMapping("/products/{id}") public String product(@PathVariable Long id,Model model) {
+    @GetMapping("/products/{id}") public String product(@PathVariable Long id,@RequestParam(required=false) String group,@AuthenticationPrincipal UtetraPrincipal principal,Model model) {
+        if(group!=null&&!group.isBlank()){
+            if(principal==null)return "redirect:/group-orders/"+java.net.URLEncoder.encode(group,java.nio.charset.StandardCharsets.UTF_8);
+            var state=groups.view(new com.utetra.order.dto.OrderRequests.Actor(principal.userId(),principal.role()),group);
+            if(!Boolean.TRUE.equals(state.get("joined"))||!"OPEN".equals(state.get("status"))||Boolean.TRUE.equals(state.get("expired")))return "redirect:/group-orders/"+group;
+            model.addAttribute("groupToken",group);
+        }
         model.addAttribute("product",bean(catalog.detail(id))); return "catalog/product";
     }
     @PostMapping("/products/{id}/quote") @ResponseBody public Object quote(@PathVariable Long id,@Valid @RequestBody DrinkInput input) { return catalog.quote(id,input); }

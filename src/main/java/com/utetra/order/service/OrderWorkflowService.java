@@ -250,6 +250,7 @@ public class OrderWorkflowService {
         || !states.get(position + 1).equals(request.status())
         || shipping && position < 1)
       throw OrderProblem.conflict("Không được bỏ bước hoặc đảo trạng thái đơn.");
+    LocalQrPaymentService.assertLedger(data,refs,o,true);
     if (!"COD".equals(o.paymentMethod) && !"PAID".equals(o.paymentStatus))
       throw OrderProblem.conflict("Chưa xác nhận thanh toán trực tuyến.");
     String from = o.status;
@@ -329,7 +330,7 @@ public class OrderWorkflowService {
     if (owner && !operator && !"NEW".equals(o.status)
         || !Set.of("NEW", "CONFIRMED", "PICKED_UP", "DELIVERING").contains(o.status))
       throw OrderProblem.conflict("Đơn không còn trong thời điểm cho phép hủy.");
-    boolean prepaidBank = Set.of("BANK_TRANSFER","VNPAY").contains(o.paymentMethod) && "PAID".equals(o.paymentStatus);
+    boolean prepaidBank = Set.of("BANK_TRANSFER","VNPAY","LOCAL_QR").contains(o.paymentMethod) && "PAID".equals(o.paymentStatus);
     if ("PAID".equals(o.paymentStatus) && !prepaidBank)
       throw OrderProblem.conflict(
           "Đơn trả trước cần quy trình hoàn ngân hàng; tích hợp này đang được hoãn.");
@@ -472,7 +473,7 @@ public class OrderWorkflowService {
   public Map<String, Object> refundCash(Actor actor, long id, RefundInput request) {
     Order o = data.require(Order.class, id, true);
     refs.requireOperator(actor, o.storeId);
-    boolean bank = Set.of("BANK_TRANSFER","VNPAY").contains(o.paymentMethod);
+    boolean bank = Set.of("BANK_TRANSFER","VNPAY","LOCAL_QR").contains(o.paymentMethod);
     if (bank && !actor.is("ADMIN")) throw OrderProblem.forbidden();
     version(o, request.version());
     boolean cancelledBank = bank && "CANCELLED".equals(o.status) && "REFUND_PENDING".equals(o.paymentStatus);
