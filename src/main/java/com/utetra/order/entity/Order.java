@@ -13,6 +13,10 @@ public class Order {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
+  @Column(name="group_order_id") public Long groupOrderId;
+  @Column(name="group_participants",nullable=false) public int groupParticipants;
+  @Column(name="group_discount",nullable=false,precision=14,scale=2) public BigDecimal groupDiscount=BigDecimal.ZERO;
+
   @Version public long version;
 
   public long getVersion() {

@@ -180,7 +180,11 @@
             steps[2].className = 'is-current'; steps[2].setAttribute('aria-current', 'step');
           }
           if ((form.id === 'otp-form' && !result.grant) || form.dataset.endpoint === '/auth/reset') completeAuth();
-          if (result.redirect) { window.location.assign(result.redirect); return; }
+          if (result.redirect) {
+            const next=new URLSearchParams(location.search).get('next');
+            const invite=form.dataset.endpoint==='/auth/login' && /^\/group-orders\/(new|[0-9a-fA-F-]{36})$/.test(next||'');
+            window.location.assign(invite?context+next:result.redirect); return;
+          }
           if (form.dataset.endpoint === '/auth/reset') { form.reset(); form.elements.grant.value = ''; form.classList.add('d-none'); }
           if (!page.startsWith('/auth/')) await load();
           if (form.id === 'address-form') { form.reset(); delete form.dataset.method; form.dataset.endpoint = '/account/addresses'; }
@@ -226,7 +230,7 @@
     body.append(text('p', row.phone), text('p', row.address_detail));
     body.append(button('Sửa địa chỉ', async () => {
       const f = document.getElementById('address-form'); fill(f, row); f.dataset.endpoint = `/account/addresses/${row.id}`; f.dataset.method = 'PUT'; f.scrollIntoView({behavior: 'smooth'});
-    }), button('Xóa', async () => { if (window.confirm('Xóa địa chỉ này?')) { await request(`/account/addresses/${row.id}`, 'DELETE'); await load(); } }, 'btn btn-outline-danger btn-sm ms-2'));
+    }), button('Xóa', async () => { if (await window.utetraConfirm('Xóa địa chỉ này?')) { await request(`/account/addresses/${row.id}`, 'DELETE'); await load(); } }, 'btn btn-outline-danger btn-sm ms-2'));
   }
   function product(row) {
     const body = card(row.name);
@@ -256,7 +260,7 @@
       if (length < (page === '/comments' ? 50 : 0) || length > 2000) throw new Error('Nội dung bình luận cần 50–2000 ký tự; đánh giá tối đa 2000 ký tự.');
       say((await request(`${page}/${row.id}`, 'PUT', {content: edit.value, stars: Number(rating?.value || 0), version: row.version})).message); await load();
     }),
-      button('Gỡ nội dung', async () => { if (window.confirm('Gỡ nội dung này?')) { await request(`${page}/${row.id}`, 'DELETE'); await load(); } }, 'btn btn-outline-danger btn-sm ms-2'));
+      button('Gỡ nội dung', async () => { if (await window.utetraConfirm('Gỡ nội dung này?')) { await request(`${page}/${row.id}`, 'DELETE'); await load(); } }, 'btn btn-outline-danger btn-sm ms-2'));
   }
   function user(row) {
     const body = card(`${row.full_name} · #${row.id}`); body.closest('.card').classList.add('user-list-card'); body.prepend(text('span',row.full_name?.trim().split(/\s+/).map(v=>v[0]).slice(-2).join('')||'U','user-avatar')); body.append(text('p', `${row.email} · ${row.username}`));

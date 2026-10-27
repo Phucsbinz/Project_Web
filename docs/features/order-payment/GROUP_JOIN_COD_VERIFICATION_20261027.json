@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-27",
+  "branch": "identify",
+  "flow": "Homepage -> create/join first -> pick inside group -> host selects payment mode -> host places one order",
+  "modes": {
+    "HOST": "Host pays full using allowed existing checkout methods",
+    "INDIVIDUAL": "One COD delivery; each participant pays their discounted allocation on receipt; no member payment confirmation"
+  },
+  "validation": {
+    "host_only_mode": true,
+    "empty_join_allowed": true,
+    "food_in_personal_cart_not_imported": true,
+    "only_people_with_food_count": true,
+    "no_member_payment_confirmation": true,
+    "server_allocations_match_order_total": true
+  },
+  "example": {
+    "people_with_food": 3,
+    "each_subtotal": 26000,
+    "each_discount": 1300,
+    "each_goods_net": 24700,
+    "example_shared_shipping": 15000,
+    "each_shipping_share": 5000,
+    "each_cod_amount": 29700
+  },
+  "full_verify": {
+    "tests": 182,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "scope": "Before final rounding and product submit readiness refinement"
+  },
+  "final_targeted_verify": {
+    "tests": 77,
+    "classes": [
+      "OrderCommerceIntegrationTest (69)",
+      "CatalogViewTest (5)",
+      "BaselineViewTest (3)"
+    ],
+    "failures": 0,
+    "errors": 0,
+    "build": "WAR verify passed"
+  },
+  "latest_report_inventory": {
+    "distinct_test_cases": 183,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "browser": {
+    "checks": [
+      "Guest popup updates badge and shows success with one-hour retention reminder",
+      "Stepper updates quantity and totals; badge counts lines rather than cups",
+      "Checkbox persists selected subset; countdown uses server time rather than the fixture/client clock difference",
+      "Clearing guest cart updates empty state and hides badge",
+      "Customer login returns home; vendor destination preserved",
+      "Three distinct contributors, host-only finalization and group page responsive",
+      "Finalized cart has real images/prices and responsive summary at 390/1440px",
+      "Group discount is applied by checkout, order saved in isolated H2, badge clears after checkout",
+      "Checkout inputs accept new address/contact/points/note; selected checkout preserves unchecked items; mobile form fits",
+      "UUID fallback supports LAN HTTP where crypto.randomUUID is unavailable",
+      "Homepage group entry, empty join first, independent group menu, host-only COD split creates one shared order without member payment confirmation"
+    ],
+    "errors": [],
+    "fixture": "Isolated H2 only; no cloud orders or provider calls"
+  },
+  "migration": "V2026102702__group_member_confirmation.sql applied at server startup",
+  "server": "http://127.0.0.1:8080/",
+  "pushed": false,
+  "limits": [
+    "All end-to-end order creation was on isolated H2; no cloud group order placed.",
+    "No real online payment or automatic charge was executed. COD remains UNPAID until actual collection is recorded.",
+    "Financial allocation is a single-delivery group bill, not separate bank debits."
+  ]
+}

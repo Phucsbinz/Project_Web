@@ -155,6 +155,7 @@ public class OrderSupport {
     v.put("paymentMethod", o.paymentMethod);
     v.put("subtotal", amount(o.subtotal));
     v.put("productDiscount", amount(o.productDiscount));
+    v.put("groupDiscount",amount(o.groupDiscount));v.put("groupParticipants",o.groupParticipants);
     v.put("pointsDiscount", amount(o.pointsDiscount));
     v.put("shippingGross", amount(o.shippingGross));
     v.put("shippingDiscount", amount(o.shippingDiscount));

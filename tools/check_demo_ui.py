@@ -36,7 +36,7 @@ with sync_playwright() as p:
  page.set_viewport_size({'width':1440,'height':1000})
  for role,routes in [('thanh',['/account/profile','/account/security','/orders']),('admin',['/admin/reports','/admin/orders','/admin/products']),('manager',['/manager/reports','/manager/orders','/manager/products']),('vendor',['/vendor/revenue','/vendor/orders','/vendor/products'])]:
   page.context.clear_cookies();page.goto(base+'/auth/login',wait_until='networkidle')
-  page.locator('#email').fill('demo.'+role+'@example.test');page.locator('#password').fill('123456');page.locator('form[data-endpoint="/auth/login"] button[type=submit]').click();page.wait_for_url('**/account/profile',timeout=20000)
+  page.locator('#email').fill('demo.'+role+'@example.test');page.locator('#password').fill('123456');page.locator('form[data-endpoint="/auth/login"] button[type=submit]').click();page.wait_for_url('**/' if role=='thanh' else '**/account/profile',timeout=30000)
   for route in routes:shot(route,role+'-'+route.strip('/').replace('/','-'))
   if role=='admin':
    shot('/admin/orders','admin-orders-mobile',390)

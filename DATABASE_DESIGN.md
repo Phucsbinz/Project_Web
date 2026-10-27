@@ -816,3 +816,18 @@ JPA LAZY và DTO trong Service, open-in-view=false; không serialize Entity vòn
 Tạo riêng utetra_db; không import script từ database project khác. V1 seed 5 role, chưa tự tạo tài khoản đăng nhập. Seed nghiệp vụ sau này gồm shop được duyệt/đang chờ, Vendor có quyền mua, Manager A/B, User A/B, Admin, catalog và các món có >10 ly bán hợp lệ để thử top; đơn/refund/promo/carrier/commission/ledger khớp công thức. Các account giả lập phải qua email verification phù hợp, không plaintext password.
 
 Kiểm schema/migration trên TiDB/MySQL thực và JPA validate; H2 chỉ dùng test isolated không thay kiểm SQL dialect/TLS. Bảng kế hoạch chưa có migration phải ghi chưa hiện thực. Test unique/FK/default/UTC/decimal, callback/replay/competing quota, points debt/reversal, refund/net report, quyền shop/owner/assignment và restore trước bàn giao.
+
+## Bổ sung đặt đơn nhóm — 26/10/2026
+
+Migration V2026102603: `group_orders` lưu host, UUID invite, trạng thái OPEN/LOCKED/ORDERED/CANCELLED, hạn 24h, order đã tạo, timestamp/version; `group_order_members` lưu user/display name/snapshot JSON và unique(group_order_id,user_id). `carts.group_order_id` nullable liên kết giỏ host sau chốt. `orders.group_order_id`, `group_participants`, `group_discount` lưu nguồn ưu đãi tại checkout. `group_discount` là thành phần của `product_discount`, không cộng vào tổng giảm lần nữa. FK cùng unique ngăn mồ côi/trùng thành viên. Chi tiết và ràng buộc: docs/features/order-payment/GROUP_ORDERS_20261026.md.
+
+## Bổ sung lựa chọn và hạn giỏ — 27/10/2026
+
+V2026102701: cart_items.is_selected mặc định true; carts.activity_revision làm bẩn cart/version độc lập timestamp thực. Hạn giỏ là updated_at + 1 giờ theo server Clock, không thêm cột chứa giờ client. Quote/checkout chỉ lấy dòng selected; order lưu snapshot như cũ, món chưa chọn giữ lại. Chi tiết: docs/features/order-payment/CART_SELECTION_EXPIRY_20261027.md.
+
+## Group join-first và phân bổ COD — V2026102702
+
+Group.payment_mode do host quyết định HOST/INDIVIDUAL, sau chốt bất biến. Member có thể tồn tại với items_json=[] trước khi chọn; is_confirmed giữ tương thích nhưng thêm món tự đánh dấu có món, không yêu cầu xác nhận thanh toán. Sau host checkout một order chung, member có món lưu order_id/billed_subtotal/discount_share/shipping_share/amount_due. Tổng amount_due bằng finalAmount của order; đây là bảng phân bổ COD, không phải đã thu tiền. Chi tiết: docs/features/order-payment/GROUP_JOIN_FIRST_COD_20261027.md.
+
+
+Cập nhật 27/10/2026 theo yêu cầu Thanh: QR cho đơn mới dùng LOCAL_QR (ví giả lập, không tiền thật), local_qr_payments theo từng người. Đơn nhóm chia phần chỉ được CONFIRMED khi tất cả phần thanh toán thành công. Hướng dẫn/contract mới thay phần QR chuyển khoản trước đó: docs/features/order-payment/LOCAL_QR_WALLET_20261027.md.

@@ -40,14 +40,14 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .dispatcherTypeMatchers(DispatcherType.FORWARD,DispatcherType.ERROR).permitAll()
                 .requestMatchers("/payments/vnpay/ipn","/payments/vnpay/return").permitAll()
-                .requestMatchers("/","/menu","/products/**","/stores/**","/assets/**","/auth/**","/error","/api/system/health").permitAll()
+                .requestMatchers("/local-wallet/**","/","/menu","/products/**","/stores/**","/assets/**","/auth/**","/error","/api/system/health").permitAll()
                 .requestMatchers("/admin/**","/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/manager/**","/api/manager/**").hasAnyRole("MANAGER","ADMIN")
                 .requestMatchers("/vendor/**","/api/vendor/**").hasRole("VENDOR")
                 .requestMatchers("/shipper/**","/api/shipper/**").hasRole("SHIPPER")
                 .requestMatchers("/account/security","/account/profile","/account/profile/**","/account/password").authenticated()
                 .requestMatchers("/cart/**").permitAll()
-                .requestMatchers("/checkout/**","/orders/**","/account/**","/favorites/**","/viewed/**","/reviews/**","/comments/**","/api/buyer/**").hasAnyRole("USER","VENDOR")
+                .requestMatchers("/group-orders/**","/checkout/**","/orders/**","/account/**","/favorites/**","/viewed/**","/reviews/**","/comments/**","/api/buyer/**").hasAnyRole("USER","VENDOR")
                 .anyRequest().authenticated())
             .exceptionHandling(errors -> errors.authenticationEntryPoint((req,res,ex) -> {
                 String accept=req.getHeader("Accept");
@@ -55,7 +55,11 @@ public class SecurityConfig {
                     || accept!=null && accept.contains("application/json")) {
                     res.setStatus(401); res.setContentType("application/json;charset=UTF-8");
                     res.getWriter().write("{\"error\":\"UNAUTHORIZED\"}");
-                } else res.sendRedirect(req.getContextPath()+"/auth/login");
+                } else {
+                    String next=req.getServletPath();
+                    String invite=next.matches("/group-orders/(new|[0-9a-fA-F-]{36})")?"?next="+java.net.URLEncoder.encode(next,java.nio.charset.StandardCharsets.UTF_8):"";
+                    res.sendRedirect(req.getContextPath()+"/auth/login"+invite);
+                }
             }))
             .addFilterBefore(jwt,UsernamePasswordAuthenticationFilter.class)
             .addFilterAfter(new CsrfTokenMaterializationFilter(),org.springframework.security.web.access.intercept.AuthorizationFilter.class);

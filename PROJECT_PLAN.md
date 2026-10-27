@@ -83,3 +83,20 @@ Chưa có lịch nộp từ giảng viên; không tự coi thời lượng cũ l
 Ưu tiên 6/10 điểm cho đầy đủ chức năng/logic/validation/security. Kiểm thử quyền owner/shop/assignment, OTP retry/replay, token revoked, tiền/điểm/quota, IPN giả/trùng/đến muộn, hoàn tiền thực, media và schema; một template responsive trên mobile/tablet/desktop. Tất cả request thay đổi cần CSRF, trừ callback máy chủ được xác minh chữ ký theo cấu hình đã review khi module thanh toán có thật.
 
 Bàn giao code, WAR, MySQL migrations, cấu hình, SETUP, báo cáo khảo sát/phân tích, hình kiến trúc/activity/code/UI, test thực và prompt AI nguyên văn đã che secret. Báo cáo chấm điểm/ma trận yêu cầu tại docs/QUY_DINH_VA_CAU_HINH_CHUNG.md; hồ sơ tổng hợp tại docs/REPORT_ASSEMBLY.md.
+
+## Cập nhật phạm vi 26/10/2026 — Giỏ và đặt nhóm
+
+Thanh duyệt đặt nhóm theo link mời, mỗi người dùng tài khoản riêng và gửi snapshot món; host chốt rồi thanh toán chung. Chính sách 3/5/10 người giảm 5/10/15%, trần 100.000đ, không cộng dồn mã giảm món. Giữ chọn chi nhánh tại checkout. Thêm badge giỏ nhẹ trên header desktop/mobile và giỏ có ảnh/giá/tóm tắt; tối ưu đọc trang chủ theo lô, User đăng nhập về /. Chi tiết use case/schema/validation và giới hạn tại docs/features/order-payment/GROUP_ORDERS_20261026.md.
+
+## 27/10 — chủ nhóm quyết định thanh toán
+
+Thanh xác nhận chủ nhóm quyết định trả toàn bộ hoặc COD chia phần; host đặt ngay, không đợi từng người xác nhận thanh toán. Entry trang chủ, tham gia trước/chọn món trong nhóm, một đơn chung và bill từng phần sau giảm. Contract ưu tiên bản GROUP_JOIN_FIRST_COD_20261027.md trong docs/features/order-payment; các mô tả nhóm trước đó được thay thế về luồng và thanh toán.
+
+
+Cập nhật 27/10/2026 theo yêu cầu Thanh: chia phần hỗ trợ cả COD và QR, chủ nhóm đặt ngay, thành viên nhận popup thông báo và xem phần tiền/QR của mình. Chi tiết và giới hạn đối soát ở docs/features/order-payment/GROUP_SPLIT_QR_POPUP_20261027.md.
+
+
+Cập nhật 27/10/2026 theo yêu cầu Thanh: QR cho đơn mới dùng LOCAL_QR (ví giả lập, không tiền thật), local_qr_payments theo từng người. Đơn nhóm chia phần chỉ được CONFIRMED khi tất cả phần thanh toán thành công. Hướng dẫn/contract mới thay phần QR chuyển khoản trước đó: docs/features/order-payment/LOCAL_QR_WALLET_20261027.md.
+
+
+Cập nhật 27/10/2026: hủy và hết hạn có popup riêng cho thành viên; mã nhóm/host/time/status và badge Chủ nhóm. Nhãn QR trung tính, cơ chế nội bộ không đổi. Xem docs/features/order-payment/GROUP_LIFECYCLE_20261027.md.

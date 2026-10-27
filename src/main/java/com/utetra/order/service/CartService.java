@@ -83,7 +83,8 @@ public class CartService {
   }
 
   private Map<String,Object> addLocked(Actor actor,Item item) { return addLocked(actor,item,false); }
-  private Map<String, Object> addLocked(Actor actor, Item item,boolean draft) {
+  private Map<String, Object> addLocked(Actor actor, Item item,boolean draft) {return addLocked(actor,item,draft,true);}
+  private Map<String, Object> addLocked(Actor actor, Item item,boolean draft,boolean render) {
     var variant = draft ? refs.one("select p.store_id from products p join product_variants v on v.product_id=p.id where v.id=?",item.variantId()) : refs.saleVariant(item.variantId(), true, clock);
     long store = CommerceReferenceRepository.number(variant, "store_id");
     Cart cart = data.cart(actor.userId(), true);
@@ -96,6 +97,7 @@ public class CartService {
       data.save(cart);
       data.flush();
     }
+    editable(cart);
     var lines = data.cartItems(cart.id);
     if (!draft && !cart.storeId.equals(store) && !lines.isEmpty())
       throw OrderProblem.conflict("Giỏ thuộc cửa hàng khác; hãy xóa hoặc xác nhận đổi cửa hàng.");
@@ -125,20 +127,16 @@ public class CartService {
     } else {
       if (line.quantity + item.quantity() > 20)
         throw OrderProblem.invalid("Mỗi dòng tối đa 20 ly.");
-      line.quantity += item.quantity();
+      line.quantity += item.quantity();line.selected=true;
     }
     touch(cart);
-    return view(actor);
+    return render?view(actor):Map.of();
   }
 
+  private void editable(Cart cart) { if(cart.groupOrderId!=null){var group=data.require(GroupOrder.class,cart.groupOrderId,false);if(java.util.Set.of("CANCELLED","EXPIRED").contains(group.status)||!group.expiresAt.isAfter(clock.instant()))cart.groupOrderId=null;else throw OrderProblem.conflict("Giỏ nhóm đã chốt. Mở đơn nhóm để xử lý trước khi sửa giỏ.");} }
+
   private void touch(Cart cart) {
-    cart.updatedAt =
-        cart.updatedAt == null
-            ? clock.instant()
-            : clock.instant().isAfter(cart.updatedAt)
-                ? clock.instant()
-                : cart.updatedAt.plusNanos(1000);
-    data.flush();
+    cart.updatedAt=clock.instant();cart.activityRevision++;data.flush();
   }
 
   public Map<String, Object> itemView(Object id, Item item) {
@@ -178,16 +176,45 @@ public class CartService {
     return view;
   }
 
+  private Map<String,Object> selectedView(CartItem item,Map<String,Object> view){view.put("selected",item.selected);return view;}
+  @Transactional(isolation=Isolation.READ_COMMITTED)
+  public Map<String,Object> select(Actor actor,Set<Long> ids,long version){
+    support.buyer(actor);refs.user(actor.userId(),true);var cart=data.cart(actor.userId(),true);
+    if(cart==null||cart.version!=version)throw OrderProblem.conflict("Giỏ đã đổi hoặc hết hạn. Hãy tải lại.");editable(cart);
+    var items=data.cartItems(cart.id);if(!items.stream().map(i->i.id).collect(java.util.stream.Collectors.toSet()).containsAll(ids))throw OrderProblem.invalid("Món được chọn không thuộc giỏ.");
+    items.forEach(item->item.selected=ids.contains(item.id));touch(cart);return view(actor);
+  }
+  @Transactional
+  public Map<String,Object> applyGuestExclusions(Actor actor,Set<String> unselected){
+    support.buyer(actor);refs.user(actor.userId(),true);var cart=data.cart(actor.userId(),true);if(cart==null)return view(actor);editable(cart);
+    for(var item:data.cartItems(cart.id))if(unselected.contains(item.configurationHash))item.selected=false;
+    touch(cart);return view(actor);
+  }
+  @Transactional
+  public void expireInactive(){
+    for(var row:refs.list("select user_id from carts where updated_at<=? order by user_id limit 100",clock.instant().minus(com.utetra.order.repository.OrderDataRepository.CART_TTL))){
+      long user=CommerceReferenceRepository.number(row,"user_id");refs.one("select id from users where id=? for update",user);data.cart(user,true);
+    }
+  }
+
+  @Transactional(readOnly=true)
+  public Map<String,Object> count(Actor actor) {
+    support.buyer(actor);
+    var rows=refs.one("select count(i.id) line_count,coalesce(sum(i.quantity),0) cups from carts c left join cart_items i on i.cart_id=c.id where c.user_id=? and c.updated_at>?",actor.userId(),clock.instant().minus(com.utetra.order.repository.OrderDataRepository.CART_TTL));
+    return Map.of("count",rows.get("line_count"),"cups",rows.get("cups"));
+  }
+
   @Transactional(readOnly = true)
   public Map<String, Object> view(Actor actor) {
     support.buyer(actor);
     Cart cart = data.cart(actor.userId(), false);
-    if (cart == null) return Map.of("items", List.of(), "version", 0);
+    if (cart == null) return Map.of("items", List.of(), "version", 0,"expiresAt","");
     var items =
         data.cartItems(cart.id).stream()
             .map(
                 l ->
-                    itemView(
+                    selectedView(l,
+                        itemView(
                         l.id,
                         new Item(
                             l.variantId,
@@ -197,9 +224,9 @@ public class CartService {
                                 .map(topping -> topping.toppingId)
                                 .toList(),
                             l.quantity,
-                            l.note)))
+                            l.note))))
             .toList();
-    return Map.of("storeId", cart.storeId, "version", cart.version, "items", items);
+    return Map.of("storeId", cart.storeId, "version", cart.version, "items", items,"groupOrderId",cart.groupOrderId==null?0:cart.groupOrderId,"expiresAt",data.expiresAt(cart).toString(),"serverNow",clock.instant().toString());
   }
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -210,6 +237,7 @@ public class CartService {
     Cart cart = data.cart(actor.userId(), true);
     if (cart == null) throw OrderProblem.missing();
     if (cart.version != version) throw OrderProblem.conflict("Giỏ đã thay đổi, hãy tải lại.");
+    editable(cart);
     CartItem item = data.require(CartItem.class, itemId, false);
     if (!item.cartId.equals(cart.id)) throw OrderProblem.missing();
     if (remove) {
@@ -234,10 +262,17 @@ public class CartService {
     refs.user(actor.userId(), true);
     Cart cart = data.cart(actor.userId(), true);
     if (cart != null) {
+      editable(cart);
       data.clear(cart);
       touch(cart);
     }
     return view(actor);
+  }
+
+  @Transactional(isolation=Isolation.READ_COMMITTED)
+  public void replaceDraftForGroup(Actor actor,List<Item> items) {
+    support.buyer(actor);refs.user(actor.userId(),true);clear(actor);
+    for(var item:items)addLocked(actor,validateDraft(item),true,false);
   }
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -245,11 +280,11 @@ public class CartService {
     support.buyer(actor); refs.user(actor.userId(),true);
     if(storeId<=0 || expectedVersion<0)throw OrderProblem.invalid("Chi nhánh hoặc phiên bản giỏ không hợp lệ.");
     var cart=data.cart(actor.userId(),true);
-    if(cart==null || data.cartItems(cart.id).isEmpty())throw OrderProblem.invalid("Giỏ hàng trống.");
+    if(cart==null || data.selectedItems(cart.id).isEmpty())throw OrderProblem.invalid("Hãy tick chọn ít nhất một món trước khi thanh toán.");
     if(cart.version!=expectedVersion)throw OrderProblem.conflict("Giỏ đã thay đổi. Vui lòng tải lại trước khi chọn chi nhánh.");
     refs.store(storeId,true);
     List<Item> mapped=new ArrayList<>();Map<Long,Integer> quantities=new TreeMap<>();
-    for(var line:data.cartItems(cart.id)) {
+    for(var line:data.selectedItems(cart.id)) {
       var candidates=refs.list("select v.id,p.name from product_variants source join products original on original.id=source.product_id join stores os on os.id=original.store_id join stores target on target.id=? and target.owner_user_id=os.owner_user_id join products p on p.store_id=target.id and p.category_id=original.category_id and (p.id=original.id or (original.catalog_key is not null and p.catalog_key=original.catalog_key)) join product_variants v on v.product_id=p.id and v.size_name=source.size_name where source.id=? and p.is_active=true and p.is_available=true and v.is_active=true order by p.id,v.id",storeId,line.variantId);
       if(candidates.size()!=1)throw OrderProblem.conflict("Chi nhánh chưa phục vụ đủ món hoặc size đã chọn. Vui lòng chọn chi nhánh khác hoặc sửa giỏ.");
       long variant=CommerceReferenceRepository.number(candidates.getFirst(),"id");
@@ -263,9 +298,13 @@ public class CartService {
       if(v.get("stock_quantity")!=null && CommerceReferenceRepository.number(v,"stock_quantity")<entry.getValue())throw OrderProblem.conflict("Chi nhánh không còn đủ số lượng cho size đã chọn.");
     }
     // Validate the full replacement before deleting anything; transaction rollback preserves the original cart.
-    data.clear(cart);data.flush();cart.storeId=storeId;
-    for(Item item:mapped)addLocked(actor,item,false);
-    touch(cart);return view(actor);
+    var groupId=cart.groupOrderId;cart.groupOrderId=null;
+    Set<String> skipped=data.cartItems(cart.id).stream().filter(i->!i.selected).map(i->i.configurationHash).collect(java.util.stream.Collectors.toSet());
+    if(mapped.stream().map(this::configuration).anyMatch(skipped::contains))throw OrderProblem.conflict("Món được chọn trùng cấu hình với món chưa chọn tại chi nhánh này. Hãy chọn cả hai dòng hoặc đổi chi nhánh.");
+    for(var line:data.selectedItems(cart.id)){for(var top:data.cartToppings(line.id))data.remove(top);data.remove(line);}
+    data.flush();cart.storeId=storeId;
+    for(Item item:mapped)addLocked(actor,item,false,false);
+    cart.groupOrderId=groupId;touch(cart);return view(actor);
   }
 
   @Transactional(isolation = Isolation.READ_COMMITTED)

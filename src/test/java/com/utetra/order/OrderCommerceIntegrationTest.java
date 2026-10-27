@@ -28,7 +28,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = {"features.shipper.enabled=true","payment.vnpay.enabled=true",
+    properties = {"payment.bank.enabled=true","features.shipper.enabled=true","payment.vnpay.enabled=true",
       "payment.vnpay.tmn-code=TESTCODE","payment.vnpay.hash-secret=test-only-merchant-secret-1234567890",
       "payment.vnpay.return-url=https://merchant.example.invalid/payments/vnpay/return",
       "payment.vnpay.ipn-url=https://merchant.example.invalid/payments/vnpay/ipn"})
@@ -36,11 +36,13 @@ import org.springframework.test.context.ActiveProfiles;
 @Import(OrderCommerceIntegrationTest.TimeConfiguration.class)
 class OrderCommerceIntegrationTest {
   @Autowired CartService carts;
+  @Autowired GroupOrderService groups;
   @Autowired GuestCartService guests;
   @Autowired CheckoutService checkout;
   @Autowired OrderWorkflowService workflow;
   @Autowired OperationsService operations;
   @Autowired BankTransferService bankTransfers;
+  @Autowired LocalQrPaymentService localQr;
   @Autowired CheckoutAvailabilityService availability;
   @Autowired com.utetra.identity.AuthService authentication;
   @Autowired com.utetra.service.SessionIdentityService currentIdentity;
@@ -273,6 +275,202 @@ class OrderCommerceIntegrationTest {
         time.instant());
   }
 
+  String groupWithThree(){return groupWithThree("HOST");}
+  String groupWithThree(String mode) {
+    String token=groups.create(BUYER,mode).get("token").toString();
+    groups.addItem(BUYER,token,groupVersion(token),item(1));groups.confirm(BUYER,token,groupVersion(token));
+    for(var actor:List.of(BUYER_B,VENDOR)){groups.join(actor,token,groupVersion(token));groups.addItem(actor,token,groupVersion(token),item(1));groups.confirm(actor,token,groupVersion(token));}
+    return token;
+  }
+  long groupVersion(String token){return ((Number)groups.view(BUYER,token).get("version")).longValue();}
+  @Test void groupDiscountTiersAndCapUseParticipantsRatherThanCups() {
+    assertThat(GroupOrderService.discount(new BigDecimal("2000000"),2)).isEqualByComparingTo("0");
+    assertThat(GroupOrderService.discount(new BigDecimal("120000"),3)).isEqualByComparingTo("6000");
+    assertThat(GroupOrderService.discount(new BigDecimal("120000"),5)).isEqualByComparingTo("12000");
+    assertThat(GroupOrderService.discount(new BigDecimal("120000"),10)).isEqualByComparingTo("18000");
+    assertThat(GroupOrderService.discount(new BigDecimal("2000000"),10)).isEqualByComparingTo("100000");
+  }
+  @Test void groupSnapshotsAreUniqueAndVersionedAndHostOnlyCanLock() {
+    String token=groupWithThree();long version=groupVersion(token);
+    assertThatThrownBy(()->groups.lock(BUYER_B,token,version)).isInstanceOf(OrderProblem.class);
+    groups.join(BUYER_B,token,version);
+    assertThat(groups.view(BUYER,token).get("participants")).isEqualTo(3);
+    assertThatThrownBy(()->groups.lock(BUYER,token,version)).isInstanceOf(OrderProblem.class);
+    groups.leave(BUYER_B,token,groupVersion(token));
+    assertThat(groups.view(BUYER,token).get("participants")).isEqualTo(2);
+    assertThatThrownBy(()->groups.view(ADMIN,token)).isInstanceOf(OrderProblem.class);
+  }
+  @Test void groupCheckoutAppliesDiscountAndKeepsIdempotencyAndMemberCarts() {
+    String token=groupWithThree();groups.lock(BUYER,token,groupVersion(token));
+    assertThat(carts.count(BUYER)).containsEntry("count",1L).containsEntry("cups",3L);
+    assertThat(carts.count(BUYER_B)).containsEntry("cups",0L);
+    assertThatThrownBy(()->carts.addDraft(BUYER,item(1))).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->carts.clear(BUYER)).isInstanceOf(OrderProblem.class);
+    long cv=((Number)carts.view(BUYER).get("version")).longValue();carts.selectBranch(BUYER,1,cv);
+    var key=UUID.randomUUID().toString();var draft=new Checkout(key,1,1,1,null,null,0,"","","COD");
+    var quote=checkout.quote(BUYER,draft);assertThat(new BigDecimal(quote.get("productDiscount").toString())).isEqualByComparingTo("6000");
+    var req=new Checkout(key,1,1,1,null,null,0,quote.get("hash").toString(),"","COD");var order=checkout.checkout(BUYER,req);
+    assertThat(order.get("groupParticipants")).isEqualTo(3);assertThat(new BigDecimal(order.get("groupDiscount").toString())).isEqualByComparingTo("6000");
+    assertThat(checkout.checkout(BUYER,req).get("id")).isEqualTo(order.get("id"));
+    assertThat(groups.view(BUYER,token).get("status")).isEqualTo("ORDERED");
+    groups.cancel(BUYER,token,groupVersion(token));assertThat(groups.view(BUYER,token)).containsEntry("status","CANCELLED");
+    carts.addDraft(BUYER,item(1));
+  }
+  @Test void groupExpiryAndCancelReleaseCartWithoutDiscount() {
+    String token=groupWithThree();groups.lock(BUYER,token,groupVersion(token));
+    time.advance(Duration.ofHours(25));
+    var draft=new Checkout(UUID.randomUUID().toString(),1,1,1,null,null,0,"","","COD");
+    assertThatThrownBy(()->checkout.quote(BUYER,draft)).isInstanceOf(OrderProblem.class);
+    groups.cancel(BUYER,token,groupVersion(token));carts.clear(BUYER);
+    assertThat(carts.count(BUYER)).containsEntry("count",0L);
+  }
+  @Test void groupRejectsOverFiftyCupsWithoutAddingItems() {
+    String token=groups.create(BUYER).get("token").toString();groups.addItem(BUYER,token,groupVersion(token),item(20));
+    groups.join(BUYER_B,token,groupVersion(token));groups.addItem(BUYER_B,token,groupVersion(token),item(20));groups.join(VENDOR,token,groupVersion(token));
+    assertThatThrownBy(()->groups.addItem(VENDOR,token,groupVersion(token),item(20))).isInstanceOf(OrderProblem.class);
+    assertThat(groups.view(BUYER,token).get("memberCount")).isEqualTo(3);assertThat(groups.view(BUYER,token).get("participants")).isEqualTo(2);
+  }
+
+  @Test void concurrentGroupContributionsRejectStaleVersionInsteadOfDuplicatingMembers() throws Exception {
+    carts.addDraft(BUYER,item(1));carts.addDraft(BUYER_B,item(1));var created=groups.create(BUYER);String token=created.get("token").toString();long version=groupVersion(token);
+    try(var pool=Executors.newFixedThreadPool(2)){
+      var tasks=pool.invokeAll(List.of((Callable<Boolean>)()->{try{groups.join(BUYER_B,token,version);return true;}catch(OrderProblem ex){return false;}},()->{try{groups.join(BUYER_B,token,version);return true;}catch(OrderProblem ex){return false;}}));
+      assertThat(tasks.stream().filter(f->{try{return f.get();}catch(Exception e){throw new RuntimeException(e);}}).count()).isEqualTo(1);
+    }
+    assertThat(groups.view(BUYER,token).get("memberCount")).isEqualTo(2);
+  }
+  @Test void groupDiscountCannotStackProductVoucherAndCancelRemovesGroupDraft() {
+    String token=groupWithThree();groups.lock(BUYER,token,groupVersion(token));
+    jdbc.update("insert into promotions(id,created_by,scope,kind,code,name,percent,max_discount,min_order,usage_limit,per_user_limit,starts_at,ends_at,is_active,funded_by,created_at,updated_at,version) values(1,4,'GLOBAL','PRODUCT_PERCENT','GROUP_CONFLICT','Test',10,100000,0,10,10,?,?,true,'APP',?,?,0)",time.instant().minusSeconds(60),time.instant().plusSeconds(3600),time.instant(),time.instant());
+    var req=new Checkout(UUID.randomUUID().toString(),1,1,1,1L,null,0,"","","COD");
+    assertThatThrownBy(()->checkout.quote(BUYER,req)).isInstanceOf(OrderProblem.class).hasMessageContaining("không cộng dồn");
+    groups.cancel(BUYER,token,groupVersion(token));
+    var normal=new Checkout(UUID.randomUUID().toString(),1,1,1,null,null,0,"","","COD");
+    assertThatThrownBy(()->checkout.quote(BUYER,normal)).isInstanceOf(OrderProblem.class);
+    assertThat(carts.count(BUYER)).containsEntry("cups",0L);
+  }
+
+  @Test void selectedLinesOnlyAreQuotedAndCheckedOutAndSkippedLinesRemain() {
+    carts.addDraft(BUYER,item(1));var cart=carts.addDraft(BUYER,new Item(1,0,0,List.of(),2,"Keep for later"));
+    var items=(List<Map<String,Object>>)cart.get("items");long chosen=((Number)items.getFirst().get("id")).longValue();
+    carts.select(BUYER,Set.of(chosen),((Number)cart.get("version")).longValue());
+    cart=carts.view(BUYER);carts.selectBranch(BUYER,1,((Number)cart.get("version")).longValue());
+    String key=UUID.randomUUID().toString();var draft=new Checkout(key,1,1,1,null,null,0,"","","COD");var quote=checkout.quote(BUYER,draft);
+    assertThat(new BigDecimal(quote.get("subtotal").toString())).isEqualByComparingTo("40000");
+    checkout.checkout(BUYER,new Checkout(key,1,1,1,null,null,0,quote.get("hash").toString(),"","COD"));
+    var remaining=(List<Map<String,Object>>)carts.view(BUYER).get("items");assertThat(remaining).hasSize(1);assertThat(remaining.getFirst()).containsEntry("note","Keep for later").containsEntry("selected",false);
+    assertThatThrownBy(()->checkout.quote(BUYER,draft)).isInstanceOf(OrderProblem.class);
+  }
+  @Test void cartExpiresAtOneHourAndNewAdditionStartsFreshWithoutChangingOrders() {
+    var order=createBank();long count=jdbc.queryForObject("select count(*) from orders",Long.class);
+    carts.addDraft(BUYER,item(1));time.advance(Duration.ofMinutes(59));assertThat((List<?>)carts.view(BUYER).get("items")).hasSize(1);
+    time.advance(Duration.ofMinutes(1));assertThat((List<?>)carts.view(BUYER).get("items")).isEmpty();assertThat(carts.count(BUYER)).containsEntry("count",0L);
+    carts.expireInactive();assertThat(jdbc.queryForObject("select count(*) from cart_items",Long.class)).isZero();assertThat(jdbc.queryForObject("select count(*) from orders",Long.class)).isEqualTo(count);
+    carts.addDraft(BUYER,item(2));assertThat(carts.count(BUYER)).containsEntry("cups",2L);assertThat(workflow.read(BUYER,id(order)).get("status")).isEqualTo("NEW");
+  }
+  @Test void guestExpirySelectionAndMutationDeadlineAreServerOwned() {
+    var guest=new GuestCartService.Snapshot();guests.addDraft(guest,item(1));guests.addDraft(guest,new Item(1,0,0,List.of(),1,"Later"));
+    String first=carts.configuration(item(1));guests.select(guest,Set.of(first),guest.version);
+    var rows=(List<Map<String,Object>>)guests.view(guest).get("items");assertThat(rows.stream().filter(r->Boolean.TRUE.equals(r.get("selected"))).count()).isEqualTo(1);
+    time.advance(Duration.ofMinutes(59));guests.change(guest,first,2,guest.version,false);time.advance(Duration.ofMinutes(2));assertThat((List<?>)guests.view(guest).get("items")).hasSize(2);
+    time.advance(Duration.ofMinutes(58));assertThat((List<?>)guests.view(guest).get("items")).isEmpty();assertThat(guest.unselected).isEmpty();
+  }
+  @Test void selectionRejectsForeignItemsAndStaleVersionsAndLockedGroups() {
+    var current=carts.addDraft(BUYER,item(1));long version=((Number)current.get("version")).longValue();
+    assertThatThrownBy(()->carts.select(BUYER,Set.of(999999L),version)).isInstanceOf(OrderProblem.class);
+    carts.select(BUYER,Set.of(),version);assertThatThrownBy(()->carts.select(BUYER,Set.of(),version)).isInstanceOf(OrderProblem.class);
+    carts.clear(BUYER);String token=groupWithThree();groups.lock(BUYER,token,groupVersion(token));var locked=carts.view(BUYER);
+    assertThatThrownBy(()->carts.select(BUYER,Set.of(),((Number)locked.get("version")).longValue())).isInstanceOf(OrderProblem.class);
+  }
+
+  @Test void joinFirstAllowsEmptyCartAndOnlyConfirmedPeopleCountForDiscount() {
+    String token=groups.create(BUYER).get("token").toString();groups.join(BUYER_B,token,groupVersion(token));
+    assertThat(groups.view(BUYER,token)).containsEntry("memberCount",2).containsEntry("participants",0);
+    assertThatThrownBy(()->groups.addItem(VENDOR,token,groupVersion(token),item(1))).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->groups.lock(BUYER,token,groupVersion(token))).isInstanceOf(OrderProblem.class);
+    groups.addItem(BUYER,token,groupVersion(token),item(1));groups.confirm(BUYER,token,groupVersion(token));
+    assertThat(groups.view(BUYER,token).get("participants")).isEqualTo(1);
+    groups.addItem(BUYER,token,groupVersion(token),new Item(1,0,0,List.of(),1,""));assertThat(groups.view(BUYER,token).get("participants")).isEqualTo(1);
+    assertThat(carts.count(BUYER)).containsEntry("count",0L);
+  }
+  @Test void hostChoosesCodSplitAndPlacesOneOrderWithoutMemberPaymentConfirmation() {
+    jdbc.update("update products set base_price=21000 where id=1");String token=groups.create(BUYER,"INDIVIDUAL").get("token").toString();
+    for(var actor:List.of(BUYER,BUYER_B,VENDOR)){if(!actor.equals(BUYER))groups.join(actor,token,groupVersion(token));groups.addItem(actor,token,groupVersion(token),new Item(1,50,50,List.of(),1,""));}
+    assertThatThrownBy(()->groups.paymentMode(BUYER_B,token,groupVersion(token),"HOST")).isInstanceOf(OrderProblem.class);
+    groups.lock(BUYER,token,groupVersion(token));var cart=carts.view(BUYER);carts.selectBranch(BUYER,1,((Number)cart.get("version")).longValue());
+    String key=UUID.randomUUID().toString();var draft=new Checkout(key,1,1,1,null,null,0,"","","COD");var quote=checkout.quote(BUYER,draft);
+    assertThat(new BigDecimal(quote.get("productDiscount").toString())).isEqualByComparingTo("3900");
+    assertThat(checkout.quote(BUYER,new Checkout(UUID.randomUUID().toString(),1,1,1,null,null,0,"","","BANK_TRANSFER"))).containsKey("hash");
+    var order=checkout.checkout(BUYER,new Checkout(key,1,1,1,null,null,0,quote.get("hash").toString(),"","COD"));
+    assertThat(jdbc.queryForObject("select count(*) from orders",Long.class)).isEqualTo(1);
+    assertThat(jdbc.queryForObject("select payment_status from orders",String.class)).isEqualTo("UNPAID");
+    var rows=jdbc.queryForList("select billed_subtotal,discount_share,shipping_share,amount_due from group_order_members order by id");assertThat(rows).hasSize(3);
+    for(var row:rows){assertThat(new BigDecimal(row.get("billed_subtotal").toString())).isEqualByComparingTo("26000");assertThat(new BigDecimal(row.get("discount_share").toString())).isEqualByComparingTo("1300");assertThat(new BigDecimal(row.get("amount_due").toString())).isEqualByComparingTo("29700");}
+    assertThat(jdbc.queryForObject("select sum(amount_due) from group_order_members",BigDecimal.class)).isEqualByComparingTo(order.get("total").toString());
+    assertThat(groups.view(BUYER,token).get("status")).isEqualTo("ORDERED");
+    assertThatThrownBy(()->groups.paymentMode(BUYER,token,groupVersion(token),"HOST")).isInstanceOf(OrderProblem.class);
+  }
+
+  private long localGroupOrder() {
+    String token=groupWithThree();groups.paymentMode(BUYER,token,groupVersion(token),"INDIVIDUAL");groups.lock(BUYER,token,groupVersion(token));var cart=carts.view(BUYER);carts.selectBranch(BUYER,1,((Number)cart.get("version")).longValue());String key=UUID.randomUUID().toString();var draft=new Checkout(key,1,1,1,null,null,0,"","","LOCAL_QR");var quote=checkout.quote(BUYER,draft);return ((Number)checkout.checkout(BUYER,new Checkout(key,1,1,1,null,null,0,quote.get("hash").toString(),"","LOCAL_QR")).get("id")).longValue();
+  }
+  private String localToken(Map<String,Object> payment){return payment.get("walletUrl").toString().split("#token=")[1];}
+  @Test void groupCardsDistinguishMultipleGroupsByCodeHostTimeAndStatus() {
+    String first=groups.create(BUYER).get("token").toString(),second=groups.create(BUYER).get("token").toString();var all=groups.mine(BUYER);assertThat(all).hasSize(2);assertThat(all.get(0).get("code")).isNotEqualTo(all.get(1).get("code"));for(var card:all)assertThat(card).containsKeys("title","hostName","memberCount","createdLabel","statusLabel");assertThat(first).isNotEqualTo(second);
+  }
+  @Test void cancelledGroupRemovesActiveMembershipAndListButKeepsLifecycleNotice() {
+    String token=groups.create(BUYER).get("token").toString();groups.join(BUYER_B,token,groupVersion(token));groups.cancel(BUYER,token,groupVersion(token));assertThat(groups.view(BUYER_B,token)).containsEntry("joined",false).containsEntry("memberCount",0);assertThat((List<?>)groups.view(BUYER_B,token).get("members")).isEmpty();assertThat(groups.mine(BUYER_B)).noneSatisfy(group->assertThat(group).containsEntry("token",token));assertThat(groups.lifecycleNotices(BUYER_B)).anySatisfy(notice->assertThat(notice).containsEntry("token",token));
+  }
+  @Test void onlyHostCanCancelGroupAndAllMembersReceiveLifecycleNotice() {
+    String token=groups.create(BUYER).get("token").toString();groups.join(BUYER_B,token,groupVersion(token));assertThatThrownBy(()->groups.cancel(BUYER_B,token,groupVersion(token))).isInstanceOf(OrderProblem.class);groups.cancel(BUYER,token,groupVersion(token));assertThat(groups.view(BUYER_B,token)).containsEntry("status","CANCELLED");assertThat(groups.lifecycleNotices(BUYER_B)).anySatisfy(notice->assertThat(notice).containsEntry("token",token).containsEntry("status","CANCELLED"));assertThat(groups.lifecycleNotices(BUYER)).hasSize(1);assertThat(groups.lifecycleNotices(VENDOR)).isEmpty();assertThatThrownBy(()->groups.addItem(BUYER_B,token,groupVersion(token),item(1))).isInstanceOf(OrderProblem.class);
+  }
+  @Test void openGroupExpiryIsVisibleToHostAndMembersAndCannotJoinOrPick() {
+    String token=groups.create(BUYER).get("token").toString();groups.join(BUYER_B,token,groupVersion(token));time.advance(Duration.ofHours(25));assertThat(groups.lifecycleNotices(BUYER_B)).anySatisfy(notice->assertThat(notice).containsEntry("status","EXPIRED"));assertThat(groups.lifecycleNotices(BUYER)).hasSize(1);groups.expireGroups();assertThat(groups.view(BUYER_B,token)).containsEntry("status","EXPIRED").containsEntry("expired",true);assertThatThrownBy(()->groups.join(VENDOR,token,groupVersion(token))).isInstanceOf(OrderProblem.class);assertThatThrownBy(()->groups.addItem(BUYER,token,groupVersion(token),item(1))).isInstanceOf(OrderProblem.class);
+  }
+  @Test void lockedGroupCartExpiryNotifiesAndHostCancellationClearsOnlyGroupCart() {
+    String token=groupWithThree();groups.lock(BUYER,token,groupVersion(token));time.advance(Duration.ofMinutes(61));assertThat(groups.lifecycleNotices(BUYER_B)).anySatisfy(notice->assertThat(notice).containsEntry("status","EXPIRED"));carts.expireInactive();assertThat(groups.view(BUYER,token)).containsEntry("status","EXPIRED");assertThat((List<?>)carts.view(BUYER).get("items")).isEmpty();
+  }
+  @Test void hostCanCancelPlacedUnconfirmedGroupAndPaymentsAreBlocked() {
+    long order=localGroupOrder();String token=jdbc.queryForObject("select invite_token from group_orders where order_id=?",String.class,order);var payment=localQr.merchant(BUYER_B,order);groups.cancel(BUYER,token,groupVersion(token));assertThat(jdbc.queryForObject("select status from orders where id=?",String.class,order)).isEqualTo("CANCELLED");assertThat(groups.lifecycleNotices(BUYER_B)).anySatisfy(notice->assertThat(notice).containsEntry("status","CANCELLED"));assertThatThrownBy(()->localQr.confirm(payment.get("id").toString(),localToken(payment),new BigDecimal(payment.get("amount").toString()),true)).isInstanceOf(OrderProblem.class);
+  }
+  @Test void hostCannotCancelGroupAfterStoreConfirmation() {
+    long order=localGroupOrder();String token=jdbc.queryForObject("select invite_token from group_orders where order_id=?",String.class,order);for(var actor:List.of(BUYER,BUYER_B,VENDOR)){var payment=localQr.merchant(actor,order);localQr.confirm(payment.get("id").toString(),localToken(payment),new BigDecimal(payment.get("amount").toString()),true);}workflow.transition(VENDOR,order,new Transition("CONFIRMED",version(order),"",false));assertThatThrownBy(()->groups.cancel(BUYER,token,groupVersion(token))).isInstanceOf(OrderProblem.class);assertThat(groups.view(BUYER,token)).containsEntry("status","ORDERED");
+  }
+  @Test void localQrRequiresEveryMemberBeforeOrderCanBeConfirmed() {
+    long order=localGroupOrder();assertThat(jdbc.queryForObject("select count(*) from local_qr_payments",Long.class)).isEqualTo(3);
+    assertThatThrownBy(()->workflow.transition(VENDOR,order,new Transition("CONFIRMED",version(order),"",false))).isInstanceOf(OrderProblem.class);
+    for(var actor:List.of(BUYER,BUYER_B)) {var payment=localQr.merchant(actor,order);localQr.confirm(payment.get("id").toString(),localToken(payment),new BigDecimal(payment.get("amount").toString()),true);assertThat(jdbc.queryForObject("select payment_status from orders where id=?",String.class,order)).isEqualTo("UNPAID");assertThatThrownBy(()->workflow.transition(VENDOR,order,new Transition("CONFIRMED",version(order),"",false))).isInstanceOf(OrderProblem.class);}
+    var last=localQr.merchant(VENDOR,order);localQr.confirm(last.get("id").toString(),localToken(last),new BigDecimal(last.get("amount").toString()),true);assertThat(jdbc.queryForObject("select payment_status from orders where id=?",String.class,order)).isEqualTo("PAID");workflow.transition(VENDOR,order,new Transition("CONFIRMED",version(order),"",false));assertThat(jdbc.queryForObject("select status from orders where id=?",String.class,order)).isEqualTo("CONFIRMED");
+  }
+  @Test void localQrRejectsWrongTokenAmountConsentAndUnauthorizedOwner() {
+    long order=localGroupOrder();var payment=localQr.merchant(BUYER,order);String id=payment.get("id").toString(),token=localToken(payment);BigDecimal amount=new BigDecimal(payment.get("amount").toString());
+    assertThatThrownBy(()->localQr.merchant(MANAGER,order)).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->localQr.confirm(id,"a".repeat(43),amount,true)).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->localQr.confirm(id,token,amount.add(BigDecimal.ONE),true)).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->localQr.confirm(id,token,amount,false)).isInstanceOf(OrderProblem.class);
+    assertThat(localQr.publicStatus(id,token)).containsEntry("state","PENDING");assertThat(jdbc.queryForObject("select payment_status from orders where id=?",String.class,order)).isEqualTo("UNPAID");
+  }
+  @Test void localQrRetriesAreIdempotentAndCannotForgeAggregatePaid() {
+    long order=localGroupOrder();var payment=localQr.merchant(BUYER,order);String id=payment.get("id").toString(),token=localToken(payment);var amount=new BigDecimal(payment.get("amount").toString());localQr.confirm(id,token,amount,true);localQr.confirm(id,token,amount,true);assertThat(jdbc.queryForObject("select count(*) from local_qr_payments where status='SUCCESS'",Long.class)).isEqualTo(1);jdbc.update("update orders set payment_status='PAID' where id=?",order);assertThatThrownBy(()->workflow.transition(VENDOR,order,new Transition("CONFIRMED",version(order),"",false))).isInstanceOf(OrderProblem.class);
+  }
+  @Test void localQrConcurrentSameShareIsSafeAndDoesNotCountTwice() throws Exception {
+    long order=localGroupOrder();var payment=localQr.merchant(BUYER,order);String id=payment.get("id").toString(),token=localToken(payment);var amount=new BigDecimal(payment.get("amount").toString());var pool=java.util.concurrent.Executors.newFixedThreadPool(2);var start=new java.util.concurrent.CountDownLatch(1);try{var tasks=new java.util.ArrayList<java.util.concurrent.Future<Map<String,Object>>>();for(int i=0;i<2;i++)tasks.add(pool.submit(()->{start.await();return localQr.confirm(id,token,amount,true);}));start.countDown();for(var task:tasks)assertThat(task.get(15,java.util.concurrent.TimeUnit.SECONDS)).containsEntry("state","SUCCESS");}finally{pool.shutdownNow();}assertThat(jdbc.queryForObject("select count(*) from local_qr_payments where status='SUCCESS'",Long.class)).isEqualTo(1);assertThat(jdbc.queryForObject("select payment_status from orders where id=?",String.class,order)).isEqualTo("UNPAID");
+  }
+  @Test void localQrExpiredCanRenewButCancelledCannotPay() {
+    long order=localGroupOrder();var payment=localQr.merchant(BUYER,order);String old=payment.get("id").toString(),token=localToken(payment);var amount=new BigDecimal(payment.get("amount").toString());time.advance(Duration.ofMinutes(31));assertThat(localQr.publicStatus(old,token)).containsEntry("state","EXPIRED");assertThatThrownBy(()->localQr.confirm(old,token,amount,true)).isInstanceOf(OrderProblem.class);var fresh=localQr.renew(BUYER,order);assertThat(fresh.get("id")).isNotEqualTo(old);assertThatThrownBy(()->localQr.publicStatus(old,token)).isInstanceOf(OrderProblem.class);workflow.cancel(BUYER,order,version(order),"Hủy đơn thử");assertThatThrownBy(()->localQr.confirm(fresh.get("id").toString(),localToken(fresh),amount,true)).isInstanceOf(OrderProblem.class);
+  }
+  @Test void localQrFullPaymentOnlyEmitsAggregateEventOnceAndCannotUseBankConfirm() {
+    long order=localGroupOrder();for(var actor:List.of(BUYER,BUYER_B,VENDOR)){var payment=localQr.merchant(actor,order);localQr.confirm(payment.get("id").toString(),localToken(payment),new BigDecimal(payment.get("amount").toString()),true);localQr.confirm(payment.get("id").toString(),localToken(payment),new BigDecimal(payment.get("amount").toString()),true);}assertThat(jdbc.queryForObject("select count(*) from order_status_history where event_type='LOCAL_QR_ALL_PAID'",Long.class)).isEqualTo(1);assertThatThrownBy(()->bankTransfers.confirm(ADMIN,order,new BankConfirmation("LOCAL-FAKE",new BigDecimal("1"),version(order)))).isInstanceOf(OrderProblem.class);
+  }
+  @Test void codSplitRoundingNeverAllocatesDiscountToFreeMember() {
+    jdbc.update("update products set base_price=0 where id=1");jdbc.update("update product_variants set extra_price=0 where id=1");jdbc.update("update toppings set price=41 where id=1");
+    jdbc.update("insert into toppings(id,name,price,is_active,created_at,updated_at) values(2,'Other',42,true,?,?)",time.instant(),time.instant());jdbc.update("insert into product_toppings(product_id,topping_id) values(1,2)");jdbc.update("insert into store_toppings(store_id,topping_id,is_available,created_at,updated_at) values(1,2,true,?,?)",time.instant(),time.instant());
+    String token=groups.create(BUYER,"INDIVIDUAL").get("token").toString();groups.addItem(BUYER,token,groupVersion(token),new Item(1,50,50,List.of(1L),1,""));
+    groups.join(BUYER_B,token,groupVersion(token));groups.addItem(BUYER_B,token,groupVersion(token),new Item(1,50,50,List.of(2L),1,""));groups.join(VENDOR,token,groupVersion(token));groups.addItem(VENDOR,token,groupVersion(token),new Item(1,50,50,List.of(),1,""));
+    groups.lock(BUYER,token,groupVersion(token));var key=UUID.randomUUID().toString();var draft=new Checkout(key,1,1,1,null,null,0,"","","COD");var quote=checkout.quote(BUYER,draft);checkout.checkout(BUYER,new Checkout(key,1,1,1,null,null,0,quote.get("hash").toString(),"","COD"));
+    assertThat(jdbc.queryForObject("select discount_share from group_order_members where user_id=2",BigDecimal.class)).isZero();assertThat(jdbc.queryForObject("select sum(discount_share) from group_order_members",BigDecimal.class)).isEqualByComparingTo("4");
+  }
+
   Item item(int quantity) {
     return new Item(1, 50, 50, List.of(1L), quantity, "No straw");
   }
@@ -452,7 +650,7 @@ class OrderCommerceIntegrationTest {
     var checkoutPage = http.exchange("/checkout?branch=1", HttpMethod.GET,
         new HttpEntity<>(browserHeaders(buyer)), String.class);
     assertThat(checkoutPage.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(checkoutPage.getBody()).contains("value=\"BANK_TRANSFER\"");
+    assertThat(checkoutPage.getBody()).contains("value=\"LOCAL_QR\"");
   }
 
   @Test

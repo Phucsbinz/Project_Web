@@ -1,0 +1,65 @@
+{
+  "demo_feedback": {
+    "reviews_updated": 90,
+    "comments_updated": 90,
+    "drinks": 30,
+    "notes": 90,
+    "scope": "Only known seeded boilerplate from demo authors on demo vendor products with matching DELIVERED/PAID purchase evidence",
+    "repeat_read_only_plan": {
+      "eligible": 0,
+      "changed": 0
+    },
+    "source_compile": "FeedbackCopy, SeedDemo, ShowcaseOrders compiled without running seed"
+  },
+  "typography": {
+    "family": "Be Vietnam Pro local; decorative wordmark remains Georgia",
+    "weights": [
+      400,
+      500,
+      600,
+      700
+    ],
+    "vietnamese_glyphs_verified_per_weight": 146,
+    "missing_glyphs": 0,
+    "ui_encoding_suspects": 0
+  },
+  "render_tests": {
+    "tests": 11,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": [
+      "CatalogViewTest (5)",
+      "BaselineViewTest (3)",
+      "IdentityViewTest (2)",
+      "IdentitySocketLifecycleTest (1)"
+    ]
+  },
+  "browser": {
+    "module_checks": 158,
+    "failures": 0,
+    "javascript_errors": 0,
+    "widths": [
+      1440,
+      390
+    ],
+    "coffee_popup": {
+      "checks": [
+        "reviews: product-specific coffee copy, no generic tea phrase, varied samples",
+        "comments: product-specific coffee copy, no generic tea phrase, varied samples",
+        "Popup typography and coffee comments at 1440px; title has accent clearance and no horizontal clipping",
+        "Popup typography and coffee comments at 390px; title has accent clearance and no horizontal clipping"
+      ],
+      "errors": [],
+      "scope": "Read-only live MySQL product feedback and popup; no cart/order/provider mutation"
+    }
+  },
+  "build": "verify passed; final CSS resources packaged after heading utility refinement",
+  "shared_ui": "one SiteMesh layout, 21 shared files",
+  "pushed": false,
+  "limits": [
+    "Demo comments are simulated, not real customer testimonials.",
+    "No real user-written feedback was targeted.",
+    "Render checks cover audited routes/viewports, not every device or browser."
+  ]
+}

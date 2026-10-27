@@ -5,7 +5,12 @@
     "category": "Trà sữa",
     "price": 39000,
     "description": "Ô long rang thơm hòa sữa béo dịu, trân châu đen dai mềm.",
-    "image": "/assets/images/menu/milk-tea.png"
+    "image": "/assets/images/menu/milk-tea.png",
+    "tasting_notes": [
+      "Ô long có mùi rang nhẹ, vị sữa dịu và trân châu dai mềm.",
+      "Vị ô long vẫn rõ sau lớp sữa, trân châu tạo cảm giác nhai vui miệng.",
+      "Món thiên về vị trà rang và sữa béo nhẹ, hợp khi muốn một ly trà sữa không quá nặng."
+    ]
   },
   {
     "slug": "matcha",
@@ -13,7 +18,12 @@
     "category": "Matcha & trà rang",
     "price": 49000,
     "description": "Matcha xanh mịn quyện sữa tươi, vị trà rõ và hậu ngọt thanh.",
-    "image": "/assets/images/menu/matcha.png"
+    "image": "/assets/images/menu/matcha.png",
+    "tasting_notes": [
+      "Matcha có vị chát nhẹ đặc trưng, sữa làm hậu vị mềm hơn.",
+      "Hương matcha rõ, vị trà xanh cân bằng với độ béo của sữa.",
+      "Món giữ được vị đắng nhẹ của matcha, hợp người thích trà xanh hơn vị ngọt đậm."
+    ]
   },
   {
     "slug": "peach-tea",
@@ -21,7 +31,12 @@
     "category": "Trà trái cây",
     "price": 45000,
     "description": "Trà đen ủ lạnh cùng đào, cam tươi và hương sả thanh mát.",
-    "image": "/assets/images/menu/peach-tea.png"
+    "image": "/assets/images/menu/peach-tea.png",
+    "tasting_notes": [
+      "Vị đào ngọt dịu đi cùng cam chua nhẹ và mùi sả thoảng.",
+      "Hương sả nổi lên sau vị đào, nền trà đen tạo hậu vị rõ hơn.",
+      "Cam và đào làm ly trà có vị chua ngọt dễ uống, mùi sả không quá gắt."
+    ]
   },
   {
     "slug": "lychee-tea",
@@ -29,7 +44,12 @@
     "category": "Trà trái cây",
     "price": 45000,
     "description": "Trà lài thơm nhẹ với vải mọng nước, thích hợp cho ngày nắng.",
-    "image": "/assets/images/menu/lychee-tea.png"
+    "image": "/assets/images/menu/lychee-tea.png",
+    "tasting_notes": [
+      "Hương lài nhẹ, vị vải ngọt thanh và dễ uống.",
+      "Vị vải rõ nhưng vẫn nhận ra nền trà lài ở hậu vị.",
+      "Món thiên về mùi hoa lài và vị ngọt của vải, phù hợp khi thích trà trái cây nhẹ."
+    ]
   },
   {
     "slug": "coffee",
@@ -37,7 +57,12 @@
     "category": "Cà phê",
     "price": 35000,
     "description": "Cà phê phin đậm đà cân bằng sữa đặc, đánh thức buổi sáng.",
-    "image": "/assets/images/menu/coffee.png"
+    "image": "/assets/images/menu/coffee.png",
+    "tasting_notes": [
+      "Cà phê có vị đắng rõ, sữa đặc làm ly nước béo và dịu hơn.",
+      "Vị cà phê rang vẫn nổi bật sau lớp sữa, hậu vị hơi đắng.",
+      "Cà phê và sữa đặc hòa khá cân bằng, hợp người thích cà phê sữa vị đậm."
+    ]
   },
   {
     "slug": "lotus-tea",
@@ -45,7 +70,12 @@
     "category": "Trà nguyên lá",
     "price": 49000,
     "description": "Trà sen thanh dịu với hạt sen bùi và lớp kem sữa mềm.",
-    "image": "/assets/images/menu/lotus-tea.png"
+    "image": "/assets/images/menu/lotus-tea.png",
+    "tasting_notes": [
+      "Hương sen thoảng nhẹ, lớp kem sữa làm vị trà mềm và béo hơn.",
+      "Nền trà có hậu vị thanh, kem sữa thêm độ béo mà không lấn hết mùi sen.",
+      "Món kết hợp mùi sen dịu với kem sữa, hợp khi muốn vị trà nhẹ nhàng."
+    ]
   },
   {
     "slug": "brown-sugar",
@@ -53,7 +83,12 @@
     "category": "Trà sữa",
     "price": 45000,
     "description": "Sữa tươi mát và đường đen thơm mật, thêm trân châu mềm.",
-    "image": "/assets/images/menu/brown-sugar.png"
+    "image": "/assets/images/menu/brown-sugar.png",
+    "tasting_notes": [
+      "Đường đen có mùi caramel rõ, sữa tươi béo nhẹ và trân châu dai.",
+      "Vị chính là sữa tươi và đường đen, trân châu tạo điểm nhấn khi uống.",
+      "Món khá thiên về vị ngọt của đường đen, hợp người thích sữa tươi cùng trân châu."
+    ]
   },
   {
     "slug": "taro",
@@ -61,7 +96,12 @@
     "category": "Trà sữa",
     "price": 45000,
     "description": "Khoai môn béo bùi kết hợp nền trà nhẹ, hương vị êm dịu.",
-    "image": "/assets/images/menu/taro.png"
+    "image": "/assets/images/menu/taro.png",
+    "tasting_notes": [
+      "Mùi khoai môn bùi, vị sữa béo và hậu trà khá nhẹ.",
+      "Vị khoai môn rõ hơn nền trà, cảm giác uống mềm và bùi.",
+      "Món thiên về vị khoai môn cùng sữa, phù hợp khi muốn đổi khỏi trà sữa truyền thống."
+    ]
   },
   {
     "slug": "thai-tea",
@@ -69,7 +109,12 @@
     "category": "Trà sữa",
     "price": 39000,
     "description": "Trà Thái màu hổ phách, hương trà rõ hòa sữa thơm béo.",
-    "image": "/assets/images/menu/thai-tea.png"
+    "image": "/assets/images/menu/thai-tea.png",
+    "tasting_notes": [
+      "Trà Thái đỏ có mùi đặc trưng, vị trà đậm đi cùng sữa béo.",
+      "Hương trà Thái rõ ngay khi uống, hậu vị vẫn còn chút chát nhẹ.",
+      "Vị trà và sữa khá đậm, hợp người thích trà sữa Thái hơn các dòng trà trái cây."
+    ]
   },
   {
     "slug": "jasmine-milk",
@@ -77,7 +122,12 @@
     "category": "Trà sữa",
     "price": 42000,
     "description": "Trà lài và sữa dịu nhẹ đi cùng trân châu trắng giòn.",
-    "image": "/assets/images/menu/jasmine-milk.png"
+    "image": "/assets/images/menu/jasmine-milk.png",
+    "tasting_notes": [
+      "Hương lài nhẹ kết hợp với sữa, trân châu tạo độ dai vừa phải.",
+      "Mùi hoa lài vẫn nhận ra sau vị sữa, tổng thể khá dịu.",
+      "Nền trà lài thanh hơn hồng trà, phù hợp khi thích trà sữa có hương hoa nhẹ."
+    ]
   },
   {
     "slug": "black-milk",
@@ -85,7 +135,12 @@
     "category": "Trà sữa",
     "price": 35000,
     "description": "Hồng trà đậm vị kết hợp sữa, món quen cho mọi buổi hẹn.",
-    "image": "/assets/images/menu/black-milk.png"
+    "image": "/assets/images/menu/black-milk.png",
+    "tasting_notes": [
+      "Hồng trà có vị đậm và hơi chát, sữa làm hậu vị dịu hơn.",
+      "Vị trà đen rõ, không bị lớp sữa che hết mùi trà.",
+      "Món có hương vị trà sữa truyền thống, hợp khi thích nền hồng trà đậm."
+    ]
   },
   {
     "slug": "cheese-oolong",
@@ -93,7 +148,12 @@
     "category": "Trà nguyên lá",
     "price": 45000,
     "description": "Ô long rang hậu ngọt phủ lớp kem cheese mặn béo vừa đủ.",
-    "image": "/assets/images/menu/cheese-oolong.png"
+    "image": "/assets/images/menu/cheese-oolong.png",
+    "tasting_notes": [
+      "Ô long có hương rang nhẹ, kem cheese béo và hơi mằn mặn.",
+      "Uống phần trà trước sẽ thấy vị ô long rõ, khuấy kem vào thì mềm và béo hơn.",
+      "Vị trà rang và kem cheese tạo hai lớp vị khá khác nhau, hợp người thích béo mặn nhẹ."
+    ]
   },
   {
     "slug": "strawberry-tea",
@@ -101,7 +161,12 @@
     "category": "Trà trái cây",
     "price": 49000,
     "description": "Trà lài thơm cùng dâu đỏ chua ngọt và đá mát lạnh.",
-    "image": "/assets/images/menu/strawberry-tea.png"
+    "image": "/assets/images/menu/strawberry-tea.png",
+    "tasting_notes": [
+      "Dâu có vị chua ngọt, nền trà lài tạo mùi hoa nhẹ.",
+      "Vị dâu rõ và hơi chua, hậu vị còn hương lài thoảng.",
+      "Món thiên về vị dâu tươi cùng trà lài, phù hợp khi muốn trà trái cây chua nhẹ."
+    ]
   },
   {
     "slug": "mango-tea",
@@ -109,7 +174,12 @@
     "category": "Trà trái cây",
     "price": 49000,
     "description": "Xoài vàng thơm hòa trà thanh nhẹ, thêm miếng xoài tươi.",
-    "image": "/assets/images/menu/mango-tea.png"
+    "image": "/assets/images/menu/mango-tea.png",
+    "tasting_notes": [
+      "Xoài có vị ngọt và mùi trái cây nhiệt đới, nền trà giữ hậu vị nhẹ.",
+      "Hương xoài nổi bật, vị trà phía sau giúp ly nước đỡ cảm giác ngọt nặng.",
+      "Món hợp người thích xoài chín kết hợp với trà thay vì sữa."
+    ]
   },
   {
     "slug": "passion-tea",
@@ -117,7 +187,12 @@
     "category": "Trà trái cây",
     "price": 42000,
     "description": "Chanh dây chua thanh và hồng trà đậm hương, ít ngọt dễ uống.",
-    "image": "/assets/images/menu/passion-tea.png"
+    "image": "/assets/images/menu/passion-tea.png",
+    "tasting_notes": [
+      "Chanh dây có vị chua rõ và mùi thơm đặc trưng, nền trà nhẹ.",
+      "Vị chua của chanh dây nổi bật hơn độ ngọt, hợp khi muốn đổi vị.",
+      "Món có vị chua ngọt rõ ràng, hậu trà nhẹ và không có vị sữa."
+    ]
   },
   {
     "slug": "kumquat",
@@ -125,7 +200,12 @@
     "category": "Trà trái cây",
     "price": 35000,
     "description": "Tắc thơm vỏ, trà đen và mật ong tạo hậu vị thanh mát.",
-    "image": "/assets/images/menu/kumquat.png"
+    "image": "/assets/images/menu/kumquat.png",
+    "tasting_notes": [
+      "Tắc có vị chua và mùi vỏ thơm nhẹ, mật ong làm hậu vị dịu hơn.",
+      "Mùi tắc khá rõ, vị mật ong thêm độ ngọt mà vẫn giữ nét chua nhẹ.",
+      "Món thiên về vị tắc cùng mật ong, hợp người thích nước trà có vị chua thanh."
+    ]
   },
   {
     "slug": "hibiscus",
@@ -133,7 +213,12 @@
     "category": "Trà trái cây",
     "price": 45000,
     "description": "Atiso đỏ ủ lạnh sắc ruby, chua dịu và hương hoa tự nhiên.",
-    "image": "/assets/images/menu/hibiscus.png"
+    "image": "/assets/images/menu/hibiscus.png",
+    "tasting_notes": [
+      "Hibiscus có vị chua nhẹ đặc trưng và hương hoa dịu.",
+      "Vị chua của atisô đỏ rõ hơn hậu ngọt, không có vị béo của sữa.",
+      "Món phù hợp khi thích trà hoa thiên chua, hương hibiscus khác với trà lài thông thường."
+    ]
   },
   {
     "slug": "pineapple",
@@ -141,7 +226,12 @@
     "category": "Trà trái cây",
     "price": 42000,
     "description": "Trà lài kết hợp dứa vàng chua ngọt, hương vị nhiệt đới.",
-    "image": "/assets/images/menu/pineapple.png"
+    "image": "/assets/images/menu/pineapple.png",
+    "tasting_notes": [
+      "Dứa có vị chua ngọt, nền trà lài thêm mùi hoa nhẹ.",
+      "Hương dứa nổi bật trước, sau đó còn chút hậu vị trà lài.",
+      "Món thiên về vị dứa cùng trà, hợp khi muốn trà trái cây chua nhẹ."
+    ]
   },
   {
     "slug": "matcha-coconut",
@@ -149,7 +239,12 @@
     "category": "Matcha & trà rang",
     "price": 55000,
     "description": "Matcha xanh và sữa dừa thơm, vị béo thanh hòa quyện.",
-    "image": "/assets/images/menu/matcha-coconut.png"
+    "image": "/assets/images/menu/matcha-coconut.png",
+    "tasting_notes": [
+      "Matcha hơi chát kết hợp với vị dừa béo dịu.",
+      "Mùi dừa rõ nhưng vẫn giữ được vị trà xanh ở hậu vị.",
+      "Món béo hơn matcha latte thường, hợp người thích matcha đi cùng hương dừa."
+    ]
   },
   {
     "slug": "matcha-strawberry",
@@ -157,7 +252,12 @@
     "category": "Matcha & trà rang",
     "price": 55000,
     "description": "Lớp dâu đỏ, sữa tươi và matcha xanh tạo vị chua ngọt cân bằng.",
-    "image": "/assets/images/menu/matcha-strawberry.png"
+    "image": "/assets/images/menu/matcha-strawberry.png",
+    "tasting_notes": [
+      "Vị matcha chát nhẹ tương phản với dâu chua ngọt.",
+      "Dâu làm ly matcha có thêm nét trái cây, sữa nối hai lớp vị khá mềm.",
+      "Món có cả vị trà xanh và dâu, hợp khi thích matcha nhưng muốn hậu vị chua nhẹ."
+    ]
   },
   {
     "slug": "matcha-cheese",
@@ -165,7 +265,12 @@
     "category": "Matcha & trà rang",
     "price": 55000,
     "description": "Matcha rõ vị với lớp kem cheese mặn nhẹ, mềm mịn.",
-    "image": "/assets/images/menu/matcha-cheese.png"
+    "image": "/assets/images/menu/matcha-cheese.png",
+    "tasting_notes": [
+      "Matcha có vị đắng nhẹ, lớp kem cheese thêm độ béo và mặn dịu.",
+      "Vị trà xanh vẫn rõ sau lớp kem, phần cheese làm hậu vị đậm hơn.",
+      "Món thiên về matcha cùng kem béo mặn, hợp người thích vị trà xanh rõ."
+    ]
   },
   {
     "slug": "hojicha",
@@ -173,7 +278,12 @@
     "category": "Matcha & trà rang",
     "price": 49000,
     "description": "Trà rang hojicha hương hạt, hòa sữa tươi êm và ít đắng.",
-    "image": "/assets/images/menu/hojicha.png"
+    "image": "/assets/images/menu/hojicha.png",
+    "tasting_notes": [
+      "Trà rang có mùi hạt rang nhẹ, sữa làm vị bùi và mềm hơn.",
+      "Hương rang của hojicha khác với vị xanh của matcha, hậu vị khá dịu.",
+      "Món có vị trà rang và sữa béo nhẹ, phù hợp khi thích hương bùi thay vì trà xanh."
+    ]
   },
   {
     "slug": "black-coffee",
@@ -181,7 +291,12 @@
     "category": "Cà phê",
     "price": 29000,
     "description": "Cà phê phin đen đậm hương rang, hậu vị kéo dài.",
-    "image": "/assets/images/menu/black-coffee.png"
+    "image": "/assets/images/menu/black-coffee.png",
+    "tasting_notes": [
+      "Cà phê đen có vị đắng rõ và mùi rang, không có độ béo của sữa.",
+      "Vị cà phê khá đậm, hậu đắng kéo dài hơn các dòng cà phê sữa.",
+      "Món giữ vị cà phê nguyên bản, hợp người thích cà phê đen hơn vị sữa ngọt."
+    ]
   },
   {
     "slug": "bac-xiu",
@@ -189,7 +304,12 @@
     "category": "Cà phê",
     "price": 35000,
     "description": "Sữa thơm làm nền, thêm cà phê phin cho vị dịu dễ uống.",
-    "image": "/assets/images/menu/bac-xiu.png"
+    "image": "/assets/images/menu/bac-xiu.png",
+    "tasting_notes": [
+      "Sữa béo và ngọt nổi bật, cà phê tạo mùi thơm nhẹ phía sau.",
+      "Bạc xỉu có vị sữa rõ hơn vị cà phê, cảm giác uống khá mềm.",
+      "Món nhẹ vị cà phê hơn cà phê sữa đá, hợp khi thích sữa là chính."
+    ]
   },
   {
     "slug": "coconut-coffee",
@@ -197,7 +317,12 @@
     "category": "Cà phê",
     "price": 49000,
     "description": "Cà phê rang đậm cùng dừa đá xay béo thơm, mát lạnh.",
-    "image": "/assets/images/menu/coconut-coffee.png"
+    "image": "/assets/images/menu/coconut-coffee.png",
+    "tasting_notes": [
+      "Cà phê đắng nhẹ đi cùng dừa béo, mùi dừa khá rõ.",
+      "Vị dừa làm hậu cà phê mềm hơn, tổng thể có độ béo đặc trưng.",
+      "Món hợp người thích cà phê nhưng muốn thêm vị dừa thay cho sữa đặc thông thường."
+    ]
   },
   {
     "slug": "salt-coffee",
@@ -205,7 +330,12 @@
     "category": "Cà phê",
     "price": 42000,
     "description": "Cà phê sữa với kem muối mặn nhẹ, làm nổi bật vị cà phê.",
-    "image": "/assets/images/menu/salt-coffee.png"
+    "image": "/assets/images/menu/salt-coffee.png",
+    "tasting_notes": [
+      "Cà phê đậm đi cùng lớp kem béo mằn mặn, vị mặn không phải vị muối gắt.",
+      "Lớp kem muối làm vị đắng của cà phê dịu hơn và tạo hậu vị béo.",
+      "Món có nét tương phản giữa cà phê đắng và kem muối, hợp người thích cà phê kem."
+    ]
   },
   {
     "slug": "caramel-coffee",
@@ -213,7 +343,12 @@
     "category": "Cà phê",
     "price": 49000,
     "description": "Cà phê sữa tươi và caramel vàng thơm, vị ngọt vừa.",
-    "image": "/assets/images/menu/caramel-coffee.png"
+    "image": "/assets/images/menu/caramel-coffee.png",
+    "tasting_notes": [
+      "Caramel có mùi đường thắng, đi cùng cà phê và sữa béo.",
+      "Vị caramel nổi bật trước, phía sau vẫn còn chút đắng nhẹ của cà phê.",
+      "Món thiên về latte ngọt béo với hương caramel, hợp khi không thích cà phê quá gắt."
+    ]
   },
   {
     "slug": "chocolate",
@@ -221,7 +356,12 @@
     "category": "Đá xay & chocolate",
     "price": 45000,
     "description": "Cacao đậm hòa sữa mát, thơm chocolate và hậu vị dịu.",
-    "image": "/assets/images/menu/chocolate.png"
+    "image": "/assets/images/menu/chocolate.png",
+    "tasting_notes": [
+      "Chocolate có vị cacao đậm nhẹ, sữa làm ly nước béo và mềm.",
+      "Vị cacao rõ hơn độ ngọt, không có hương cà phê hay vị trà.",
+      "Món phù hợp khi thích chocolate cùng sữa, hậu vị cacao hơi đắng nhẹ."
+    ]
   },
   {
     "slug": "cookies",
@@ -229,7 +369,12 @@
     "category": "Đá xay & chocolate",
     "price": 55000,
     "description": "Sữa đá xay với bánh cookies giòn, lớp kem mịn bên trên.",
-    "image": "/assets/images/menu/cookies.png"
+    "image": "/assets/images/menu/cookies.png",
+    "tasting_notes": [
+      "Vị bánh quy và sữa béo rõ, phần đá xay tạo cảm giác mát và sánh.",
+      "Món thiên về vị bánh cookies ngọt béo, không có vị trà.",
+      "Hương bánh quy nổi bật, hợp người thích đồ đá xay có vị sữa và bánh."
+    ]
   },
   {
     "slug": "mango-smoothie",
@@ -237,6 +382,11 @@
     "category": "Đá xay & chocolate",
     "price": 49000,
     "description": "Xoài chín xay mịn với đá, hương trái cây tươi mát.",
-    "image": "/assets/images/menu/mango-smoothie.png"
+    "image": "/assets/images/menu/mango-smoothie.png",
+    "tasting_notes": [
+      "Xoài có vị ngọt chín và hơi chua nhẹ, đá xay tạo độ sánh mát.",
+      "Hương xoài rõ, món thiên về vị trái cây thay vì trà hoặc cà phê.",
+      "Món phù hợp khi thích xoài đá xay, vị chua ngọt của xoài khá dễ nhận ra."
+    ]
   }
 ]

@@ -80,3 +80,9 @@ python tools/reset_test_passwords.py --apply-all-accounts # reset mọi tài kho
 Git chỉ đồng bộ code và migration, không đồng bộ dữ liệu DB. Người dùng chung đúng database TiDB đã reset không cần chạy lại lệnh. Người dùng database riêng cần áp dụng migration rồi chủ động chạy lệnh. Không đổi datasource để sử dụng script. Script không bật tài khoản bị khóa hoặc xác minh email thay người dùng.
 
 Cột `password_plaintext` không xuất qua API hồ sơ. Khi tài khoản đổi/khôi phục mật khẩu, cột được xóa; mật khẩu cá nhân mới chỉ lưu BCrypt. Tài khoản đăng ký mới không lưu mật khẩu trực tiếp. Chính sách mật khẩu cho đăng ký/đổi/khôi phục vẫn giữ nguyên.
+
+## Phản hồi đúng món — 26/10/2026
+
+Đã thay 90 đánh giá và 90 bình luận demo dùng câu mẫu chung bằng phản hồi riêng cho 30 món. tools/demo/menu.json có 3 tasting_notes cho mỗi món; FeedbackCopy.java dùng trong seed và công cụ sửa dữ liệu. Size/đường/đá lấy từ order_items đã mua, không đoán. Mỗi phản hồi vẫn ghi rõ là nội dung demo, không giả phản hồi khách thật.
+
+`python tools/check_demo_feedback.py` kiểm đủ 30 món/90 nội dung, Unicode NFC, độ dài và ngữ cảnh cà phê. `python tools/repair_demo_feedback.py` chỉ xem kế hoạch đọc DB; thêm `--apply` để thay **đúng** các chuỗi boilerplate cũ của tác giả demo trên món do vendor demo sở hữu, có order item DELIVERED/PAID khớp tác giả. Không sửa phản hồi mới do người dùng viết, không đổi sao/ảnh/liên kết mua hàng. Chạy lại sau sửa trả eligible=0, không viết lại dữ liệu đã cập nhật. Không cần seed lại toàn bộ đơn hàng.

@@ -52,6 +52,8 @@ with sync_playwright() as p:
      assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),('horizontal overflow',page.evaluate('document.documentElement.scrollWidth'))
      page.evaluate('document.fonts.ready')
      assert page.evaluate("document.fonts.check('14px \"Be Vietnam Pro\"')"),'font unavailable'
+     assert 'Be Vietnam Pro' in page.locator('body').evaluate('(e)=>getComputedStyle(e).fontFamily'),'body font mismatch'
+     assert page.locator('main h1').evaluate_all("nodes=>nodes.every(e=>getComputedStyle(e).fontFamily.includes('Be Vietnam Pro'))"),'heading font mismatch'
      assert page.locator('body').inner_text().find('<%@')==-1,'uncompiled JSP'
      if role in ['admin','manager','vendor'] and path.startswith('/'+role):
       for suffix in ['/areas','/stock']:

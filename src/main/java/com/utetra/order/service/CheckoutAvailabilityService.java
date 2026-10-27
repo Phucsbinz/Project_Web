@@ -27,7 +27,7 @@ public class CheckoutAvailabilityService {
     List<Map<String,Object>> variants=new ArrayList<>(),promotions=new ArrayList<>();
     if(cart!=null) {
       Map<Long,Integer> requested=new TreeMap<>();
-      for(var item:data.cartItems(cart.id)) requested.merge(item.variantId,item.quantity,Math::addExact);
+      for(var item:data.selectedItems(cart.id)) requested.merge(item.variantId,item.quantity,Math::addExact);
       for(var entry:requested.entrySet()) {
         var row=refs.one("select v.stock_quantity,v.size_name,p.name from product_variants v join products p on p.id=v.product_id where v.id=?",entry.getKey());
         Map<String,Object> v=new LinkedHashMap<>();v.put("id",entry.getKey());v.put("requested",entry.getValue());

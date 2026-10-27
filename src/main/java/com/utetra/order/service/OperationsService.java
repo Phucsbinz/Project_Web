@@ -236,7 +236,7 @@ public class OperationsService {
     return Map.of(
         "addresses",
         refs.list(
-            "select id,recipient_name,address_detail from user_addresses where user_id=? order by"
+            "select id,recipient_name,phone,address_detail from user_addresses where user_id=? order by"
                 + " id",
             actor.userId()),
         "areas",

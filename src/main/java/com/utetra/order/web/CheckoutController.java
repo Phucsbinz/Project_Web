@@ -17,11 +17,12 @@ public class CheckoutController {
   private final OperationsService operations;
   private final BankTransferSettings bank;
   private final VnpaySettings vnpay;
+  private final LocalQrPaymentService localQr;
   private final CheckoutAvailabilityService availability;
 
   public CheckoutController(CheckoutService checkout, OperationsService operations, BankTransferSettings bank,
-      CheckoutAvailabilityService availability,VnpaySettings vnpay,CartService carts,com.utetra.order.repository.CommerceReferenceRepository refs) {
-    this.carts=carts;this.refs=refs;
+      CheckoutAvailabilityService availability,VnpaySettings vnpay,CartService carts,com.utetra.order.repository.CommerceReferenceRepository refs,LocalQrPaymentService localQr) {
+    this.carts=carts;this.refs=refs;this.localQr=localQr;
     this.checkout = checkout;
     this.operations = operations;
     this.bank = bank;
@@ -32,11 +33,18 @@ public class CheckoutController {
   public String page(@RequestParam(required=false) Long branch,Model model) {
     var cart=carts.view(OrderWebSupport.actor());
     if(((java.util.List<?>)cart.get("items")).isEmpty())return "redirect:/cart";
+    var selected=((java.util.List<?>)cart.get("items")).stream().map(item->(Map<?,?>)item).filter(item->!Boolean.FALSE.equals(item.get("selected"))).toList();
+    if(selected.isEmpty())return "redirect:/cart";
+    model.addAttribute("groupPaymentMode",((Number)cart.getOrDefault("groupOrderId",0)).longValue()>0?refs.one("select payment_mode from group_orders where id=?",cart.get("groupOrderId")).get("payment_mode"):"HOST");
+    if(((Number)cart.getOrDefault("groupOrderId",0)).longValue()>0)model.addAttribute("groupToken",refs.one("select invite_token from group_orders where id=?",cart.get("groupOrderId")).get("invite_token"));
+    model.addAttribute("groupDiscountActive",((Number)cart.getOrDefault("groupOrderId",0)).longValue()>0 && ((Number)refs.one("select count(*) as participants from group_order_members where group_order_id=? and is_confirmed=true and items_json<>'[]'",cart.get("groupOrderId")).get("participants")).intValue()>=3);
+    model.addAttribute("cartExpiresAt",cart.get("expiresAt"));
     model.addAttribute("cartVersion",cart.get("version"));
     model.addAttribute("branches",refs.list("select id,name,address from stores where status='ACTIVE' order by name,id"));
     model.addAttribute("branchReady",branch!=null && branch>0 && branch.equals(((Number)cart.get("storeId")).longValue()));
     model.addAttribute("choices", operations.checkoutChoices(OrderWebSupport.actor()));
-    model.addAttribute("bankEnabled", bank.available());
+    model.addAttribute("localQrEnabled", localQr.available());
+    model.addAttribute("bankEnabled", false);
     model.addAttribute("vnpayEnabled",vnpay.available());
     model.addAttribute("availability", availability.snapshot(OrderWebSupport.actor()));
     return "order/checkout";

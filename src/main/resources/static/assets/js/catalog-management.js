@@ -145,7 +145,7 @@
         const info = section === 'stores' ? item.address + ' · ' + item.status : section === 'products' ? item.basePrice + ' đ · ' + (item.active ? 'Hoạt động' : 'Ngừng bán') : section === 'promotions' ? item.percent + '% · ' + (item.active ? 'Bật' : 'Tắt') : item.active ? 'Hoạt động' : 'Ngừng hoạt động';
         card.append(el('p',info,'small text-secondary')); const actions = el('div',undefined,'d-flex flex-wrap gap-2');
         actions.append(button('Sửa',() => edit(item)));
-        if(section === 'products') actions.append(button('Ngừng bán',async () => { if(!confirm('Ngừng bán sản phẩm này?')) return; await request('/products/' + item.id + '?version=' + item.version,'DELETE'); await refresh(); }));
+        if(section === 'products') actions.append(button('Ngừng bán',async () => { if(!await window.utetraConfirm('Ngừng bán sản phẩm này?')) return; await request('/products/' + item.id + '?version=' + item.version,'DELETE'); await refresh(); }));
         if(section === 'stores' && app.dataset.role !== 'vendor') {
           if(item.status === 'PENDING_APPROVAL') { actions.append(button('Duyệt',() => review(item,'APPROVED',card)),button('Từ chối',() => review(item,'REJECTED',card))); }
           if(['ACTIVE','SUSPENDED'].includes(item.status)) actions.append(button(item.status === 'ACTIVE' ? 'Tạm khóa' : 'Mở lại', async () => {

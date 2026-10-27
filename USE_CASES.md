@@ -185,3 +185,24 @@ WebSocket /user/queue/orders và /user/queue/notifications cho mình; /topic/sto
 ## 8. Test nghiệm thu bắt buộc
 
 OTP đúng/sai/hết hạn/replay/resend/SMTP lỗi; BCrypt và Vendor quyền User; mỗi top/filter/paging; cart DB/merge; owner/scope HTTP/socket; comment 49 ký tự bị chặn, 50 được xử lý và video sai bị chặn; checkout tampered price/quote/quota/points/replay; COD thu lặp; VNPAY IPN giả/sai tiền/trùng/đến muộn; cancel-confirm race; return/refund thật/retry/ledger reversal; net report có refund/commission; responsive một template. H2 chỉ test bảo mật isolated, không thay kiểm chứng migration/JPA/TLS trên MySQL/TiDB thật.
+
+## UC-ORD-GROUP — Đặt đơn nhóm (26/10/2026)
+
+User/Vendor đã xác minh chọn món cá nhân; host tạo link mời 24h; thành viên gửi/cập nhật/rút snapshot; host xem món mọi người, chốt ít nhất 2 người, chọn chi nhánh ở checkout và thanh toán một đơn chung. 3/5/10 tài khoản có món được giảm 5/10/15%, tối đa 100.000đ, không chồng mã giảm sản phẩm. Không nhập số người thủ công. Tổng tối đa 50 ly, 20 ly/dòng; kiểm version, quyền host, hạn nhóm, tồn kho, giá và hash ở backend. Giỏ host sau chốt bị khóa sửa; host có thể hủy nhóm để giữ món và bỏ ưu đãi. Sau khi tạo order dùng workflow đơn hàng hiện có, không tái sử dụng nhóm. Contract: docs/features/order-payment/GROUP_ORDERS_20261026.md.
+
+## UC-ORD-CART-SELECT — Tick chọn và hạn giỏ
+
+User chọn từng dòng/chọn tất cả, tóm tắt theo dòng chọn; chỉ các dòng đó được ánh xạ chi nhánh, báo giá và tạo đơn. Dòng bỏ tick giữ trong giỏ. Hết 1 giờ từ cập nhật gần nhất, server từ chối dùng giỏ cũ và reset giỏ; đọc trang không gia hạn, đơn đã tạo giữ nguyên. Nhóm đã chốt không được đổi tập lựa chọn. Checkout hỗ trợ lưu địa chỉ mới ngay tại bước giao hàng. Contract: docs/features/order-payment/CART_SELECTION_EXPIRY_20261027.md.
+
+## UC-ORD-GROUP-JOIN-FIRST — cập nhật 27/10
+
+Trang chủ có Đặt đơn nhóm. Tạo/tham gia khi chưa chọn món; sau tham gia mỗi người chọn trực tiếp trong nhóm, độc lập giỏ cá nhân. Chỉ host chọn trả hết hoặc COD chia phần. Host đặt một đơn chung ngay, không cần thành viên xác nhận thanh toán; chỉ tính người có món cho mốc giảm và phí giao chia đều. Bảng phần tiền sau giảm lưu theo snapshot order; không tự đánh dấu đã thanh toán. Contract mới ưu tiên: docs/features/order-payment/GROUP_JOIN_FIRST_COD_20261027.md.
+
+
+Cập nhật 27/10/2026 theo yêu cầu Thanh: chia phần hỗ trợ cả COD và QR, chủ nhóm đặt ngay, thành viên nhận popup thông báo và xem phần tiền/QR của mình. Chi tiết và giới hạn đối soát ở docs/features/order-payment/GROUP_SPLIT_QR_POPUP_20261027.md.
+
+
+Cập nhật 27/10/2026 theo yêu cầu Thanh: QR cho đơn mới dùng LOCAL_QR (ví giả lập, không tiền thật), local_qr_payments theo từng người. Đơn nhóm chia phần chỉ được CONFIRMED khi tất cả phần thanh toán thành công. Hướng dẫn/contract mới thay phần QR chuyển khoản trước đó: docs/features/order-payment/LOCAL_QR_WALLET_20261027.md.
+
+
+Cập nhật 27/10/2026: hủy và hết hạn có popup riêng cho thành viên; mã nhóm/host/time/status và badge Chủ nhóm. Nhãn QR trung tính, cơ chế nội bộ không đổi. Xem docs/features/order-payment/GROUP_LIFECYCLE_20261027.md.

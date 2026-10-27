@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-27",
+  "branch": "identify",
+  "cart_lifetime": "1 hour from last mutation; authoritative server Clock; reads do not renew",
+  "selection": "Only selected lines quoted/mapped/ordered; unchecked lines remain; group-locked cart immutable",
+  "full_verify": {
+    "tests": 180,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "final_render_verify": {
+    "tests": 8,
+    "classes": [
+      "CatalogViewTest (5)",
+      "BaselineViewTest (3)"
+    ],
+    "failures": 0,
+    "errors": 0,
+    "build": "WAR verify passed after checkout DOMContentLoaded fix"
+  },
+  "browser": {
+    "checks": [
+      "Guest popup updates badge and shows success with one-hour retention reminder",
+      "Stepper updates quantity and totals; badge counts lines rather than cups",
+      "Checkbox persists selected subset; countdown uses server time rather than the fixture/client clock difference",
+      "Clearing guest cart updates empty state and hides badge",
+      "Customer login returns home; vendor destination preserved",
+      "Three distinct contributors, host-only finalization and group page responsive",
+      "Finalized cart has real images/prices and responsive summary at 390/1440px",
+      "Group discount is applied by checkout, order saved in isolated H2, badge clears after checkout",
+      "Checkout inputs accept new address/contact/points/note; selected checkout preserves unchecked items; mobile form fits",
+      "UUID fallback supports LAN HTTP where crypto.randomUUID is unavailable"
+    ],
+    "errors": [],
+    "fixture": "Isolated H2 only; no cloud orders or provider calls"
+  },
+  "cleanup": {
+    "feedback_suffixes_removed": 180,
+    "other_known_display_fields_updates": [
+      252,
+      617
+    ],
+    "source_generators_updated": true,
+    "provenance_retained_in_docs": true
+  },
+  "shared_ui": "one layout, 21 shared files",
+  "migration": "V2026102701__cart_selection.sql",
+  "server": "http://127.0.0.1:8080/cart",
+  "pushed": false,
+  "limits": [
+    "Browser orders and address creation ran only on isolated H2, not cloud.",
+    "LAN UUID fallback tested; actual Windows firewall/router connectivity depends on local setup.",
+    "Expiry affects carts only; existing orders are unchanged."
+  ]
+}

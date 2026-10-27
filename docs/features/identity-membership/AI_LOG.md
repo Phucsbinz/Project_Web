@@ -149,3 +149,45 @@ Thanh yêu cầu bỏ dòng ghi chú trong mô tả popup và đổi nhãn Xem v
 - IdentityIntegrationTest: 35 đạt; IdentitySocketLifecycleTest: 1 đạt, không failure/error/skipped. Kiểm tra xóa cột trực tiếp sau đổi/reset và loại khỏi profile. Bước repackage đầu bị Windows khóa WAR đang chạy; dừng server rồi package lại thành công.
 - Server MySQL chạy lại, Flyway áp dụng migration. HTTP login thật Admin/Manager/Vendor/User đều 200; profile không có password_hash/password_plaintext. Chưa khẳng định mọi tài khoản đều được phép đăng nhập vì trạng thái khóa/xác minh giữ nguyên.
 - Đồng bộ seed mới và công cụ kiểm UI với thông tin kiểm thử mới; tài liệu phân biệt pull code với dữ liệu DB, yêu cầu chạy reset chủ động nếu database riêng.
+
+## 2026-10-26 — Thay Gmail gửi OTP theo yêu cầu Thanh
+
+- Yêu cầu: thay Gmail gửi OTP bằng jskosiskeekdj@gmail.com và App Password được cung cấp; người dùng cũng yêu cầu push thông tin SMTP.
+- Đã thay thông tin trong .local/mail.properties, kiểm tra STARTTLS xác minh chứng chỉ và SMTP AUTH trả 235, không gửi email. Server đã restart để nạp file mới. MailOtpDeliveryTest: 3 đạt, 0 failure/error/skipped.
+- Hệ thống automatic approval review chặn commit/push mật khẩu ứng dụng đang hoạt động do nguy cơ lộ quyền truy cập tài khoản lâu dài. Không thử lách giới hạn. Giữ file cục bộ bị Git bỏ qua; chỉ push địa chỉ mặc định, công cụ cấu hình và hướng dẫn không chứa bí mật.
+
+## 2026-10-26 — Merge UI mới từ integration/utetra
+
+- Thanh yêu cầu lấy source/UI mới từ utetra rồi xác nhận phải merge. Đã fetch origin, merge origin/integration/utetra c15af04 vào identify; commit merge 152f40b, không conflict. Không push.
+- Đã đọc quy ước Shared UI; sau merge vẫn một app.jsp/Bootstrap/theme, 21 file chung khớp chính xác nguồn integration/utetra. Giữ cấu hình mail hiện tại, không đổi dữ liệu cloud để làm UI.
+- Maven verify sau merge: 167 tests, 0 failure/error/skipped, WAR build thành công. Lần đầu thiếu quyền loopback cho Tomcat; chạy lại với quyền cần thiết đã đạt.
+- Edge/Tomcat/SiteMesh fixture H2 riêng: 158 lượt render/navigation/responsive cho Guest/User/Vendor/Manager/Admin/Shipper ở 1440 và 390px, không lỗi JS hoặc kiểm tra giao diện thất bại. Đã xem ảnh địa chỉ mobile. Ảnh kiểm lần này giữ trong .local, không ghi đè chứng cứ của nhánh nguồn.
+- Server MySQL thật chạy lại trên cổng 8080; thêm 6 checks trang chủ/font/footer/popup/size/quantity/giá/report desktop-mobile đạt; không đặt đơn hoặc gửi OTP. Kết quả cấu trúc tại MERGE_UTETRA_20261026.json. Không khẳng định nghiệm thu mọi mutation/provider.
+
+## 2026-10-26 — Trang chủ nhanh hơn và đích đến sau đăng nhập
+
+- Thanh báo trang chủ khi đăng nhập User chậm, yêu cầu sau login vào thẳng /. Đo trước sửa: 16,950 và 15,981 giây cho HTML cùng tài khoản/DB. Nguyên nhân: 4 nhóm xếp hạng cùng kết quả chính hydrate sản phẩm và size/topping theo từng món (N+1), lặp metadata lookup.
+- CatalogService đọc products/variants/links/store toppings/toppings theo lô; bốn nhóm dùng chung một lần hydrate, không cache quyền/giá/tồn kho, không bỏ nhóm nội dung. CatalogQueryRepository đọc danh sách table một lần mỗi search thay ba lần. Menu không tải danh sách cửa hàng không sử dụng.
+- AuthService.Tokens mang role từ login đã xác thực; AuthController chỉ chuyển ROLE_USER về /, các role khác giữ đích cũ. Login theo link mời nhóm được giữ next cố định allow-list /group-orders/UUID; không cho redirect tùy ý ra ngoài.
+- Kiểm test đích User/Manager và kiểm hydrate 12 sản phẩm trong tối đa 6 câu JPA. Đo sau: 5,920 giây lượt đầu khởi động, 1,578 giây lượt sau; không tính thời gian tải ảnh, không coi là SLA. Full verify 176 đạt trước lượt tinh chỉnh nhóm cuối; các lượt cuối ghi riêng ở SHOPPING_VERIFICATION_20261026.json.
+- Phần giỏ/badge/đặt nhóm cùng yêu cầu tiếp theo ghi ở docs/features/order-payment/GROUP_ORDERS_20261026.md. Không push.
+
+## 2026-10-26 — Đúng ngữ cảnh phản hồi và font tiếng Việt
+
+- Thanh báo cà phê bị bình luận “vị trà thơm”, sau đó yêu cầu “chỉnh full lỗi font”. Đã nhận lỗi bộ câu demo chung.
+- tools/demo/menu.json thêm 90 tasting notes riêng cho 30 món. FeedbackCopy.java dùng cho seed và công cụ repair, lấy size/sugar/ice từ order_items thực tế. ShowcaseOrders không còn thay đánh giá bằng bộ câu chung.
+- Đã cập nhật 90 review + 90 comment, chỉ chuỗi demo cũ của tài khoản demo trên sản phẩm vendor demo với order item DELIVERED/PAID đúng tác giả. Có guard database utetra_db, transaction và conditional UPDATE chống ghi đè khi sửa đồng thời; không đổi sao/media/liên kết mua hàng. Chạy lại kế hoạch đọc chỉ trả eligible=0. Nội dung vẫn ghi rõ demo.
+- Font: chuẩn hóa weight thực 600/700 thay các mức tổng hợp 650/750/800/850; nới line-height/tracking (cả Bootstrap heading utilities), tăng cỡ nhãn/bảng/sidebar và chữ phản hồi, bố trí title popup không chật nút đóng. Giữ Be Vietnam Pro local + Georgia cho brand/nhấn trang trí, một layout/theme.
+- Đã kiểm cmap: 146 ký tự tiếng Việt đủ trên 4 weight; quét source giao diện không phát hiện replacement/mojibake. Build verify với 11 test render/socket đạt; sau refinement heading utility chỉ package CSS lại, không coi skipTests là chạy thêm test.
+- Browser: 158 route/role/viewport checks + font body/h1 đạt, 0 lỗi JS/overflow. Live MySQL popup cà phê: 4 checks desktop/mobile đạt, nội dung đúng cà phê, mẫu khác nhau và title đủ line-height, không tràn. Đã xem ảnh mobile thực tế. Không seed lại đơn hoặc gửi mail, không push. Kết quả: docs/demo/FEEDBACK_TYPOGRAPHY_20261026.json.
+
+## 2026-10-27 — Bỏ nhãn hiển thị và địa chỉ ở checkout
+
+- Theo yêu cầu mới bỏ nhãn Nội dung demo/mô phỏng khỏi UI: cập nhật đúng 180 feedback đã tạo bằng mẫu đã biết, chỉnh generator; dọn mô tả, địa chỉ, tên ưu đãi/carrier và ghi chú/snapshot đã tạo. Không đổi tài khoản/mã định danh/trạng thái tài chính hoặc xóa chứng cứ nguồn gốc trong tài liệu. Các trường hợp người dùng tự viết không khớp mẫu vẫn giữ nguyên.
+- Account address API hiện có được dùng bởi form inline checkout; không nới validation/CSRF/quyền. Browser đã nhập/lưu thông tin và đặt đơn H2 hoàn chỉnh. Các phần giỏ expiry/checkbox/toast ghi ở AI_LOG order-payment và CART_SELECTION_EXPIRY_20261027.md. Chưa push.
+
+
+## 2026-10-27 — Tên người dùng trên nút tài khoản
+Prompt Thanh: sau đăng nhập thay chữ Tài khoản bằng tên người dùng, luôn một dòng.
+NavigationAdvice cung cấp currentDisplayName lấy full_name hiện tại, fallback username nếu thiếu; bỏ query cho guest, POST và yêu cầu JSON. app.jsp escape nội dung và title bằng c:out. CSS dùng white-space nowrap/ellipsis/max-width desktop190px mobile125px, icon/mũi tên không co. Tên đổi trong hồ sơ được phản ánh ở lần tải trang sau, không lấy tên cũ trong token. Giữ menu tài khoản và một layout.
+Kiểm thực: 8 tests render qua, WAR build thành công; 13 shopping browser scenarios qua gồm header tên User 1/full title/nowrap/ellipsis sau đăng nhập và các luồng đặt đơn. Shared UI và diff check qua. Server đã mở lại, chưa commit/push.
