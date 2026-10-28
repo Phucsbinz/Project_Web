@@ -137,3 +137,12 @@ vào AI_LOG và hồ sơ UC. Sơ đồ dự kiến và ảnh UI thật phải ph
 ## Cập nhật tích hợp 20/10/2026
 
 Nhánh identity đã ghép UI/schema/service với module này theo IDN-AI-003. Xem [kết quả và giới hạn hiện tại](../identity-membership/INTEGRATION_20261020.md); các ghi chú chưa tích hợp phía trên là lịch sử của nhánh gốc.
+
+
+## Quyền và workflow cập nhật 29/10/2026
+
+Theo yêu cầu mới, Manager là vận hành, không còn sửa giá món/promotion/commission hoặc xem revenue/settlement. CATALOG_ADMIN chỉ bổ sung định nghĩa Category/Topping; ownership Vendor độc lập membership. API vận hành riêng kiểm phiên bản và membership hiện tại, thu hồi cùng mutex user.
+
+Dispatch: Admin/Manager, CONFIRMED và đủ điều kiện thanh toán, Shipper active có shipper_store_scopes; không đổi bình thường sau PICKED_UP. Assignment hiện hành giữ unique order, delivery_assignment_changes lưu lịch sử old/new/operator/reason; không thay event cũ. Shipper hoàn tất chỉ xem lịch sử tối thiểu, không PII/link chi tiết. COD là thu hộ, không phải thu nhập. Không tự hủy/hoàn khi giao thất bại.
+
+Migration V2026102901 tạo scopes/events/history, không tự cấp scope; giữ snapshot assignment cũ, không suy dựng lịch sử đã mất. Chưa áp DB shared. Xem docs/reviews/role-workflow-fixes-2026-10-29/REPORT.md về vận hành/kiểm chứng.

@@ -48,6 +48,6 @@ public class CatalogMediaService {
         }
     }
     private void check(UtetraPrincipal p,String type,Long id) {
-        guard.store(p,"product".equals(type)?found(products.findById(id)).getStoreId():id);
+        guard.business(p,"product".equals(type)?found(products.findById(id)).getStoreId():id);
     }
 }

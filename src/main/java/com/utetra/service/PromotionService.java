@@ -49,7 +49,7 @@ public class PromotionService {
             require(input.storeId()==null || input.storeId().equals(product.getStoreId()),"Sản phẩm không thuộc phạm vi khuyến mãi");
         }
         var promotion=id==null?new Promotion():found(promotions.findById(id));
-        if(id!=null) { access(p,promotion.getStoreId()); require(Objects.equals(promotion.getStoreId(),input.storeId()),"Không được chuyển phạm vi khuyến mãi"); version(promotion.getVersion(),input.version()); }
+        if(id!=null) { access(p,promotion.getStoreId()); require(Objects.equals(promotion.getStoreId(),input.storeId()),"Không được chuyển phạm vi khuyến mãi"); expectedVersion(promotion.getVersion(),input.version()); }
         else promotion.setCreatedBy(p.userId());
         promotion.setStoreId(input.storeId()); promotion.setScope(input.storeId()==null?"GLOBAL":"SHOP"); promotion.setFundedBy(input.storeId()==null?"APP":"SHOP");
         promotion.setName(input.name().trim()); promotion.setCode(input.code()==null?null:input.code().trim().toUpperCase(Locale.ROOT));
@@ -81,7 +81,7 @@ public class PromotionService {
         return new PromotionQuote(promotionId,promo.getKind(),eligible,discount,promo.getVersion());
     }
     private boolean current(Promotion p) { return p.getActive() && !clock.instant().isBefore(p.getStartsAt()) && clock.instant().isBefore(p.getEndsAt()); }
-    private void access(UtetraPrincipal p,Long storeId) { if(storeId==null) guard.admin(p); else guard.store(p,storeId); }
+    private void access(UtetraPrincipal p,Long storeId) { if(storeId==null) guard.admin(p); else guard.business(p,storeId); }
     private PromotionView view(Promotion p) {
         return new PromotionView(p.getId(),p.getStoreId(),p.getScope(),p.getKind(),p.getCode(),p.getName(),p.getPercent(),p.getMaxDiscount(),p.getMinOrder(),p.getUsageLimit(),p.getPerUserLimit(),p.getStartsAt(),p.getEndsAt(),p.getActive(),p.getFundedBy(),p.getVersion(),
             links.findByPromotionId(p.getId()).stream().map(PromotionProduct::getProductId).collect(java.util.stream.Collectors.toSet()));

@@ -1,5 +1,8 @@
 # UTETra — Use case theo quy định giảng viên
 
+> Cập nhật quyền 29/10/2026 theo yêu cầu triển khai mới: Vendor quản lý kinh doanh theo ownership; Manager chỉ vận hành theo membership (đơn, tồn/availability/nhận đơn, giao hàng và báo cáo vận hành), không sửa giá món, khuyến mãi hoặc đọc đối soát/hoa hồng Vendor. CATALOG_ADMIN là capability membership chỉ cho Category/Topping chung, Admin cấp/thu hồi. Các mô tả Manager quản lý giá/promotion/commission/revenue cũ bên dưới được thay bằng quyết định này. Admin/Manager phân công chuyến sau CONFIRMED và kiểm thanh toán; Shipper phải có scope phục vụ riêng trước khi nhận assignment. Chi tiết quyền/state/migration và bằng chứng tại [hồ sơ triển khai](docs/reviews/role-workflow-fixes-2026-10-29/REPORT.md).
+
+
 > UC-CSKH-01: User mở hội thoại Admin/chi nhánh; nhân viên trả lời trong scope, lưu DB và WebSocket private sau commit. Không có chat staff–staff. Contract và kiểm quyền tại docs/features/customer-support/UC-CSKH-01.md. Phần nhập địa chỉ tự do tại checkout được giữ; kiểm role/bảo mật mới nhất tại docs/ROLE_REQUIREMENTS_20261027.md.
 
 > UC-ORD-06 đã có VnpaySettings/Service/Controller và test, chưa nghiệm thu merchant thật. UC-MGR-06 đã có CRUD carrier theo shop. Xem [trạng thái cuối kỳ](docs/FINAL_REQUIREMENTS_STATUS.md).

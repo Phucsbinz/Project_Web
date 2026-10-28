@@ -115,3 +115,12 @@ Các case ghi trong CatalogIntegrationTest thuộc lượt Maven mới nhất; C
 - Test liên quan: `CatalogIntegrationTest.scopePolicyUsesDbOwnershipAndMembership`.
 - Hồ sơ quy trình và sơ đồ: [use case](use-cases/UC-ADM-03.md).
 - Phần nhóm cần chốt: owner/MSSV/reviewer/commit, ảnh UI và hình code/activity riêng phù hợp phần báo cáo; không dùng một test liên quan thay mọi bước nghiệm thu.
+
+
+## Quyền và workflow cập nhật 29/10/2026
+
+Theo yêu cầu mới, Manager là vận hành, không còn sửa giá món/promotion/commission hoặc xem revenue/settlement. CATALOG_ADMIN chỉ bổ sung định nghĩa Category/Topping; ownership Vendor độc lập membership. API vận hành riêng kiểm phiên bản và membership hiện tại, thu hồi cùng mutex user.
+
+Dispatch: Admin/Manager, CONFIRMED và đủ điều kiện thanh toán, Shipper active có shipper_store_scopes; không đổi bình thường sau PICKED_UP. Assignment hiện hành giữ unique order, delivery_assignment_changes lưu lịch sử old/new/operator/reason; không thay event cũ. Shipper hoàn tất chỉ xem lịch sử tối thiểu, không PII/link chi tiết. COD là thu hộ, không phải thu nhập. Không tự hủy/hoàn khi giao thất bại.
+
+Migration V2026102901 tạo scopes/events/history, không tự cấp scope; giữ snapshot assignment cũ, không suy dựng lịch sử đã mất. Chưa áp DB shared. Xem docs/reviews/role-workflow-fixes-2026-10-29/REPORT.md về vận hành/kiểm chứng.

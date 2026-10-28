@@ -231,7 +231,8 @@ class CatalogIntegrationTest {
         assertThatThrownBy(() -> stores.commissionPolicies(vendor,storeId)).isInstanceOf(ResponseStatusException.class);
         assertThatThrownBy(() -> stores.commissionPolicies(manager,storeId)).isInstanceOf(ResponseStatusException.class);
         stores.assign(admin,storeId,new Membership(manager.userId(),true),false);
-        assertThat(stores.commissionPolicies(manager,storeId)).hasSize(1);
+        // Operational membership no longer grants access to Vendor commission/settlement policy.
+        assertThatThrownBy(() -> stores.commissionPolicies(manager,storeId)).isInstanceOf(ResponseStatusException.class);
     }
     @Test void cannotTransferProductOrModifyAnotherShop() {
         var p=product(); assertThatThrownBy(() -> catalog.saveProduct(other,p.id(),productInput(storeId,p.slug(),p.version()))).isInstanceOf(ResponseStatusException.class);

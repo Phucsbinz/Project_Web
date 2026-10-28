@@ -49,7 +49,10 @@ public class UserManagementService {
         IdentityValidation.id(managerId); IdentityValidation.id(storeId);
         if(!admin(p)) throw IdentityException.denied();
         var user=db.user(managerId,true);
-        if(!"ROLE_MANAGER".equals(string(user,"role_name"))) throw IdentityException.invalid("Tài khoản chưa có vai trò Manager.");
+        if(!"ROLE_MANAGER".equals(string(user,"role_name")) || active && (!flag(user,"is_active") || user.get("email_verified_at")==null)) throw IdentityException.invalid("Manager phải đang hoạt động và đã xác minh email.");
+        var prior=db.optional("select member_role,is_active from store_memberships where user_id=? and store_id=? for update",managerId,storeId);
+        if(active && prior.isPresent() && "CATALOG_ADMIN".equals(string(prior.get(),"member_role")) && !flag(prior.get(),"is_active"))
+            throw IdentityException.invalid("Hãy dùng form phân công của Admin để xác nhận rõ quyền quản trị danh mục khi cấp lại.");
         db.one("select id from stores where id=?",storeId);
         var now=time(clock.instant());
         if(db.update("update store_memberships set is_active=?,assigned_by=?,updated_at=? where user_id=? and store_id=?",active,p.userId(),now,managerId,storeId)==0)

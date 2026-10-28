@@ -1,5 +1,8 @@
 # UTETra — Kế hoạch dự án theo quy định cuối kỳ
 
+> Cập nhật quyền 29/10/2026 theo yêu cầu triển khai mới: Vendor quản lý kinh doanh theo ownership; Manager chỉ vận hành theo membership (đơn, tồn/availability/nhận đơn, giao hàng và báo cáo vận hành), không sửa giá món, khuyến mãi hoặc đọc đối soát/hoa hồng Vendor. CATALOG_ADMIN là capability membership chỉ cho Category/Topping chung, Admin cấp/thu hồi. Các mô tả Manager quản lý giá/promotion/commission/revenue cũ bên dưới được thay bằng quyết định này. Admin/Manager phân công chuyến sau CONFIRMED và kiểm thanh toán; Shipper phải có scope phục vụ riêng trước khi nhận assignment. Chi tiết quyền/state/migration và bằng chứng tại [hồ sơ triển khai](docs/reviews/role-workflow-fixes-2026-10-29/REPORT.md).
+
+
 > CSKH UC-CSKH-01 được thực hiện trên integration, gồm User ↔ đội Manager của chi nhánh hoặc đội Admin, không staff–staff. Source/test/setup tại docs/features/customer-support. Trạng thái role mới nhất: docs/ROLE_REQUIREMENTS_20261027.md; số đếm DB thực: docs/DB_AUDIT_20261027.md.
 
 > Bổ sung cuối lượt 24/10: VNPAY có adapter và test giao thức, còn merchant sandbox để nghiệm thu; Manager CRUD carrier theo shop. Xem [trạng thái theo yêu cầu thầy](docs/FINAL_REQUIREMENTS_STATUS.md).

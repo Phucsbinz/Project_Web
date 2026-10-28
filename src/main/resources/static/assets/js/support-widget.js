@@ -1,7 +1,14 @@
 'use strict';
 document.addEventListener('DOMContentLoaded',()=>{
  const widget=document.querySelector('[data-support-widget]');if(!widget)return;
- const base=document.querySelector('meta[name="app-context"]')?.content||'',me=Number(widget.dataset.user),panel=widget.querySelector('#support-widget-panel'),launcher=widget.querySelector('.support-widget-launcher'),messages=widget.querySelector('.support-widget-messages'),status=widget.querySelector('.support-widget-status'),compose=widget.querySelector('form'),body=widget.querySelector('textarea'),send=compose.querySelector('button'),older=widget.querySelector('[data-chat-older]'),badge=widget.querySelector('.support-widget-unread');
+ if(window.self!==window.top){widget.remove();return;}
+ const base=document.querySelector('meta[name="app-context"]')?.content||'';
+ if(!widget.dataset.user){
+  widget.querySelector('.support-widget-launcher').addEventListener('click',async()=>{
+   if(await window.utetraConfirm('Bạn cần đăng nhập để trò chuyện với bộ phận chăm sóc khách hàng.','Đăng nhập để chat','Đăng nhập'))window.location.assign(base+'/auth/login');
+  });return;
+ }
+ const me=Number(widget.dataset.user),panel=widget.querySelector('#support-widget-panel'),launcher=widget.querySelector('.support-widget-launcher'),messages=widget.querySelector('.support-widget-messages'),status=widget.querySelector('.support-widget-status'),compose=widget.querySelector('form'),body=widget.querySelector('textarea'),send=compose.querySelector('button'),older=widget.querySelector('[data-chat-older]'),badge=widget.querySelector('.support-widget-unread');
  let conversation=null,rows=new Map(),busy=false,sending=false,attempt=null,stopped=false,lastSeen=Number(sessionStorage.getItem('utetra.chat.seen.'+me)||0);
  function node(tag,text){const e=document.createElement(tag);e.textContent=text;return e;}
  async function request(path,method='GET',data){const headers={Accept:'application/json'};if(method!=='GET'){const csrf=await fetch(base+'/products/csrf',{cache:'no-store'});if(!csrf.ok)throw new Error('Vui lòng đăng nhập lại để gửi tin nhắn.');const token=await csrf.json();headers[token.headerName]=token.token;headers['Content-Type']='application/json';}const r=await fetch(base+'/api/support'+path,{method,headers,credentials:'same-origin',cache:'no-store',...(data?{body:JSON.stringify(data)}:{})});const result=r.headers.get('Content-Type')?.includes('application/json')?await r.json():{};if(!r.ok)throw new Error(result.message||'Chưa thể kết nối hỗ trợ. Bạn thử lại sau nhé.');return result;}

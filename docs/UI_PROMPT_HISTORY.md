@@ -159,3 +159,7 @@ Prompt: chủ nhóm cần cảnh báo/xác nhận mới hủy; thành viên nh�
 Prompt: đổi ưu đãi món/phí giao sang popup tìm voucher, khóa mã không đủ điều kiện kèm lý do đỏ; bỏ nút tự mở thanh toán ở merchant QR, hiển thị bill; thanh toán cá nhân/nhóm xong có popup và chuyển hóa đơn với thông tin đã nhập, nút đơn mua/home. Yêu cầu đã rõ, triển khai trên stack hiện có. Thiết kế, sửa và kiểm chứng VOUCHERS_INVOICES_20261028.md. Không push.
 # 28/10/2026 — Menu ưu đãi / chat nổi
 Thay menu CSKH khách bằng chat góc phải; Ưu đãi của tôi mở popup tìm mã, hai nhóm món/giao hàng và bộ lọc sở hữu. Giữ layout/theme chung; UTF-8 cho JSPF. Chỉ hiển thị COD/QR tại checkout theo chốt mới của Thanh. Chi tiết kiểm ở docs/features/identity-membership/OFFERS_CHAT_20261028.md.
+
+
+## 29/10/2026 — Workspace theo role và phạm vi hiện hành
+Yêu cầu: Vendor vào tổng quan kinh doanh tất cả cửa hàng sở hữu, tách mua hàng/workspace; Manager vào vận hành chi nhánh theo phân công 0/1/nhiều, không có menu giá món/khuyến mãi/đối soát, CATALOG_ADMIN chỉ bổ sung danh mục/topping; Shipper vào dashboard giao hàng. Giữ deep link hợp lệ, một SiteMesh layout và widget đang có. Kết quả local: thêm workspace Vendor/Manager, Admin phân công đọc được, redirect kiểm role/local path, menu chung theo capability. Chạy Java 21: 8 tests đạt sau RED cho redirect/route; Shared UI/skills/Node syntax đạt. Render Tomcat và kiểm tích hợp toàn bộ do lượt kiểm chung thực hiện, chưa tự ghi là đã đạt tại mục này. Không commit/push hoặc đổi datasource/provider.

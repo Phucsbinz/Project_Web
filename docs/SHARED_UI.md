@@ -174,3 +174,11 @@ site-ui.js dùng notice cá nhân để thêm dòng dự kiến hoàn sau 30 ph�
 
 ## Voucher và invoice — 28/10/2026
 app.jsp tăng cache; site-ui.js không chen nhắc thanh toán vào invoice đang xem. Voucher/invoice là module order với CSS riêng scoped, dùng Bootstrap/modal/layout chung. Không thêm decorator/framework/provider mới. Xem VOUCHERS_INVOICES_20261028.md.
+
+## CSKH Guest và quick view — 29/10/2026
+Layout duy nhất render nút CSKH cho Guest và User trên trang thường. Guest bấm nút sẽ thấy modal yêu cầu đăng nhập; widget không gọi API chat hoặc polling khi chưa đăng nhập. `quick=1` không render widget; JS cũng loại widget khỏi iframe. CSS scoped `body.modal-open .support-widget` ẩn widget nền trong khi modal Bootstrap đang mở, tự hiện lại khi đóng. Cache CSS/JS widget đổi thành `20261028-support-visibility`. Không đổi quyền API, JWT hoặc layout theo role. Kiểm thật bằng `py -3 tools/check_all_ui.py --support-widget`.
+
+
+## Workspace theo vai trò và phạm vi — 29/10/2026
+`NavigationAdvice` và `app.jsp` dùng chung bổ sung nhãn Chủ cửa hàng/Quản lý chi nhánh, menu vận hành Manager và capability danh mục theo membership đang có hiệu lực. Vendor mở tổng quan kinh doanh tất cả cửa hàng sở hữu; Manager mở vận hành với trạng thái chưa phân công/chọn một trong nhiều chi nhánh; Shipper dùng dashboard đơn giao hiện có. Admin có danh sách phân công Manager và link phạm vi Shipper. Không thêm layout/Bootstrap/theme; giữ nguyên thay đổi widget CSKH đang có trong workspace. Module mới dùng JSP `workspace/`, CSS `.role-workspace` và JS riêng. Đây là thay đổi bundle chung cần ghép cùng `NavigationAdvice`/`app.jsp` khi tích hợp main, không chỉ chép menu; quyền API/service vẫn độc lập.
+Kiểm đã chạy tại lượt sửa: Shared UI 1 layout/21 file, cấu trúc 15 skill, Node syntax cho các JS mới/identity, và 8 kiểm thử Java 21 (redirect role/deep link, membership/capability, owner overview, route, login MockMvc). RED trước sửa: 3 test redirect lỗi đúng đích cũ và route Vendor lỗi còn mở catalog; GREEN 8/8 sau sửa. Kiểm render thật Tomcat/SiteMesh và toàn bộ suite được ghép trong lượt kiểm tích hợp chung; đoạn này không tự nhận đã hoàn tất chúng.

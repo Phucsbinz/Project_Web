@@ -5,7 +5,7 @@
 <c:if test="${orderRole == 'ROLE_USER' || orderRole == 'ROLE_VENDOR'}"><a class="nav-link" href="<c:url value='/orders'/>">Đơn mua của tôi</a><a class="nav-link" href="<c:url value='/orders'/>?status=RECEIVED">Đã nhận hàng</a></c:if>
 <c:if test="${orderRole != 'GUEST'}"><a class="nav-link" href="<c:url value='/notifications'/>">Thông báo</a></c:if>
 <c:if test="${orderRole == 'ROLE_VENDOR'}"><a class="nav-link" href="<c:url value='/vendor/orders'/>">Đơn của cửa hàng</a><a class="nav-link" href="<c:url value='/vendor/revenue'/>">Doanh thu cửa hàng</a></c:if>
-<c:if test="${orderRole == 'ROLE_MANAGER'}"><a class="nav-link" href="<c:url value='/manager/orders'/>">Vận hành đơn</a><a class="nav-link" href="<c:url value='/manager/order-tools'/>">Phí giao / hoa hồng</a><a class="nav-link" href="<c:url value='/manager/reports'/>">Báo cáo</a></c:if>
+<c:if test="${orderRole == 'ROLE_MANAGER'}"><a class="nav-link" href="<c:url value='/manager/orders'/>">Vận hành đơn</a><a class="nav-link" href="<c:url value='/manager/order-tools'/>">Vận chuyển chi nhánh</a><a class="nav-link" href="<c:url value='/manager/reports'/>">Báo cáo vận hành</a></c:if>
 <c:if test="${orderRole == 'ROLE_ADMIN'}"><a class="nav-link" href="<c:url value='/admin/orders'/>">Đơn toàn hệ thống</a><a class="nav-link" href="<c:url value='/admin/order-tools'/>">Vận chuyển / hoa hồng</a><a class="nav-link" href="<c:url value='/admin/reports'/>">Báo cáo hệ thống</a></c:if>
 <c:if test="${orderRole == 'ROLE_SHIPPER'}"><a class="nav-link" href="<c:url value='/shipper/orders'/>">Đơn giao của tôi</a><a class="nav-link" href="<c:url value='/shipper/reports'/>">Thống kê giao hàng</a></c:if>
 </nav>

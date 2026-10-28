@@ -58,8 +58,11 @@ public class SecurityConfig {
                     res.getWriter().write("{\"error\":\"UNAUTHORIZED\"}");
                 } else {
                     String next=req.getServletPath();
-                    String invite=next.matches("/group-orders/(new|[0-9a-fA-F-]{36})")?"?next="+java.net.URLEncoder.encode(next,java.nio.charset.StandardCharsets.UTF_8):"";
-                    res.sendRedirect(req.getContextPath()+"/auth/login"+invite);
+                    String query=req.getQueryString();
+                    if(query!=null && query.length()<=2000) next += "?"+query;
+                    // The login controller independently validates this local destination and role.
+                    String destination="?next="+java.net.URLEncoder.encode(next,java.nio.charset.StandardCharsets.UTF_8);
+                    res.sendRedirect(req.getContextPath()+"/auth/login"+destination);
                 }
             }))
             .addFilterBefore(jwt,UsernamePasswordAuthenticationFilter.class)

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderWorkflowService {
+  private final ShipperScopeService scopes;
   private final OrderDataRepository data;
   private final CommerceReferenceRepository refs;
   private final OrderSupport support;
@@ -26,7 +27,7 @@ public class OrderWorkflowService {
   private final org.springframework.context.ApplicationEventPublisher rewardEvents;
 
   public OrderWorkflowService(
-      OrderDataRepository data,
+      ShipperScopeService scopes, OrderDataRepository data,
       CommerceReferenceRepository refs,
       OrderSupport support,
       OrderLoyaltyBridge loyalty,
@@ -34,6 +35,7 @@ public class OrderWorkflowService {
       Clock clock,
       @Value("${order.return-window:3h}") Duration returnWindow,
       @Value("${features.shipper.enabled:false}") boolean shipperEnabled, OrderInventoryService inventory,org.springframework.context.ApplicationEventPublisher rewardEvents) {
+    this.scopes=scopes;
     this.data = data;
     this.refs = refs;
     this.support = support;
@@ -78,10 +80,10 @@ public class OrderWorkflowService {
     if (refs.operates(actor, o.storeId)) return;
     if (shipperEnabled
         && actor.is("SHIPPER")
+        && scopes.serves(actor.userId(),o.storeId)
         && !data.query(
                 DeliveryAssignment.class,
-                "where e.orderId=:order and e.shipperId=:user and e.status in"
-                    + " ('ACTIVE','COMPLETED')",
+                "where e.orderId=:order and e.shipperId=:user and e.status='ACTIVE'",
                 Map.of("order", o.id, "user", actor.userId()),
                 false,
                 1)
@@ -194,12 +196,19 @@ public class OrderWorkflowService {
                         "evidenceUrl",
                         r.evidenceUrl == null ? "" : r.evidenceUrl))
             .toList());
+    if(actor.is("SHIPPER")) {
+      result.keySet().retainAll(Set.of("id","code","storeId","storeName","status","paymentStatus","paymentMethod","total","createdAt","version","pickupAddress","pickupPhone","recipientName","recipientPhone","deliveryAddress","carrierName","note","items","canShip","delivery"));
+      result.put("delivery",assignments.stream().map(a->Map.of("shipperId",a.shipperId,"name",Objects.toString(refs.one("select full_name from users where id=?",a.shipperId).get("full_name"),""),"status",a.status,"assignedAt",a.assignedAt.toString())).toList());
+    }
     return result;
   }
 
   @Transactional(readOnly = true)
+  public List<Map<String, Object>> list(Actor actor,String mode,String status,int page,int size){return list(actor,mode,status,page,size,null);}
+
+  @Transactional(readOnly=true)
   public List<Map<String, Object>> list(
-      Actor actor, String mode, String status, int page, int size) {
+      Actor actor, String mode, String status, int page, int size,Long store) {
     refs.requireCurrent(actor, false);
     if (page < 0 || page > 499 || size < 1 || size > 50)
       throw OrderProblem.invalid("Phân trang không hợp lệ.");
@@ -212,7 +221,7 @@ public class OrderWorkflowService {
     } else if ("shipper".equals(mode)) {
       shipper(actor);
       where = "where exists (select a.id from DeliveryAssignment a where a.orderId=e.id"
-          + " and a.shipperId=:user and a.status in ('ACTIVE','COMPLETED'))";
+          + " and a.shipperId=:user and a.status in ('ACTIVE','COMPLETED')) and exists (select sc.id from ShipperStoreScope sc where sc.shipperId=:user and sc.storeId=e.storeId and sc.active=true)";
       params.put("user", actor.userId());
     } else {
       if (!actor.is("ADMIN") && !actor.is("MANAGER") && !actor.is("VENDOR"))
@@ -222,6 +231,7 @@ public class OrderWorkflowService {
               .map(s -> CommerceReferenceRepository.number(s, "id"))
               .filter(id -> refs.operates(actor, id))
               .toList();
+      if(store!=null){refs.requireOperator(actor,store);ids=ids.stream().filter(id->id.equals(store)).toList();}
       if (ids.isEmpty()) return List.of();
       where = "where e.storeId in :ids";
       params.put("ids", ids);
@@ -251,21 +261,36 @@ public class OrderWorkflowService {
             Math.min(10000, (page + 1) * size))
         .stream()
         .skip((long) page * size)
+        .filter(o -> !"shipper".equals(mode)||scopes.serves(actor.userId(),o.storeId))
         .map(o -> {
           Map<String,Object> view = support.view(o);
           if ("shipper".equals(mode)) {
+            if(!assigned(actor,o.id)){
+              var assignment=data.query(DeliveryAssignment.class,"where e.orderId=:order and e.shipperId=:shipper",Map.of("order",o.id,"shipper",actor.userId()),false,1).getFirst();
+              return new LinkedHashMap<String,Object>(Map.of("id",o.id,"code",o.orderCode,"storeName",o.storeName,"status",o.status,"canRead",false,"assignedAt",assignment.assignedAt.toString(),"completedAt",assignment.completedAt==null?"":assignment.completedAt.toString()));
+            }
             var pickup = refs.store(o.storeId,false);
             view.put("pickupAddress",pickup.get("address"));
             view.put("pickupPhone",pickup.get("phone"));
             view.put("recipientName", o.recipientName);
             view.put("recipientPhone", o.recipientPhone);
             view.put("deliveryAddress", o.deliveryAddress);
+            view.keySet().retainAll(Set.of("id","code","storeId","storeName","status","paymentStatus","paymentMethod","total","createdAt","version","pickupAddress","pickupPhone","recipientName","recipientPhone","deliveryAddress"));
+            view.put("canRead",true);
             view.put("codDue", "COD".equals(o.paymentMethod) && !"PAID".equals(o.paymentStatus)
                 ? o.finalAmount : BigDecimal.ZERO);
           }
           return view;
         })
         .toList();
+  }
+
+  private void mutationActor(Actor actor,long id){
+    long buyer=CommerceReferenceRepository.number(refs.one("select user_id from orders where id=?",id),"user_id");
+    scopes.lockUsers(actor.userId(),buyer);
+    refs.requireCurrent(actor,false);
+    if(actor.is("ADMIN")||actor.is("MANAGER")||actor.is("VENDOR"))
+      refs.requireOperatorMutation(actor,CommerceReferenceRepository.number(refs.one("select store_id from orders where id=?",id),"store_id"));
   }
 
   private void version(Order o, long version) {
@@ -284,12 +309,13 @@ public class OrderWorkflowService {
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public Map<String, Object> transition(Actor actor, long id, Transition request) {
-    refs.requireCurrent(actor, false);
+    mutationActor(actor,id);
     Order o = lockForLoyalty(id);
     version(o, request.version());
     boolean shipping = actor.is("SHIPPER");
     if (shipping) {
       shipper(actor);
+      scopes.requireService(actor.userId(),o.storeId);
       if (!assigned(actor, id)) throw OrderProblem.forbidden();
     } else refs.requireOperator(actor, o.storeId);
     List<String> states = List.of("NEW", "CONFIRMED", "PICKED_UP", "DELIVERING", "DELIVERED");
@@ -369,7 +395,7 @@ public class OrderWorkflowService {
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public Map<String, Object> cancel(Actor actor, long id, long version, String reason) {
-    refs.requireCurrent(actor, false);
+    mutationActor(actor,id);
     Order o = lockForLoyalty(id);
     version(o, version);
     boolean owner = actor.buyer() && o.userId == actor.userId();
@@ -477,6 +503,7 @@ public class OrderWorkflowService {
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public Map<String, Object> reviewReturn(Actor actor, long id, Decision request) {
+    mutationActor(actor,id);
     Order o = data.require(Order.class, id, true);
     refs.requireOperator(actor, o.storeId);
     version(o, request.version());
@@ -505,6 +532,7 @@ public class OrderWorkflowService {
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public Map<String, Object> receiveReturn(Actor actor, long id, long version) {
+    mutationActor(actor,id);
     Order o = data.require(Order.class, id, true);
     refs.requireOperator(actor, o.storeId);
     version(o, version);
@@ -524,6 +552,7 @@ public class OrderWorkflowService {
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public Map<String, Object> refundCash(Actor actor, long id, RefundInput request) {
+    mutationActor(actor,id);
     Order o = lockForLoyalty(id);
     refs.requireOperator(actor, o.storeId);
     boolean bank = Set.of("BANK_TRANSFER","VNPAY","LOCAL_QR").contains(o.paymentMethod);
@@ -602,8 +631,10 @@ public class OrderWorkflowService {
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public Map<String, Object> deliveryFailure(Actor actor, long id, long version, String reason) {
+    refs.requireCurrent(actor,true);
     shipper(actor);
     Order o = data.require(Order.class, id, true);
+    scopes.requireService(actor.userId(),o.storeId);
     version(o, version);
     if (!assigned(actor, id)) throw OrderProblem.forbidden();
     if (!Set.of("PICKED_UP", "DELIVERING").contains(o.status))
@@ -628,21 +659,29 @@ public class OrderWorkflowService {
   @Transactional(readOnly = true)
   public List<Map<String,Object>> availableShippers(Actor actor, long orderId) {
     if (!shipperEnabled) return List.of();
+    if(!actor.is("ADMIN")&&!actor.is("MANAGER"))throw OrderProblem.forbidden();
     Order order = data.require(Order.class,orderId,false);
     refs.requireOperator(actor,order.storeId);
     return refs.list("select u.id,u.full_name from users u join roles r on r.id=u.role_id"
-        + " where r.name='ROLE_SHIPPER' and u.is_active=true and u.email_verified_at is not null"
-        + " order by u.full_name,u.id");
+        + " join shipper_store_scopes sc on sc.shipper_id=u.id join stores s on s.id=sc.store_id"
+        + " where sc.store_id=? and sc.is_active=true and s.status='ACTIVE' and r.name='ROLE_SHIPPER' and u.is_active=true and u.email_verified_at is not null"
+        + " order by u.full_name,u.id",order.storeId);
   }
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public void assign(Actor actor, long id, Assignment request) {
     if (!shipperEnabled) throw OrderProblem.forbidden();
+    if(!actor.is("ADMIN")&&!actor.is("MANAGER"))throw OrderProblem.forbidden();
+    scopes.lockUsers(actor.userId(),request.shipperId(),CommerceReferenceRepository.number(refs.one("select user_id from orders where id=?",id),"user_id"));
+    mutationActor(actor,id);
     Order o = data.require(Order.class, id, true);
     refs.requireOperator(actor, o.storeId);
     version(o, request.version());
-    if (!Set.of("NEW", "CONFIRMED", "PICKED_UP", "DELIVERING").contains(o.status))
-      throw OrderProblem.conflict("Đơn không thể phân công.");
+    if (!"CONFIRMED".equals(o.status))
+      throw OrderProblem.conflict("Chỉ phân công sau khi xác nhận đơn và trước khi lấy hàng.");
+    LocalQrPaymentService.assertLedger(data,refs,o,true);
+    if(!"COD".equals(o.paymentMethod)&&!"PAID".equals(o.paymentStatus))throw OrderProblem.conflict("Chưa hoàn tất thanh toán trực tuyến.");
+    scopes.requireService(request.shipperId(),o.storeId);
     if (!"ROLE_SHIPPER".equals(refs.user(request.shipperId(), true).get("role_name")))
       throw OrderProblem.invalid("Người nhận không phải Shipper hoạt động.");
     DeliveryAssignment a =
@@ -654,6 +693,7 @@ public class OrderWorkflowService {
     boolean fresh = a == null;
     if (!fresh && a.shipperId.equals(request.shipperId()) && "ACTIVE".equals(a.status)) return;
     Long previous = fresh ? null : a.shipperId;
+    if(!fresh)OrderSupport.required(request.reason(),500);
     if (fresh) {
       a = new DeliveryAssignment();
       a.orderId = id;
@@ -669,9 +709,11 @@ public class OrderWorkflowService {
     assignedEvent.assignmentId = a.id;
     assignedEvent.actorId = actor.userId();
     assignedEvent.type = fresh ? "ASSIGNED" : "REASSIGNED";
-    assignedEvent.note = "shipper:" + (previous == null ? "none" : previous) + "->" + a.shipperId;
+    assignedEvent.note = "shipper:" + (previous == null ? "none" : previous) + "->" + a.shipperId + "; " + OrderSupport.note(request.reason(),400);
     assignedEvent.createdAt = clock.instant();
     data.save(assignedEvent);
+    DeliveryAssignmentChange change=new DeliveryAssignmentChange();
+    change.assignmentId=a.id;change.previousShipperId=previous;change.shipperId=a.shipperId;change.actorId=actor.userId();change.reason=OrderSupport.note(request.reason(),500);change.createdAt=clock.instant();data.save(change);
     String from = o.status;
     o.updatedAt =
         clock.instant().isAfter(o.updatedAt) ? clock.instant() : o.updatedAt.plusNanos(1000);

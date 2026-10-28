@@ -8,7 +8,7 @@
   const form = document.querySelector('#management-form');
   const list = document.querySelector('#management-list');
   const message = document.querySelector('#management-message');
-  const tabs = app.dataset.role === 'vendor' ? ['stores','products','promotions','areas','stock'] : ['stores','products','categories','toppings','promotions','areas','stock',...(app.dataset.role === 'admin' ? ['memberships'] : [])];
+  const tabs = app.dataset.role === 'manager' ? ['categories','toppings'] : app.dataset.role === 'vendor' ? ['stores','products','promotions','areas','stock'] : ['stores','products','categories','toppings','promotions','areas','stock',...(app.dataset.role === 'admin' ? ['memberships'] : [])];
   const section = tabs.includes(app.dataset.section) ? app.dataset.section : 'stores';
   let editing = null, shopList = [], categories = [], toppings = [], productList = [], loading = false;
   let productLookupReady = false, productLookupRevision = 0;
@@ -74,6 +74,11 @@
     if(options[type]) {
       input.multiple = ['toppings','products'].includes(type);
       options[type].forEach(o => { const option = el('option',o.name); option.value = o.id; option.selected = input.multiple ? (value || []).includes(o.id) : String(value) === String(o.id); input.append(option); });
+      if(type === 'category' && value != null && !options[type].some(o => String(o.id) === String(value))) {
+        const option = el('option','Danh mục #' + value + ' (đã ngừng hoạt động)');
+        option.value = value; option.selected = true; input.append(option);
+        group.append(el('small','Danh mục hiện tại đã ngừng hoạt động. Giữ nguyên hoặc chủ động chọn danh mục thay thế.','field-help'));
+      }
       if(type === 'products') {
         const known = new Set(options[type].map(o => String(o.id)));
         for(const id of value || []) if(!known.has(String(id))) {
@@ -84,6 +89,7 @@
     } else if(type === 'checkbox') { input.type = 'checkbox'; input.checked = value === undefined ? ['active','available'].includes(name) : Boolean(value); }
     else { if(type !== 'textarea') input.type = type; input.value = value ?? (type === 'number' ? (name.includes('Limit') ? 1 : 0) : ''); }
     if(type === 'datetime-local' && value) { const date = new Date(value); input.value = new Date(date - date.getTimezoneOffset()*60000).toISOString().slice(0,16); }
+    if(type === 'time') input.step = '1';
     if(type === 'number') { input.min = name.includes('Limit') || name.endsWith('Id') ? '1' : '0'; input.step = name === 'percent' ? '0.01' : '1'; if(name === 'percent') input.max = '100'; }
     input.required = !['checkbox','textarea','toppings','products'].includes(type) && name !== 'code' && name !== 'catalogKey';
     if(type === 'text') input.maxLength = name === 'phone' ? 20 : name === 'code' ? 50 : section === 'categories' || section === 'toppings' ? 100 : 150;
@@ -196,7 +202,7 @@
   }
   async function reload() {
     productLookupReady = false; syncPromotionSave();
-    const previous = select.value || new URL(location.href).searchParams.get('storeId'); shopList = await request('/stores'); select.replaceChildren();
+    const previous = select.value || new URL(location.href).searchParams.get('storeId') || new URL(location.href).searchParams.get('store'); shopList = await request('/stores'); select.replaceChildren();
     if(app.dataset.role === 'admin') { const o = el('option','Toàn hệ thống (khuyến mãi)'); o.value = ''; select.append(o); }
     shopList.forEach(s => { const o = el('option',s.name + ' · ' + (states[s.status]||s.status)); o.value = s.id; select.append(o); });
     if(!select.options.length) {const o=el('option','Chưa có cửa hàng được phân công');o.value='';select.append(o);}

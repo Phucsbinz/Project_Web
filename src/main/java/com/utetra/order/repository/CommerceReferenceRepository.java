@@ -94,6 +94,18 @@ public class CommerceReferenceRepository {
     if (!operates(actor, storeId)) throw OrderProblem.forbidden();
   }
 
+  /** Call before order/store locks. Membership revocation takes the same user lock. */
+  public void requireOperatorMutation(Actor actor, long storeId) {
+    if(actor==null) throw OrderProblem.forbidden();
+    var u=one("select role_id,is_active,email_verified_at from users where id=? for update",actor.userId());
+    var role=one("select name from roles where id=?",u.get("role_id")).get("name");
+    if(!flag(u,"is_active") || u.get("email_verified_at")==null || !actor.role().equals(role)) throw OrderProblem.forbidden();
+    if(actor.is("ADMIN")) return;
+    if(actor.is("VENDOR") && number(store(storeId,false),"owner_user_id")==actor.userId()) return;
+    if(actor.is("MANAGER") && !list("select id from store_memberships where user_id=? and store_id=? and is_active=true and member_role in ('MANAGER','CATALOG_ADMIN') for update",actor.userId(),storeId).isEmpty()) return;
+    throw OrderProblem.forbidden();
+  }
+
   public Map<String, Object> saleVariant(long variantId, boolean lock, Clock clock) {
     String sql =
         "select v.id variant_id,v.product_id,v.size_name,v.extra_price,p.store_id,p.name"

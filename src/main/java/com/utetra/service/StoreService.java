@@ -45,7 +45,7 @@ public class StoreService {
     }
     /** Read existing policies for shop approval; creating policies belongs to Order. */
     public List<CommissionPolicyView> commissionPolicies(UtetraPrincipal p,Long storeId) {
-        guard.reviewer(p,storeId);
+        guard.admin(p);
         return operations.commissionPolicies();
     }
     public List<StoreView> managedStores(UtetraPrincipal p) {
@@ -61,12 +61,12 @@ public class StoreService {
         requests.save(request); guard.audit(p,"REGISTER","STORE",store.getId()); return view(store);
     }
     @Transactional public StoreView update(UtetraPrincipal p,Long id,@Valid StoreInput input) {
-        guard.store(p,id); validate(input); var s=found(stores.findById(id)); version(s.getVersion(),input.version());
+        guard.business(p,id); validate(input); var s=found(stores.findById(id)); expectedVersion(s.getVersion(),input.version());
         require(!input.acceptingOrders() || "ACTIVE".equals(s.getStatus()),"Shop chưa được duyệt hoặc đang bị khóa");
         apply(s,input); stores.flush(); guard.audit(p,"UPDATE","STORE",id); return view(s);
     }
     @Transactional public StoreView review(UtetraPrincipal p,Long id,@Valid Decision input) {
-        guard.reviewer(p,id); var s=found(stores.findById(id)); version(s.getVersion(),input.version());
+        guard.admin(p); var s=found(stores.findById(id)); version(s.getVersion(),input.version());
         require(!s.getOwnerUserId().equals(p.userId()),"Không được tự duyệt shop");
         require("PENDING_APPROVAL".equals(s.getStatus()),"Hồ sơ đã được xử lý");
         if("APPROVED".equals(input.decision())) {
@@ -87,13 +87,13 @@ public class StoreService {
         stores.flush(); guard.audit(p,input.decision(),"STORE",id); return view(s);
     }
     @Transactional public StoreView state(UtetraPrincipal p,Long id,@Valid StoreState input) {
-        guard.reviewer(p,id); var s=found(stores.findById(id)); version(s.getVersion(),input.version());
+        guard.admin(p); var s=found(stores.findById(id)); version(s.getVersion(),input.version());
         require(Set.of("ACTIVE","SUSPENDED").contains(s.getStatus()),"Cần duyệt hồ sơ trước");
         s.setStatus(input.status()); if(!"ACTIVE".equals(s.getStatus())) s.setAcceptingOrders(false);
         stores.flush(); guard.audit(p,"STATUS_"+input.status(),"STORE",id); return view(s);
     }
     @Transactional public AreaView area(UtetraPrincipal p,Long storeId,Long areaId,@Valid AreaInput input) {
-        guard.store(p,storeId); var area=areaId==null?new StoreDeliveryArea():found(areas.findById(areaId));
+        guard.mutation(p,storeId); var area=areaId==null?new StoreDeliveryArea():found(areas.findById(areaId));
         require(areaId==null || storeId.equals(area.getStoreId()),"Khu vực không thuộc shop");
         if(areaId!=null) expectedVersion(area.getVersion(),input.version());
         area.setStoreId(storeId); area.setAreaCode(input.areaCode().trim()); area.setName(input.name().trim()); area.setActive(input.active());
@@ -101,13 +101,16 @@ public class StoreService {
     }
     @Transactional public void assign(UtetraPrincipal p,Long storeId,@Valid Membership input,boolean catalogDelegation) {
         guard.admin(p); found(stores.findById(storeId));
-        boolean managerActive=operations.activeManager(input.userId());
-        require(managerActive,"Chỉ phân công Manager đang hoạt động");
-        var m=memberships.findAll().stream().filter(x -> x.getUserId().equals(input.userId()) && x.getStoreId().equals(storeId)).findFirst().orElseGet(StoreMembership::new);
+        guard.assignmentTarget(input.userId(),input.active());
+        var m=memberships.assignment(input.userId(),storeId).orElseGet(StoreMembership::new);
         m.setStoreId(storeId); m.setUserId(input.userId()); m.setAssignedBy(p.userId()); m.setActive(input.active()); m.setMemberRole(catalogDelegation?"CATALOG_ADMIN":"MANAGER");
         memberships.saveAndFlush(m); guard.audit(p,"ASSIGN","STORE",storeId);
     }
-    private void validate(StoreInput i) { require(i.openTime().isBefore(i.closeTime()),"Giờ mở phải trước giờ đóng, không qua đêm"); }
+    private void validate(StoreInput i) {
+        // The MySQL migration declares TIME without fsp: the persisted contract is whole seconds.
+        require(i.openTime().getNano()==0 && i.closeTime().getNano()==0,"Giờ mở/đóng chỉ hỗ trợ đến giây, không nhận phần lẻ của giây");
+        require(i.openTime().isBefore(i.closeTime()),"Giờ mở phải trước giờ đóng, không qua đêm");
+    }
     private void apply(Store s,StoreInput i) {
         s.setName(i.name().trim()); s.setSlug(i.slug()); s.setAddress(i.address().trim()); s.setPhone(i.phone().trim());
         s.setDescription(i.description()); s.setOpenTime(i.openTime()); s.setCloseTime(i.closeTime()); s.setAcceptingOrders(i.acceptingOrders());

@@ -1,0 +1,9 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<!DOCTYPE html><html lang="vi"><head><title>Vận hành chi nhánh · UTETra</title><link rel="stylesheet" href="<c:url value='/assets/css/role-workspace.css'/>"></head><body>
+<section class="role-workspace" id="manager-operations"><p class="eyebrow">KHÔNG GIAN QUẢN LÝ</p><h1 id="operations-title">Vận hành chi nhánh</h1><p>Theo dõi đơn hàng, nhận đơn và cập nhật tình trạng phục vụ trong chi nhánh được phân công.</p>
+<div id="operations-message" class="workspace-status" role="status" aria-live="polite">Đang tải phân công…</div>
+<div class="workspace-choice" id="operations-picker" hidden><label for="operations-store" class="form-label">Chi nhánh được phân công</label><select id="operations-store" class="form-select"></select></div>
+<div id="operations-content" hidden><div class="workspace-store"><h2 id="operations-branch" class="h4"></h2><div class="workspace-actions mb-3"><a class="btn btn-primary" id="operations-orders">Đơn hàng chi nhánh</a><a class="btn btn-outline-primary" id="operations-report">Báo cáo vận hành</a><a class="btn btn-outline-primary" href="<c:url value='/manager/support'/>">Hỗ trợ khách hàng</a></div><p id="operations-accepting"></p><button type="button" id="operations-toggle" class="btn btn-outline-primary">Đổi trạng thái nhận đơn</button></div>
+<h2 class="h4 mt-4">Khả năng phục vụ và tồn kho</h2><p>Thay đổi tình trạng sẵn bán và số lượng size đang theo dõi tồn kho.</p><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Món / size</th><th>Tình trạng</th><th>Tồn kho</th><th>Thao tác</th></tr></thead><tbody id="operations-products"></tbody></table></div></div></section>
+<script src="<c:url value='/assets/js/manager-operations.js'/>" defer></script></body></html>

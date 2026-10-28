@@ -63,6 +63,11 @@ public class OperationsController {
       @RequestParam(required = false) LocalDate to,
       Model model) {
     LocalDate today = LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+    if(OrderWebSupport.actor().is("MANAGER")) {
+      model.addAttribute("report",operations.operationalReport(OrderWebSupport.actor(),store,from==null?today.minusDays(6):from,to==null?today:to));
+      model.addAttribute("stores",operations.stores(OrderWebSupport.actor()));
+      return "order/operational-report";
+    }
     model.addAttribute(
         "report",
         operations.revenue(

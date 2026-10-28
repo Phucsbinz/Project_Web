@@ -32,7 +32,7 @@ public class OperationsService {
   }
 
   private void admin(Actor actor) {
-    refs.requireCurrent(actor, false);
+    refs.requireCurrent(actor, true);
     if (!actor.is("ADMIN")) throw OrderProblem.forbidden();
   }
 
@@ -66,10 +66,10 @@ public class OperationsService {
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public Carrier carrier(Actor actor, CarrierInput request) {
-    refs.requireCurrent(actor,false);
+    refs.requireCurrent(actor,true);
     if(!actor.is("ADMIN") && !actor.is("MANAGER")) throw OrderProblem.forbidden();
     if(actor.is("MANAGER") && request.storeId()==null) throw OrderProblem.forbidden();
-    if(request.storeId()!=null) refs.requireOperator(actor,request.storeId());
+    if(request.storeId()!=null) refs.requireOperatorMutation(actor,request.storeId());
     Carrier c =
         request.id() == null ? new Carrier() : data.require(Carrier.class, request.id(), true);
     if(request.id()!=null && !Objects.equals(c.managedStoreId,request.storeId()))
@@ -92,11 +92,11 @@ public class OperationsService {
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public CarrierAreaRate rate(Actor actor, RateInput request) {
-    refs.requireCurrent(actor, false);
+    refs.requireCurrent(actor, true);
     var area =
         refs.one("select * from store_delivery_areas where id=? for update", request.areaId());
     long store = CommerceReferenceRepository.number(area, "store_id");
-    refs.requireOperator(actor, store);
+    refs.requireOperatorMutation(actor, store);
     if (!actor.is("ADMIN") && !actor.is("MANAGER")) throw OrderProblem.forbidden();
     Carrier carrier=data.require(Carrier.class, request.carrierId(), true);
     if(carrier.managedStoreId!=null && carrier.managedStoreId!=store)
@@ -130,9 +130,9 @@ public class OperationsService {
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public CommissionPolicy commission(Actor actor, CommissionInput request) {
-    refs.requireCurrent(actor, false);
-    if (!actor.is("ADMIN") && !actor.is("MANAGER")) throw OrderProblem.forbidden();
-    refs.requireOperator(actor, request.storeId());
+    refs.requireCurrent(actor, true);
+    if (!actor.is("ADMIN")) throw OrderProblem.forbidden();
+    refs.requireOperatorMutation(actor, request.storeId());
     refs.store(request.storeId(), true);
     BigDecimal percent = request.percent();
     if (percent == null
@@ -197,6 +197,7 @@ public class OperationsService {
                 + " left join commission_policies c on c.id=s.commission_policy_id order by s.id")
         .stream()
         .filter(s -> refs.operates(actor, CommerceReferenceRepository.number(s, "id")))
+        .map(s -> {if(actor.is("MANAGER")){s.remove("commission_policy_id");s.remove("commission_rate");}return s;})
         .toList();
   }
 
@@ -262,7 +263,7 @@ public class OperationsService {
   @Transactional(readOnly = true)
   public Map<String, Object> revenue(Actor actor, Long store, LocalDate from, LocalDate to) {
     refs.requireCurrent(actor, false);
-    if (!actor.is("ADMIN") && !actor.is("MANAGER") && !actor.is("VENDOR"))
+    if (!actor.is("ADMIN") && !actor.is("VENDOR"))
       throw OrderProblem.forbidden();
     if (store != null) refs.requireOperator(actor, store);
     if (from == null || to == null || to.isBefore(from) || to.isAfter(from.plusDays(365)))
@@ -323,6 +324,23 @@ public class OperationsService {
         reverse,
         "storeNet",
         goods.subtract(refundGoods).subtract(commission.subtract(reverse)));
+  }
+
+  @Transactional(readOnly=true)
+  public Map<String,Object> operationalReport(Actor actor,Long store,LocalDate from,LocalDate to){
+    refs.requireCurrent(actor,false);
+    if(!actor.is("MANAGER")&&!actor.is("ADMIN"))throw OrderProblem.forbidden();
+    if(store!=null)refs.requireOperator(actor,store);
+    if(from==null||to==null||to.isBefore(from)||to.isAfter(from.plusDays(365)))throw OrderProblem.invalid("Khoảng ngày không hợp lệ.");
+    var allowed=stores(actor).stream().map(s->CommerceReferenceRepository.number(s,"id")).filter(id->store==null||id.equals(store)).toList();
+    var start=from.atStartOfDay(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant();var end=to.plusDays(1).atStartOfDay(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant();
+    long count=0,delivered=0,cancelled=0;BigDecimal due=BigDecimal.ZERO,collected=BigDecimal.ZERO;
+    for(var row:refs.list("select store_id,status,payment_method,payment_status,final_amount from orders where created_at>=? and created_at<?",start,end)){
+      if(!allowed.contains(CommerceReferenceRepository.number(row,"store_id")))continue;
+      count++;if("DELIVERED".equals(row.get("status")))delivered++;if("CANCELLED".equals(row.get("status")))cancelled++;
+      if("COD".equals(row.get("payment_method"))){if("PAID".equals(row.get("payment_status")))collected=collected.add(CommerceReferenceRepository.money(row,"final_amount"));else if(!Set.of("CANCELLED","REFUNDED").contains(row.get("status")))due=due.add(CommerceReferenceRepository.money(row,"final_amount"));}
+    }
+    return Map.of("from",from.toString(),"to",to.toString(),"orders",count,"delivered",delivered,"cancelled",cancelled,"codDue",due,"codCollected",collected);
   }
 
   @Transactional(readOnly = true)

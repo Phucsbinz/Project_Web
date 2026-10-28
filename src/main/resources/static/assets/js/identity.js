@@ -75,7 +75,7 @@
     } catch (_) {
       throw new Error('Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối và thử lại sau.');
     }
-    if (path === '/auth/login' && res.status === 401) {
+    if (path.split('?')[0] === '/auth/login' && res.status === 401) {
       throw new Error('Email hoặc mật khẩu không đúng. Vui lòng thử lại hoặc chọn Quên mật khẩu.');
     }
     if (res.redirected || !res.headers.get('Content-Type')?.includes('application/json')) {
@@ -162,7 +162,9 @@
       run(async () => {
         const submit = form.querySelector('button[type="submit"],button:not([type])'); submit.disabled = true;
         try {
-          const result = await request(form.dataset.endpoint, form.dataset.method || 'POST', form.hasAttribute('data-multipart') ? new FormData(form) : fieldData(form));
+          const next = new URLSearchParams(location.search).get('next');
+          const endpoint = form.dataset.endpoint === '/auth/login' && next ? '/auth/login?next=' + encodeURIComponent(next) : form.dataset.endpoint;
+          const result = await request(endpoint, form.dataset.method || 'POST', form.hasAttribute('data-multipart') ? new FormData(form) : fieldData(form));
           if (form.id === 'profile-form') avatarInput.value = '';
           say(result.message || 'Đã lưu.');
           if (['/auth/register', '/auth/forgot'].includes(form.dataset.endpoint)) {
@@ -181,9 +183,7 @@
           }
           if ((form.id === 'otp-form' && !result.grant) || form.dataset.endpoint === '/auth/reset') completeAuth();
           if (result.redirect) {
-            const next=new URLSearchParams(location.search).get('next');
-            const invite=form.dataset.endpoint==='/auth/login' && /^\/group-orders\/(new|[0-9a-fA-F-]{36})$/.test(next||'');
-            window.location.assign(invite?context+next:result.redirect); return;
+            window.location.assign(result.redirect); return;
           }
           if (form.dataset.endpoint === '/auth/reset') { form.reset(); form.elements.grant.value = ''; form.classList.add('d-none'); }
           if (!page.startsWith('/auth/')) await load();

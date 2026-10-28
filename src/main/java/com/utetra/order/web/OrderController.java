@@ -46,10 +46,11 @@ public class OrderController {
   public String list(
       @RequestParam(required = false) String status,
       @RequestParam(defaultValue = "0") int page,
+      @RequestParam(required = false) Long store,
       HttpServletRequest request,
       Model model) {
     model.addAttribute(
-        "orders", orders.list(OrderWebSupport.actor(), mode(request), status, page, 20));
+        "orders", orders.list(OrderWebSupport.actor(), mode(request), status, page, 20,store));
     model.addAttribute("base", base(request));
     model.addAttribute("mode", mode(request));
     model.addAttribute("page", page);
@@ -62,8 +63,9 @@ public class OrderController {
   public List<Map<String, Object>> listData(
       @RequestParam(required = false) String status,
       @RequestParam(defaultValue = "0") int page,
+      @RequestParam(required = false) Long store,
       HttpServletRequest request) {
-    return orders.list(OrderWebSupport.actor(), mode(request), status, page, 20);
+    return orders.list(OrderWebSupport.actor(), mode(request), status, page, 20,store);
   }
 
   @GetMapping("/{id}")
@@ -72,8 +74,8 @@ public class OrderController {
     model.addAttribute("base", base(request));
     model.addAttribute("mode", mode(request));
     model.addAttribute("role", OrderWebSupport.actor().role());
-    model.addAttribute("bank", bank.instructions(id));
-    if ("operator".equals(mode(request)))
+    if(!OrderWebSupport.actor().is("SHIPPER"))model.addAttribute("bank", bank.instructions(id));
+    if ("operator".equals(mode(request)) && (OrderWebSupport.actor().is("ADMIN")||OrderWebSupport.actor().is("MANAGER")))
       model.addAttribute("shippers", orders.availableShippers(OrderWebSupport.actor(),id));
     return "order/detail";
   }

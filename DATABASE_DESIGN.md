@@ -1,5 +1,8 @@
 # UTETra — Thiết kế dữ liệu theo yêu cầu cuối kỳ
 
+> Cập nhật quyền 29/10/2026 theo yêu cầu triển khai mới: Vendor quản lý kinh doanh theo ownership; Manager chỉ vận hành theo membership (đơn, tồn/availability/nhận đơn, giao hàng và báo cáo vận hành), không sửa giá món, khuyến mãi hoặc đọc đối soát/hoa hồng Vendor. CATALOG_ADMIN là capability membership chỉ cho Category/Topping chung, Admin cấp/thu hồi. Các mô tả Manager quản lý giá/promotion/commission/revenue cũ bên dưới được thay bằng quyết định này. Admin/Manager phân công chuyến sau CONFIRMED và kiểm thanh toán; Shipper phải có scope phục vụ riêng trước khi nhận assignment. Chi tiết quyền/state/migration và bằng chứng tại [hồ sơ triển khai](docs/reviews/role-workflow-fixes-2026-10-29/REPORT.md).
+
+
 > Migration 2026102704 thêm support_conversations và support_messages với FK users/stores, unique customer/scope và UUID retry; migration 2026102705 bỏ cột test password_plaintext, không thay password_hash BCrypt. Đã áp dụng trên utetra_db: 17 migration, 51 bảng gồm Flyway; snapshot/số dòng tại docs/DB_AUDIT_20261027.json.
 
 > Migration `2026102403`: `carriers.managed_store_id` nullable FK stores; NULL là carrier global do Admin quản lý, có shop là carrier riêng. Scope không được đổi bằng request; rate và checkout kiểm đúng shop.

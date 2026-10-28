@@ -129,13 +129,13 @@ class IdentityIntegrationTest {
         assertThatThrownBy(() -> auth.refresh(next.refresh())).isInstanceOf(IdentityException.class);
         assertThat(identity.isCurrent(p)).isTrue();
     }
-    @Test void customerLoginRedirectsHomeWithoutChangingManagerDestination() throws Exception {
+    @Test void customerLoginRedirectsHomeAndManagerToOperationsWorkspace() throws Exception {
         buyer();
         mvc.perform(post("/auth/login").with(csrf()).contentType("application/json").content(json.writeValueAsString(Map.of("email",email,"password",PASSWORD))))
             .andExpect(status().isOk()).andExpect(jsonPath("$.redirect").value("/"));
         db.update("update users set role_id=(select id from roles where name='ROLE_MANAGER') where email=?",email);
         mvc.perform(post("/auth/login").with(csrf()).contentType("application/json").content(json.writeValueAsString(Map.of("email",email,"password",PASSWORD))))
-            .andExpect(status().isOk()).andExpect(jsonPath("$.redirect").value("/account/profile"));
+            .andExpect(status().isOk()).andExpect(jsonPath("$.redirect").value("/manager"));
     }
     @Test void concurrentRefreshHasExactlyOneWinner() throws Exception {
         buyer(); var token=auth.login(email,PASSWORD).refresh();

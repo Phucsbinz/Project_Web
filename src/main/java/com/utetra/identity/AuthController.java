@@ -29,7 +29,7 @@ public class AuthController {
         limits.check("reset:"+req.getRemoteAddr(),30); auth.reset(form.grant(),form.password()); cookies.clear(req,res); return Map.of("message","Đã đổi mật khẩu và thu hồi tất cả phiên.");
     }
     @PostMapping("/login") public Map<String,Object> login(@Valid @RequestBody IdentityForms.Login form,HttpServletRequest req,HttpServletResponse res) {
-        limits.check("login:"+req.getRemoteAddr(),60); var result=auth.login(form.email(),form.password()); cookies.write(req,res,result); cookies.rotateCsrf(req,res); return Map.of("message","Đăng nhập thành công.","redirect",req.getContextPath()+("ROLE_USER".equals(result.role())?"/":"/account/profile"));
+        limits.check("login:"+req.getRemoteAddr(),60); var result=auth.login(form.email(),form.password()); cookies.write(req,res,result); cookies.rotateCsrf(req,res); return Map.of("message","Đăng nhập thành công.","redirect",req.getContextPath()+LoginDestination.resolve(result.role(),req.getParameter("next")));
     }
     @PostMapping("/refresh") public Map<String,Object> refresh(@CookieValue(name="UTETRA_REFRESH",required=false) String token,HttpServletRequest req,HttpServletResponse res) {
         limits.check("refresh:"+req.getRemoteAddr(),120); cookies.write(req,res,auth.refresh(token)); return Map.of("message","Đã làm mới phiên.");

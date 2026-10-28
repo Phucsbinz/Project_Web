@@ -78,7 +78,8 @@ public final class OrderRequests {
 
   public record Assignment(
       @Positive @JsonDeserialize(using = StrictNumbers.LongValue.class) long shipperId,
-      @Min(0) @JsonDeserialize(using = StrictNumbers.LongValue.class) long version) {}
+      @Min(0) @JsonDeserialize(using = StrictNumbers.LongValue.class) long version,
+      @Size(max=500) String reason) { public Assignment(long shipperId,long version){this(shipperId,version,"");} }
 
   public record CarrierInput(
       @Positive @JsonDeserialize(using = StrictNumbers.LongValue.class) Long id,

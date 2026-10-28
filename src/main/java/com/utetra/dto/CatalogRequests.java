@@ -12,7 +12,11 @@ public final class CatalogRequests {
         @NotBlank @Pattern(regexp="[a-z0-9]+(?:-[a-z0-9]+)*") @Size(max=150) String slug,
         @NotBlank @Size(max=500) String address, @NotBlank @Pattern(regexp="[+0-9 ()-]{8,20}") String phone,
         @Size(max=4000) String description, @NotNull LocalTime openTime, @NotNull LocalTime closeTime,
-        boolean acceptingOrders, @PositiveOrZero long version) {}
+        boolean acceptingOrders, @PositiveOrZero @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using=com.utetra.identity.StrictNumbers.LongValue.class) Long version) {
+        public StoreInput(String name,String slug,String address,String phone,String description,LocalTime openTime,LocalTime closeTime,boolean acceptingOrders,long version) {
+            this(name,slug,address,phone,description,openTime,closeTime,acceptingOrders,Long.valueOf(version));
+        }
+    }
     public record CategoryInput(@NotBlank @Size(max=100) String name,
         @NotBlank @Pattern(regexp="[a-z0-9]+(?:-[a-z0-9]+)*") @Size(max=100) String slug,
         @Size(max=4000) String description, @Min(0) int displayOrder, boolean active,
@@ -53,7 +57,11 @@ public final class CatalogRequests {
         @NotNull @DecimalMin("0") @Digits(integer=12,fraction=0) BigDecimal maxDiscount,
         @NotNull @DecimalMin("0") @Digits(integer=12,fraction=0) BigDecimal minOrder,
         @Min(1) int usageLimit, @Min(1) int perUserLimit, @NotNull Instant startsAt, @NotNull Instant endsAt,
-        boolean active, @NotNull @Size(max=200) Set<@NotNull Long> productIds, @PositiveOrZero long version) {}
+        boolean active, @NotNull @Size(max=200) Set<@NotNull Long> productIds, @PositiveOrZero @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using=com.utetra.identity.StrictNumbers.LongValue.class) Long version) {
+        public PromotionInput(Long storeId,String name,String code,String kind,BigDecimal percent,BigDecimal maxDiscount,BigDecimal minOrder,int usageLimit,int perUserLimit,Instant startsAt,Instant endsAt,boolean active,Set<Long> productIds,long version) {
+            this(storeId,name,code,kind,percent,maxDiscount,minOrder,usageLimit,perUserLimit,startsAt,endsAt,active,productIds,Long.valueOf(version));
+        }
+    }
     public record DrinkInput(@NotNull Long variantId, @Min(1) @Max(20) int quantity,
         int sugarLevel, int iceLevel, @NotNull @Size(max=50) Set<@NotNull Long> toppingIds) {}
     public record Decision(@NotNull @Pattern(regexp="APPROVED|REJECTED") String decision,

@@ -80,7 +80,14 @@ public class CatalogController {
     @PostMapping("/account/shop-registration") @ResponseBody public Object registration(@AuthenticationPrincipal UtetraPrincipal p,@Valid @RequestBody StoreInput input) { return stores.register(p,input); }
     @GetMapping({"/vendor","/vendor/{section:products|promotions|stores|shop|areas|stock}","/manager","/manager/{section:products|categories|toppings|promotions|stores|areas|stock}","/admin","/admin/{section:products|categories|toppings|promotions|stores|areas|stock|memberships}"})
     public String management(jakarta.servlet.http.HttpServletRequest request,Model model) {
-        String[] path=request.getServletPath().split("/"); model.addAttribute("rolePath",path[1]);
+        String current=request.getServletPath();
+        if("/vendor".equals(current)) return "redirect:/vendor/overview";
+        if(java.util.Set.of("/manager","/manager/products","/manager/stores","/manager/stock").contains(current)) {
+            String store=request.getParameter("store");
+            return "redirect:/manager/operations"+(store!=null&&store.matches("[0-9]+")?"?store="+store:"");
+        }
+        if("/admin/memberships".equals(current)) return "redirect:/admin/assignments";
+        String[] path=current.split("/"); model.addAttribute("rolePath",path[1]);
         model.addAttribute("catalogSection",path.length<3 || "shop".equals(path[2]) ? "stores" : path[2]);
         return "catalog/manage";
     }

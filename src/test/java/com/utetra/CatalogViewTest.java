@@ -48,7 +48,10 @@ class CatalogViewTest {
             String path="/"+role.toLowerCase()+"/products";
             var response=client.exchange(path,HttpMethod.GET,new HttpEntity<>(headers),String.class);
             assertThat(response.getStatusCode()).as(path).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).contains("catalog-manager","catalog-management.js","_csrf","data-section=\"products\"").doesNotContain("<%@","<sitemesh:write");
+            if(role.equals("MANAGER"))
+                assertThat(response.getBody()).contains("manager-operations","manager-operations.js","_csrf").doesNotContain("id=\"catalog-manager\"","<%@","<sitemesh:write");
+            else
+                assertThat(response.getBody()).contains("catalog-manager","catalog-management.js","_csrf","data-section=\"products\"").doesNotContain("<%@","<sitemesh:write");
         }
         jdbc.update("update users set role_id=(select id from roles where name='ROLE_VENDOR') where id=1");
         var headers=new HttpHeaders(); headers.setBearerAuth(jwt.issue(1L,1L,"ROLE_VENDOR"));

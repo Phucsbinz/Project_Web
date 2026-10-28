@@ -52,7 +52,7 @@ public class CatalogService {
         toppings.saveAndFlush(t); guard.audit(p,"SAVE","TOPPING",t.getId()); return toppingView(t);
     }
     @Transactional public void availability(UtetraPrincipal p,Long storeId,Long toppingId,boolean available) {
-        guard.store(p,storeId); found(toppings.findById(toppingId));
+        guard.mutation(p,storeId); found(toppings.findById(toppingId));
         var s=stock.findByStoreIdAndToppingId(storeId,toppingId).orElseGet(StoreTopping::new);
         s.setStoreId(storeId); s.setToppingId(toppingId); s.setAvailable(available); stock.saveAndFlush(s); guard.audit(p,"AVAILABILITY","TOPPING",toppingId);
     }
@@ -101,9 +101,9 @@ public class CatalogService {
         guard.store(p,storeId); return products.findAll().stream().filter(x -> x.getStoreId().equals(storeId)).map(x -> view(x,0,BigDecimal.ZERO,0)).toList();
     }
     @Transactional public ProductView saveProduct(UtetraPrincipal p,Long id,@Valid ProductInput input) {
-        guard.store(p,input.storeId()); var product=id==null?new Product():found(products.findById(id));
-        if(id!=null) { guard.store(p,product.getStoreId()); require(product.getStoreId().equals(input.storeId()),"Không được chuyển món sang shop khác"); expectedVersion(product.getVersion(),input.version()); }
-        require(found(categories.findById(input.categoryId())).getActive(),"Danh mục đã ngừng hoạt động");
+        guard.business(p,input.storeId()); var product=id==null?new Product():found(products.findById(id));
+        if(id!=null) { guard.business(p,product.getStoreId()); require(product.getStoreId().equals(input.storeId()),"Không được chuyển món sang shop khác"); expectedVersion(product.getVersion(),input.version()); }
+        require(found(categories.findById(input.categoryId())).getActive() || (id!=null && Objects.equals(product.getCategoryId(),input.categoryId())),"Danh mục đã ngừng hoạt động");
         require(input.variants().stream().map(VariantInput::sizeName).distinct().count()==input.variants().size(),"Size bị trùng");
         require(input.variants().stream().anyMatch(VariantInput::active),"Cần ít nhất một size hoạt động");
         for(Long toppingId:input.toppingIds()) require(found(toppings.findById(toppingId)).getActive(),"Topping đã ngừng hoạt động");
@@ -126,7 +126,7 @@ public class CatalogService {
         variants.flush(); products.flush(); availabilityEvents.changed(product.getStoreId(),variants.findByProductId(product.getId()).stream().map(ProductVariant::getId).toList(),List.of()); guard.audit(p,"SAVE","PRODUCT",product.getId()); return view(product,0,BigDecimal.ZERO,0);
     }
     @Transactional public void disableProduct(UtetraPrincipal p,Long id,long suppliedVersion) {
-        var product=found(products.findById(id)); guard.store(p,product.getStoreId()); version(product.getVersion(),suppliedVersion);
+        var product=found(products.findById(id)); guard.business(p,product.getStoreId()); version(product.getVersion(),suppliedVersion);
         product.setActive(false); product.setAvailable(false); products.flush(); guard.audit(p,"DISABLE","PRODUCT",id);
     }
     public DrinkQuote quote(Long id,@Valid DrinkInput input) {
