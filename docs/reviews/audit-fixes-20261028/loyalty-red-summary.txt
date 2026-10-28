@@ -1,0 +1,5 @@
+[ERROR] Tests run: 2, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 24.94 s <<< FAILURE! -- in com.utetra.order.OrderCommerceIntegrationTest
+[ERROR] Tests run: 2, Failures: 0, Errors: 2, Skipped: 0
+[INFO] BUILD FAILURE
+[INFO] Total time:  42.550 s
+[INFO] Finished at: 2026-10-28T12:08:14+07:00

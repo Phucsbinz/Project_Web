@@ -24,7 +24,11 @@ public class Product {
     @Column(name="updated_at",nullable=false) private Instant updatedAt;
     @Version private long version;
     public Long getId() { return id; }
-    public void touch() { updatedAt=Instant.now(); }
+    public void touch() {
+        Instant now=Instant.now();
+        // Always dirty the parent so child-only edits advance its optimistic version.
+        updatedAt=updatedAt==null || now.isAfter(updatedAt)?now:updatedAt.plusNanos(1000);
+    }
     public Long getStoreId() { return storeId; }
     public void setStoreId(Long value) { storeId=value; }
     public Long getCategoryId() { return categoryId; }

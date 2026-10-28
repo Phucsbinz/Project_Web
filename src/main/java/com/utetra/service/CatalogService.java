@@ -41,11 +41,13 @@ public class CatalogService {
     public List<ToppingView> toppings(UtetraPrincipal p) { guard.role(p); return toppings.findAll().stream().map(this::toppingView).toList(); }
     @Transactional public CategoryView saveCategory(UtetraPrincipal p,Long id,@Valid CategoryInput input) {
         guard.catalog(p); var c=id==null?new Category():found(categories.findById(id));
+        if(id!=null) expectedVersion(c.getVersion(),input.version());
         c.setName(input.name().trim()); c.setSlug(input.slug()); c.setDescription(input.description()); c.setDisplayOrder(input.displayOrder()); c.setActive(input.active());
         categories.saveAndFlush(c); guard.audit(p,"SAVE","CATEGORY",c.getId()); return categoryView(c);
     }
     @Transactional public ToppingView saveTopping(UtetraPrincipal p,Long id,@Valid ToppingInput input) {
         guard.catalog(p); var t=id==null?new Topping():found(toppings.findById(id));
+        if(id!=null) expectedVersion(t.getVersion(),input.version());
         t.setName(input.name().trim()); t.setPrice(input.price()); t.setActive(input.active());
         toppings.saveAndFlush(t); guard.audit(p,"SAVE","TOPPING",t.getId()); return toppingView(t);
     }
@@ -157,6 +159,6 @@ public class CatalogService {
             .map(v -> new VariantView(v.getId(),v.getSizeName(),v.getExtraPrice(),v.getActive(),v.getStockQuantity(),v.getVersion())).toList(),options,
             links.findByProductId(p.getId()).stream().map(ProductTopping::getToppingId).collect(java.util.stream.Collectors.toSet()),sold,rating,favorites,p.getCatalogKey());
     }
-    private CategoryView categoryView(Category c) { return new CategoryView(c.getId(),c.getName(),c.getSlug(),c.getDescription(),c.getDisplayOrder(),c.getActive(),c.getImageUrl()); }
-    private ToppingView toppingView(Topping t) { return new ToppingView(t.getId(),t.getName(),t.getPrice(),t.getActive()); }
+    private CategoryView categoryView(Category c) { return new CategoryView(c.getId(),c.getName(),c.getSlug(),c.getDescription(),c.getDisplayOrder(),c.getActive(),c.getImageUrl(),c.getVersion()); }
+    private ToppingView toppingView(Topping t) { return new ToppingView(t.getId(),t.getName(),t.getPrice(),t.getActive(),t.getVersion()); }
 }

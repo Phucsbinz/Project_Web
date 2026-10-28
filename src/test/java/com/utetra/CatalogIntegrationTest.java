@@ -82,6 +82,54 @@ class CatalogIntegrationTest {
     PromotionInput promo(Long shop,Set<Long> ids,BigDecimal percent,long version) {
         return new PromotionInput(shop,"Ưu đãi","TEST10","PRODUCT_PERCENT",percent,money(100000),money(0),100,1,clock.instant().minusSeconds(60),clock.instant().plusSeconds(3600),true,ids,version);
     }
+    private org.springframework.security.core.Authentication auditAdminAuth() {
+        return new UsernamePasswordAuthenticationToken(admin,null,List.of(new SimpleGrantedAuthority(admin.role())));
+    }
+    private void auditPut(String path,Map<String,Object> body,int expectedStatus) throws Exception {
+        mvc.perform(put(path).with(authentication(auditAdminAuth())).with(csrf())
+            .contentType("application/json").content(mapper.writeValueAsString(body)))
+            .andExpect(status().is(expectedStatus));
+    }
+    @Test void staleToppingFormCannotReenableDisabledTopping() throws Exception {
+        String path="/api/admin/catalog/toppings/"+toppingId;
+        auditPut(path,Map.of("name","Trân châu","price",5000,"active",false,"version",0),200);
+        auditPut(path,Map.of("name","Trân châu","price",6000,"active",true,"version",0),409);
+        var current=catalog.toppings(admin).stream().filter(t->t.id().equals(toppingId)).findFirst().orElseThrow();
+        assertThat(current.active()).isFalse();assertThat(current.price()).isEqualByComparingTo("5000");
+    }
+    @Test void staleCategoryFormCannotReenableDisabledCategory() throws Exception {
+        String path="/api/admin/catalog/categories/"+categoryId;
+        auditPut(path,Map.of("name","Trà sữa","slug","tra-sua","description","","displayOrder",0,"active",false,"version",0),200);
+        auditPut(path,Map.of("name","Tên cũ sửa lại","slug","tra-sua","description","","displayOrder",0,"active",true,"version",0),409);
+        assertThat(catalog.categories(true,admin).stream().filter(c->c.id().equals(categoryId)).findFirst().orElseThrow().active()).isFalse();
+    }
+    @Test void staleAreaFormCannotReenableDisabledDeliveryArea() throws Exception {
+        var created=stores.area(admin,storeId,null,new AreaInput("AUDIT","Khu vực",true));
+        String path="/api/admin/catalog/stores/"+storeId+"/areas/"+created.id();
+        auditPut(path,Map.of("areaCode","AUDIT","name","Khu vực","active",false,"version",0),200);
+        auditPut(path,Map.of("areaCode","AUDIT","name","Đổi tên cũ","active",true,"version",0),409);
+        assertThat(stores.managedStore(admin,storeId).areas().stream().filter(a->a.id().equals(created.id())).findFirst().orElseThrow().active()).isFalse();
+    }
+    @Test void detachedToppingWriteCannotOverwriteNewerState() throws Exception {
+        var stale=em.find(com.utetra.entity.catalog.Topping.class,toppingId);em.detach(stale);
+        auditPut("/api/admin/catalog/toppings/"+toppingId,Map.of("name","Trân châu","price",5000,"active",false,"version",0),200);
+        assertThatThrownBy(()->em.merge(stale)).isInstanceOf(jakarta.persistence.OptimisticLockException.class);
+    }
+    @Test void detachedCategoryWriteCannotOverwriteNewerState() throws Exception {
+        var stale=em.find(com.utetra.entity.catalog.Category.class,categoryId);em.detach(stale);
+        auditPut("/api/admin/catalog/categories/"+categoryId,Map.of("name","Trà sữa","slug","tra-sua","description","","displayOrder",0,"active",false,"version",0),200);
+        assertThatThrownBy(()->em.merge(stale)).isInstanceOf(jakarta.persistence.OptimisticLockException.class);
+    }
+    @Test void detachedAreaWriteCannotOverwriteNewerState() throws Exception {
+        var area=stores.area(admin,storeId,null,new AreaInput("AUDIT","Khu vực",true));
+        var stale=em.find(com.utetra.entity.catalog.StoreDeliveryArea.class,area.id());em.detach(stale);
+        auditPut("/api/admin/catalog/stores/"+storeId+"/areas/"+area.id(),Map.of("areaCode","AUDIT","name","Khu vực","active",false,"version",0),200);
+        assertThatThrownBy(()->em.merge(stale)).isInstanceOf(jakarta.persistence.OptimisticLockException.class);
+    }
+    @Test void configurationUpdateWithoutVersionIsRejected() throws Exception {
+        auditPut("/api/admin/catalog/toppings/"+toppingId,Map.of("name","Trân châu","price",6000,"active",false),409);
+    }
+
     @Test void homepageHydratesAllRankingSectionsInOneBoundedBatch() {
         for(int n=0;n<12;n++)catalog.saveProduct(admin,null,productInput(storeId,"home-batch-"+n,0));
         em.flush();em.clear();
@@ -145,7 +193,7 @@ class CatalogIntegrationTest {
         assertThatThrownBy(() -> catalog.quote(p.id(),new DrinkInput(variant,1,50,50,Set.of(toppingId)))).isInstanceOf(ResponseStatusException.class);
     }
     @Test void hiddenCategoryAndSuspendedShopCannotBePurchased() {
-        var p=product(); catalog.saveCategory(admin,categoryId,new CategoryInput("Trà sữa","tra-sua","",0,false));
+        var p=product(); catalog.saveCategory(admin,categoryId,new CategoryInput("Trà sữa","tra-sua","",0,false,catalog.categories(true,admin).stream().filter(c->c.id().equals(categoryId)).findFirst().orElseThrow().version()));
         assertThat(catalog.search("",null,null,null,null,"newest",0,12,false,false).total()).isZero();
         assertThatThrownBy(() -> catalog.quote(p.id(),new DrinkInput(p.variants().getFirst().id(),1,100,100,Set.of()))).isInstanceOf(ResponseStatusException.class);
     }
@@ -160,11 +208,16 @@ class CatalogIntegrationTest {
         assertThat(shop.openTime()).isEqualTo(LocalTime.of(8,0)); assertThat(shop.closeTime()).isEqualTo(LocalTime.of(22,0));
     }
     @Test void updatesKeepVariantIdsAndRejectStaleVersions() {
-        var first=product(); var second=catalog.saveProduct(admin,first.id(),productInput(storeId,first.slug(),first.version()));
-        assertThat(second.version()).isGreaterThan(first.version()); assertThat(second.variants().getFirst().id()).isEqualTo(first.variants().getFirst().id());
-        assertThatThrownBy(() -> catalog.saveProduct(admin,first.id(),productInput(storeId,first.slug(),first.version()))).isInstanceOf(ResponseStatusException.class);
-        catalog.disableProduct(admin,second.id(),second.version());
-        assertThat(productRepo.existsById(first.id())).isTrue(); assertThat(variantRepo.existsById(first.variants().getFirst().id())).isTrue();
+        // A coarse wall clock must not let an unchanged parent bypass versioning of child edits.
+        Instant tick=Instant.now();
+        try(var wallClock=org.mockito.Mockito.mockStatic(Instant.class,org.mockito.Mockito.CALLS_REAL_METHODS)) {
+            wallClock.when(Instant::now).thenReturn(tick);
+            var first=product(); var second=catalog.saveProduct(admin,first.id(),productInput(storeId,first.slug(),first.version()));
+            assertThat(second.version()).isGreaterThan(first.version()); assertThat(second.variants().getFirst().id()).isEqualTo(first.variants().getFirst().id());
+            assertThatThrownBy(() -> catalog.saveProduct(admin,first.id(),productInput(storeId,first.slug(),first.version()))).isInstanceOf(ResponseStatusException.class);
+            catalog.disableProduct(admin,second.id(),second.version());
+            assertThat(productRepo.existsById(first.id())).isTrue(); assertThat(variantRepo.existsById(first.variants().getFirst().id())).isTrue();
+        }
     }
     @Test void validationRejectsNegativePricesAndDuplicateSizes() {
         var bad=new ToppingInput("Sai",money(-1),true);

@@ -1,0 +1,119 @@
+{
+  "checks": [
+    "Existing localhost app health200",
+    "Product30001: UTF8/name/placeholder/source-specific sizes200",
+    "Product30002: UTF8/name/placeholder/source-specific sizes200",
+    "Product30003: UTF8/name/placeholder/source-specific sizes200",
+    "Product30004: UTF8/name/placeholder/source-specific sizes200",
+    "Product30005: UTF8/name/placeholder/source-specific sizes200",
+    "Product30006: UTF8/name/placeholder/source-specific sizes200",
+    "Search and category filters across three existing stores200",
+    "Two menu pages have distinct product links under fixed read data"
+  ],
+  "errors": [
+    "TimeoutError: timed out"
+  ],
+  "browserVerification": "HTTP only",
+  "requests": [
+    {
+      "path": "/api/system/health",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.01
+    },
+    {
+      "path": "/products/30001",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.71
+    },
+    {
+      "path": "/products/30002",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.62
+    },
+    {
+      "path": "/products/30003",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.78
+    },
+    {
+      "path": "/products/30004",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.84
+    },
+    {
+      "path": "/products/30005",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.71
+    },
+    {
+      "path": "/products/30006",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.69
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 1.26
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 1.13
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.88
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.97
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 1.05
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.78
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 1.0
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.88
+    },
+    {
+      "path": "/products/csrf",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.0
+    },
+    {
+      "path": "/products/22/quote",
+      "method": "POST"
+    }
+  ]
+}

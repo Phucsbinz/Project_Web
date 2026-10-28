@@ -1,0 +1,18 @@
+[ {
+  "case" : "verified-reset-grant-survives-account-password-change",
+  "sessionsRevoked" : true,
+  "resetChallengesStillLive" : 1,
+  "oldGrantAccepted" : true,
+  "overwrittenPasswordLoginAccepted" : true
+}, {
+  "case" : "unverified-reset-code-survives-account-password-change",
+  "oldCodeAccepted" : true,
+  "overwrittenPasswordLoginAccepted" : true
+}, {
+  "case" : "101-eligible-purchase-choices",
+  "eligibleOrderItems" : 101,
+  "choicesReturned" : 100,
+  "oldestIncluded" : false,
+  "oldestReviewAllowedByService" : true,
+  "oldestCommentAllowedByService" : true
+} ]

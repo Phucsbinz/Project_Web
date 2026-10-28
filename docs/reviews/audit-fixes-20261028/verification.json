@@ -1,0 +1,20 @@
+{
+  "branch": "feature/order-payment",
+  "base": "269ea2c8c6d434078ca96846527dcd3d47a6873e",
+  "command": ".\\mvnw.cmd test",
+  "mavenExit": 0,
+  "surefire": {
+    "tests": 223,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "sharedUi": "one SiteMesh layout, 21 shared files",
+  "catalogBrowserCases": 3,
+  "database": "H2 isolated only; new migration not applied to cloud",
+  "codeStatus": "working tree, not committed or pushed",
+  "adminBrowserChecks": 17,
+  "shoppingBrowserChecks": 18,
+  "independentReview": "No Critical/Important confirmed; verification gaps documented",
+  "servers": "Owned isolated UI servers automatically stopped"
+}

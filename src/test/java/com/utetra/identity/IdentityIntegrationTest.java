@@ -159,6 +159,78 @@ class IdentityIntegrationTest {
         assertThatThrownBy(() -> auth.login(email,PASSWORD)).isInstanceOf(IdentityException.class);
         assertThat(auth.login(email,"ChangedPassword!42").access()).isNotBlank();
     }
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans={false,true})
+    void accountPasswordChangeRevokesOldResetEvidence(boolean verifiedGrant) {
+        var p=buyer();db.update("update otp_challenges set created_at=? where email=?",time(Instant.now().minusSeconds(61)),email);
+        otp.request(email,"PASSWORD_RESET");String code=lastOtp.get();
+        String grant=verifiedGrant?otp.verify(email,"PASSWORD_RESET",code):null;
+        account.password(p,new IdentityForms.Password(PASSWORD,"ChangedPassword!42"));
+        if(verifiedGrant)assertThatThrownBy(()->auth.reset(grant,"AnotherPassword42!")).isInstanceOf(IdentityException.class);
+        else assertThatThrownBy(()->otp.verify(email,"PASSWORD_RESET",code)).isInstanceOf(OtpRejectedException.class);
+        assertThat(auth.login(email,"ChangedPassword!42").access()).isNotBlank();
+        assertThatThrownBy(()->auth.login(email,PASSWORD)).isInstanceOf(IdentityException.class);
+        assertThat(identity.isCurrent(p)).isFalse();
+        db.update("update otp_challenges set created_at=? where email=?",time(Instant.now().minusSeconds(61)),email);
+        otp.request(email,"PASSWORD_RESET");String fresh=otp.verify(email,"PASSWORD_RESET",lastOtp.get());
+        auth.reset(fresh,"FreshPassword42!");
+        assertThatThrownBy(()->auth.reset(fresh,"ReplayPassword42!")).isInstanceOf(IdentityException.class);
+        assertThat(auth.login(email,"FreshPassword42!").access()).isNotBlank();
+    }
+
+    @Test void failedPasswordChangePreservesResetGrantAndExistingCredential() {
+        var p=buyer();db.update("update otp_challenges set created_at=? where email=?",time(Instant.now().minusSeconds(61)),email);
+        otp.request(email,"PASSWORD_RESET");String grant=otp.verify(email,"PASSWORD_RESET",lastOtp.get());
+        assertThatThrownBy(()->account.password(p,new IdentityForms.Password("IncorrectPassword42!","ChangedPassword!42"))).isInstanceOf(IdentityException.class);
+        assertThat(auth.login(email,PASSWORD).access()).isNotBlank();assertThat(identity.isCurrent(p)).isTrue();
+        auth.reset(grant,"ChangedPassword!42");assertThat(auth.login(email,"ChangedPassword!42").access()).isNotBlank();
+    }
+
+    @Test void changingPasswordDoesNotRevokeOtherPurposeOrOtherUsersReset() {
+        var p=buyer();String firstEmail=email;
+        db.update("update otp_challenges set created_at=? where email=?",time(Instant.now().minusSeconds(61)),email);
+        otp.request(email,"REGISTER");String registrationCode=lastOtp.get();
+        db.update("update otp_challenges set created_at=? where email=?",time(Instant.now().minusSeconds(61)),email);
+        otp.request(email,"PASSWORD_RESET");String firstReset=lastOtp.get();
+        email="other"+email;username="other"+username;var other=buyer();
+        db.update("update otp_challenges set created_at=? where email=?",time(Instant.now().minusSeconds(61)),email);
+        otp.request(email,"PASSWORD_RESET");String otherGrant=otp.verify(email,"PASSWORD_RESET",lastOtp.get());
+        account.password(p,new IdentityForms.Password(PASSWORD,"ChangedPassword!42"));
+        assertThatThrownBy(()->otp.verify(firstEmail,"PASSWORD_RESET",firstReset)).isInstanceOf(OtpRejectedException.class);
+        assertThat(otp.verify(firstEmail,"REGISTER",registrationCode)).isEmpty();
+        auth.reset(otherGrant,"OtherPassword42!");assertThat(auth.login(email,"OtherPassword42!").access()).isNotBlank();
+    }
+
+    @Test void expiredResetGrantRemainsRejected() {
+        buyer();db.update("update otp_challenges set created_at=? where email=?",time(Instant.now().minusSeconds(61)),email);
+        otp.request(email,"PASSWORD_RESET");String grant=otp.verify(email,"PASSWORD_RESET",lastOtp.get());
+        db.update("update otp_challenges set expires_at=? where email=? and purpose='PASSWORD_RESET'",time(Instant.now().minusSeconds(1)),email);
+        assertThatThrownBy(()->auth.reset(grant,"ChangedPassword!42")).isInstanceOf(IdentityException.class);
+        assertThat(auth.login(email,PASSWORD).access()).isNotBlank();
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans={false,true})
+    void passwordChangeSerializesWithOldResetEvidence(boolean verifiedGrant) throws Exception {
+        var p=buyer();db.update("update otp_challenges set created_at=? where email=?",time(Instant.now().minusSeconds(61)),email);
+        otp.request(email,"PASSWORD_RESET");String code=lastOtp.get();String grant=verifiedGrant?otp.verify(email,"PASSWORD_RESET",code):null;
+        var changed=new CountDownLatch(1);var commit=new CountDownLatch(1);var attempted=new CountDownLatch(1);
+        try(var pool=Executors.newFixedThreadPool(2)){
+            var writer=pool.submit(()->tx.execute(status->{
+                account.password(p,new IdentityForms.Password(PASSWORD,"ChangedPassword!42"));changed.countDown();
+                try{if(!commit.await(5,TimeUnit.SECONDS))throw new IllegalStateException("Test commit timeout");}catch(InterruptedException e){throw new RuntimeException(e);}return true;
+            }));
+            try{
+                assertThat(changed.await(5,TimeUnit.SECONDS)).isTrue();
+                var reset=pool.submit(()->{attempted.countDown();try{if(verifiedGrant)auth.reset(grant,"AnotherPassword42!");else otp.verify(email,"PASSWORD_RESET",code);return false;}catch(IdentityException ex){return true;}});
+                assertThat(attempted.await(5,TimeUnit.SECONDS)).isTrue();
+                assertThatThrownBy(()->reset.get(200,TimeUnit.MILLISECONDS)).isInstanceOf(TimeoutException.class);
+                commit.countDown();assertThat(writer.get(5,TimeUnit.SECONDS)).isTrue();assertThat(reset.get(5,TimeUnit.SECONDS)).isTrue();
+                assertThat(auth.login(email,"ChangedPassword!42").access()).isNotBlank();
+            }finally{commit.countDown();}
+        }
+    }
+
     @Test void passwordByteLimitAndStaleProfileAreRejected() {
         assertThatThrownBy(() -> IdentityValidation.password("ậ".repeat(25))).isInstanceOf(IdentityException.class);
         var p=buyer(); long version=number(account.profile(p),"version");
@@ -191,6 +263,49 @@ class IdentityIntegrationTest {
         assertThat(number(db.one("select view_count from product_views where user_id=?",p.userId()),"view_count")).isEqualTo(2);
         assertThat(community.products(p,false,0,20)).hasSize(1); assertThat(community.favorite(p,id,false)).isZero();
     }
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints={0,1,100,101})
+    void purchaseChoicesAreBoundedAndEveryEligibleLineIsReachable(int count) throws Exception {
+        var p=buyer();long product=product(p.userId());var expected=new ArrayList<Long>();
+        if(count>0){
+            long order=order(p.userId(),product,"DELIVERED","PAID",0,50000);
+            var first=db.one("select id,variant_id from order_items where order_id=?",order);
+            expected.add(number(first,"id"));
+            for(int n=1;n<count;n++)expected.add(row("order_items",Map.of("order_id",order,"variant_id",number(first,"variant_id"),"product_name","Tea "+n,"quantity",1)));
+        }
+        Collections.reverse(expected);String access=auth.login(email,PASSWORD).access();var actual=new ArrayList<Long>();
+        for(int page=0;page<=count/20;page++){
+            var response=mvc.perform(get("/reviews/purchases").param("page",Integer.toString(page)).param("size","20").header("Authorization","Bearer "+access))
+                .andExpect(status().isOk()).andReturn().getResponse();
+            var choices=json.readTree(response.getContentAsString());assertThat(choices.isArray()).isTrue();
+            assertThat(choices.size()).isEqualTo(Math.min(20,Math.max(0,count-page*20)));
+            choices.forEach(choice->actual.add(choice.get("id").asLong()));
+        }
+        assertThat(actual).containsExactlyElementsOf(expected).doesNotHaveDuplicates();
+        if(count==101){
+            long oldest=expected.getLast();
+            community.review(p,new IdentityForms.Review(product,oldest,5,"Old purchase"),List.of());
+            assertThatThrownBy(()->community.review(p,new IdentityForms.Review(product,oldest,4,"Duplicate"),List.of())).isInstanceOf(IdentityException.class);
+            assertThatThrownBy(()->community.comment(p,new IdentityForms.Comment(product,oldest,"a".repeat(49)),List.of())).isInstanceOf(IdentityException.class);
+            assertThat(community.comment(p,new IdentityForms.Comment(product,oldest,"a".repeat(50)),List.of())).isPositive();
+        }
+    }
+
+    @Test void purchasePagingKeepsOwnershipEligibilityAndValidation() throws Exception {
+        var p=buyer();String ownEmail=email;String access=auth.login(email,PASSWORD).access();long product=product(p.userId());
+        long pending=order(p.userId(),product,"NEW","UNPAID",0,50000),unpaid=order(p.userId(),product,"DELIVERED","UNPAID",0,50000);
+        email="other"+email;username="other"+username;var other=buyer();
+        long foreign=order(other.userId(),product,"DELIVERED","PAID",0,50000);
+        mvc.perform(get("/reviews/purchases?page=0&size=20").header("Authorization","Bearer "+access)).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(0));
+        for(long order:List.of(pending,unpaid,foreign)){
+            long item=number(db.one("select id from order_items where order_id=?",order),"id");
+            assertThatThrownBy(()->community.review(p,new IdentityForms.Review(product,item,5,"Invalid proof"),List.of())).isInstanceOf(IdentityException.class);
+            assertThatThrownBy(()->community.comment(p,new IdentityForms.Comment(product,item,"a".repeat(50)),List.of())).isInstanceOf(IdentityException.class);
+        }
+        for(String query:List.of("page=-1&size=20","page=10001&size=20","page=0&size=0","page=0&size=101"))
+            mvc.perform(get("/reviews/purchases?"+query).header("Authorization","Bearer "+access)).andExpect(status().isBadRequest());
+    }
+
     @Test void purchaseEvidenceAndCommentLengthAreEnforced() {
         var p=buyer(); long product=product(p.userId()),order=order(p.userId(),product,"NEW","UNPAID",0,50000);
         long item=number(db.one("select id from order_items where order_id=?",order),"id");

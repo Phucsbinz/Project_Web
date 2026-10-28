@@ -1,0 +1,658 @@
+{
+  "id": "utetra-catalog-20261028-v1",
+  "database": "utetra_db",
+  "environment": "development-demo confirmed by user 2026-10-28",
+  "authorization": "DB phát triển/demo, cho phép seed danh mục và giá demo; project cuối kỳ, không bán thật",
+  "sources": {
+    "mango-milk": "https://gongcha.com.vn/en/san-pham/tra-sua-xoai-tran-chau-den/",
+    "taro-smoothie": "https://gongcha.com.vn/en/san-pham/khoai-mon-da-xay/",
+    "herbal": "https://gongcha.com.vn/en/san-pham/suong-sao/"
+  },
+  "accessDate": "2026-10-28",
+  "requirements": [
+    {
+      "table": "stores",
+      "id": 1,
+      "expected": {
+        "slug": "demo-thu-duc",
+        "status": "ACTIVE"
+      }
+    },
+    {
+      "table": "stores",
+      "id": 2,
+      "expected": {
+        "slug": "demo-binh-thanh",
+        "status": "ACTIVE"
+      }
+    },
+    {
+      "table": "stores",
+      "id": 3,
+      "expected": {
+        "slug": "demo-quan-1",
+        "status": "ACTIVE"
+      }
+    },
+    {
+      "table": "categories",
+      "id": 1,
+      "expected": {
+        "slug": "demo-category-0",
+        "is_active": true
+      }
+    },
+    {
+      "table": "categories",
+      "id": 6,
+      "expected": {
+        "slug": "demo-category-5",
+        "is_active": true
+      }
+    },
+    {
+      "table": "toppings",
+      "id": 1,
+      "expected": {
+        "name": "Trân châu đen",
+        "price": 5000.0,
+        "is_active": true
+      }
+    },
+    {
+      "table": "toppings",
+      "id": 2,
+      "expected": {
+        "name": "Trân châu trắng",
+        "price": 6000.0,
+        "is_active": true
+      }
+    },
+    {
+      "table": "toppings",
+      "id": 3,
+      "expected": {
+        "name": "Thạch vải",
+        "price": 7000.0,
+        "is_active": true
+      }
+    },
+    {
+      "table": "products",
+      "id": 1,
+      "expected": {
+        "store_id": 1,
+        "category_id": 1,
+        "name": "Ô long sữa trân châu",
+        "catalog_key": "demo-milk-tea"
+      }
+    },
+    {
+      "table": "products",
+      "id": 22,
+      "expected": {
+        "store_id": 1,
+        "category_id": 1,
+        "name": "Trà sữa khoai môn",
+        "catalog_key": "demo-taro"
+      }
+    },
+    {
+      "table": "products",
+      "id": 82,
+      "expected": {
+        "store_id": 1,
+        "category_id": 6,
+        "name": "Chocolate sữa đá",
+        "catalog_key": "demo-chocolate"
+      }
+    },
+    {
+      "table": "products",
+      "id": 2,
+      "expected": {
+        "store_id": 2,
+        "category_id": 1,
+        "name": "Ô long sữa trân châu",
+        "catalog_key": "demo-milk-tea"
+      }
+    },
+    {
+      "table": "products",
+      "id": 23,
+      "expected": {
+        "store_id": 2,
+        "category_id": 1,
+        "name": "Trà sữa khoai môn",
+        "catalog_key": "demo-taro"
+      }
+    },
+    {
+      "table": "products",
+      "id": 83,
+      "expected": {
+        "store_id": 2,
+        "category_id": 6,
+        "name": "Chocolate sữa đá",
+        "catalog_key": "demo-chocolate"
+      }
+    },
+    {
+      "table": "products",
+      "id": 3,
+      "expected": {
+        "store_id": 3,
+        "category_id": 1,
+        "name": "Ô long sữa trân châu",
+        "catalog_key": "demo-milk-tea"
+      }
+    },
+    {
+      "table": "products",
+      "id": 24,
+      "expected": {
+        "store_id": 3,
+        "category_id": 1,
+        "name": "Trà sữa khoai môn",
+        "catalog_key": "demo-taro"
+      }
+    },
+    {
+      "table": "products",
+      "id": 84,
+      "expected": {
+        "store_id": 3,
+        "category_id": 6,
+        "name": "Chocolate sữa đá",
+        "catalog_key": "demo-chocolate"
+      }
+    }
+  ],
+  "operations": [
+    {
+      "key": "herbal",
+      "table": "toppings",
+      "natural": [
+        "name"
+      ],
+      "values": {
+        "name": "Sương sáo",
+        "price": 10000,
+        "is_active": true
+      }
+    },
+    {
+      "key": "herbal-store-1",
+      "table": "store_toppings",
+      "natural": [
+        "store_id",
+        "topping_id"
+      ],
+      "values": {
+        "store_id": 1,
+        "topping_id": "@herbal",
+        "is_available": true
+      }
+    },
+    {
+      "key": "mango-milk-1",
+      "table": "products",
+      "natural": [
+        "slug"
+      ],
+      "values": {
+        "store_id": 1,
+        "category_id": 1,
+        "name": "Trà sữa xoài",
+        "slug": "utetra-ref-20261028-mango-milk-1",
+        "catalog_key": "ref-20261028-mango-milk",
+        "description": "Vị sữa dịu kết hợp xoài. Giá tham khảo dùng cho demo UTETra; chưa mở bán do chưa xác nhận tồn kho.",
+        "base_price": 51000,
+        "is_active": true,
+        "is_available": false,
+        "is_featured": false,
+        "image_url": null,
+        "image_public_id": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "mango-milk-1-M",
+      "table": "product_variants",
+      "natural": [
+        "product_id",
+        "size_name"
+      ],
+      "values": {
+        "product_id": "@mango-milk-1",
+        "size_name": "M",
+        "extra_price": 0,
+        "is_active": true,
+        "stock_quantity": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "mango-milk-1-L",
+      "table": "product_variants",
+      "natural": [
+        "product_id",
+        "size_name"
+      ],
+      "values": {
+        "product_id": "@mango-milk-1",
+        "size_name": "L",
+        "extra_price": 8000,
+        "is_active": true,
+        "stock_quantity": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "mango-milk-1-pearl",
+      "table": "product_toppings",
+      "natural": [
+        "product_id",
+        "topping_id"
+      ],
+      "values": {
+        "product_id": "@mango-milk-1",
+        "topping_id": 1
+      }
+    },
+    {
+      "key": "taro-smoothie-1",
+      "table": "products",
+      "natural": [
+        "slug"
+      ],
+      "values": {
+        "store_id": 1,
+        "category_id": 6,
+        "name": "Khoai môn đá xay",
+        "slug": "utetra-ref-20261028-taro-smoothie-1",
+        "catalog_key": "ref-20261028-taro-smoothie",
+        "description": "Đồ uống đá xay vị khoai môn. Giá tham khảo dùng cho demo UTETra; chưa mở bán do chưa xác nhận tồn kho.",
+        "base_price": 63000,
+        "is_active": true,
+        "is_available": false,
+        "is_featured": false,
+        "image_url": null,
+        "image_public_id": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "taro-smoothie-1-M",
+      "table": "product_variants",
+      "natural": [
+        "product_id",
+        "size_name"
+      ],
+      "values": {
+        "product_id": "@taro-smoothie-1",
+        "size_name": "M",
+        "extra_price": 0,
+        "is_active": true,
+        "stock_quantity": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "herbal-1",
+      "table": "product_toppings",
+      "natural": [
+        "product_id",
+        "topping_id"
+      ],
+      "values": {
+        "product_id": 1,
+        "topping_id": "@herbal"
+      }
+    },
+    {
+      "key": "herbal-22",
+      "table": "product_toppings",
+      "natural": [
+        "product_id",
+        "topping_id"
+      ],
+      "values": {
+        "product_id": 22,
+        "topping_id": "@herbal"
+      }
+    },
+    {
+      "key": "herbal-82",
+      "table": "product_toppings",
+      "natural": [
+        "product_id",
+        "topping_id"
+      ],
+      "values": {
+        "product_id": 82,
+        "topping_id": "@herbal"
+      }
+    },
+    {
+      "key": "herbal-store-2",
+      "table": "store_toppings",
+      "natural": [
+        "store_id",
+        "topping_id"
+      ],
+      "values": {
+        "store_id": 2,
+        "topping_id": "@herbal",
+        "is_available": true
+      }
+    },
+    {
+      "key": "mango-milk-2",
+      "table": "products",
+      "natural": [
+        "slug"
+      ],
+      "values": {
+        "store_id": 2,
+        "category_id": 1,
+        "name": "Trà sữa xoài",
+        "slug": "utetra-ref-20261028-mango-milk-2",
+        "catalog_key": "ref-20261028-mango-milk",
+        "description": "Vị sữa dịu kết hợp xoài. Giá tham khảo dùng cho demo UTETra; chưa mở bán do chưa xác nhận tồn kho.",
+        "base_price": 51000,
+        "is_active": true,
+        "is_available": false,
+        "is_featured": false,
+        "image_url": null,
+        "image_public_id": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "mango-milk-2-M",
+      "table": "product_variants",
+      "natural": [
+        "product_id",
+        "size_name"
+      ],
+      "values": {
+        "product_id": "@mango-milk-2",
+        "size_name": "M",
+        "extra_price": 0,
+        "is_active": true,
+        "stock_quantity": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "mango-milk-2-L",
+      "table": "product_variants",
+      "natural": [
+        "product_id",
+        "size_name"
+      ],
+      "values": {
+        "product_id": "@mango-milk-2",
+        "size_name": "L",
+        "extra_price": 8000,
+        "is_active": true,
+        "stock_quantity": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "mango-milk-2-pearl",
+      "table": "product_toppings",
+      "natural": [
+        "product_id",
+        "topping_id"
+      ],
+      "values": {
+        "product_id": "@mango-milk-2",
+        "topping_id": 1
+      }
+    },
+    {
+      "key": "taro-smoothie-2",
+      "table": "products",
+      "natural": [
+        "slug"
+      ],
+      "values": {
+        "store_id": 2,
+        "category_id": 6,
+        "name": "Khoai môn đá xay",
+        "slug": "utetra-ref-20261028-taro-smoothie-2",
+        "catalog_key": "ref-20261028-taro-smoothie",
+        "description": "Đồ uống đá xay vị khoai môn. Giá tham khảo dùng cho demo UTETra; chưa mở bán do chưa xác nhận tồn kho.",
+        "base_price": 63000,
+        "is_active": true,
+        "is_available": false,
+        "is_featured": false,
+        "image_url": null,
+        "image_public_id": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "taro-smoothie-2-M",
+      "table": "product_variants",
+      "natural": [
+        "product_id",
+        "size_name"
+      ],
+      "values": {
+        "product_id": "@taro-smoothie-2",
+        "size_name": "M",
+        "extra_price": 0,
+        "is_active": true,
+        "stock_quantity": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "herbal-2",
+      "table": "product_toppings",
+      "natural": [
+        "product_id",
+        "topping_id"
+      ],
+      "values": {
+        "product_id": 2,
+        "topping_id": "@herbal"
+      }
+    },
+    {
+      "key": "herbal-23",
+      "table": "product_toppings",
+      "natural": [
+        "product_id",
+        "topping_id"
+      ],
+      "values": {
+        "product_id": 23,
+        "topping_id": "@herbal"
+      }
+    },
+    {
+      "key": "herbal-83",
+      "table": "product_toppings",
+      "natural": [
+        "product_id",
+        "topping_id"
+      ],
+      "values": {
+        "product_id": 83,
+        "topping_id": "@herbal"
+      }
+    },
+    {
+      "key": "herbal-store-3",
+      "table": "store_toppings",
+      "natural": [
+        "store_id",
+        "topping_id"
+      ],
+      "values": {
+        "store_id": 3,
+        "topping_id": "@herbal",
+        "is_available": true
+      }
+    },
+    {
+      "key": "mango-milk-3",
+      "table": "products",
+      "natural": [
+        "slug"
+      ],
+      "values": {
+        "store_id": 3,
+        "category_id": 1,
+        "name": "Trà sữa xoài",
+        "slug": "utetra-ref-20261028-mango-milk-3",
+        "catalog_key": "ref-20261028-mango-milk",
+        "description": "Vị sữa dịu kết hợp xoài. Giá tham khảo dùng cho demo UTETra; chưa mở bán do chưa xác nhận tồn kho.",
+        "base_price": 51000,
+        "is_active": true,
+        "is_available": false,
+        "is_featured": false,
+        "image_url": null,
+        "image_public_id": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "mango-milk-3-M",
+      "table": "product_variants",
+      "natural": [
+        "product_id",
+        "size_name"
+      ],
+      "values": {
+        "product_id": "@mango-milk-3",
+        "size_name": "M",
+        "extra_price": 0,
+        "is_active": true,
+        "stock_quantity": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "mango-milk-3-L",
+      "table": "product_variants",
+      "natural": [
+        "product_id",
+        "size_name"
+      ],
+      "values": {
+        "product_id": "@mango-milk-3",
+        "size_name": "L",
+        "extra_price": 8000,
+        "is_active": true,
+        "stock_quantity": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "mango-milk-3-pearl",
+      "table": "product_toppings",
+      "natural": [
+        "product_id",
+        "topping_id"
+      ],
+      "values": {
+        "product_id": "@mango-milk-3",
+        "topping_id": 1
+      }
+    },
+    {
+      "key": "taro-smoothie-3",
+      "table": "products",
+      "natural": [
+        "slug"
+      ],
+      "values": {
+        "store_id": 3,
+        "category_id": 6,
+        "name": "Khoai môn đá xay",
+        "slug": "utetra-ref-20261028-taro-smoothie-3",
+        "catalog_key": "ref-20261028-taro-smoothie",
+        "description": "Đồ uống đá xay vị khoai môn. Giá tham khảo dùng cho demo UTETra; chưa mở bán do chưa xác nhận tồn kho.",
+        "base_price": 63000,
+        "is_active": true,
+        "is_available": false,
+        "is_featured": false,
+        "image_url": null,
+        "image_public_id": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "taro-smoothie-3-M",
+      "table": "product_variants",
+      "natural": [
+        "product_id",
+        "size_name"
+      ],
+      "values": {
+        "product_id": "@taro-smoothie-3",
+        "size_name": "M",
+        "extra_price": 0,
+        "is_active": true,
+        "stock_quantity": null,
+        "version": 0
+      }
+    },
+    {
+      "key": "herbal-3",
+      "table": "product_toppings",
+      "natural": [
+        "product_id",
+        "topping_id"
+      ],
+      "values": {
+        "product_id": 3,
+        "topping_id": "@herbal"
+      }
+    },
+    {
+      "key": "herbal-24",
+      "table": "product_toppings",
+      "natural": [
+        "product_id",
+        "topping_id"
+      ],
+      "values": {
+        "product_id": 24,
+        "topping_id": "@herbal"
+      }
+    },
+    {
+      "key": "herbal-84",
+      "table": "product_toppings",
+      "natural": [
+        "product_id",
+        "topping_id"
+      ],
+      "values": {
+        "product_id": 84,
+        "topping_id": "@herbal"
+      }
+    }
+  ],
+  "expectedNewRows": {
+    "toppings": 1,
+    "store_toppings": 3,
+    "products": 6,
+    "product_variants": 9,
+    "product_toppings": 12
+  },
+  "curationNotes": [
+    "Mango milk optional black pearl is UTETra demo recipe; not claimed as source optional topping policy.",
+    "Herbal jelly links only to existing taro milk/chocolate milk/oolong milk, as source suggestions.",
+    "No inferred S/L on taro smoothie; source publishes M only.",
+    "Unknown stock remains NULL, product unavailable; this does not enable purchasing with untracked inventory.",
+    "Existing menu has six groups and 30 canonical drinks, retained unchanged."
+  ]
+}

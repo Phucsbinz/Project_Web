@@ -12,6 +12,9 @@ class IntegratedMigrationTest {
     String sql=Files.readString(file).replaceAll("(?m)^--.*$","").replaceAll("(?i) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci","").replaceAll("(?i) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci","");
     for(String statement:sql.split(";"))if(!statement.isBlank())stmt.execute(statement);
    }
+   for(String table:List.of("CATEGORIES","TOPPINGS","STORE_DELIVERY_AREAS")) {
+    try(var columns=c.getMetaData().getColumns(null,"PUBLIC",table,"VERSION")){assertThat(columns.next()).as(table+" version column").isTrue();assertThat(columns.getInt("NULLABLE")).isEqualTo(DatabaseMetaData.columnNoNulls);}
+   }
    try(var columns=c.getMetaData().getColumns(null,"PUBLIC","USERS","PASSWORD_PLAINTEXT")){assertThat(columns.next()).isFalse();}
    assertThatThrownBy(()->stmt.execute("insert into product_favorites(user_id,product_id,created_at) values(999,999,current_timestamp)")).isInstanceOf(SQLException.class);
    try(var r=stmt.executeQuery("select count(*) from users")){r.next();assertThat(r.getLong(1)).isZero();}

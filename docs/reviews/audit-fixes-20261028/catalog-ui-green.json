@@ -1,0 +1,18 @@
+{
+  "cases": [
+    {
+      "case": "global",
+      "passed": true
+    },
+    {
+      "case": "key",
+      "passed": true
+    },
+    {
+      "case": "version",
+      "passed": true
+    }
+  ],
+  "pageErrors": [],
+  "fixture": "Isolated H2/Tomcat/SiteMesh only"
+}

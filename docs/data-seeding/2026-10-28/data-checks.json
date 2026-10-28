@@ -1,0 +1,25 @@
+{
+  "checks" : {
+    "check-1" : 0,
+    "check-2" : 0,
+    "check-3" : 0,
+    "check-4" : 0,
+    "check-5" : 0,
+    "check-6" : 0,
+    "check-7" : 0,
+    "check-8" : 0,
+    "check-9" : 0
+  },
+  "databaseTriggers" : [ {
+    "count" : 0
+  } ],
+  "existingQuoteCandidate" : [ {
+    "product_id" : 22,
+    "variant_id" : 64,
+    "base_price" : 45000.00,
+    "extra_price" : 0.00,
+    "stock_quantity" : 199,
+    "topping_id" : 30001,
+    "topping_price" : 10000.00
+  } ]
+}

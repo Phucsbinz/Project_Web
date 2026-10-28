@@ -1,0 +1,32 @@
+{
+  "fixture": "Isolated H2 only; no cloud/provider calls",
+  "checks": [
+    "reviews: native render at 390/768/1440",
+    "/reviews: 101 choices across six bounded pages, old purchase submitted, back page resets selection",
+    "comments: native render at 390/768/1440",
+    "/comments: 101 choices across six bounded pages, old purchase submitted, back page resets selection",
+    "Purchase lookup failure is explicit and retry restores choices",
+    "empty-review: native render at 390/768/1440",
+    "Empty eligible purchase state disables choice",
+    "host-host-empty-group: native render at 390/768/1440",
+    "host-host-empty-payment: native render at 390/768/1440",
+    "host-host-empty-tracking: native render at 390/768/1440",
+    "HOST: actual checkout redirect, reload/direct host tracking/payment and member payment preserve payer count",
+    "individual-host-empty-group: native render at 390/768/1440",
+    "individual-host-empty-payment: native render at 390/768/1440",
+    "individual-host-empty-tracking: native render at 390/768/1440",
+    "INDIVIDUAL: actual checkout redirect, reload/direct host tracking/payment and member payment preserve payer count",
+    "Header logout revokes account access; only independent pre-login Guest cart remains"
+  ],
+  "pageErrors": [],
+  "requestFailures": [],
+  "expectedNavigationAborts": [
+    {
+      "path": "http://127.0.0.1:8882/auth/logout",
+      "failure": "net::ERR_ABORTED"
+    }
+  ],
+  "logoutHttpStatuses": [
+    200
+  ]
+}

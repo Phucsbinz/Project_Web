@@ -6,9 +6,9 @@ import java.util.*;
 
 public final class CatalogViews {
     private CatalogViews() {}
-    public record CategoryView(Long id,String name,String slug,String description,int displayOrder,boolean active,String imageUrl) {}
-    public record ToppingView(Long id,String name,BigDecimal price,boolean active) {}
-    public record AreaView(Long id,String areaCode,String name,boolean active) {}
+    public record CategoryView(Long id,String name,String slug,String description,int displayOrder,boolean active,String imageUrl,long version) {}
+    public record ToppingView(Long id,String name,BigDecimal price,boolean active,long version) {}
+    public record AreaView(Long id,String areaCode,String name,boolean active,long version) {}
     public record DeliveryRateView(Long areaId,String areaName,Long carrierId,String carrierName,BigDecimal fee) {}
     public record CommissionPolicyView(Long id,String name,BigDecimal ratePercent) {}
     public record RegistrationView(StoreView store,String status,String note,Instant createdAt,Instant reviewedAt) {}

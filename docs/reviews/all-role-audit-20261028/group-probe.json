@@ -1,0 +1,16 @@
+[ {
+  "mode" : "HOST",
+  "orderCreated" : true,
+  "hostViewContainsOrderId" : false,
+  "groupPaymentPageAllowed" : false,
+  "groupPaymentPageError" : "Bạn không có quyền thực hiện thao tác này.",
+  "qrPageAllowed" : true
+}, {
+  "mode" : "INDIVIDUAL",
+  "orderCreated" : true,
+  "hostViewContainsOrderId" : false,
+  "groupPaymentPageAllowed" : false,
+  "groupPaymentPageError" : "Bạn không có quyền thực hiện thao tác này.",
+  "qrPageAllowed" : false,
+  "qrPageError" : "Bạn không có quyền thực hiện thao tác này."
+} ]

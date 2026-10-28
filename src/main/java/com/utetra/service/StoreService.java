@@ -95,6 +95,7 @@ public class StoreService {
     @Transactional public AreaView area(UtetraPrincipal p,Long storeId,Long areaId,@Valid AreaInput input) {
         guard.store(p,storeId); var area=areaId==null?new StoreDeliveryArea():found(areas.findById(areaId));
         require(areaId==null || storeId.equals(area.getStoreId()),"Khu vực không thuộc shop");
+        if(areaId!=null) expectedVersion(area.getVersion(),input.version());
         area.setStoreId(storeId); area.setAreaCode(input.areaCode().trim()); area.setName(input.name().trim()); area.setActive(input.active());
         areas.saveAndFlush(area); guard.audit(p,"SAVE","DELIVERY_AREA",area.getId()); return areaView(area);
     }
@@ -116,5 +117,5 @@ public class StoreService {
             s.getImageUrl(),s.getBannerUrl(),s.getOpenTime(),s.getCloseTime(),s.getStatus(),s.getAcceptingOrders(),s.getVersion(),
             areas.findByStoreId(s.getId()).stream().map(this::areaView).toList());
     }
-    private AreaView areaView(StoreDeliveryArea a) { return new AreaView(a.getId(),a.getAreaCode(),a.getName(),a.getActive()); }
+    private AreaView areaView(StoreDeliveryArea a) { return new AreaView(a.getId(),a.getAreaCode(),a.getName(),a.getActive(),a.getVersion()); }
 }

@@ -1,0 +1,73 @@
+{
+  "checks": [
+    {
+      "width": 1440,
+      "route": "/admin"
+    },
+    {
+      "width": 1440,
+      "route": "/admin/products?storeId=1"
+    },
+    {
+      "width": 1440,
+      "route": "/admin/users"
+    },
+    {
+      "width": 1440,
+      "route": "/admin/orders"
+    },
+    {
+      "width": 1440,
+      "route": "/admin/order-tools"
+    },
+    {
+      "width": 1440,
+      "route": "/admin/reports"
+    },
+    {
+      "width": 1440,
+      "route": "/admin/categories"
+    },
+    {
+      "width": 1440,
+      "route": "/admin/promotions"
+    },
+    {
+      "width": 390,
+      "route": "/admin"
+    },
+    {
+      "width": 390,
+      "route": "/admin/products?storeId=1"
+    },
+    {
+      "width": 390,
+      "route": "/admin/users"
+    },
+    {
+      "width": 390,
+      "route": "/admin/orders"
+    },
+    {
+      "width": 390,
+      "route": "/admin/order-tools"
+    },
+    {
+      "width": 390,
+      "route": "/admin/reports"
+    },
+    {
+      "width": 390,
+      "route": "/admin/categories"
+    },
+    {
+      "width": 390,
+      "route": "/admin/promotions"
+    },
+    {
+      "dropdown": "Visible toggle opens all choices; selection synchronizes server ID; keyboard Escape closes menu"
+    }
+  ],
+  "errors": [],
+  "fixture": "Isolated H2; read-only UI interactions"
+}

@@ -53,6 +53,10 @@ public class CatalogGuard {
     }
     public static void forbidden() { throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Không có quyền trong phạm vi này"); }
     public static void require(boolean condition,String message) { if(!condition) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,message); }
+    public static void expectedVersion(long current,Long supplied) {
+        if(supplied==null) throw new ResponseStatusException(HttpStatus.CONFLICT,"Thiếu phiên bản dữ liệu. Hãy tải lại trang trước khi lưu.");
+        version(current,supplied.longValue());
+    }
     public static void version(long current,long supplied) { if(current!=supplied) throw new ResponseStatusException(HttpStatus.CONFLICT,"Dữ liệu đã thay đổi. Hãy tải lại trang."); }
     public static <T> T found(java.util.Optional<T> value) { return value.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy dữ liệu")); }
 }

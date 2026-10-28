@@ -1,0 +1,1 @@
+Independent scoped source/test review: no concrete Critical/Important/Minor regression found. Reviewer did not execute Maven/browser or verify MySQL/TiDB locking. No edits or git mutations.

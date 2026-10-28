@@ -1,0 +1,17 @@
+{
+  "checks": [
+    "Existing localhost app health200",
+    "Product30001: UTF8/name/placeholder/source-specific sizes200",
+    "Product30002: UTF8/name/placeholder/source-specific sizes200",
+    "Product30003: UTF8/name/placeholder/source-specific sizes200",
+    "Product30004: UTF8/name/placeholder/source-specific sizes200",
+    "Product30005: UTF8/name/placeholder/source-specific sizes200",
+    "Product30006: UTF8/name/placeholder/source-specific sizes200",
+    "Search and category filters across three existing stores200",
+    "Two menu pages have distinct product links under fixed read data"
+  ],
+  "errors": [
+    "TimeoutError: timed out"
+  ],
+  "browserVerification": "HTTP only"
+}

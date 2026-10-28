@@ -42,7 +42,9 @@ public class OrderInventoryService {
   public void releaseBeforePreparation(Order order,String previousStatus) {
     if(!Set.of("NEW","CONFIRMED").contains(previousStatus)) return;
     Set<Long> changed=new LinkedHashSet<>();
-    for(var item:data.items(order.id)) {
+    // Point UPDATEs acquire variant locks in the same order as checkout/reserve/branch selection.
+    for(var item:data.items(order.id).stream()
+        .sorted(Comparator.comparing((OrderItem i)->i.variantId).thenComparing(i->i.id)).toList()) {
       if(!item.stockReserved) continue;
       refs.write("update product_variants set stock_quantity=stock_quantity+?,version=version+1,updated_at=? where id=? and stock_quantity is not null",
           item.quantity,clock.instant(),item.variantId);

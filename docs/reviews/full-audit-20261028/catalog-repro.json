@@ -1,0 +1,25 @@
+{
+  "fixture": "Isolated H2/Tomcat/SiteMesh, no cloud mutations",
+  "confirmed": {
+    "staleTopping": {
+      "aStatus": 200,
+      "aActive": false,
+      "bStatus": 200,
+      "bActive": true,
+      "stalePayloadRejected": false
+    },
+    "optionalCatalogKey": {
+      "required": true,
+      "valueMissing": true,
+      "emptyValueValid": false
+    },
+    "globalPromotion": {
+      "linksBefore": [
+        1
+      ],
+      "optionsShown": 0,
+      "saveStatus": 200,
+      "linksAfter": []
+    }
+  }
+}

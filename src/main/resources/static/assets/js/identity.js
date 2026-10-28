@@ -320,12 +320,38 @@
       }
     } catch (error) { output.replaceChildren(text('p', error.message, 'alert alert-warning')); }
   }
-  if (['/reviews', '/comments'].includes(page)) run(async () => {
-    const purchases = await request('/reviews/purchases');
-    const select = document.getElementById('orderItemId'); select.replaceChildren(text('option', 'Chọn sản phẩm từ đơn đã mua')); select.firstChild.value = '';
-    purchases.forEach(p => { const o = text('option', `${p.product_name} · dòng đơn #${p.id}`); o.value = p.id; o.dataset.product = p.product_id; select.append(o); });
-    select.addEventListener('change', () => { document.querySelector('#community-form [name="productId"]').value = select.selectedOptions[0]?.dataset.product || ''; });
-    if (!purchases.length) { select.replaceChildren(text('option', 'Chưa có sản phẩm đủ điều kiện')); select.firstChild.value = ''; }
-  });
+  if (['/reviews', '/comments'].includes(page)) {
+    const form = document.getElementById('community-form');
+    const select = document.getElementById('orderItemId');
+    const previous = document.getElementById('purchase-prev'), next = document.getElementById('purchase-next');
+    const retry = document.getElementById('purchase-retry'), status = document.getElementById('purchase-status');
+    const submit = form.querySelector('button[type="submit"]');
+    let purchasePage = 0, attemptedPage = 0, loading = false;
+    function choice(label) { const option = text('option', label); option.value = ''; select.replaceChildren(option); }
+    async function loadPurchases(target) {
+      if (loading) return;
+      loading = true; attemptedPage = target;
+      select.disabled = submit.disabled = previous.disabled = next.disabled = true;
+      select.setAttribute('aria-busy', 'true'); retry.hidden = true;
+      form.elements.productId.value = ''; choice('Đang tải sản phẩm…'); status.textContent = 'Đang tải sản phẩm đã mua…';
+      try {
+        const purchases = await request(`/reviews/purchases?page=${target}&size=20`);
+        purchasePage = target; choice('Chọn sản phẩm từ đơn đã mua');
+        purchases.forEach(p => { const option = text('option', `${p.product_name} · dòng đơn #${p.id}`); option.value = p.id; option.dataset.product = p.product_id; select.append(option); });
+        document.getElementById('purchase-page-label').textContent = `Trang ${target + 1}`;
+        previous.disabled = target === 0; next.disabled = purchases.length < 20;
+        select.disabled = submit.disabled = !purchases.length;
+        status.textContent = purchases.length ? 'Chọn sản phẩm trong trang này; dùng Trang mua sau để tìm dòng mua cũ hơn.' : target === 0 ? 'Chưa có sản phẩm từ đơn đã giao và đã thanh toán.' : 'Đã hết danh sách. Chọn Trang mua trước để quay lại.';
+        if (!purchases.length) choice('Không có sản phẩm trong trang này');
+      } catch (error) {
+        choice('Chưa tải được sản phẩm'); status.textContent = error.message; retry.hidden = false;
+      } finally { loading = false; select.setAttribute('aria-busy', 'false'); }
+    }
+    select.addEventListener('change', () => { form.elements.productId.value = select.selectedOptions[0]?.dataset.product || ''; });
+    previous.addEventListener('click', () => loadPurchases(purchasePage - 1));
+    next.addEventListener('click', () => loadPurchases(purchasePage + 1));
+    retry.addEventListener('click', () => loadPurchases(attemptedPage));
+    loadPurchases(0);
+  }
   run(load);
 })();

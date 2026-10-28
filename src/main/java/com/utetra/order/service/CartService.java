@@ -324,6 +324,9 @@ public class CartService {
     UUID.fromString(mergeKey);
     Cart cart = data.cart(actor.userId(), true);
     if (cart != null && mergeKey.equals(cart.lastMergeKey)) return view(actor);
+    // Merge can lock several variants without reserving stock; acquire them before replaying display order.
+    for (long variantId : guest.stream().map(Item::variantId).distinct().sorted().toList())
+      refs.saleVariant(variantId, true, clock);
     for (var item : guest) addLocked(actor, validate(item));
     cart = data.cart(actor.userId(), true);
     if (cart != null) {

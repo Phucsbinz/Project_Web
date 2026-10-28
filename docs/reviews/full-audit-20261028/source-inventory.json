@@ -1,0 +1,329 @@
+{
+  "head": "269ea2c8c6d434078ca96846527dcd3d47a6873e",
+  "java_files": 172,
+  "controller_classes": 17,
+  "jpa_entity_classes": 50,
+  "versioned_entity_classes": 22,
+  "entities": [
+    {
+      "class": "AuthSession",
+      "path": "src/main/java/com/utetra/entity/AuthSession.java",
+      "table": "auth_sessions",
+      "version": true
+    },
+    {
+      "class": "Role",
+      "path": "src/main/java/com/utetra/entity/Role.java",
+      "table": "roles",
+      "version": false
+    },
+    {
+      "class": "User",
+      "path": "src/main/java/com/utetra/entity/User.java",
+      "table": "users",
+      "version": true
+    },
+    {
+      "class": "SupportConversation",
+      "path": "src/main/java/com/utetra/support/SupportConversation.java",
+      "table": "support_conversations",
+      "version": false
+    },
+    {
+      "class": "SupportMessage",
+      "path": "src/main/java/com/utetra/support/SupportMessage.java",
+      "table": "support_messages",
+      "version": false
+    },
+    {
+      "class": "Carrier",
+      "path": "src/main/java/com/utetra/order/entity/Carrier.java",
+      "table": "carriers",
+      "version": true
+    },
+    {
+      "class": "CarrierAreaRate",
+      "path": "src/main/java/com/utetra/order/entity/CarrierAreaRate.java",
+      "table": "carrier_area_rates",
+      "version": false
+    },
+    {
+      "class": "Cart",
+      "path": "src/main/java/com/utetra/order/entity/Cart.java",
+      "table": "carts",
+      "version": true
+    },
+    {
+      "class": "CartItem",
+      "path": "src/main/java/com/utetra/order/entity/CartItem.java",
+      "table": "cart_items",
+      "version": false
+    },
+    {
+      "class": "CartItemTopping",
+      "path": "src/main/java/com/utetra/order/entity/CartItemTopping.java",
+      "table": "cart_item_toppings",
+      "version": false
+    },
+    {
+      "class": "CommissionPolicy",
+      "path": "src/main/java/com/utetra/order/entity/CommissionPolicy.java",
+      "table": "commission_policies",
+      "version": true
+    },
+    {
+      "class": "CouponRedemption",
+      "path": "src/main/java/com/utetra/order/entity/CouponRedemption.java",
+      "table": "coupon_redemptions",
+      "version": false
+    },
+    {
+      "class": "DeliveryAssignment",
+      "path": "src/main/java/com/utetra/order/entity/DeliveryAssignment.java",
+      "table": "delivery_assignments",
+      "version": true
+    },
+    {
+      "class": "DeliveryEvent",
+      "path": "src/main/java/com/utetra/order/entity/DeliveryEvent.java",
+      "table": "delivery_events",
+      "version": false
+    },
+    {
+      "class": "GroupOrder",
+      "path": "src/main/java/com/utetra/order/entity/GroupOrder.java",
+      "table": "group_orders",
+      "version": true
+    },
+    {
+      "class": "GroupOrderMember",
+      "path": "src/main/java/com/utetra/order/entity/GroupOrderMember.java",
+      "table": "group_order_members",
+      "version": false
+    },
+    {
+      "class": "LocalQrPayment",
+      "path": "src/main/java/com/utetra/order/entity/LocalQrPayment.java",
+      "table": "local_qr_payments",
+      "version": true
+    },
+    {
+      "class": "Notification",
+      "path": "src/main/java/com/utetra/order/entity/Notification.java",
+      "table": "notifications",
+      "version": false
+    },
+    {
+      "class": "Order",
+      "path": "src/main/java/com/utetra/order/entity/Order.java",
+      "table": "orders",
+      "version": true
+    },
+    {
+      "class": "OrderItem",
+      "path": "src/main/java/com/utetra/order/entity/OrderItem.java",
+      "table": "order_items",
+      "version": false
+    },
+    {
+      "class": "OrderItemTopping",
+      "path": "src/main/java/com/utetra/order/entity/OrderItemTopping.java",
+      "table": "order_item_toppings",
+      "version": false
+    },
+    {
+      "class": "OrderStatusHistory",
+      "path": "src/main/java/com/utetra/order/entity/OrderStatusHistory.java",
+      "table": "order_status_history",
+      "version": false
+    },
+    {
+      "class": "PaymentCallbackEvent",
+      "path": "src/main/java/com/utetra/order/entity/PaymentCallbackEvent.java",
+      "table": "payment_callback_events",
+      "version": false
+    },
+    {
+      "class": "PaymentTransaction",
+      "path": "src/main/java/com/utetra/order/entity/PaymentTransaction.java",
+      "table": "payment_transactions",
+      "version": true
+    },
+    {
+      "class": "RefundTransaction",
+      "path": "src/main/java/com/utetra/order/entity/RefundTransaction.java",
+      "table": "refund_transactions",
+      "version": true
+    },
+    {
+      "class": "ReturnRequest",
+      "path": "src/main/java/com/utetra/order/entity/ReturnRequest.java",
+      "table": "return_requests",
+      "version": true
+    },
+    {
+      "class": "StoreSettlement",
+      "path": "src/main/java/com/utetra/order/entity/StoreSettlement.java",
+      "table": "store_settlements",
+      "version": true
+    },
+    {
+      "class": "CommentMedia",
+      "path": "src/main/java/com/utetra/identity/entity/CommentMedia.java",
+      "table": "comment_media",
+      "version": false
+    },
+    {
+      "class": "LoyaltyAccounts",
+      "path": "src/main/java/com/utetra/identity/entity/LoyaltyAccounts.java",
+      "table": "loyalty_accounts",
+      "version": true
+    },
+    {
+      "class": "LoyaltyTransactions",
+      "path": "src/main/java/com/utetra/identity/entity/LoyaltyTransactions.java",
+      "table": "loyalty_transactions",
+      "version": false
+    },
+    {
+      "class": "OtpChallenges",
+      "path": "src/main/java/com/utetra/identity/entity/OtpChallenges.java",
+      "table": "otp_challenges",
+      "version": true
+    },
+    {
+      "class": "ProductComments",
+      "path": "src/main/java/com/utetra/identity/entity/ProductComments.java",
+      "table": "product_comments",
+      "version": true
+    },
+    {
+      "class": "ProductFavorites",
+      "path": "src/main/java/com/utetra/identity/entity/ProductFavorites.java",
+      "table": "product_favorites",
+      "version": false
+    },
+    {
+      "class": "ProductViews",
+      "path": "src/main/java/com/utetra/identity/entity/ProductViews.java",
+      "table": "product_views",
+      "version": false
+    },
+    {
+      "class": "ReviewMedia",
+      "path": "src/main/java/com/utetra/identity/entity/ReviewMedia.java",
+      "table": "review_media",
+      "version": false
+    },
+    {
+      "class": "Reviews",
+      "path": "src/main/java/com/utetra/identity/entity/Reviews.java",
+      "table": "reviews",
+      "version": true
+    },
+    {
+      "class": "UserAddresses",
+      "path": "src/main/java/com/utetra/identity/entity/UserAddresses.java",
+      "table": "user_addresses",
+      "version": false
+    },
+    {
+      "class": "CatalogAudit",
+      "path": "src/main/java/com/utetra/entity/catalog/CatalogAudit.java",
+      "table": "audit_logs",
+      "version": false
+    },
+    {
+      "class": "Category",
+      "path": "src/main/java/com/utetra/entity/catalog/Category.java",
+      "table": "categories",
+      "version": false
+    },
+    {
+      "class": "Product",
+      "path": "src/main/java/com/utetra/entity/catalog/Product.java",
+      "table": "products",
+      "version": true
+    },
+    {
+      "class": "ProductTopping",
+      "path": "src/main/java/com/utetra/entity/catalog/ProductTopping.java",
+      "table": "product_toppings",
+      "version": false
+    },
+    {
+      "class": "ProductVariant",
+      "path": "src/main/java/com/utetra/entity/catalog/ProductVariant.java",
+      "table": "product_variants",
+      "version": true
+    },
+    {
+      "class": "Promotion",
+      "path": "src/main/java/com/utetra/entity/catalog/Promotion.java",
+      "table": "promotions",
+      "version": true
+    },
+    {
+      "class": "PromotionProduct",
+      "path": "src/main/java/com/utetra/entity/catalog/PromotionProduct.java",
+      "table": "promotion_products",
+      "version": false
+    },
+    {
+      "class": "Store",
+      "path": "src/main/java/com/utetra/entity/catalog/Store.java",
+      "table": "stores",
+      "version": true
+    },
+    {
+      "class": "StoreDeliveryArea",
+      "path": "src/main/java/com/utetra/entity/catalog/StoreDeliveryArea.java",
+      "table": "store_delivery_areas",
+      "version": false
+    },
+    {
+      "class": "StoreMembership",
+      "path": "src/main/java/com/utetra/entity/catalog/StoreMembership.java",
+      "table": "store_memberships",
+      "version": false
+    },
+    {
+      "class": "StoreRegistrationRequest",
+      "path": "src/main/java/com/utetra/entity/catalog/StoreRegistrationRequest.java",
+      "table": "store_registration_requests",
+      "version": true
+    },
+    {
+      "class": "StoreTopping",
+      "path": "src/main/java/com/utetra/entity/catalog/StoreTopping.java",
+      "table": "store_toppings",
+      "version": false
+    },
+    {
+      "class": "Topping",
+      "path": "src/main/java/com/utetra/entity/catalog/Topping.java",
+      "table": "toppings",
+      "version": false
+    }
+  ],
+  "controllers": [
+    "src/main/java/com/utetra/controller/CatalogManagementController.java",
+    "src/main/java/com/utetra/controller/SystemController.java",
+    "src/main/java/com/utetra/identity/AccountController.java",
+    "src/main/java/com/utetra/identity/AuthController.java",
+    "src/main/java/com/utetra/identity/CommunityController.java",
+    "src/main/java/com/utetra/identity/IdentityPages.java",
+    "src/main/java/com/utetra/identity/UserManagementController.java",
+    "src/main/java/com/utetra/support/SupportController.java",
+    "src/main/java/com/utetra/order/web/CartController.java",
+    "src/main/java/com/utetra/order/web/CheckoutController.java",
+    "src/main/java/com/utetra/order/web/GroupOrderController.java",
+    "src/main/java/com/utetra/order/web/LocalQrController.java",
+    "src/main/java/com/utetra/order/web/OperationsController.java",
+    "src/main/java/com/utetra/order/web/OrderController.java",
+    "src/main/java/com/utetra/order/web/VnpayController.java",
+    "src/main/java/com/utetra/controller/publicweb/CatalogController.java",
+    "src/main/java/com/utetra/controller/publicweb/HomeController.java"
+  ],
+  "note": "Static annotation inventory only; missing @Version is not automatically a defect. Transactions may be class-level or caller-owned."
+}

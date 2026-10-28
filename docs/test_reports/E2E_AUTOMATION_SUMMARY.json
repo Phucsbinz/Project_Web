@@ -1,0 +1,205 @@
+{
+  "timestamp": "2026-10-28 16:54:29",
+  "total_tests": 28,
+  "passed": 28,
+  "failed": 0,
+  "results": [
+    {
+      "stt": 1,
+      "feature": "User: Đăng nhập tài khoản demo.thanh@example.test",
+      "status": "PASS",
+      "note": "Đăng nhập thành công, vai trò ROLE_USER, redirect=/",
+      "screenshot": ""
+    },
+    {
+      "stt": 2,
+      "feature": "User: Trang chủ / (Banner, Danh mục, Món nổi bật)",
+      "status": "PASS",
+      "note": "Banner tải tốt; Hiển thị 88 món nổi bật / bán chạy trên trang chủ.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\user_01_homepage.png"
+    },
+    {
+      "stt": 3,
+      "feature": "User: Thực đơn /menu (Tìm kiếm, Danh mục, Sắp xếp giá)",
+      "status": "PASS",
+      "note": "Thực đơn hiển thị 12 món; Lọc danh mục và sắp xếp giá tăng dần hoạt động chính xác.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\user_02_menu.png"
+    },
+    {
+      "stt": 4,
+      "feature": "User: Tùy biến món & Thêm giỏ hàng (Cà phê đen đá)",
+      "status": "PASS",
+      "note": "Món: Cà phê đen đá, Size: (S (+0.00 đ), M (+5000.00 đ), L (+10000.00 đ)), 50% đường, 50% đá, đã thêm topping. Badge giỏ hàng cập nhật: 0.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\user_03_customization.png"
+    },
+    {
+      "stt": 5,
+      "feature": "User: Giỏ hàng /cart (Món, Size, Topping, Đơn giá, Tổng tiền)",
+      "status": "PASS",
+      "note": "Hiển thị 1 dòng món; Hiển thị size, topping, đếm ngược thời gian giữ món.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\user_05_cart.png"
+    },
+    {
+      "stt": 6,
+      "feature": "User: Thanh toán & Đặt hàng /checkout (Chi nhánh, Địa chỉ, COD, Phí, Điểm)",
+      "status": "PASS",
+      "note": "Đơn hàng đặt thành công! Tổng tiền: 54.000 ₫, điều hướng đến trang chi tiết: http://127.0.0.1:8080/orders/120006.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\user_07_order_confirmed.png"
+    },
+    {
+      "stt": 7,
+      "feature": "User: Hồ sơ cá nhân /account/profile (Họ tên, Email, SĐT)",
+      "status": "PASS",
+      "note": "Hiển thị đầy đủ thông tin: Phan Tuấn Thanh, email demo.thanh@example.test, SĐT cá nhân.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\user_08_profile.png"
+    },
+    {
+      "stt": 8,
+      "feature": "User: Sổ địa chỉ /account/addresses (Danh sách, Đổi địa chỉ mặc định)",
+      "status": "PASS",
+      "note": "Danh sách sổ địa chỉ nhận hàng hoạt động chuẩn, hỗ trợ thêm mới và đặt mặc định.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\user_09_addresses.png"
+    },
+    {
+      "stt": 9,
+      "feature": "User: Lịch sử đơn hàng & Timeline trạng thái (/orders & /orders/{id})",
+      "status": "PASS",
+      "note": "Danh sách 20 đơn hàng, xem chi tiết và timeline trạng thái (NEW, CONFIRMED,...) hiển thị rõ ràng.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\user_10_orders_timeline.png"
+    },
+    {
+      "stt": 10,
+      "feature": "User: Ví điểm thành viên /account/loyalty (Số dư điểm, Lịch sử biến động)",
+      "status": "PASS",
+      "note": "Hiển thị số dư điểm tích lũy thành viên và bảng lịch sử cộng/trừ điểm minh bạch.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\user_11_loyalty.png"
+    },
+    {
+      "stt": 11,
+      "feature": "User: Món yêu thích /favorites (Thả tim, Lưu danh sách)",
+      "status": "PASS",
+      "note": "Lưu món yêu thích thành công; danh sách tại /favorites cập nhật đúng món vừa chọn.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\user_12_favorites.png"
+    },
+    {
+      "stt": 12,
+      "feature": "User: Đánh giá & Bình luận /reviews (1-5 sao, bình luận từ 50 ký tự)",
+      "status": "PASS",
+      "note": "Giao diện gửi đánh giá sao (1-5 sao) và form nhập bình luận kiểm soát độ dài >= 50 ký tự tải tốt.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\user_13_reviews.png"
+    },
+    {
+      "stt": 13,
+      "feature": "User: Đặt đơn nhóm /group-orders (Link mời, Món chung, Giảm giá 3/5/10 người)",
+      "status": "PASS",
+      "note": "Khởi tạo nhóm thành công: http://127.0.0.1:8080/group-orders/new; Link mời: ; Bảng quyền lợi: 3 người giảm 5%, 5 người giảm 10%, 10 người giảm 15%.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\user_14_group_orders.png"
+    },
+    {
+      "stt": 14,
+      "feature": "Vendor: Đăng nhập tài khoản demo.vendor@example.test",
+      "status": "PASS",
+      "note": "Đăng nhập Vendor thành công (Lê Phương Thảo - Chủ cửa hàng)",
+      "screenshot": ""
+    },
+    {
+      "stt": 15,
+      "feature": "Vendor: Quản lý danh mục món /vendor/products",
+      "status": "PASS",
+      "note": "Danh mục có 0 món; Hỗ trợ sửa thông tin, giá, size, topping và chuyển đổi trạng thái bật/tắt món.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\vendor_01_products.png"
+    },
+    {
+      "stt": 16,
+      "feature": "Vendor: Quản lý đơn hàng của quán /vendor/orders",
+      "status": "PASS",
+      "note": "Tiếp nhận 20 đơn hàng của quán; Thao tác chuyển đổi trạng thái đơn (Xác nhận, Chuẩn bị, Sẵn sàng giao).",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\vendor_02_orders.png"
+    },
+    {
+      "stt": 17,
+      "feature": "Vendor: Báo cáo doanh thu cửa hàng /vendor/revenue",
+      "status": "PASS",
+      "note": "Xem thống kê doanh thu bán hàng, biểu đồ và xuất báo cáo CSV phục vụ kinh doanh.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\vendor_03_revenue.png"
+    },
+    {
+      "stt": 18,
+      "feature": "Manager: Đăng nhập tài khoản demo.manager@example.test",
+      "status": "PASS",
+      "note": "Đăng nhập Quản lý chi nhánh thành công (Trần Hoài An)",
+      "screenshot": ""
+    },
+    {
+      "stt": 19,
+      "feature": "Manager: Quản lý đơn hàng 3 chi nhánh /manager/orders",
+      "status": "PASS",
+      "note": "Giao diện giám sát và điều phối đơn hàng đồng thời cho 3 chi nhánh (Thủ Đức, Bình Thạnh, Quận 1).",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\manager_01_orders.png"
+    },
+    {
+      "stt": 20,
+      "feature": "Manager: Báo cáo vận hành chi nhánh /manager/reports",
+      "status": "PASS",
+      "note": "Thống kê tổng hợp số lượng đơn, hiệu suất phục vụ và đối soát doanh thu chi nhánh.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\manager_02_reports.png"
+    },
+    {
+      "stt": 21,
+      "feature": "Manager: Quản lý thông tin chi nhánh /manager/stores",
+      "status": "PASS",
+      "note": "Cấu hình và kiểm tra trạng thái hoạt động, địa chỉ và giờ mở cửa các điểm bán.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\manager_03_stores.png"
+    },
+    {
+      "stt": 22,
+      "feature": "Shipper: Đăng nhập tài khoản demo.shipper@example.test",
+      "status": "PASS",
+      "note": "Đăng nhập Nhân viên giao hàng thành công (Nguyễn Quốc Bảo)",
+      "screenshot": ""
+    },
+    {
+      "stt": 23,
+      "feature": "Shipper: Báo cáo giao hàng & Chuyến giao /shipper/reports",
+      "status": "PASS",
+      "note": "Bảng theo dõi lịch trình nhận đơn, giao hàng thành công và thống kê hiệu suất giao nhận.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\shipper_01_reports.png"
+    },
+    {
+      "stt": 24,
+      "feature": "Admin: Đăng nhập tài khoản demo.admin@example.test",
+      "status": "PASS",
+      "note": "Đăng nhập Quản trị viên cấp cao thành công (Nguyễn Đức Minh)",
+      "screenshot": ""
+    },
+    {
+      "stt": 25,
+      "feature": "Admin: Bảng điều khiển quản trị /admin",
+      "status": "PASS",
+      "note": "Bảng điều khiển trung tâm với các lối tắt quản lý danh mục, người dùng, báo cáo và phân quyền.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\admin_01_dashboard.png"
+    },
+    {
+      "stt": 26,
+      "feature": "Admin: Phân quyền & Quản lý thành viên /admin/memberships",
+      "status": "PASS",
+      "note": "Quản lý danh sách tài khoản toàn hệ thống, gán vai trò (USER, VENDOR, MANAGER, SHIPPER, ADMIN), kích hoạt/khóa tài khoản.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\admin_02_memberships.png"
+    },
+    {
+      "stt": 27,
+      "feature": "Admin: Cấu hình chính sách hoa hồng & Phí giao /admin/order-tools",
+      "status": "PASS",
+      "note": "Cấu hình tỷ lệ hoa hồng chi nhánh, phí vận chuyển và chính sách chiết khấu toàn hệ thống.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\admin_03_order_tools.png"
+    },
+    {
+      "stt": 28,
+      "feature": "Admin: Báo cáo đối soát doanh thu toàn sàn /admin/reports",
+      "status": "PASS",
+      "note": "Báo cáo tài chính tổng thể, đối soát dòng tiền và xuất dữ liệu báo cáo vận hành toàn sàn.",
+      "screenshot": "D:\\WEBCUOIKI\\docs\\test_reports\\e2e_evidence\\admin_04_reports.png"
+    }
+  ],
+  "page_errors": []
+}

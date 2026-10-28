@@ -15,6 +15,8 @@ public class Category {
     @Column(name="is_active", nullable=false) private boolean active;
     @Column(name="created_at",nullable=false) private Instant createdAt;
     @Column(name="updated_at",nullable=false) private Instant updatedAt;
+    @Version @Column(nullable=false, columnDefinition="BIGINT DEFAULT 0") private long version;
+    public long getVersion() { return version; }
     public Long getId() { return id; }
     public String getName() { return name; }
     public void setName(String value) { name=value; }

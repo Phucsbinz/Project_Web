@@ -1,0 +1,5 @@
+[ERROR] Tests run: 4, Failures: 4, Errors: 0, Skipped: 0, Time elapsed: 20.48 s <<< FAILURE! -- in com.utetra.CatalogIntegrationTest
+[ERROR] Tests run: 4, Failures: 4, Errors: 0, Skipped: 0
+[INFO] BUILD FAILURE
+[INFO] Total time:  36.222 s
+[INFO] Finished at: 2026-10-28T12:09:28+07:00

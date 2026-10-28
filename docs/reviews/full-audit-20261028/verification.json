@@ -1,0 +1,21 @@
+{
+  "head": "269ea2c8c6d434078ca96846527dcd3d47a6873e",
+  "branch": "feature/order-payment",
+  "commands": {
+    "maven": ".\\mvnw.cmd test",
+    "mavenExit": 0,
+    "sharedUi": "py -3 tools/check_shared_ui.py",
+    "sharedUiExit": 0
+  },
+  "surefire": {
+    "tests": 214,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "business_probe_cases": 3,
+  "catalog_probe_cases": 3,
+  "confirmed_findings": 4,
+  "fixture": "H2 isolated only; no cloud database/provider writes",
+  "note": "Passing existing suite does not cover all findings; probes are additional temporary audit checks, not added to production tests."
+}

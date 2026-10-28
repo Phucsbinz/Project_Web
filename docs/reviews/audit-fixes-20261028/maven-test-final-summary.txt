@@ -1,0 +1,26 @@
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 24.16 s -- in com.utetra.BaselineSecurityTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 14.37 s -- in com.utetra.BaselineViewTest
+[INFO] Tests run: 24, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.30 s -- in com.utetra.CatalogIntegrationTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.195 s -- in com.utetra.CatalogSchemaProposalTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.778 s -- in com.utetra.CatalogViewTest
+[INFO] Tests run: 36, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 36.54 s -- in com.utetra.identity.IdentityIntegrationTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.121 s -- in com.utetra.identity.IdentityMigrationTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.599 s -- in com.utetra.identity.IdentitySocketLifecycleTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.28 s -- in com.utetra.identity.IdentityViewTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.515 s -- in com.utetra.identity.MailOtpDeliveryTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.559 s -- in com.utetra.IntegratedMigrationTest
+[INFO] Tests run: 92, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 52.94 s -- in com.utetra.order.OrderCommerceIntegrationTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.403 s -- in com.utetra.order.service.CheckoutAvailabilityEventsTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.623 s -- in com.utetra.order.service.OrderEventDeliveryTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.694 s -- in com.utetra.order.service.OrderSocketGuardTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.310 s -- in com.utetra.order.service.ReturnEvidenceServiceTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.utetra.order.service.VnpaySettingsTest
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.025 s -- in com.utetra.order.SupportIntegrationTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.026 s -- in com.utetra.security.JwtServiceTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.158 s -- in com.utetra.service.CatalogMediaServiceTest
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.145 s -- in com.utetra.service.CloudinaryMediaServiceTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.285 s -- in com.utetra.service.SessionIdentityServiceTest
+[INFO] Tests run: 223, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+[INFO] Total time:  03:06 min
+[INFO] Finished at: 2026-10-28T12:25:11+07:00

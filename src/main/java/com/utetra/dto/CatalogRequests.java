@@ -15,9 +15,17 @@ public final class CatalogRequests {
         boolean acceptingOrders, @PositiveOrZero long version) {}
     public record CategoryInput(@NotBlank @Size(max=100) String name,
         @NotBlank @Pattern(regexp="[a-z0-9]+(?:-[a-z0-9]+)*") @Size(max=100) String slug,
-        @Size(max=4000) String description, @Min(0) int displayOrder, boolean active) {}
+        @Size(max=4000) String description, @Min(0) int displayOrder, boolean active,
+        @PositiveOrZero @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using=com.utetra.identity.StrictNumbers.LongValue.class) Long version) {
+        public CategoryInput(String name,String slug,String description,int displayOrder,boolean active) {
+            this(name,slug,description,displayOrder,active,null);
+        }
+    }
     public record ToppingInput(@NotBlank @Size(max=100) String name,
-        @NotNull @DecimalMin("0") @Digits(integer=12,fraction=0) BigDecimal price, boolean active) {}
+        @NotNull @DecimalMin("0") @Digits(integer=12,fraction=0) BigDecimal price, boolean active,
+        @PositiveOrZero @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using=com.utetra.identity.StrictNumbers.LongValue.class) Long version) {
+        public ToppingInput(String name,BigDecimal price,boolean active) { this(name,price,active,null); }
+    }
     public record VariantInput(@NotBlank @Pattern(regexp="S|M|L") String sizeName,
         @NotNull @DecimalMin("0") @Digits(integer=12,fraction=0) BigDecimal extraPrice, boolean active,
         @Min(0) @Max(1000000) @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using=com.utetra.identity.StrictNumbers.IntValue.class) Integer stockQuantity,
@@ -51,7 +59,10 @@ public final class CatalogRequests {
     public record Decision(@NotNull @Pattern(regexp="APPROVED|REJECTED") String decision,
         @NotBlank @Size(max=1000) String note, @PositiveOrZero long version, @Positive Long commissionPolicyId) {}
     public record StoreState(@NotNull @Pattern(regexp="ACTIVE|SUSPENDED") String status, @PositiveOrZero long version) {}
-    public record AreaInput(@NotBlank @Size(max=50) String areaCode, @NotBlank @Size(max=150) String name, boolean active) {}
+    public record AreaInput(@NotBlank @Size(max=50) String areaCode, @NotBlank @Size(max=150) String name, boolean active,
+        @PositiveOrZero @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using=com.utetra.identity.StrictNumbers.LongValue.class) Long version) {
+        public AreaInput(String areaCode,String name,boolean active) { this(areaCode,name,active,null); }
+    }
     public record Availability(boolean available) {}
     public record Membership(@NotNull Long userId, boolean active) {}
 }

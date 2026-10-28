@@ -1,0 +1,10 @@
+{
+  "conflicts" : [ ],
+  "skippedDependencies" : [ ],
+  "created" : [ ],
+  "format" : "catalog-only-v1",
+  "database" : "utetra_db",
+  "capturedAtUtc" : "2026-10-28T10:47:07.773828400Z",
+  "mode" : "preview",
+  "status" : "preview-no-writes"
+}

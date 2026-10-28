@@ -837,3 +837,10 @@ Cập nhật 27/10/2026 theo yêu cầu Thanh: QR cho đơn mới dùng LOCAL_QR
 
 ## 28/10/2026 — Xác nhận nhận hàng
 orders.received_at (nullable DATETIME(6)) ghi thời điểm chính chủ đơn xác nhận nhận hàng, tách trạng thái DELIVERED; migration V2026102801.
+
+
+## Bổ sung sau audit — 28/10/2026
+
+Migration mới `V2026102802__catalog_configuration_versions.sql` thêm `version BIGINT NOT NULL DEFAULT 0` cho `categories`, `toppings`, `store_delivery_areas`; không sửa migration cũ hay xóa dữ liệu. Source entity dùng @Version. API đọc trả version, API cập nhật category/topping/area phải gửi version của bản form đã mở; thiếu hoặc cũ trả409 và cần tải lại. Tạo mới vẫn cho phép không gửi version. Phải đồng bộ migration + backend DTO/view/service + JS quản trị cùng nhau khi ghép nhánh. Lượt sửa này chỉ kiểm H2, không chạy migration lên DB cloud.
+
+Không thay datasource/JWT/provider/layout hay tính khoảng cách. GLOBAL promo giữ sản phẩm đã chọn; lookup không sẵn sàng thì chặn lưu. `catalogKey` cho phép bỏ trống; backend vẫn kiểm cú pháp khi có giá trị. LOCAL_QR hủy đã trả tiền có dùng điểm theo cùng policy hoàn điểm như đơn trả trước khác. Kết quả RED/GREEN và giới hạn kiểm chứng xem `docs/reviews/AUDIT_REMEDIATION_20261028.md` (đường dẫn từ gốc project).

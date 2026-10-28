@@ -1,0 +1,10 @@
+{
+  "wouldDelete" : 31,
+  "deleted" : 0,
+  "blocked" : [ ],
+  "format" : "catalog-only-v1",
+  "database" : "utetra_db",
+  "capturedAtUtc" : "2026-10-28T10:47:23.250730400Z",
+  "mode" : "rollback-preview",
+  "status" : "preview-no-writes"
+}

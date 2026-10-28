@@ -1,0 +1,28 @@
+{
+  "branch": "feature/order-payment",
+  "head": "269ea2c8c6d434078ca96846527dcd3d47a6873e",
+  "includesUncommittedRemediation": true,
+  "maven": {
+    "tests": 223,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "uiChecks": 158,
+  "uiFailures": 0,
+  "jsErrors": 0,
+  "uiByRole": {
+    "guest": 22,
+    "user": 32,
+    "vendor": 28,
+    "manager": 32,
+    "admin": 34,
+    "shipper": 10
+  },
+  "sharedUi": "one SiteMesh layout, 21 shared files",
+  "database": "Isolated H2 only; no cloud migration/provider calls",
+  "scope": "Static review plus existing automated tests and native render; not every business mutation executed",
+  "additionalRuntimeCases": 5,
+  "confirmedNewMediumFindings": 3,
+  "staticConcurrencyRisks": 1
+}

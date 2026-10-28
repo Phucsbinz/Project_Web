@@ -1139,3 +1139,92 @@ bạn hoàn thiện đầy đủ cho role shiper đi
 Kết quả: bật features.shipper.enabled; bổ sung chọn Shipper hoạt động/đã xác minh thay ID nhập tay, đơn giao responsive có địa chỉ/điện thoại lấy và giao, COD cần thu, nhật ký và thao tác đúng trạng thái. Giữ backend kiểm assignment/role/version/CSRF; chỉ hoàn tất COD khi thu đủ, người cũ mất quyền khi đổi/hủy. Báo cáo SQL aggregate đúng user/ngày, thêm đơn hủy/COD, phân công lặp cùng người không tạo event trùng. Không thêm bảng hoặc sửa DB cloud, không refactor 3NF. Hướng dẫn: docs/features/order-payment/SHIPPER_COMPLETION_20261028.md.
 
 Kiểm thực tế: clean verify cuối 214 tests, 0 failures/errors/skipped; WAR thành công; Shared UI 21 files đạt; 4 Shipper browser scenarios H2/Tomcat/SiteMesh và 18 shopping scenarios đạt. Test UI phát hiện mã đơn dài tràn mobile, đã sửa text-break và chạy lại đạt; lỗi shopping badge trước đó do chưa chờ navigation/refresh, đã sửa harness và chạy lại đủ 18 case. Minh chứng docs/demo/shipper-20261028. Không thử thu/giao hàng thật. Chỉ lưu công việc trên nhánh order, chưa push; giữ nguyên thay đổi xóa ảnh nguồn cục bộ có trước.
+
+
+## 28/10/2026 — Review độc lập Shipper bằng requesting-code-review
+
+Prompt nguyên văn:
+```text
+d:\WEBCUOIKI\.agents\skills "Dùng skill requesting-code-review kiểm tra lại các thay đổi vừa làm xem có đạt yêu cầu chưa."
+```
+
+Đã đọc skill và template, giao reviewer độc lập chỉ đọc với context riêng; phạm vi 9d6b553..269ea2c. Reviewer kiểm diff/service/repository/security/controller/JSP/tests và phần merge liên quan; kết luận Ready to merge: Yes, không phát hiện Critical/Important/Minor đủ căn cứ. Đã đối chiếu bằng chứng 214 test và 4 Shipper/18 shopping browser từ lượt trước; không chạy lại Maven/app trong lượt review. Shared UI checker và diff --check được chạy lại thành công. Không sửa code/config, không commit/push hoặc ghi DB cloud. Báo cáo đầy đủ, giới hạn và các hành vi cân nhắc ngoài phạm vi: docs/reviews/SHIPPER_REVIEW_20261028.md.
+
+
+## 28/10/2026 — Full Project Audit
+
+Prompt nguyên văn:
+```text
+"Hãy thực hiện một đợt Full Project Audit (Rà soát toàn diện dự án) cho tôi bằng cách áp dụng các skill requesting-code-review, systematic-debugging và verification-before-completion:
+
+Chạy kiểm tra tự động trước (Automated Verification):
+Chạy .\mvnw.cmd test để kiểm tra toàn bộ unit & integration tests xem có logic nào bị gãy không.
+Chạy py -3 tools/check_shared_ui.py để kiểm tra xung đột giao diện / SiteMesh layout.
+Rà soát Bảo mật & Phân quyền (Security & Roles):
+Kiểm tra các Controller/API xem có lỗ hổng IDOR (ví dụ: User này xem/sửa đơn hàng, hồ sơ của User khác) không.
+Kiểm tra phân quyền các vai trò (ROLE_ADMIN, ROLE_MANAGER, ROLE_VENDOR, ROLE_SHIPPER, ROLE_USER) xem có endpoint nào bị hở quyền không.
+Rà soát Logic nghiệp vụ & Dữ liệu (Business Logic & Transactions):
+Kiểm tra các luồng nhạy cảm: Đặt hàng, Tính giá (quote), Khuyến mãi, Tồn kho (stock), Đổi mật khẩu/OTP.
+Kiểm tra xem các phương thức ghi DB đã có @Transactional và khóa lạc quan @Version để chống xung đột dữ liệu chưa.
+Tổng hợp báo cáo:
+Lập danh sách các lỗi / rủi ro tiềm ẩn (phân loại theo mức độ: Nghiêm trọng, Trung bình, Nhẹ).
+Chỉ rõ file, dòng code bị ảnh hưởng và đề xuất cách sửa chi tiết."
+```
+
+Lời nhắc nguyên văn:
+```text
+các skill trong này nha bạn đọc kỹ d:\WEBCUOIKI\.agents
+```
+
+Đã đọc đúng các skill local yêu cầu, giao hai reviewer độc lập read-only (security/roles và catalog/data) với context riêng theo requesting-code-review; điều phối rà checkout/group/payment/transaction. Chạy mới .\mvnw.cmd test: exit0, 214 tests/0 failures/0 errors/0 skipped, BUILD SUCCESS. Shared UI checker exit0: một layout21file. Đã tái hiện bổ sung trên H2: lỗi hủy LOCAL_QR đã thanh toán có dùng điểm (3 ca đối chứng); 3 lỗi catalog qua API/browser thật (global promotion mất productIds khi chỉ sửa tên; topping bị bật lại bởi payload cũ; catalogKey tùy chọn lại required). Tổng4findings mức Trung bình, chưa xác nhận Nghiêm trọng hoặc IDOR/vượt quyền trong phạm vi đã rà; không khẳng định tuyệt đối an toàn. Phân tích transaction/version theo call graph, không coi mọi bảng thiếu @Version là lỗi. Không sửa source/config, không ghi DB cloud hoặc gọi provider thật, không commit/push.
+
+Báo cáo có file/dòng, trace, cách sửa và test cần bổ sung: docs/reviews/FULL_PROJECT_AUDIT_20261028.md. Minh chứng đã loại thông tin nhạy cảm: docs/reviews/full-audit-20261028/. Repro tạm nằm .local/audit-20261028; lần chạy helper đầu cần chuẩn hóa giá VND thành integer, lượt sau sửa điều kiện chờ option DOM từ visible sang attached, rồi cả3ca catalog tái hiện thành công; không sửa production code để né lỗi. Các lỗi nêu trong audit vẫn chưa được khắc phục.
+
+
+## 28/10/2026 — Sửa bốn lỗi audit theo systematic-debugging và TDD
+
+Prompt nguyên văn:
+```text
+Hãy áp dụng skill systematic-debugging và test-driven-development để sửa các lỗi vừa tìm thấy:
+
+Với từng lỗi, hãy giải thích ngắn gọn nguyên nhân gốc rễ.
+Tiến hành sửa code một cách an toàn, không làm ảnh hưởng đến các chức năng liên quan.
+Dùng skill verification-before-completion chạy lại test (mvn test) để kiểm chứng toàn bộ lỗi đã được khắc phục hoàn toàn.
+```
+
+Đã đọc đúng skill local .agents/skills, giữ scope nhánh feature/order-payment và làm inline theo plan docs/superpowers/plans/2026-10-28-audit-remediation.md. Nguyên nhân và sửa: GLOBAL lookup rỗng làm mất selection → tải options theo shop, giữ selected ID và chặn lưu khi lookup lỗi; policy loyalty bỏ LOCAL_QR → thêm vào đúng nhánh CANCELLED/REFUND_PENDING; stale configuration payload thiếu expected-version → forward migration2802 + @Version ba entity + version trong view/input + kiểm409 trước ghi; catalogKey optional bị required → chỉ miễn required đúng trường.
+
+TDD thực tế: loyalty2ca RED lỗi hoàn điểm rồi GREEN; stale HTTP4ca RED200-vs409 rồi GREEN; optimistic merge3ca RED không phát hiện stale rồi GREEN; browser global/key RED rồi global/key/version GREEN. Có bước đồng bộ resources sau xác nhận hash target/source khác nhau và sửa harness chờ editor reset, không bỏ assertion nghiệp vụ. Test detached merge không phải hai transaction MySQL độc lập; giới hạn này được ghi rõ.
+
+Verification mới: .\mvnw.cmd test exit0,223 tests/0 failures/0 errors/0 skipped; Shared UI một layout21files; JS syntax và diff check đạt; browser3regressions+17admin+18shopping đạt trên H2/Tomcat/SiteMesh. Reviewer độc lập không phát hiện Critical/Important trong diff; các gaps/limits ghi tại docs/reviews/AUDIT_REMEDIATION_20261028.md. Minh chứng RED/GREEN docs/reviews/audit-fixes-20261028/. Không sửa datasource/JWT/provider/layout, không chạy migration hoặc ghi DB cloud, không commit/push. Giữ nguyên các thay đổi có trước gồm ảnh nguồn QR bị xóa, .agents và skills-lock.
+
+
+## 28/10/2026 — Rà soát toàn bộ vai trò sau sửa audit
+
+Prompt nguyên văn:
+
+```text
+áp dụng các skill requesting-code-review, systematic-debugging và verification-before-completion rà soát hết các chức năng của tất cả các role Chạy kiểm tra tự động trước (Automated Verification):
+Chạy .\mvnw.cmd test để kiểm tra toàn bộ unit & integration tests xem có logic nào bị gãy không.
+Chạy py -3 tools/check_shared_ui.py để kiểm tra xung đột giao diện / SiteMesh layout. Rà soát Logic nghiệp vụ & Dữ liệu (Business Logic & Transactions):
+Kiểm tra các luồng nhạy cảm: Đặt hàng, Tính giá (quote), Khuyến mãi, Tồn kho (stock), Đổi mật khẩu/OTP.
+Kiểm tra xem các phương thức ghi DB đã có @Transactional và khóa lạc quan @Version để chống xung đột dữ liệu chưa. xem đầy tất cả các chức năng xem có bị lỗi logic lỗi gì k
+```
+
+Prompt tiếp nối nguyên văn:
+
+```text
+tiếp tục đi
+```
+
+Kết quả thực: Maven223/0fail/0error/0skip; sharedUI một layout/21 file; Tomcat/SiteMesh render158 checks ở sáu vai trò, 0 lỗi/0 JS errors. Đối chiếu58 UC; 5 ca probe H2 xác nhận3 lỗi Trung bình (host không có món mất tracking/payment, đổi mật khẩu chưa revoke OTP/reset grant cũ, lựa chọn mua để review/comment bị cắt100 dòng); thêm1 rủi ro thứ tự khóa checkout/cancel chưa runtime MySQL/TiDB. Không sửa thêm production source, không ghi cloud/provider, không commit/push. Xem [báo cáo](reviews/ALL_ROLE_AUDIT_20261028.md). Không ghi secret và không coi render là toàn bộ mutation E2E.
+
+
+## 28/10/2026 — UTETRA-FIX-20261028: sửa ba lỗi và kiểm thứ tự khóa
+
+- Metadata và **prompt nguyên văn đầy đủ**, gồm phản hồi về giỏ sau logout, theo mẫu PROMPT_ENTRY: [hồ sơ prompt](reviews/prompts/UTETRA-FIX-20261028.md).
+- Phản hồi/kết quả/file thay đổi: [báo cáo sửa lỗi](reviews/SCOPED_FIXES_20261028.md).
+- Kết quả thực: baseline223 đạt; có RED/GREEN từng lỗi. Final verify257 tests,0fail/0error/0skip và executable WAR thành công trên bản sao316 input nguyên trạng. Workspace verify bị chặn rename WAR đang có app chạy; không tự tắt app.
+- NativeUI16 nhóm/27 render390-768-1440 đạt;0JS/console errors,0network failure bất thường,1logout navigation abort có200/401 và Guest isolation đối chứng. SharedUI mộtlayout/21file và diffcheck đạt.
+- Host rỗng có tracking/payment đúng nghĩa vụ; revoke đúng PASSWORD_RESET của actor cùng transaction; purchases phân trang20 ở UI và bounded API; stock locks tăngID ở checkout/release/legacy merge, giữ display order. MySQL/TiDB concurrency chưa chạy, không ghi deadlock đó đã tái hiện hoặc loại hết.
+- Codex sửa theo thứ tự, reviewer scoped độc lập chỉ đọc chưa thấy regression source/test; chưa commit/push/merge, không migration/cloud/provider thật. Không ghi secret vào hồ sơ. Không xóa hay thay nội dung nhật ký cũ.

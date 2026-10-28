@@ -15,8 +15,8 @@ public class CommunityController {
     @DeleteMapping("/favorites/{id}") public Map<String,Object> unlike(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable long id) { return Map.of("count",community.favorite(p,id,false)); }
     @PostMapping("/viewed/{id}") public Map<String,Object> view(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable long id) { community.viewed(p,id); return Map.of("message","Đã ghi nhận lượt xem."); }
     @GetMapping({"/favorites/data","/viewed/data"}) public List<Map<String,Object>> products(@AuthenticationPrincipal UtetraPrincipal p,jakarta.servlet.http.HttpServletRequest req,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int size) { return community.products(p,req.getServletPath().startsWith("/viewed"),page,size); }
-    @GetMapping("/reviews/purchases") public List<Map<String,Object>> purchases(@AuthenticationPrincipal UtetraPrincipal p) {
-        return community.purchases(p);
+    @GetMapping("/reviews/purchases") public List<Map<String,Object>> purchases(@AuthenticationPrincipal UtetraPrincipal p,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="100") int size) {
+        return community.purchases(p,page,size);
     }
     @GetMapping({"/reviews/data","/comments/data"}) public List<Map<String,Object>> entries(@AuthenticationPrincipal UtetraPrincipal p,jakarta.servlet.http.HttpServletRequest req,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int size) { return community.entries(p,req.getServletPath().startsWith("/reviews"),page,size); }
     @PostMapping(value="/reviews",consumes="multipart/form-data") public Map<String,Object> review(@AuthenticationPrincipal UtetraPrincipal p,@Valid @ModelAttribute IdentityForms.Review form,@RequestParam(required=false) List<MultipartFile> files) { return Map.of("id",community.review(p,form,files),"message","Đã gửi đánh giá."); }

@@ -1,0 +1,3441 @@
+{
+  "schema" : [ {
+    "name" : "utetra_db"
+  } ],
+  "categories" : [ {
+    "id" : 1,
+    "name" : "Trà sữa",
+    "slug" : "demo-category-0",
+    "is_active" : true
+  }, {
+    "id" : 2,
+    "name" : "Matcha & trà rang",
+    "slug" : "demo-category-2",
+    "is_active" : true
+  }, {
+    "id" : 3,
+    "name" : "Trà trái cây",
+    "slug" : "demo-category-1",
+    "is_active" : true
+  }, {
+    "id" : 4,
+    "name" : "Cà phê",
+    "slug" : "demo-category-3",
+    "is_active" : true
+  }, {
+    "id" : 5,
+    "name" : "Trà nguyên lá",
+    "slug" : "demo-category-4",
+    "is_active" : true
+  }, {
+    "id" : 6,
+    "name" : "Đá xay & chocolate",
+    "slug" : "demo-category-5",
+    "is_active" : true
+  } ],
+  "toppings" : [ {
+    "id" : 1,
+    "name" : "Trân châu đen",
+    "price" : 5000.00,
+    "is_active" : true
+  }, {
+    "id" : 2,
+    "name" : "Trân châu trắng",
+    "price" : 6000.00,
+    "is_active" : true
+  }, {
+    "id" : 3,
+    "name" : "Thạch vải",
+    "price" : 7000.00,
+    "is_active" : true
+  } ],
+  "stores" : [ {
+    "id" : 1,
+    "name" : "UTETra Thủ Đức",
+    "slug" : "demo-thu-duc",
+    "status" : "ACTIVE",
+    "accepting_orders" : true
+  }, {
+    "id" : 2,
+    "name" : "UTETra Bình Thạnh",
+    "slug" : "demo-binh-thanh",
+    "status" : "ACTIVE",
+    "accepting_orders" : true
+  }, {
+    "id" : 3,
+    "name" : "UTETra Quận 1",
+    "slug" : "demo-quan-1",
+    "status" : "ACTIVE",
+    "accepting_orders" : true
+  } ],
+  "products" : [ {
+    "id" : 1,
+    "store_id" : 1,
+    "category_id" : 1,
+    "name" : "Ô long sữa trân châu",
+    "slug" : "demo-milk-tea-0",
+    "catalog_key" : "demo-milk-tea",
+    "base_price" : 39000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 4,
+    "store_id" : 1,
+    "category_id" : 2,
+    "name" : "Matcha latte",
+    "slug" : "demo-matcha-0",
+    "catalog_key" : "demo-matcha",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 7,
+    "store_id" : 1,
+    "category_id" : 3,
+    "name" : "Trà đào cam sả",
+    "slug" : "demo-peach-tea-0",
+    "catalog_key" : "demo-peach-tea",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 10,
+    "store_id" : 1,
+    "category_id" : 3,
+    "name" : "Trà lài vải",
+    "slug" : "demo-lychee-tea-0",
+    "catalog_key" : "demo-lychee-tea",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 13,
+    "store_id" : 1,
+    "category_id" : 4,
+    "name" : "Cà phê sữa đá",
+    "slug" : "demo-coffee-0",
+    "catalog_key" : "demo-coffee",
+    "base_price" : 35000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 16,
+    "store_id" : 1,
+    "category_id" : 5,
+    "name" : "Trà sen kem sữa",
+    "slug" : "demo-lotus-tea-0",
+    "catalog_key" : "demo-lotus-tea",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 19,
+    "store_id" : 1,
+    "category_id" : 1,
+    "name" : "Sữa tươi trân châu đường đen",
+    "slug" : "demo-brown-sugar-0",
+    "catalog_key" : "demo-brown-sugar",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 22,
+    "store_id" : 1,
+    "category_id" : 1,
+    "name" : "Trà sữa khoai môn",
+    "slug" : "demo-taro-0",
+    "catalog_key" : "demo-taro",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 25,
+    "store_id" : 1,
+    "category_id" : 1,
+    "name" : "Trà sữa Thái đỏ",
+    "slug" : "demo-thai-tea-0",
+    "catalog_key" : "demo-thai-tea",
+    "base_price" : 39000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 28,
+    "store_id" : 1,
+    "category_id" : 1,
+    "name" : "Trà sữa lài ngọc trai",
+    "slug" : "demo-jasmine-milk-0",
+    "catalog_key" : "demo-jasmine-milk",
+    "base_price" : 42000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 31,
+    "store_id" : 1,
+    "category_id" : 1,
+    "name" : "Hồng trà sữa",
+    "slug" : "demo-black-milk-0",
+    "catalog_key" : "demo-black-milk",
+    "base_price" : 35000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 34,
+    "store_id" : 1,
+    "category_id" : 5,
+    "name" : "Ô long kem cheese",
+    "slug" : "demo-cheese-oolong-0",
+    "catalog_key" : "demo-cheese-oolong",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 37,
+    "store_id" : 1,
+    "category_id" : 3,
+    "name" : "Trà lài dâu tươi",
+    "slug" : "demo-strawberry-tea-0",
+    "catalog_key" : "demo-strawberry-tea",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 40,
+    "store_id" : 1,
+    "category_id" : 3,
+    "name" : "Trà xoài nhiệt đới",
+    "slug" : "demo-mango-tea-0",
+    "catalog_key" : "demo-mango-tea",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 43,
+    "store_id" : 1,
+    "category_id" : 3,
+    "name" : "Trà chanh dây",
+    "slug" : "demo-passion-tea-0",
+    "catalog_key" : "demo-passion-tea",
+    "base_price" : 42000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 46,
+    "store_id" : 1,
+    "category_id" : 3,
+    "name" : "Trà tắc mật ong",
+    "slug" : "demo-kumquat-0",
+    "catalog_key" : "demo-kumquat",
+    "base_price" : 35000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 49,
+    "store_id" : 1,
+    "category_id" : 3,
+    "name" : "Trà hibiscus đỏ",
+    "slug" : "demo-hibiscus-0",
+    "catalog_key" : "demo-hibiscus",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 52,
+    "store_id" : 1,
+    "category_id" : 3,
+    "name" : "Trà lài dứa",
+    "slug" : "demo-pineapple-0",
+    "catalog_key" : "demo-pineapple",
+    "base_price" : 42000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 55,
+    "store_id" : 1,
+    "category_id" : 2,
+    "name" : "Matcha sữa dừa",
+    "slug" : "demo-matcha-coconut-0",
+    "catalog_key" : "demo-matcha-coconut",
+    "base_price" : 55000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 58,
+    "store_id" : 1,
+    "category_id" : 2,
+    "name" : "Matcha dâu latte",
+    "slug" : "demo-matcha-strawberry-0",
+    "catalog_key" : "demo-matcha-strawberry",
+    "base_price" : 55000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 61,
+    "store_id" : 1,
+    "category_id" : 2,
+    "name" : "Matcha kem cheese",
+    "slug" : "demo-matcha-cheese-0",
+    "catalog_key" : "demo-matcha-cheese",
+    "base_price" : 55000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 64,
+    "store_id" : 1,
+    "category_id" : 2,
+    "name" : "Hojicha latte",
+    "slug" : "demo-hojicha-0",
+    "catalog_key" : "demo-hojicha",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 67,
+    "store_id" : 1,
+    "category_id" : 4,
+    "name" : "Cà phê đen đá",
+    "slug" : "demo-black-coffee-0",
+    "catalog_key" : "demo-black-coffee",
+    "base_price" : 29000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 70,
+    "store_id" : 1,
+    "category_id" : 4,
+    "name" : "Bạc xỉu",
+    "slug" : "demo-bac-xiu-0",
+    "catalog_key" : "demo-bac-xiu",
+    "base_price" : 35000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 73,
+    "store_id" : 1,
+    "category_id" : 4,
+    "name" : "Cà phê dừa",
+    "slug" : "demo-coconut-coffee-0",
+    "catalog_key" : "demo-coconut-coffee",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 76,
+    "store_id" : 1,
+    "category_id" : 4,
+    "name" : "Cà phê muối",
+    "slug" : "demo-salt-coffee-0",
+    "catalog_key" : "demo-salt-coffee",
+    "base_price" : 42000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 79,
+    "store_id" : 1,
+    "category_id" : 4,
+    "name" : "Caramel latte",
+    "slug" : "demo-caramel-coffee-0",
+    "catalog_key" : "demo-caramel-coffee",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 82,
+    "store_id" : 1,
+    "category_id" : 6,
+    "name" : "Chocolate sữa đá",
+    "slug" : "demo-chocolate-0",
+    "catalog_key" : "demo-chocolate",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 85,
+    "store_id" : 1,
+    "category_id" : 6,
+    "name" : "Cookies đá xay",
+    "slug" : "demo-cookies-0",
+    "catalog_key" : "demo-cookies",
+    "base_price" : 55000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 88,
+    "store_id" : 1,
+    "category_id" : 6,
+    "name" : "Xoài đá xay",
+    "slug" : "demo-mango-smoothie-0",
+    "catalog_key" : "demo-mango-smoothie",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 2,
+    "store_id" : 2,
+    "category_id" : 1,
+    "name" : "Ô long sữa trân châu",
+    "slug" : "demo-milk-tea-1",
+    "catalog_key" : "demo-milk-tea",
+    "base_price" : 39000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 5,
+    "store_id" : 2,
+    "category_id" : 2,
+    "name" : "Matcha latte",
+    "slug" : "demo-matcha-1",
+    "catalog_key" : "demo-matcha",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 8,
+    "store_id" : 2,
+    "category_id" : 3,
+    "name" : "Trà đào cam sả",
+    "slug" : "demo-peach-tea-1",
+    "catalog_key" : "demo-peach-tea",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 11,
+    "store_id" : 2,
+    "category_id" : 3,
+    "name" : "Trà lài vải",
+    "slug" : "demo-lychee-tea-1",
+    "catalog_key" : "demo-lychee-tea",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 14,
+    "store_id" : 2,
+    "category_id" : 4,
+    "name" : "Cà phê sữa đá",
+    "slug" : "demo-coffee-1",
+    "catalog_key" : "demo-coffee",
+    "base_price" : 35000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 17,
+    "store_id" : 2,
+    "category_id" : 5,
+    "name" : "Trà sen kem sữa",
+    "slug" : "demo-lotus-tea-1",
+    "catalog_key" : "demo-lotus-tea",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 20,
+    "store_id" : 2,
+    "category_id" : 1,
+    "name" : "Sữa tươi trân châu đường đen",
+    "slug" : "demo-brown-sugar-1",
+    "catalog_key" : "demo-brown-sugar",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 23,
+    "store_id" : 2,
+    "category_id" : 1,
+    "name" : "Trà sữa khoai môn",
+    "slug" : "demo-taro-1",
+    "catalog_key" : "demo-taro",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 26,
+    "store_id" : 2,
+    "category_id" : 1,
+    "name" : "Trà sữa Thái đỏ",
+    "slug" : "demo-thai-tea-1",
+    "catalog_key" : "demo-thai-tea",
+    "base_price" : 39000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 29,
+    "store_id" : 2,
+    "category_id" : 1,
+    "name" : "Trà sữa lài ngọc trai",
+    "slug" : "demo-jasmine-milk-1",
+    "catalog_key" : "demo-jasmine-milk",
+    "base_price" : 42000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 32,
+    "store_id" : 2,
+    "category_id" : 1,
+    "name" : "Hồng trà sữa",
+    "slug" : "demo-black-milk-1",
+    "catalog_key" : "demo-black-milk",
+    "base_price" : 35000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 35,
+    "store_id" : 2,
+    "category_id" : 5,
+    "name" : "Ô long kem cheese",
+    "slug" : "demo-cheese-oolong-1",
+    "catalog_key" : "demo-cheese-oolong",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 38,
+    "store_id" : 2,
+    "category_id" : 3,
+    "name" : "Trà lài dâu tươi",
+    "slug" : "demo-strawberry-tea-1",
+    "catalog_key" : "demo-strawberry-tea",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 41,
+    "store_id" : 2,
+    "category_id" : 3,
+    "name" : "Trà xoài nhiệt đới",
+    "slug" : "demo-mango-tea-1",
+    "catalog_key" : "demo-mango-tea",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 44,
+    "store_id" : 2,
+    "category_id" : 3,
+    "name" : "Trà chanh dây",
+    "slug" : "demo-passion-tea-1",
+    "catalog_key" : "demo-passion-tea",
+    "base_price" : 42000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 47,
+    "store_id" : 2,
+    "category_id" : 3,
+    "name" : "Trà tắc mật ong",
+    "slug" : "demo-kumquat-1",
+    "catalog_key" : "demo-kumquat",
+    "base_price" : 35000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 50,
+    "store_id" : 2,
+    "category_id" : 3,
+    "name" : "Trà hibiscus đỏ",
+    "slug" : "demo-hibiscus-1",
+    "catalog_key" : "demo-hibiscus",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 53,
+    "store_id" : 2,
+    "category_id" : 3,
+    "name" : "Trà lài dứa",
+    "slug" : "demo-pineapple-1",
+    "catalog_key" : "demo-pineapple",
+    "base_price" : 42000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 56,
+    "store_id" : 2,
+    "category_id" : 2,
+    "name" : "Matcha sữa dừa",
+    "slug" : "demo-matcha-coconut-1",
+    "catalog_key" : "demo-matcha-coconut",
+    "base_price" : 55000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 59,
+    "store_id" : 2,
+    "category_id" : 2,
+    "name" : "Matcha dâu latte",
+    "slug" : "demo-matcha-strawberry-1",
+    "catalog_key" : "demo-matcha-strawberry",
+    "base_price" : 55000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 62,
+    "store_id" : 2,
+    "category_id" : 2,
+    "name" : "Matcha kem cheese",
+    "slug" : "demo-matcha-cheese-1",
+    "catalog_key" : "demo-matcha-cheese",
+    "base_price" : 55000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 65,
+    "store_id" : 2,
+    "category_id" : 2,
+    "name" : "Hojicha latte",
+    "slug" : "demo-hojicha-1",
+    "catalog_key" : "demo-hojicha",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 68,
+    "store_id" : 2,
+    "category_id" : 4,
+    "name" : "Cà phê đen đá",
+    "slug" : "demo-black-coffee-1",
+    "catalog_key" : "demo-black-coffee",
+    "base_price" : 29000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 71,
+    "store_id" : 2,
+    "category_id" : 4,
+    "name" : "Bạc xỉu",
+    "slug" : "demo-bac-xiu-1",
+    "catalog_key" : "demo-bac-xiu",
+    "base_price" : 35000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 74,
+    "store_id" : 2,
+    "category_id" : 4,
+    "name" : "Cà phê dừa",
+    "slug" : "demo-coconut-coffee-1",
+    "catalog_key" : "demo-coconut-coffee",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 77,
+    "store_id" : 2,
+    "category_id" : 4,
+    "name" : "Cà phê muối",
+    "slug" : "demo-salt-coffee-1",
+    "catalog_key" : "demo-salt-coffee",
+    "base_price" : 42000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 80,
+    "store_id" : 2,
+    "category_id" : 4,
+    "name" : "Caramel latte",
+    "slug" : "demo-caramel-coffee-1",
+    "catalog_key" : "demo-caramel-coffee",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 83,
+    "store_id" : 2,
+    "category_id" : 6,
+    "name" : "Chocolate sữa đá",
+    "slug" : "demo-chocolate-1",
+    "catalog_key" : "demo-chocolate",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 86,
+    "store_id" : 2,
+    "category_id" : 6,
+    "name" : "Cookies đá xay",
+    "slug" : "demo-cookies-1",
+    "catalog_key" : "demo-cookies",
+    "base_price" : 55000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 89,
+    "store_id" : 2,
+    "category_id" : 6,
+    "name" : "Xoài đá xay",
+    "slug" : "demo-mango-smoothie-1",
+    "catalog_key" : "demo-mango-smoothie",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 3,
+    "store_id" : 3,
+    "category_id" : 1,
+    "name" : "Ô long sữa trân châu",
+    "slug" : "demo-milk-tea-2",
+    "catalog_key" : "demo-milk-tea",
+    "base_price" : 39000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 6,
+    "store_id" : 3,
+    "category_id" : 2,
+    "name" : "Matcha latte",
+    "slug" : "demo-matcha-2",
+    "catalog_key" : "demo-matcha",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 9,
+    "store_id" : 3,
+    "category_id" : 3,
+    "name" : "Trà đào cam sả",
+    "slug" : "demo-peach-tea-2",
+    "catalog_key" : "demo-peach-tea",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 12,
+    "store_id" : 3,
+    "category_id" : 3,
+    "name" : "Trà lài vải",
+    "slug" : "demo-lychee-tea-2",
+    "catalog_key" : "demo-lychee-tea",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 15,
+    "store_id" : 3,
+    "category_id" : 4,
+    "name" : "Cà phê sữa đá",
+    "slug" : "demo-coffee-2",
+    "catalog_key" : "demo-coffee",
+    "base_price" : 35000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 18,
+    "store_id" : 3,
+    "category_id" : 5,
+    "name" : "Trà sen kem sữa",
+    "slug" : "demo-lotus-tea-2",
+    "catalog_key" : "demo-lotus-tea",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 21,
+    "store_id" : 3,
+    "category_id" : 1,
+    "name" : "Sữa tươi trân châu đường đen",
+    "slug" : "demo-brown-sugar-2",
+    "catalog_key" : "demo-brown-sugar",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 24,
+    "store_id" : 3,
+    "category_id" : 1,
+    "name" : "Trà sữa khoai môn",
+    "slug" : "demo-taro-2",
+    "catalog_key" : "demo-taro",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 27,
+    "store_id" : 3,
+    "category_id" : 1,
+    "name" : "Trà sữa Thái đỏ",
+    "slug" : "demo-thai-tea-2",
+    "catalog_key" : "demo-thai-tea",
+    "base_price" : 39000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 30,
+    "store_id" : 3,
+    "category_id" : 1,
+    "name" : "Trà sữa lài ngọc trai",
+    "slug" : "demo-jasmine-milk-2",
+    "catalog_key" : "demo-jasmine-milk",
+    "base_price" : 42000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 33,
+    "store_id" : 3,
+    "category_id" : 1,
+    "name" : "Hồng trà sữa",
+    "slug" : "demo-black-milk-2",
+    "catalog_key" : "demo-black-milk",
+    "base_price" : 35000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 36,
+    "store_id" : 3,
+    "category_id" : 5,
+    "name" : "Ô long kem cheese",
+    "slug" : "demo-cheese-oolong-2",
+    "catalog_key" : "demo-cheese-oolong",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 39,
+    "store_id" : 3,
+    "category_id" : 3,
+    "name" : "Trà lài dâu tươi",
+    "slug" : "demo-strawberry-tea-2",
+    "catalog_key" : "demo-strawberry-tea",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 42,
+    "store_id" : 3,
+    "category_id" : 3,
+    "name" : "Trà xoài nhiệt đới",
+    "slug" : "demo-mango-tea-2",
+    "catalog_key" : "demo-mango-tea",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 45,
+    "store_id" : 3,
+    "category_id" : 3,
+    "name" : "Trà chanh dây",
+    "slug" : "demo-passion-tea-2",
+    "catalog_key" : "demo-passion-tea",
+    "base_price" : 42000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 48,
+    "store_id" : 3,
+    "category_id" : 3,
+    "name" : "Trà tắc mật ong",
+    "slug" : "demo-kumquat-2",
+    "catalog_key" : "demo-kumquat",
+    "base_price" : 35000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 51,
+    "store_id" : 3,
+    "category_id" : 3,
+    "name" : "Trà hibiscus đỏ",
+    "slug" : "demo-hibiscus-2",
+    "catalog_key" : "demo-hibiscus",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 54,
+    "store_id" : 3,
+    "category_id" : 3,
+    "name" : "Trà lài dứa",
+    "slug" : "demo-pineapple-2",
+    "catalog_key" : "demo-pineapple",
+    "base_price" : 42000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 57,
+    "store_id" : 3,
+    "category_id" : 2,
+    "name" : "Matcha sữa dừa",
+    "slug" : "demo-matcha-coconut-2",
+    "catalog_key" : "demo-matcha-coconut",
+    "base_price" : 55000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 60,
+    "store_id" : 3,
+    "category_id" : 2,
+    "name" : "Matcha dâu latte",
+    "slug" : "demo-matcha-strawberry-2",
+    "catalog_key" : "demo-matcha-strawberry",
+    "base_price" : 55000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 63,
+    "store_id" : 3,
+    "category_id" : 2,
+    "name" : "Matcha kem cheese",
+    "slug" : "demo-matcha-cheese-2",
+    "catalog_key" : "demo-matcha-cheese",
+    "base_price" : 55000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 66,
+    "store_id" : 3,
+    "category_id" : 2,
+    "name" : "Hojicha latte",
+    "slug" : "demo-hojicha-2",
+    "catalog_key" : "demo-hojicha",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 69,
+    "store_id" : 3,
+    "category_id" : 4,
+    "name" : "Cà phê đen đá",
+    "slug" : "demo-black-coffee-2",
+    "catalog_key" : "demo-black-coffee",
+    "base_price" : 29000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 72,
+    "store_id" : 3,
+    "category_id" : 4,
+    "name" : "Bạc xỉu",
+    "slug" : "demo-bac-xiu-2",
+    "catalog_key" : "demo-bac-xiu",
+    "base_price" : 35000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 75,
+    "store_id" : 3,
+    "category_id" : 4,
+    "name" : "Cà phê dừa",
+    "slug" : "demo-coconut-coffee-2",
+    "catalog_key" : "demo-coconut-coffee",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 78,
+    "store_id" : 3,
+    "category_id" : 4,
+    "name" : "Cà phê muối",
+    "slug" : "demo-salt-coffee-2",
+    "catalog_key" : "demo-salt-coffee",
+    "base_price" : 42000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 81,
+    "store_id" : 3,
+    "category_id" : 4,
+    "name" : "Caramel latte",
+    "slug" : "demo-caramel-coffee-2",
+    "catalog_key" : "demo-caramel-coffee",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 84,
+    "store_id" : 3,
+    "category_id" : 6,
+    "name" : "Chocolate sữa đá",
+    "slug" : "demo-chocolate-2",
+    "catalog_key" : "demo-chocolate",
+    "base_price" : 45000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 87,
+    "store_id" : 3,
+    "category_id" : 6,
+    "name" : "Cookies đá xay",
+    "slug" : "demo-cookies-2",
+    "catalog_key" : "demo-cookies",
+    "base_price" : 55000.00,
+    "is_active" : true,
+    "is_available" : true
+  }, {
+    "id" : 90,
+    "store_id" : 3,
+    "category_id" : 6,
+    "name" : "Xoài đá xay",
+    "slug" : "demo-mango-smoothie-2",
+    "catalog_key" : "demo-mango-smoothie",
+    "base_price" : 49000.00,
+    "is_active" : true,
+    "is_available" : true
+  } ],
+  "variants" : [ {
+    "product_id" : 1,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 1,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 1,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 2,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 2,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 2,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 3,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 3,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 3,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 4,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 4,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 4,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 5,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 5,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 5,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 6,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 6,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 6,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 7,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 7,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 7,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 8,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 8,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 8,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 9,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 9,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 9,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 10,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 10,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 10,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 11,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 11,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 11,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 12,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 12,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 12,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 13,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 13,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 13,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 14,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 14,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 14,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 15,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 15,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 15,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 16,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 16,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 16,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 17,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 17,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 17,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 18,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 18,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 18,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 19,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 19,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 19,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 20,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 20,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 20,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 21,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 21,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 21,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 22,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 22,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 22,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 23,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 23,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 23,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 24,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 24,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 24,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 25,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 25,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 25,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 26,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 26,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 26,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 27,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 27,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 27,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 28,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 28,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 28,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 29,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 29,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 29,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 30,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 30,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 30,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 31,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 31,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 31,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 32,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 32,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 32,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 33,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 33,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 33,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 34,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 34,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 34,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 35,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 35,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 35,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 36,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 36,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 36,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 37,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 37,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 37,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 38,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 38,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 38,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 39,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 39,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 39,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 40,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 40,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 40,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 41,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 41,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 41,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 42,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 42,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 42,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 43,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 43,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 43,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 44,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 44,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 44,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 45,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 45,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 45,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 46,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 46,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 46,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 47,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 47,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 47,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 48,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 48,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 48,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 49,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 49,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 49,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 50,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 50,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 50,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 51,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 51,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 51,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 52,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 52,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 52,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 53,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 53,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 53,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 54,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 54,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 54,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 55,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 55,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 55,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 56,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 56,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 56,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 57,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 57,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 57,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 58,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 58,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 58,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 59,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 59,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 59,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 60,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 60,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 60,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 61,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 61,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 61,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 62,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 62,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 62,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 63,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 63,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 63,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 64,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 64,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 64,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 65,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 65,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 65,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 66,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 66,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 66,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 67,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 67,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 67,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 68,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 68,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 68,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 69,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 69,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 69,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 70,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 70,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 70,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 71,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 71,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 71,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 72,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 72,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 72,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 73,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 73,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 73,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 74,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 74,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 74,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 75,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 75,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 75,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 76,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 76,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 76,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 77,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 77,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 77,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 78,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 78,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 78,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 79,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 79,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 79,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 80,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 80,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 80,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 81,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 81,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 81,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 82,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 82,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 82,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 83,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 83,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 83,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 84,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 84,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 84,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 85,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 85,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 85,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 86,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 86,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 86,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 87,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 87,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 87,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 88,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 88,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 88,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 89,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 89,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 89,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 90,
+    "size_name" : "L",
+    "extra_price" : 10000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 90,
+    "size_name" : "M",
+    "extra_price" : 5000.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  }, {
+    "product_id" : 90,
+    "size_name" : "S",
+    "extra_price" : 0.00,
+    "is_active" : true,
+    "untracked_stock" : 0
+  } ],
+  "product_toppings" : [ {
+    "product_id" : 1,
+    "topping_id" : 1
+  }, {
+    "product_id" : 1,
+    "topping_id" : 2
+  }, {
+    "product_id" : 1,
+    "topping_id" : 3
+  }, {
+    "product_id" : 2,
+    "topping_id" : 1
+  }, {
+    "product_id" : 2,
+    "topping_id" : 2
+  }, {
+    "product_id" : 2,
+    "topping_id" : 3
+  }, {
+    "product_id" : 3,
+    "topping_id" : 1
+  }, {
+    "product_id" : 3,
+    "topping_id" : 2
+  }, {
+    "product_id" : 3,
+    "topping_id" : 3
+  }, {
+    "product_id" : 4,
+    "topping_id" : 1
+  }, {
+    "product_id" : 4,
+    "topping_id" : 2
+  }, {
+    "product_id" : 4,
+    "topping_id" : 3
+  }, {
+    "product_id" : 5,
+    "topping_id" : 1
+  }, {
+    "product_id" : 5,
+    "topping_id" : 2
+  }, {
+    "product_id" : 5,
+    "topping_id" : 3
+  }, {
+    "product_id" : 6,
+    "topping_id" : 1
+  }, {
+    "product_id" : 6,
+    "topping_id" : 2
+  }, {
+    "product_id" : 6,
+    "topping_id" : 3
+  }, {
+    "product_id" : 7,
+    "topping_id" : 1
+  }, {
+    "product_id" : 7,
+    "topping_id" : 2
+  }, {
+    "product_id" : 7,
+    "topping_id" : 3
+  }, {
+    "product_id" : 8,
+    "topping_id" : 1
+  }, {
+    "product_id" : 8,
+    "topping_id" : 2
+  }, {
+    "product_id" : 8,
+    "topping_id" : 3
+  }, {
+    "product_id" : 9,
+    "topping_id" : 1
+  }, {
+    "product_id" : 9,
+    "topping_id" : 2
+  }, {
+    "product_id" : 9,
+    "topping_id" : 3
+  }, {
+    "product_id" : 10,
+    "topping_id" : 1
+  }, {
+    "product_id" : 10,
+    "topping_id" : 2
+  }, {
+    "product_id" : 10,
+    "topping_id" : 3
+  }, {
+    "product_id" : 11,
+    "topping_id" : 1
+  }, {
+    "product_id" : 11,
+    "topping_id" : 2
+  }, {
+    "product_id" : 11,
+    "topping_id" : 3
+  }, {
+    "product_id" : 12,
+    "topping_id" : 1
+  }, {
+    "product_id" : 12,
+    "topping_id" : 2
+  }, {
+    "product_id" : 12,
+    "topping_id" : 3
+  }, {
+    "product_id" : 13,
+    "topping_id" : 1
+  }, {
+    "product_id" : 13,
+    "topping_id" : 2
+  }, {
+    "product_id" : 13,
+    "topping_id" : 3
+  }, {
+    "product_id" : 14,
+    "topping_id" : 1
+  }, {
+    "product_id" : 14,
+    "topping_id" : 2
+  }, {
+    "product_id" : 14,
+    "topping_id" : 3
+  }, {
+    "product_id" : 15,
+    "topping_id" : 1
+  }, {
+    "product_id" : 15,
+    "topping_id" : 2
+  }, {
+    "product_id" : 15,
+    "topping_id" : 3
+  }, {
+    "product_id" : 16,
+    "topping_id" : 1
+  }, {
+    "product_id" : 16,
+    "topping_id" : 2
+  }, {
+    "product_id" : 16,
+    "topping_id" : 3
+  }, {
+    "product_id" : 17,
+    "topping_id" : 1
+  }, {
+    "product_id" : 17,
+    "topping_id" : 2
+  }, {
+    "product_id" : 17,
+    "topping_id" : 3
+  }, {
+    "product_id" : 18,
+    "topping_id" : 1
+  }, {
+    "product_id" : 18,
+    "topping_id" : 2
+  }, {
+    "product_id" : 18,
+    "topping_id" : 3
+  }, {
+    "product_id" : 19,
+    "topping_id" : 1
+  }, {
+    "product_id" : 19,
+    "topping_id" : 2
+  }, {
+    "product_id" : 19,
+    "topping_id" : 3
+  }, {
+    "product_id" : 20,
+    "topping_id" : 1
+  }, {
+    "product_id" : 20,
+    "topping_id" : 2
+  }, {
+    "product_id" : 20,
+    "topping_id" : 3
+  }, {
+    "product_id" : 21,
+    "topping_id" : 1
+  }, {
+    "product_id" : 21,
+    "topping_id" : 2
+  }, {
+    "product_id" : 21,
+    "topping_id" : 3
+  }, {
+    "product_id" : 22,
+    "topping_id" : 1
+  }, {
+    "product_id" : 22,
+    "topping_id" : 2
+  }, {
+    "product_id" : 22,
+    "topping_id" : 3
+  }, {
+    "product_id" : 23,
+    "topping_id" : 1
+  }, {
+    "product_id" : 23,
+    "topping_id" : 2
+  }, {
+    "product_id" : 23,
+    "topping_id" : 3
+  }, {
+    "product_id" : 24,
+    "topping_id" : 1
+  }, {
+    "product_id" : 24,
+    "topping_id" : 2
+  }, {
+    "product_id" : 24,
+    "topping_id" : 3
+  }, {
+    "product_id" : 25,
+    "topping_id" : 1
+  }, {
+    "product_id" : 25,
+    "topping_id" : 2
+  }, {
+    "product_id" : 25,
+    "topping_id" : 3
+  }, {
+    "product_id" : 26,
+    "topping_id" : 1
+  }, {
+    "product_id" : 26,
+    "topping_id" : 2
+  }, {
+    "product_id" : 26,
+    "topping_id" : 3
+  }, {
+    "product_id" : 27,
+    "topping_id" : 1
+  }, {
+    "product_id" : 27,
+    "topping_id" : 2
+  }, {
+    "product_id" : 27,
+    "topping_id" : 3
+  }, {
+    "product_id" : 28,
+    "topping_id" : 1
+  }, {
+    "product_id" : 28,
+    "topping_id" : 2
+  }, {
+    "product_id" : 28,
+    "topping_id" : 3
+  }, {
+    "product_id" : 29,
+    "topping_id" : 1
+  }, {
+    "product_id" : 29,
+    "topping_id" : 2
+  }, {
+    "product_id" : 29,
+    "topping_id" : 3
+  }, {
+    "product_id" : 30,
+    "topping_id" : 1
+  }, {
+    "product_id" : 30,
+    "topping_id" : 2
+  }, {
+    "product_id" : 30,
+    "topping_id" : 3
+  }, {
+    "product_id" : 31,
+    "topping_id" : 1
+  }, {
+    "product_id" : 31,
+    "topping_id" : 2
+  }, {
+    "product_id" : 31,
+    "topping_id" : 3
+  }, {
+    "product_id" : 32,
+    "topping_id" : 1
+  }, {
+    "product_id" : 32,
+    "topping_id" : 2
+  }, {
+    "product_id" : 32,
+    "topping_id" : 3
+  }, {
+    "product_id" : 33,
+    "topping_id" : 1
+  }, {
+    "product_id" : 33,
+    "topping_id" : 2
+  }, {
+    "product_id" : 33,
+    "topping_id" : 3
+  }, {
+    "product_id" : 34,
+    "topping_id" : 1
+  }, {
+    "product_id" : 34,
+    "topping_id" : 2
+  }, {
+    "product_id" : 34,
+    "topping_id" : 3
+  }, {
+    "product_id" : 35,
+    "topping_id" : 1
+  }, {
+    "product_id" : 35,
+    "topping_id" : 2
+  }, {
+    "product_id" : 35,
+    "topping_id" : 3
+  }, {
+    "product_id" : 36,
+    "topping_id" : 1
+  }, {
+    "product_id" : 36,
+    "topping_id" : 2
+  }, {
+    "product_id" : 36,
+    "topping_id" : 3
+  }, {
+    "product_id" : 37,
+    "topping_id" : 1
+  }, {
+    "product_id" : 37,
+    "topping_id" : 2
+  }, {
+    "product_id" : 37,
+    "topping_id" : 3
+  }, {
+    "product_id" : 38,
+    "topping_id" : 1
+  }, {
+    "product_id" : 38,
+    "topping_id" : 2
+  }, {
+    "product_id" : 38,
+    "topping_id" : 3
+  }, {
+    "product_id" : 39,
+    "topping_id" : 1
+  }, {
+    "product_id" : 39,
+    "topping_id" : 2
+  }, {
+    "product_id" : 39,
+    "topping_id" : 3
+  }, {
+    "product_id" : 40,
+    "topping_id" : 1
+  }, {
+    "product_id" : 40,
+    "topping_id" : 2
+  }, {
+    "product_id" : 40,
+    "topping_id" : 3
+  }, {
+    "product_id" : 41,
+    "topping_id" : 1
+  }, {
+    "product_id" : 41,
+    "topping_id" : 2
+  }, {
+    "product_id" : 41,
+    "topping_id" : 3
+  }, {
+    "product_id" : 42,
+    "topping_id" : 1
+  }, {
+    "product_id" : 42,
+    "topping_id" : 2
+  }, {
+    "product_id" : 42,
+    "topping_id" : 3
+  }, {
+    "product_id" : 43,
+    "topping_id" : 1
+  }, {
+    "product_id" : 43,
+    "topping_id" : 2
+  }, {
+    "product_id" : 43,
+    "topping_id" : 3
+  }, {
+    "product_id" : 44,
+    "topping_id" : 1
+  }, {
+    "product_id" : 44,
+    "topping_id" : 2
+  }, {
+    "product_id" : 44,
+    "topping_id" : 3
+  }, {
+    "product_id" : 45,
+    "topping_id" : 1
+  }, {
+    "product_id" : 45,
+    "topping_id" : 2
+  }, {
+    "product_id" : 45,
+    "topping_id" : 3
+  }, {
+    "product_id" : 46,
+    "topping_id" : 1
+  }, {
+    "product_id" : 46,
+    "topping_id" : 2
+  }, {
+    "product_id" : 46,
+    "topping_id" : 3
+  }, {
+    "product_id" : 47,
+    "topping_id" : 1
+  }, {
+    "product_id" : 47,
+    "topping_id" : 2
+  }, {
+    "product_id" : 47,
+    "topping_id" : 3
+  }, {
+    "product_id" : 48,
+    "topping_id" : 1
+  }, {
+    "product_id" : 48,
+    "topping_id" : 2
+  }, {
+    "product_id" : 48,
+    "topping_id" : 3
+  }, {
+    "product_id" : 49,
+    "topping_id" : 1
+  }, {
+    "product_id" : 49,
+    "topping_id" : 2
+  }, {
+    "product_id" : 49,
+    "topping_id" : 3
+  }, {
+    "product_id" : 50,
+    "topping_id" : 1
+  }, {
+    "product_id" : 50,
+    "topping_id" : 2
+  }, {
+    "product_id" : 50,
+    "topping_id" : 3
+  }, {
+    "product_id" : 51,
+    "topping_id" : 1
+  }, {
+    "product_id" : 51,
+    "topping_id" : 2
+  }, {
+    "product_id" : 51,
+    "topping_id" : 3
+  }, {
+    "product_id" : 52,
+    "topping_id" : 1
+  }, {
+    "product_id" : 52,
+    "topping_id" : 2
+  }, {
+    "product_id" : 52,
+    "topping_id" : 3
+  }, {
+    "product_id" : 53,
+    "topping_id" : 1
+  }, {
+    "product_id" : 53,
+    "topping_id" : 2
+  }, {
+    "product_id" : 53,
+    "topping_id" : 3
+  }, {
+    "product_id" : 54,
+    "topping_id" : 1
+  }, {
+    "product_id" : 54,
+    "topping_id" : 2
+  }, {
+    "product_id" : 54,
+    "topping_id" : 3
+  }, {
+    "product_id" : 55,
+    "topping_id" : 1
+  }, {
+    "product_id" : 55,
+    "topping_id" : 2
+  }, {
+    "product_id" : 55,
+    "topping_id" : 3
+  }, {
+    "product_id" : 56,
+    "topping_id" : 1
+  }, {
+    "product_id" : 56,
+    "topping_id" : 2
+  }, {
+    "product_id" : 56,
+    "topping_id" : 3
+  }, {
+    "product_id" : 57,
+    "topping_id" : 1
+  }, {
+    "product_id" : 57,
+    "topping_id" : 2
+  }, {
+    "product_id" : 57,
+    "topping_id" : 3
+  }, {
+    "product_id" : 58,
+    "topping_id" : 1
+  }, {
+    "product_id" : 58,
+    "topping_id" : 2
+  }, {
+    "product_id" : 58,
+    "topping_id" : 3
+  }, {
+    "product_id" : 59,
+    "topping_id" : 1
+  }, {
+    "product_id" : 59,
+    "topping_id" : 2
+  }, {
+    "product_id" : 59,
+    "topping_id" : 3
+  }, {
+    "product_id" : 60,
+    "topping_id" : 1
+  }, {
+    "product_id" : 60,
+    "topping_id" : 2
+  }, {
+    "product_id" : 60,
+    "topping_id" : 3
+  }, {
+    "product_id" : 61,
+    "topping_id" : 1
+  }, {
+    "product_id" : 61,
+    "topping_id" : 2
+  }, {
+    "product_id" : 61,
+    "topping_id" : 3
+  }, {
+    "product_id" : 62,
+    "topping_id" : 1
+  }, {
+    "product_id" : 62,
+    "topping_id" : 2
+  }, {
+    "product_id" : 62,
+    "topping_id" : 3
+  }, {
+    "product_id" : 63,
+    "topping_id" : 1
+  }, {
+    "product_id" : 63,
+    "topping_id" : 2
+  }, {
+    "product_id" : 63,
+    "topping_id" : 3
+  }, {
+    "product_id" : 64,
+    "topping_id" : 1
+  }, {
+    "product_id" : 64,
+    "topping_id" : 2
+  }, {
+    "product_id" : 64,
+    "topping_id" : 3
+  }, {
+    "product_id" : 65,
+    "topping_id" : 1
+  }, {
+    "product_id" : 65,
+    "topping_id" : 2
+  }, {
+    "product_id" : 65,
+    "topping_id" : 3
+  }, {
+    "product_id" : 66,
+    "topping_id" : 1
+  }, {
+    "product_id" : 66,
+    "topping_id" : 2
+  }, {
+    "product_id" : 66,
+    "topping_id" : 3
+  }, {
+    "product_id" : 67,
+    "topping_id" : 1
+  }, {
+    "product_id" : 67,
+    "topping_id" : 2
+  }, {
+    "product_id" : 67,
+    "topping_id" : 3
+  }, {
+    "product_id" : 68,
+    "topping_id" : 1
+  }, {
+    "product_id" : 68,
+    "topping_id" : 2
+  }, {
+    "product_id" : 68,
+    "topping_id" : 3
+  }, {
+    "product_id" : 69,
+    "topping_id" : 1
+  }, {
+    "product_id" : 69,
+    "topping_id" : 2
+  }, {
+    "product_id" : 69,
+    "topping_id" : 3
+  }, {
+    "product_id" : 70,
+    "topping_id" : 1
+  }, {
+    "product_id" : 70,
+    "topping_id" : 2
+  }, {
+    "product_id" : 70,
+    "topping_id" : 3
+  }, {
+    "product_id" : 71,
+    "topping_id" : 1
+  }, {
+    "product_id" : 71,
+    "topping_id" : 2
+  }, {
+    "product_id" : 71,
+    "topping_id" : 3
+  }, {
+    "product_id" : 72,
+    "topping_id" : 1
+  }, {
+    "product_id" : 72,
+    "topping_id" : 2
+  }, {
+    "product_id" : 72,
+    "topping_id" : 3
+  }, {
+    "product_id" : 73,
+    "topping_id" : 1
+  }, {
+    "product_id" : 73,
+    "topping_id" : 2
+  }, {
+    "product_id" : 73,
+    "topping_id" : 3
+  }, {
+    "product_id" : 74,
+    "topping_id" : 1
+  }, {
+    "product_id" : 74,
+    "topping_id" : 2
+  }, {
+    "product_id" : 74,
+    "topping_id" : 3
+  }, {
+    "product_id" : 75,
+    "topping_id" : 1
+  }, {
+    "product_id" : 75,
+    "topping_id" : 2
+  }, {
+    "product_id" : 75,
+    "topping_id" : 3
+  }, {
+    "product_id" : 76,
+    "topping_id" : 1
+  }, {
+    "product_id" : 76,
+    "topping_id" : 2
+  }, {
+    "product_id" : 76,
+    "topping_id" : 3
+  }, {
+    "product_id" : 77,
+    "topping_id" : 1
+  }, {
+    "product_id" : 77,
+    "topping_id" : 2
+  }, {
+    "product_id" : 77,
+    "topping_id" : 3
+  }, {
+    "product_id" : 78,
+    "topping_id" : 1
+  }, {
+    "product_id" : 78,
+    "topping_id" : 2
+  }, {
+    "product_id" : 78,
+    "topping_id" : 3
+  }, {
+    "product_id" : 79,
+    "topping_id" : 1
+  }, {
+    "product_id" : 79,
+    "topping_id" : 2
+  }, {
+    "product_id" : 79,
+    "topping_id" : 3
+  }, {
+    "product_id" : 80,
+    "topping_id" : 1
+  }, {
+    "product_id" : 80,
+    "topping_id" : 2
+  }, {
+    "product_id" : 80,
+    "topping_id" : 3
+  }, {
+    "product_id" : 81,
+    "topping_id" : 1
+  }, {
+    "product_id" : 81,
+    "topping_id" : 2
+  }, {
+    "product_id" : 81,
+    "topping_id" : 3
+  }, {
+    "product_id" : 82,
+    "topping_id" : 1
+  }, {
+    "product_id" : 82,
+    "topping_id" : 2
+  }, {
+    "product_id" : 82,
+    "topping_id" : 3
+  }, {
+    "product_id" : 83,
+    "topping_id" : 1
+  }, {
+    "product_id" : 83,
+    "topping_id" : 2
+  }, {
+    "product_id" : 83,
+    "topping_id" : 3
+  }, {
+    "product_id" : 84,
+    "topping_id" : 1
+  }, {
+    "product_id" : 84,
+    "topping_id" : 2
+  }, {
+    "product_id" : 84,
+    "topping_id" : 3
+  }, {
+    "product_id" : 85,
+    "topping_id" : 1
+  }, {
+    "product_id" : 85,
+    "topping_id" : 2
+  }, {
+    "product_id" : 85,
+    "topping_id" : 3
+  }, {
+    "product_id" : 86,
+    "topping_id" : 1
+  }, {
+    "product_id" : 86,
+    "topping_id" : 2
+  }, {
+    "product_id" : 86,
+    "topping_id" : 3
+  }, {
+    "product_id" : 87,
+    "topping_id" : 1
+  }, {
+    "product_id" : 87,
+    "topping_id" : 2
+  }, {
+    "product_id" : 87,
+    "topping_id" : 3
+  }, {
+    "product_id" : 88,
+    "topping_id" : 1
+  }, {
+    "product_id" : 88,
+    "topping_id" : 2
+  }, {
+    "product_id" : 88,
+    "topping_id" : 3
+  }, {
+    "product_id" : 89,
+    "topping_id" : 1
+  }, {
+    "product_id" : 89,
+    "topping_id" : 2
+  }, {
+    "product_id" : 89,
+    "topping_id" : 3
+  }, {
+    "product_id" : 90,
+    "topping_id" : 1
+  }, {
+    "product_id" : 90,
+    "topping_id" : 2
+  }, {
+    "product_id" : 90,
+    "topping_id" : 3
+  } ],
+  "store_toppings" : [ {
+    "store_id" : 1,
+    "topping_id" : 1,
+    "is_available" : true
+  }, {
+    "store_id" : 1,
+    "topping_id" : 2,
+    "is_available" : true
+  }, {
+    "store_id" : 1,
+    "topping_id" : 3,
+    "is_available" : true
+  }, {
+    "store_id" : 2,
+    "topping_id" : 1,
+    "is_available" : true
+  }, {
+    "store_id" : 2,
+    "topping_id" : 2,
+    "is_available" : true
+  }, {
+    "store_id" : 2,
+    "topping_id" : 3,
+    "is_available" : true
+  }, {
+    "store_id" : 3,
+    "topping_id" : 1,
+    "is_available" : true
+  }, {
+    "store_id" : 3,
+    "topping_id" : 2,
+    "is_available" : true
+  }, {
+    "store_id" : 3,
+    "topping_id" : 3,
+    "is_available" : true
+  } ]
+}

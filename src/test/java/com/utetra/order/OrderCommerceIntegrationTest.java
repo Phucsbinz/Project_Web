@@ -283,6 +283,71 @@ class OrderCommerceIntegrationTest {
     return token;
   }
   long groupVersion(String token){return ((Number)groups.view(BUYER,token).get("version")).longValue();}
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.CsvSource({
+      "false,HOST,COD", "true,HOST,COD", "false,INDIVIDUAL,COD", "true,INDIVIDUAL,COD",
+      "false,HOST,LOCAL_QR", "true,HOST,LOCAL_QR", "false,INDIVIDUAL,LOCAL_QR", "true,INDIVIDUAL,LOCAL_QR",
+      "false,HOST,BANK_TRANSFER", "true,HOST,BANK_TRANSFER", "false,HOST,VNPAY", "true,HOST,VNPAY",
+      "false,INDIVIDUAL,BANK_TRANSFER", "true,INDIVIDUAL,BANK_TRANSFER"})
+  void groupHostTrackingAndPaymentDoNotRequireOwnItems(boolean hostHasItems,String mode,String method) {
+    String token=groups.create(BUYER,mode).get("token").toString();
+    if(hostHasItems)groups.addItem(BUYER,token,groupVersion(token),item(1));
+    for(var actor:List.of(BUYER_B,VENDOR)){
+      groups.join(actor,token,groupVersion(token));groups.addItem(actor,token,groupVersion(token),item(1));
+    }
+    groups.lock(BUYER,token,groupVersion(token));
+    carts.selectBranch(BUYER,1,((Number)carts.view(BUYER).get("version")).longValue());
+    String key=UUID.randomUUID().toString();var draft=new Checkout(key,1,1,1,null,null,0,"","",method);
+    var quote=checkout.quote(BUYER,draft);
+    var request=new Checkout(key,1,1,1,null,null,0,quote.get("hash").toString(),"",method);
+    long order=id(checkout.checkout(BUYER,request));
+    boolean hostPays="HOST".equals(mode)||"COD".equals(method);
+    for(int refresh=0;refresh<2;refresh++){
+      assertThat(groups.view(BUYER,token)).containsEntry("orderId",order).containsEntry("orderStatus","NEW");
+      assertThat(workflow.read(BUYER,order)).containsEntry("owner",true).containsEntry("status","NEW");
+      var payment=groups.paymentPage(BUYER,token);
+      assertThat(payment).containsEntry("orderId",order).containsEntry("payer",hostPays||hostHasItems);
+      assertThat(new BigDecimal(payment.get("amount").toString()))
+          .isEqualByComparingTo(hostPays?new BigDecimal(workflow.read(BUYER,order).get("total").toString()):hostHasItems?new BigDecimal("43000"):BigDecimal.ZERO);
+      assertThat(groups.paymentPage(BUYER_B,token)).containsEntry("payer",!hostPays);
+    }
+    assertThat(id(checkout.checkout(BUYER,request))).isEqualTo(order);
+    assertThat(jdbc.queryForObject("select count(*) from group_order_members where order_id=?",Integer.class,order)).isEqualTo(hostHasItems?3:2);
+    assertThat(jdbc.queryForObject("select sum(amount_due) from group_order_members where order_id=?",BigDecimal.class,order))
+        .isEqualByComparingTo(hostHasItems?"129000":"95000");
+    assertThat(groups.view(BUYER,token)).containsEntry("participants",hostHasItems?3:2);
+    // An active buyer outside this group must not acquire order or payer access from the invite URL.
+    jdbc.update("insert into users(id,role_id,username,email,password_hash,full_name,is_active,email_verified_at,created_at,updated_at,version) select 7,role_id,'outside','outside@example.test',password_hash,'Outside',true,email_verified_at,created_at,updated_at,0 from users where id=1");
+    var outside=new Actor(7,"ROLE_USER");
+    assertThat(groups.view(outside,token)).doesNotContainKey("orderId");
+    assertThatThrownBy(()->groups.paymentPage(outside,token)).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->workflow.read(outside,order)).isInstanceOf(OrderProblem.class);
+    if("LOCAL_QR".equals(method)){
+      assertThat(jdbc.queryForObject("select count(*) from local_qr_payments where order_id=?",Integer.class,order)).isEqualTo(hostPays?1:hostHasItems?3:2);
+      if(hostPays||hostHasItems)assertThat(localQr.merchant(BUYER,order)).containsEntry("orderId",order);
+      else assertThatThrownBy(()->localQr.merchant(BUYER,order)).isInstanceOf(OrderProblem.class);
+      assertThatThrownBy(()->localQr.merchant(outside,order)).isInstanceOf(OrderProblem.class);
+      var payers=hostPays?List.of(BUYER):hostHasItems?List.of(BUYER,BUYER_B,VENDOR):List.of(BUYER_B,VENDOR);
+      for(var payer:payers){
+        var payment=localQr.merchant(payer,order);
+        localQr.confirm(payment.get("id").toString(),localToken(payment),new BigDecimal(payment.get("amount").toString()),true);
+      }
+      assertThat(workflow.read(BUYER,order)).containsEntry("paymentStatus","PAID");
+      assertThat(groups.view(BUYER,token)).containsEntry("paymentStatus","PAID");
+      assertThat(groups.paymentPage(BUYER,token)).containsEntry("paymentStatus","PAID").containsEntry("payer",hostPays||hostHasItems);
+      assertThat(jdbc.queryForObject("select sum(amount) from local_qr_payments where order_id=? and status='SUCCESS'",BigDecimal.class,order))
+          .isEqualByComparingTo(hostHasItems?"129000":"95000");
+    }
+  }
+
+  @Test void emptyGroupCannotCreateAnOrderOrPayment() {
+    String token=groups.create(BUYER).get("token").toString();groups.join(BUYER_B,token,groupVersion(token));
+    assertThatThrownBy(()->groups.lock(BUYER,token,groupVersion(token))).isInstanceOf(OrderProblem.class).hasMessageContaining("hai người");
+    assertThat(groups.view(BUYER,token)).containsEntry("status","OPEN");
+    assertThatThrownBy(()->groups.paymentPage(BUYER,token)).isInstanceOf(OrderProblem.class);
+    assertThat(jdbc.queryForObject("select count(*) from orders",Integer.class)).isZero();
+  }
+
   @Test void groupDiscountTiersAndCapUseParticipantsRatherThanCups() {
     assertThat(GroupOrderService.discount(new BigDecimal("2000000"),2)).isEqualByComparingTo("0");
     assertThat(GroupOrderService.discount(new BigDecimal("120000"),3)).isEqualByComparingTo("6000");
@@ -478,6 +543,38 @@ class OrderCommerceIntegrationTest {
     assertThat(groups.lifecycleNotices(BUYER_B)).anySatisfy(notice->assertThat(notice).containsEntry("status","CANCELLED"));
     assertThatThrownBy(()->workflow.refundCash(ADMIN,order,new RefundInput("DUPLICATE",version(order)))).isInstanceOf(OrderProblem.class);
     assertThat(jdbc.queryForObject("select count(*) from refund_transactions where order_id=?",Long.class,order)).isEqualTo(1);
+  }
+
+  @Test
+  void paidSoloLocalQrWithPointsCanCancelAndRefundWithoutDoublePointCredit() {
+    carts.add(BUYER,item(1));
+    String key=UUID.randomUUID().toString();
+    var draft=new Checkout(key,1,1,1,null,null,2,"","","LOCAL_QR");
+    String hash=checkout.quote(BUYER,draft).get("hash").toString();
+    long order=id(checkout.checkout(BUYER,new Checkout(key,1,1,1,null,null,2,hash,"","LOCAL_QR")));
+    var payment=localQr.merchant(BUYER,order);
+    localQr.confirm(payment.get("id").toString(),localToken(payment),new BigDecimal(payment.get("amount").toString()),true);
+    assertThat(jdbc.queryForObject("select balance from loyalty_accounts where user_id=1",Integer.class)).isEqualTo(98);
+    workflow.cancel(BUYER,order,version(order),"Cancel before confirmation");
+    assertThat(workflow.read(BUYER,order)).containsEntry("status","CANCELLED").containsEntry("paymentStatus","REFUND_PENDING");
+    assertThat(jdbc.queryForObject("select balance from loyalty_accounts where user_id=1",Integer.class)).isEqualTo(100);
+    workflow.refundCash(ADMIN,order,new RefundInput("AUDIT-QR-POINTS",version(order)));
+    assertThat(jdbc.queryForObject("select balance from loyalty_accounts where user_id=1",Integer.class)).isEqualTo(100);
+    assertThat(jdbc.queryForObject("select count(*) from loyalty_transactions where order_id=? and type='REFUND'",Long.class,order)).isEqualTo(1L);
+  }
+
+  @Test
+  void paidHostGroupLocalQrWithPointsCanCancel() {
+    String token=groupWithThree("HOST");groups.lock(BUYER,token,groupVersion(token));
+    carts.selectBranch(BUYER,1,((Number)carts.view(BUYER).get("version")).longValue());
+    String key=UUID.randomUUID().toString();var draft=new Checkout(key,1,1,1,null,null,2,"","","LOCAL_QR");
+    String hash=checkout.quote(BUYER,draft).get("hash").toString();
+    long order=id(checkout.checkout(BUYER,new Checkout(key,1,1,1,null,null,2,hash,"","LOCAL_QR")));
+    var payment=localQr.merchant(BUYER,order);
+    localQr.confirm(payment.get("id").toString(),localToken(payment),new BigDecimal(payment.get("amount").toString()),true);
+    groups.cancel(BUYER,token,groupVersion(token));
+    assertThat(workflow.read(BUYER,order)).containsEntry("status","CANCELLED").containsEntry("paymentStatus","REFUND_PENDING");
+    assertThat(jdbc.queryForObject("select balance from loyalty_accounts where user_id=1",Integer.class)).isEqualTo(100);
   }
 
   @Test void fullyPaidLocalQrCancellationRefundsEveryShare(){long order=localGroupOrder();for(var actor:List.of(BUYER,BUYER_B,VENDOR)){var p=localQr.merchant(actor,order);localQr.confirm(p.get("id").toString(),localToken(p),new BigDecimal(p.get("amount").toString()),true);}workflow.cancel(BUYER,order,version(order),"Hủy trước xác nhận");var total=jdbc.queryForObject("select final_amount from orders where id=?",BigDecimal.class,order);workflow.refundCash(ADMIN,order,new RefundInput("ALL-INTERNAL",version(order)));assertThat(jdbc.queryForObject("select amount from refund_transactions where order_id=?",BigDecimal.class,order)).isEqualByComparingTo(total);assertThat(jdbc.queryForObject("select count(*) from local_qr_payments where order_id=? and status='REFUNDED'",Long.class,order)).isEqualTo(3);}
@@ -796,6 +893,26 @@ class OrderCommerceIntegrationTest {
     var response = http.exchange(path, HttpMethod.POST, new HttpEntity<>(body, headers), Map.class);
     rememberCookies(cookies, response.getHeaders());
     return response;
+  }
+
+  @Test
+  void logoutUsesOnlyGuestCartAndNeverExposesTheAccountCart() {
+    carts.add(BUYER,item(1));var cookies=new LinkedHashMap<String,String>();
+    assertThat(browserPost("/cart/items",item(3),cookies).getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(browserPost("/auth/login",Map.of("email","u1@test.invalid","password","Only-test-user-password"),cookies).getStatusCode()).isEqualTo(HttpStatus.OK);
+    var signedIn=http.exchange("/cart/data",HttpMethod.GET,new HttpEntity<>(browserHeaders(cookies)),Map.class);
+    assertThat(((Number)((Map<?,?>)((List<?>)signedIn.getBody().get("items")).getFirst()).get("quantity")).intValue()).isEqualTo(1);
+    assertThat(browserPost("/auth/logout",Map.of(),cookies).getStatusCode()).isEqualTo(HttpStatus.OK);
+    var guest=http.exchange("/cart/data",HttpMethod.GET,new HttpEntity<>(browserHeaders(cookies)),Map.class);
+    assertThat(((Number)((Map<?,?>)((List<?>)guest.getBody().get("items")).getFirst()).get("quantity")).intValue()).isEqualTo(3);
+    assertThat(jdbc.queryForObject("select sum(quantity) from cart_items where cart_id=(select id from carts where user_id=1)",Integer.class)).isEqualTo(1);
+    assertThat(http.exchange("/orders/data",HttpMethod.GET,new HttpEntity<>(browserHeaders(cookies)),String.class).getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    assertThat(browserPost("/auth/login",Map.of("email","u1@test.invalid","password","Only-test-user-password"),cookies).getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(browserPost("/cart/merge",Map.of(),cookies).getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(browserPost("/auth/logout",Map.of(),cookies).getStatusCode()).isEqualTo(HttpStatus.OK);
+    var afterMerge=http.exchange("/cart/data",HttpMethod.GET,new HttpEntity<>(browserHeaders(cookies)),Map.class);
+    assertThat((List<?>)afterMerge.getBody().get("items")).isEmpty();
+    assertThat(jdbc.queryForObject("select sum(quantity) from cart_items where cart_id=(select id from carts where user_id=1)",Integer.class)).isEqualTo(4);
   }
 
   @Test

@@ -19,8 +19,12 @@ public class CommunityService {
     }
     @Transactional(readOnly=true)
     public List<Map<String,Object>> purchases(UtetraPrincipal p) {
-        account.require(p,true);
-        return db.list("select oi.id, v.product_id,oi.product_name from order_items oi join orders o on o.id=oi.order_id join product_variants v on v.id=oi.variant_id where o.user_id=? and o.status='DELIVERED' and o.payment_status='PAID' order by oi.id desc limit 100",p.userId());
+        return purchases(p,0,100);
+    }
+    @Transactional(readOnly=true)
+    public List<Map<String,Object>> purchases(UtetraPrincipal p,int page,int size) {
+        account.require(p,true);int offset=IdentityValidation.offset(page,size);
+        return db.list("select oi.id, v.product_id,oi.product_name from order_items oi join orders o on o.id=oi.order_id join product_variants v on v.id=oi.variant_id where o.user_id=? and o.status='DELIVERED' and o.payment_status='PAID' order by oi.id desc limit ? offset ?",p.userId(),size,offset);
     }
     @Transactional(readOnly=true)
     public Map<String,Object> publicContent(long productId,int page,int size) {

@@ -1,0 +1,26 @@
+{
+  "fixture" : "H2 only, no real provider/payment",
+  "cases" : [ {
+    "redeemedPoints" : 0,
+    "paidBeforeCancel" : true,
+    "cancelSucceeded" : true,
+    "orderStatusAfter" : "CANCELLED",
+    "paymentStatusAfter" : "REFUND_PENDING",
+    "pointsBalanceAfter" : 100
+  }, {
+    "redeemedPoints" : 2,
+    "paidBeforeCancel" : true,
+    "cancelSucceeded" : false,
+    "error" : "Chưa đủ điều kiện hoàn điểm.",
+    "orderStatusAfter" : "NEW",
+    "paymentStatusAfter" : "PAID",
+    "pointsBalanceAfter" : 98
+  }, {
+    "redeemedPoints" : 2,
+    "paidBeforeCancel" : false,
+    "cancelSucceeded" : true,
+    "orderStatusAfter" : "CANCELLED",
+    "paymentStatusAfter" : "CANCELLED",
+    "pointsBalanceAfter" : 100
+  } ]
+}

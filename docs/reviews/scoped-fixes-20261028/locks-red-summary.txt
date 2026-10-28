@@ -1,0 +1,3 @@
+[ERROR] Tests run: 3, Failures: 0, Errors: 3, Skipped: 0, Time elapsed: 7.985 s <<< FAILURE! -- in com.utetra.order.InventoryLockOrderIntegrationTest
+[ERROR] Tests run: 3, Failures: 0, Errors: 3, Skipped: 0
+[INFO] BUILD FAILURE

@@ -1,0 +1,109 @@
+{
+  "checks": [
+    "Existing localhost app health200",
+    "Product30001: UTF8/name/placeholder/source-specific sizes200",
+    "Product30002: UTF8/name/placeholder/source-specific sizes200",
+    "Product30003: UTF8/name/placeholder/source-specific sizes200",
+    "Product30004: UTF8/name/placeholder/source-specific sizes200",
+    "Product30005: UTF8/name/placeholder/source-specific sizes200",
+    "Product30006: UTF8/name/placeholder/source-specific sizes200",
+    "Search and category filters across three existing stores200",
+    "Two menu pages have distinct product links under fixed read data"
+  ],
+  "errors": [],
+  "browserVerification": "Unavailable: CUA browser inventory empty; these are HTTP/JSP response and public quote checks, not a native browser render",
+  "noCartOrderPaymentCreated": true,
+  "requests": [
+    {
+      "path": "/api/system/health",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.32
+    },
+    {
+      "path": "/products/30001",
+      "method": "GET",
+      "status": 200,
+      "seconds": 1.22
+    },
+    {
+      "path": "/products/30002",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.99
+    },
+    {
+      "path": "/products/30003",
+      "method": "GET",
+      "status": 200,
+      "seconds": 2.92
+    },
+    {
+      "path": "/products/30004",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.89
+    },
+    {
+      "path": "/products/30005",
+      "method": "GET",
+      "status": 200,
+      "seconds": 1.01
+    },
+    {
+      "path": "/products/30006",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.84
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 1.43
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.94
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 1.09
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 1.17
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 1.21
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 1.05
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 1.1
+    },
+    {
+      "path": "/menu",
+      "method": "GET",
+      "status": 200,
+      "seconds": 0.94
+    }
+  ],
+  "quoteVerification": "not run in pages-only mode"
+}

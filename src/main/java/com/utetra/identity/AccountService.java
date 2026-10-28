@@ -54,6 +54,8 @@ public class AccountService {
         require(p,false); IdentityValidation.password(f.password()); var u=db.user(p.userId(),true);
         if(!encoder.matches(f.currentPassword(),string(u,"password_hash"))) throw IdentityException.invalid("Mật khẩu hiện tại không đúng.");
         db.update("update users set password_hash=?,updated_at=?,version=version+1 where id=?",encoder.encode(f.password()),time(clock.instant()),p.userId());
+        // The user lock also serializes OTP verification/reset; revoke both pending codes and verified grants.
+        db.update("update otp_challenges set reset_grant_hash=null,revoked_at=?,version=version+1 where user_id=? and purpose='PASSWORD_RESET' and revoked_at is null",time(clock.instant()),p.userId());
         auth.revokeAll(p.userId());
     }
     @Transactional

@@ -11,6 +11,7 @@
   const tabs = app.dataset.role === 'vendor' ? ['stores','products','promotions','areas','stock'] : ['stores','products','categories','toppings','promotions','areas','stock',...(app.dataset.role === 'admin' ? ['memberships'] : [])];
   const section = tabs.includes(app.dataset.section) ? app.dataset.section : 'stores';
   let editing = null, shopList = [], categories = [], toppings = [], productList = [], loading = false;
+  let productLookupReady = false, productLookupRevision = 0;
   const labels = {stores:'Chi nhánh',products:'Sản phẩm',categories:'Danh mục',toppings:'Topping',promotions:'Khuyến mãi',areas:'Khu vực giao',stock:'Topping tại shop',memberships:'Phân công Manager'};
   const help={stores:'Xem thông tin chi nhánh, duyệt hồ sơ và cập nhật tình trạng nhận đơn.',products:'Chọn chi nhánh, tìm món trong danh sách rồi bấm Chỉnh sửa; hoặc thêm món mới.',categories:'Quản lý nhóm đồ uống dùng chung. Thứ tự quyết định cách hiển thị trên thực đơn.',toppings:'Quản lý tên, giá và trạng thái topping dùng chung.',promotions:'Kiểm tra phạm vi chi nhánh, thời gian và điều kiện trước khi lưu ưu đãi.',areas:'Chọn chi nhánh để cấu hình những khu vực nhận giao hàng.',stock:'Chọn chi nhánh và topping để cập nhật khả năng phục vụ.',memberships:'Chọn chi nhánh rồi nhập ID Manager cần phân công. Quyền có hiệu lực sau khi lưu.'};
   const states={ACTIVE:'Đang hoạt động',APPROVED:'Đã duyệt',PENDING_APPROVAL:'Chờ duyệt',REJECTED:'Đã từ chối',SUSPENDED:'Tạm khóa',DRAFT:'Bản nháp'};
@@ -31,6 +32,26 @@
   };
   function el(tag, text, cls) { const e = document.createElement(tag); if(text !== undefined) e.textContent = text; if(cls) e.className = cls; return e; }
   function notice(text, error = false) { message.textContent = text; message.className = 'alert ' + (error ? 'alert-danger' : 'alert-success'); }
+  function syncPromotionSave() {
+    if(section === 'promotions') {
+      const save = form.querySelector('button');
+      if(save) save.disabled = !productLookupReady;
+    }
+  }
+  async function loadProductOptions() {
+    const revision = ++productLookupRevision, store = select.value;
+    productLookupReady = false; syncPromotionSave();
+    let loaded = [];
+    if(store) loaded = await request('/products?storeId=' + store);
+    else if(section === 'promotions' && app.dataset.role === 'admin') {
+      loaded = (await Promise.all(shopList.map(async shop =>
+        (await request('/products?storeId=' + shop.id)).map(product =>
+          ({...product,name:product.name + ' · ' + shop.name}))))).flat();
+    }
+    if(revision !== productLookupRevision) return false;
+    productList = loaded; productLookupReady = true; syncPromotionSave();
+    return true;
+  }
   async function request(path, method = 'GET', data) {
     const headers = {Accept: 'application/json'};
     if(method !== 'GET') {
@@ -53,11 +74,18 @@
     if(options[type]) {
       input.multiple = ['toppings','products'].includes(type);
       options[type].forEach(o => { const option = el('option',o.name); option.value = o.id; option.selected = input.multiple ? (value || []).includes(o.id) : String(value) === String(o.id); input.append(option); });
+      if(type === 'products') {
+        const known = new Set(options[type].map(o => String(o.id)));
+        for(const id of value || []) if(!known.has(String(id))) {
+          const option = el('option','Sản phẩm #' + id + ' (đã chọn)');
+          option.value = id; option.selected = true; input.append(option);
+        }
+      }
     } else if(type === 'checkbox') { input.type = 'checkbox'; input.checked = value === undefined ? ['active','available'].includes(name) : Boolean(value); }
     else { if(type !== 'textarea') input.type = type; input.value = value ?? (type === 'number' ? (name.includes('Limit') ? 1 : 0) : ''); }
     if(type === 'datetime-local' && value) { const date = new Date(value); input.value = new Date(date - date.getTimezoneOffset()*60000).toISOString().slice(0,16); }
     if(type === 'number') { input.min = name.includes('Limit') || name.endsWith('Id') ? '1' : '0'; input.step = name === 'percent' ? '0.01' : '1'; if(name === 'percent') input.max = '100'; }
-    input.required = !['checkbox','textarea','toppings','products'].includes(type) && name !== 'code';
+    input.required = !['checkbox','textarea','toppings','products'].includes(type) && name !== 'code' && name !== 'catalogKey';
     if(type === 'text') input.maxLength = name === 'phone' ? 20 : name === 'code' ? 50 : section === 'categories' || section === 'toppings' ? 100 : 150;
     if(type === 'textarea') input.maxLength = 4000;
     group.append(input);if(input.multiple)group.append(el('small','Giữ Ctrl (Windows) hoặc ⌘ (Mac) để chọn nhiều mục; bỏ chọn tất cả nếu không áp dụng.','field-help'));if(name==='slug')group.append(el('small','Đường dẫn không dấu, viết thường, ngăn cách bằng dấu gạch ngang.','field-help'));return group;
@@ -73,7 +101,7 @@
       const quantity = field('stock_' + size,'Số ly còn nhận size ' + size + ' (trống: giữ hiện có)','number',old?.stockQuantity ?? '');
       const input = quantity.querySelector('input'); if(input) {input.required=false;input.min='0';input.max='1000000';input.step='1';} form.append(quantity);
     });
-    const save = el('button',item ? 'Lưu thay đổi' : 'Lưu '+labels[section].toLocaleLowerCase('vi'),'btn btn-dark'); form.append(save);
+    const save = el('button',item ? 'Lưu thay đổi' : 'Lưu '+labels[section].toLocaleLowerCase('vi'),'btn btn-dark'); form.append(save); syncPromotionSave();
     const reset = el('button',item?'Hủy chỉnh sửa / thêm mới':'Làm trống biểu mẫu','btn btn-outline-secondary'); reset.type = 'button'; reset.onclick = () => edit(); form.append(reset);
     if(section === 'stores' && !item) { save.disabled = true; form.append(el('p','Đăng ký shop mới tại trang Đăng ký shop. Chọn một shop để cập nhật.','small text-secondary')); }
     document.querySelector('#image-panel').hidden = !item || !['products','stores'].includes(section);
@@ -167,6 +195,7 @@
     } catch(error) { list.replaceChildren(el('p',error.message,'alert alert-warning')); edit(); }
   }
   async function reload() {
+    productLookupReady = false; syncPromotionSave();
     const previous = select.value || new URL(location.href).searchParams.get('storeId'); shopList = await request('/stores'); select.replaceChildren();
     if(app.dataset.role === 'admin') { const o = el('option','Toàn hệ thống (khuyến mãi)'); o.value = ''; select.append(o); }
     shopList.forEach(s => { const o = el('option',s.name + ' · ' + (states[s.status]||s.status)); o.value = s.id; select.append(o); });
@@ -175,12 +204,12 @@
     rememberStore();
     const lookups = await fetch(context + '/products/lookups').then(r => r.ok ? r.json() : {categories:[]}); categories = lookups.categories;
     toppings = await request('/toppings');
-    productList = select.value ? await request('/products?storeId=' + select.value) : [];
-    await refresh();
+    if(await loadProductOptions()) await refresh();
   }
   form.addEventListener('submit', async event => {
     event.preventDefault(); if(loading) return; loading = true; const save = form.querySelector('button'); save.disabled = true;
     try {
+      if(section === 'promotions' && !productLookupReady) throw new Error('Chưa tải được danh sách sản phẩm. Hãy tải lại trước khi lưu khuyến mãi.');
       const values = new FormData(form), data = {};
       specs[section].forEach(([name,,type]) => { data[name] = type === 'checkbox' ? form.elements[name].checked : ['toppings','products'].includes(type) ? values.getAll(name).map(Number) : type === 'number' || ['category','topping'].includes(type) ? Number(values.get(name)) : type === 'datetime-local' ? new Date(values.get(name)).toISOString() : values.get(name); });
       let path = '/' + section + (editing ? '/' + editing.id : ''), method = editing ? 'PUT' : 'POST'; data.version = editing?.version || 0;
@@ -201,7 +230,7 @@
     link.href = context + '/' + app.dataset.role + '/' + tab;
     if(tab === section) link.setAttribute('aria-current','page'); document.querySelector('#catalog-tabs').append(link);
   });
-  select.addEventListener('change',async () => { try { rememberStore(); productList = select.value ? await request('/products?storeId=' + select.value) : []; await refresh(); } catch(error) { notice(error.message,true); } });
+  select.addEventListener('change',async () => { try { rememberStore(); if(await loadProductOptions()) await refresh(); } catch(error) { notice(error.message,true); } });
   document.querySelector('#catalog-reload').onclick = () => reload().catch(error => notice(error.message,true));
   document.querySelector('#catalog-image').addEventListener('submit',async event => {
     event.preventDefault(); if(!editing || loading) return; loading = true;

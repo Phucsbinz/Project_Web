@@ -1,0 +1,31 @@
+{
+  "branch": "feature/order-payment",
+  "head": "269ea2c8c6d434078ca96846527dcd3d47a6873e",
+  "baselineTests": 223,
+  "tests": {
+    "tests": 257,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "isolatedVerifyExit": 0,
+  "rootVerify": "257 tests passed; repackage blocked by target WAR rename while existing app runs",
+  "mavenInputsCompared": 316,
+  "mavenInputDifferences": [],
+  "nativeUiExit": 0,
+  "nativeUiChecks": 16,
+  "renderWidths": [
+    390,
+    768,
+    1440
+  ],
+  "renderChecks": 27,
+  "jsConsoleErrors": 0,
+  "unexpectedRequestFailures": 0,
+  "verifiedLogoutNavigationAborts": 1,
+  "uiFixtureStopped": true,
+  "sharedUi": "one SiteMesh layout,21 shared files",
+  "mysqlTiDbConcurrency": "not run; no claim of deadlock reproduction/elimination",
+  "artifactSha256": "1a4be68ae8e98d658ffacc2d8c33248df69993dc86cf57e7173470f042f88fc2",
+  "commitPushMerge": false
+}

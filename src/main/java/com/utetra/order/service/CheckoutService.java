@@ -111,8 +111,14 @@ public class CheckoutService {
     Map<Long, BigDecimal> products = new TreeMap<>();
     BigDecimal subtotal = BigDecimal.ZERO;
     int units = 0;
-    for (var item : data.selectedItems(cart.id)) {
-      var v = refs.saleVariant(item.variantId, lock, clock);
+    var selectedItems = data.selectedItems(cart.id);
+    Map<Long, Map<String,Object>> lockedVariants = new HashMap<>();
+    // Each call executes a bound, single-variant FOR UPDATE before any per-line topping locks.
+    // Keep cart/snapshot order separate from the order in which locks are acquired.
+    if (lock) for (long variantId : selectedItems.stream().map(i -> i.variantId).distinct().sorted().toList())
+      lockedVariants.put(variantId, refs.saleVariant(variantId, true, clock));
+    for (var item : selectedItems) {
+      var v = lock ? lockedVariants.get(item.variantId) : refs.saleVariant(item.variantId, false, clock);
       if (number(v, "store_id") != cart.storeId)
         throw OrderProblem.invalid("Món không thuộc cửa hàng của giỏ.");
       List<Map<String, Object>> toppings = new ArrayList<>();

@@ -1,0 +1,16 @@
+{
+  "cases": [
+    {
+      "case": "global",
+      "passed": false,
+      "error": "Existing GLOBAL selection lost: []"
+    },
+    {
+      "case": "key",
+      "passed": false,
+      "error": "Optional empty catalogKey is rejected by HTML validation"
+    }
+  ],
+  "pageErrors": [],
+  "fixture": "Isolated H2/Tomcat/SiteMesh only"
+}

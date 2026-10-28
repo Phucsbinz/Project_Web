@@ -191,3 +191,13 @@ Thanh yêu cầu bỏ dòng ghi chú trong mô tả popup và đổi nhãn Xem v
 Prompt Thanh: sau đăng nhập thay chữ Tài khoản bằng tên người dùng, luôn một dòng.
 NavigationAdvice cung cấp currentDisplayName lấy full_name hiện tại, fallback username nếu thiếu; bỏ query cho guest, POST và yêu cầu JSON. app.jsp escape nội dung và title bằng c:out. CSS dùng white-space nowrap/ellipsis/max-width desktop190px mobile125px, icon/mũi tên không co. Tên đổi trong hồ sơ được phản ánh ở lần tải trang sau, không lấy tên cũ trong token. Giữ menu tài khoản và một layout.
 Kiểm thực: 8 tests render qua, WAR build thành công; 13 shopping browser scenarios qua gồm header tên User 1/full title/nowrap/ellipsis sau đăng nhập và các luồng đặt đơn. Shared UI và diff check qua. Server đã mở lại, chưa commit/push.
+
+
+## 28/10/2026 — UTETRA-FIX-20261028: sửa ba lỗi và kiểm thứ tự khóa
+
+- Metadata và **prompt nguyên văn đầy đủ**, gồm phản hồi về giỏ sau logout, theo mẫu PROMPT_ENTRY: [hồ sơ prompt](../../reviews/prompts/UTETRA-FIX-20261028.md).
+- Phản hồi/kết quả/file thay đổi: [báo cáo sửa lỗi](../../reviews/SCOPED_FIXES_20261028.md).
+- Kết quả thực: baseline223 đạt; có RED/GREEN từng lỗi. Final verify257 tests,0fail/0error/0skip và executable WAR thành công trên bản sao316 input nguyên trạng. Workspace verify bị chặn rename WAR đang có app chạy; không tự tắt app.
+- NativeUI16 nhóm/27 render390-768-1440 đạt;0JS/console errors,0network failure bất thường,1logout navigation abort có200/401 và Guest isolation đối chứng. SharedUI mộtlayout/21file và diffcheck đạt.
+- Host rỗng có tracking/payment đúng nghĩa vụ; revoke đúng PASSWORD_RESET của actor cùng transaction; purchases phân trang20 ở UI và bounded API; stock locks tăngID ở checkout/release/legacy merge, giữ display order. MySQL/TiDB concurrency chưa chạy, không ghi deadlock đó đã tái hiện hoặc loại hết.
+- Codex sửa theo thứ tự, reviewer scoped độc lập chỉ đọc chưa thấy regression source/test; chưa commit/push/merge, không migration/cloud/provider thật. Không ghi secret vào hồ sơ. Không xóa hay thay nội dung nhật ký cũ.

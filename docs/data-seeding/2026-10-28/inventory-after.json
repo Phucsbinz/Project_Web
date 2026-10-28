@@ -1,0 +1,4455 @@
+{
+  "database": "utetra_db",
+  "migrations": [
+    {
+      "description": "identity baseline",
+      "success": true,
+      "version": "1"
+    },
+    {
+      "description": "order payment",
+      "success": true,
+      "version": "2"
+    },
+    {
+      "description": "catalog sales",
+      "success": true,
+      "version": "3"
+    },
+    {
+      "description": "identity membership",
+      "success": true,
+      "version": "2026101701"
+    },
+    {
+      "description": "identity validation guards",
+      "success": true,
+      "version": "2026102001"
+    },
+    {
+      "description": "integrated foreign keys",
+      "success": true,
+      "version": "2026102002"
+    },
+    {
+      "description": "bank transfer receipt",
+      "success": true,
+      "version": "2026102401"
+    },
+    {
+      "description": "jwt inventory",
+      "success": true,
+      "version": "2026102402"
+    },
+    {
+      "description": "scoped carriers",
+      "success": true,
+      "version": "2026102403"
+    },
+    {
+      "description": "shared drink catalog",
+      "success": true,
+      "version": "2026102601"
+    },
+    {
+      "description": "readable test password",
+      "success": true,
+      "version": "2026102602"
+    },
+    {
+      "description": "group orders",
+      "success": true,
+      "version": "2026102603"
+    },
+    {
+      "description": "cart selection",
+      "success": true,
+      "version": "2026102701"
+    },
+    {
+      "description": "group member confirmation",
+      "success": true,
+      "version": "2026102702"
+    },
+    {
+      "description": "local qr wallet",
+      "success": true,
+      "version": "2026102703"
+    },
+    {
+      "description": "customer support",
+      "success": true,
+      "version": "2026102704"
+    },
+    {
+      "description": "remove plaintext password",
+      "success": true,
+      "version": "2026102705"
+    },
+    {
+      "description": "customer order receipt",
+      "success": true,
+      "version": "2026102801"
+    }
+  ],
+  "capturedAtUtc": "2026-10-28T10:47:32.650723Z",
+  "physicalTableCount": 51,
+  "applicationTableCount": 50,
+  "views": [],
+  "tables": [
+    {
+      "name": "audit_logs",
+      "rows": 439,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "actor_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "action",
+          "type": "varchar(50)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "entity_type",
+          "type": "varchar(50)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "entity_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "summary",
+          "type": "varchar(1000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "actor_id"
+        }
+      ]
+    },
+    {
+      "name": "auth_sessions",
+      "rows": 130,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "refresh_token_hash",
+          "type": "varchar(64)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "expires_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "last_refreshed_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "revoked_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "access_token_id",
+          "type": "varchar(36)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "access_token_hash",
+          "type": "varchar(64)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "access_expires_at",
+          "type": "timestamp(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "carrier_area_rates",
+      "rows": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "carrier_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "delivery_area_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "additional_fee",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "carriers",
+          "target": "id",
+          "column": "carrier_id"
+        },
+        {
+          "table": "store_delivery_areas",
+          "target": "id",
+          "column": "delivery_area_id"
+        }
+      ]
+    },
+    {
+      "name": "carriers",
+      "rows": 1,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "base_fee",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "managed_store_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "stores",
+          "target": "id",
+          "column": "managed_store_id"
+        }
+      ]
+    },
+    {
+      "name": "cart_item_toppings",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "cart_item_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "topping_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "cart_items",
+          "target": "id",
+          "column": "cart_item_id"
+        },
+        {
+          "table": "toppings",
+          "target": "id",
+          "column": "topping_id"
+        }
+      ]
+    },
+    {
+      "name": "cart_items",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "cart_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "variant_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "sugar_level",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "ice_level",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "quantity",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "note",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "configuration_hash",
+          "type": "varchar(64)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_selected",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "carts",
+          "target": "id",
+          "column": "cart_id"
+        },
+        {
+          "table": "product_variants",
+          "target": "id",
+          "column": "variant_id"
+        }
+      ]
+    },
+    {
+      "name": "carts",
+      "rows": 10,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "last_merge_key",
+          "type": "varchar(36)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "group_order_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "activity_revision",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "group_orders",
+          "target": "id",
+          "column": "group_order_id"
+        },
+        {
+          "table": "stores",
+          "target": "id",
+          "column": "store_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "categories",
+      "rows": 6,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "slug",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "description",
+          "type": "varchar(4000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "display_order",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": []
+    },
+    {
+      "name": "comment_media",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "comment_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "secure_url",
+          "type": "varchar(1000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "public_id",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "resource_type",
+          "type": "varchar(10)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "display_order",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "product_comments",
+          "target": "id",
+          "column": "comment_id"
+        }
+      ]
+    },
+    {
+      "name": "commission_policies",
+      "rows": 1,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "rate_percent",
+          "type": "decimal(5,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": []
+    },
+    {
+      "name": "coupon_redemptions",
+      "rows": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "promotion_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "discount_snapshot",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "funded_by_snapshot",
+          "type": "varchar(10)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "promotion_kind_snapshot",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "promotion_name_snapshot",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "released_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        },
+        {
+          "table": "promotions",
+          "target": "id",
+          "column": "promotion_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "delivery_assignments",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "shipper_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "assigned_by",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "assigned_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "completed_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "assigned_by"
+        },
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "shipper_id"
+        }
+      ]
+    },
+    {
+      "name": "delivery_events",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "assignment_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "actor_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "type",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "note",
+          "type": "varchar(500)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "actor_id"
+        },
+        {
+          "table": "delivery_assignments",
+          "target": "id",
+          "column": "assignment_id"
+        }
+      ]
+    },
+    {
+      "name": "flyway_schema_history",
+      "rows": 18,
+      "columns": [
+        {
+          "name": "installed_rank",
+          "type": "int",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "varchar(50)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "description",
+          "type": "varchar(200)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "type",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "script",
+          "type": "varchar(1000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "checksum",
+          "type": "int",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "installed_by",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "installed_on",
+          "type": "timestamp",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "execution_time",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "success",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": []
+    },
+    {
+      "name": "group_order_members",
+      "rows": 11,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "group_order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "display_name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "items_json",
+          "type": "text",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_confirmed",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "billed_subtotal",
+          "type": "decimal(14,2)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "discount_share",
+          "type": "decimal(14,2)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "shipping_share",
+          "type": "decimal(14,2)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "amount_due",
+          "type": "decimal(14,2)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "group_orders",
+          "target": "id",
+          "column": "group_order_id"
+        },
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "group_orders",
+      "rows": 5,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "host_user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "invite_token",
+          "type": "varchar(36)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "expires_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "payment_mode",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "host_user_id"
+        },
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        }
+      ]
+    },
+    {
+      "name": "local_qr_payments",
+      "rows": 7,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "public_id",
+          "type": "varchar(36)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "token_hash",
+          "type": "varchar(64)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "amount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "expires_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "paid_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "loyalty_accounts",
+      "rows": 10,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "balance",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "debt",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "lifetime_earned",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "loyalty_transactions",
+      "rows": 103,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "account_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "type",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "points_delta",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "balance_after",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "debt_after",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "loyalty_accounts",
+          "target": "id",
+          "column": "account_id"
+        },
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        }
+      ]
+    },
+    {
+      "name": "notifications",
+      "rows": 1640,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "event_key",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "type",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "title",
+          "type": "varchar(200)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "content",
+          "type": "varchar(500)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "read_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "order_item_toppings",
+      "rows": 4,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_item_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "topping_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "topping_name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "unit_price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "order_items",
+          "target": "id",
+          "column": "order_item_id"
+        },
+        {
+          "table": "toppings",
+          "target": "id",
+          "column": "topping_id"
+        }
+      ]
+    },
+    {
+      "name": "order_items",
+      "rows": 151,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "variant_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "product_name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "size_name",
+          "type": "varchar(5)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "base_price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "extra_price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "drink_unit_price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "topping_unit_total",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "quantity",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "sugar_level",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "ice_level",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "note",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "line_total",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "discount_allocated",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "stock_reserved",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        },
+        {
+          "table": "product_variants",
+          "target": "id",
+          "column": "variant_id"
+        }
+      ]
+    },
+    {
+      "name": "order_status_history",
+      "rows": 544,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "from_status",
+          "type": "varchar(30)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "to_status",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "event_type",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "changed_by",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "reason",
+          "type": "varchar(500)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "order_version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "changed_by"
+        },
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        }
+      ]
+    },
+    {
+      "name": "orders",
+      "rows": 117,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_code",
+          "type": "varchar(40)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "delivery_area_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "carrier_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "commission_policy_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "checkout_key",
+          "type": "varchar(36)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "request_hash",
+          "type": "varchar(64)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "recipient_name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "recipient_phone",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "delivery_address",
+          "type": "varchar(500)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "store_name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "delivery_area_name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "carrier_name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "subtotal",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "product_discount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "points_discount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "shipping_gross",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "shipping_discount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "final_amount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "commission_rate",
+          "type": "decimal(5,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "commission_amount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "store_net",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "points_used",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "points_earned",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "payment_method",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "payment_status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "note",
+          "type": "varchar(500)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "cancel_reason",
+          "type": "varchar(500)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "delivered_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "cancelled_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "paid_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "payment_confirmed_by",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "group_order_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "group_participants",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "group_discount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "received_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "carriers",
+          "target": "id",
+          "column": "carrier_id"
+        },
+        {
+          "table": "commission_policies",
+          "target": "id",
+          "column": "commission_policy_id"
+        },
+        {
+          "table": "store_delivery_areas",
+          "target": "id",
+          "column": "delivery_area_id"
+        },
+        {
+          "table": "group_orders",
+          "target": "id",
+          "column": "group_order_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "payment_confirmed_by"
+        },
+        {
+          "table": "stores",
+          "target": "id",
+          "column": "store_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "otp_challenges",
+      "rows": 7,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "email",
+          "type": "varchar(254)",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "purpose",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "otp_hash",
+          "type": "varchar(64)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "attempts",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "expires_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "consumed_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "revoked_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "reset_grant_hash",
+          "type": "varchar(64)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "payment_callback_events",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "payment_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "provider",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "event_key",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "payload_hash",
+          "type": "varchar(64)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "verified",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "outcome",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "received_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "processed_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "payment_transactions",
+          "target": "id",
+          "column": "payment_id"
+        }
+      ]
+    },
+    {
+      "name": "payment_transactions",
+      "rows": 117,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "provider",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "txn_ref",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "provider_txn_id",
+          "type": "varchar(100)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "amount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "paid_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "expires_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        }
+      ]
+    },
+    {
+      "name": "product_comments",
+      "rows": 90,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "author_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "order_item_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "content",
+          "type": "varchar(2000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "author_id"
+        },
+        {
+          "table": "order_items",
+          "target": "id",
+          "column": "order_item_id"
+        },
+        {
+          "table": "products",
+          "target": "id",
+          "column": "product_id"
+        }
+      ]
+    },
+    {
+      "name": "product_favorites",
+      "rows": 91,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "products",
+          "target": "id",
+          "column": "product_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "product_toppings",
+      "rows": 282,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "topping_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "products",
+          "target": "id",
+          "column": "product_id"
+        },
+        {
+          "table": "toppings",
+          "target": "id",
+          "column": "topping_id"
+        }
+      ]
+    },
+    {
+      "name": "product_variants",
+      "rows": 279,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "size_name",
+          "type": "varchar(5)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "extra_price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "stock_quantity",
+          "type": "int",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "products",
+          "target": "id",
+          "column": "product_id"
+        }
+      ]
+    },
+    {
+      "name": "product_views",
+      "rows": 106,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "last_viewed_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "view_count",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "products",
+          "target": "id",
+          "column": "product_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "products",
+      "rows": 96,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "category_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "slug",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "description",
+          "type": "varchar(4000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "base_price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_available",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_featured",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "catalog_key",
+          "type": "varchar(150)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "categories",
+          "target": "id",
+          "column": "category_id"
+        },
+        {
+          "table": "stores",
+          "target": "id",
+          "column": "store_id"
+        }
+      ]
+    },
+    {
+      "name": "promotion_products",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "promotion_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "products",
+          "target": "id",
+          "column": "product_id"
+        },
+        {
+          "table": "promotions",
+          "target": "id",
+          "column": "promotion_id"
+        }
+      ]
+    },
+    {
+      "name": "promotions",
+      "rows": 2,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "created_by",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "scope",
+          "type": "varchar(10)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "kind",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "code",
+          "type": "varchar(50)",
+          "nullable": "YES",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "percent",
+          "type": "decimal(5,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "max_discount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "min_order",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "usage_limit",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "per_user_limit",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "starts_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "ends_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "funded_by",
+          "type": "varchar(10)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "created_by"
+        },
+        {
+          "table": "stores",
+          "target": "id",
+          "column": "store_id"
+        }
+      ]
+    },
+    {
+      "name": "refund_transactions",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "payment_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "return_request_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "refund_ref",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "provider_ref",
+          "type": "varchar(100)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "amount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "reason",
+          "type": "varchar(1000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "evidence_ref",
+          "type": "varchar(500)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "approved_by",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "completed_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "approved_by"
+        },
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        },
+        {
+          "table": "payment_transactions",
+          "target": "id",
+          "column": "payment_id"
+        },
+        {
+          "table": "return_requests",
+          "target": "id",
+          "column": "return_request_id"
+        }
+      ]
+    },
+    {
+      "name": "return_requests",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "requested_by",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "reason",
+          "type": "varchar(2000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "evidence_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "evidence_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "waive_physical_return",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "reviewed_by",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "decision_reason",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "requested_by"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "reviewed_by"
+        }
+      ]
+    },
+    {
+      "name": "review_media",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "review_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "secure_url",
+          "type": "varchar(1000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "public_id",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "resource_type",
+          "type": "varchar(10)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "display_order",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "reviews",
+          "target": "id",
+          "column": "review_id"
+        }
+      ]
+    },
+    {
+      "name": "reviews",
+      "rows": 90,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "author_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "order_item_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "stars",
+          "type": "int",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "content",
+          "type": "varchar(2000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "author_id"
+        },
+        {
+          "table": "order_items",
+          "target": "id",
+          "column": "order_item_id"
+        },
+        {
+          "table": "products",
+          "target": "id",
+          "column": "product_id"
+        }
+      ]
+    },
+    {
+      "name": "roles",
+      "rows": 5,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "name",
+          "type": "varchar(30)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "description",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": []
+    },
+    {
+      "name": "store_delivery_areas",
+      "rows": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "area_code",
+          "type": "varchar(50)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "stores",
+          "target": "id",
+          "column": "store_id"
+        }
+      ]
+    },
+    {
+      "name": "store_memberships",
+      "rows": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "member_role",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "assigned_by",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "assigned_by"
+        },
+        {
+          "table": "stores",
+          "target": "id",
+          "column": "store_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "store_registration_requests",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "applicant_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "note",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "reviewed_by",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "reviewed_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "applicant_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "reviewed_by"
+        },
+        {
+          "table": "stores",
+          "target": "id",
+          "column": "store_id"
+        }
+      ]
+    },
+    {
+      "name": "store_settlements",
+      "rows": 103,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "goods_net",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "commission_rate",
+          "type": "decimal(5,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "commission_amount",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "shipping_net",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "store_net",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "refunded_goods",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "refunded_shipping",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "commission_reversed",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "orders",
+          "target": "id",
+          "column": "order_id"
+        },
+        {
+          "table": "stores",
+          "target": "id",
+          "column": "store_id"
+        }
+      ]
+    },
+    {
+      "name": "store_toppings",
+      "rows": 12,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "topping_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "is_available",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "stores",
+          "target": "id",
+          "column": "store_id"
+        },
+        {
+          "table": "toppings",
+          "target": "id",
+          "column": "topping_id"
+        }
+      ]
+    },
+    {
+      "name": "stores",
+      "rows": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "owner_user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "commission_policy_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "name",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "slug",
+          "type": "varchar(150)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "address",
+          "type": "varchar(500)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "phone",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "description",
+          "type": "varchar(4000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "banner_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "banner_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "open_time",
+          "type": "time",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "close_time",
+          "type": "time",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "accepting_orders",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "commission_policies",
+          "target": "id",
+          "column": "commission_policy_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "owner_user_id"
+        }
+      ]
+    },
+    {
+      "name": "support_conversations",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "varchar(36)",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": ""
+        },
+        {
+          "name": "customer_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "scope_key",
+          "type": "varchar(40)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "channel",
+          "type": "varchar(10)",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "store_id",
+          "type": "bigint",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "last_message_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "customer_id"
+        },
+        {
+          "table": "stores",
+          "target": "id",
+          "column": "store_id"
+        }
+      ]
+    },
+    {
+      "name": "support_messages",
+      "rows": 0,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "conversation_id",
+          "type": "varchar(36)",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "sender_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "sender_role",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "client_message_id",
+          "type": "varchar(36)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "body",
+          "type": "varchar(2000)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "support_conversations",
+          "target": "id",
+          "column": "conversation_id"
+        },
+        {
+          "table": "users",
+          "target": "id",
+          "column": "sender_id"
+        }
+      ]
+    },
+    {
+      "name": "toppings",
+      "rows": 4,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "price",
+          "type": "decimal(14,2)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "image_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": []
+    },
+    {
+      "name": "user_addresses",
+      "rows": 10,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "MUL",
+          "extra": ""
+        },
+        {
+          "name": "recipient_name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "phone",
+          "type": "varchar(20)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "address_detail",
+          "type": "varchar(500)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_default",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "users",
+          "target": "id",
+          "column": "user_id"
+        }
+      ]
+    },
+    {
+      "name": "users",
+      "rows": 24,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "name": "role_id",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "username",
+          "type": "varchar(50)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "email",
+          "type": "varchar(254)",
+          "nullable": "NO",
+          "key": "UNI",
+          "extra": ""
+        },
+        {
+          "name": "password_hash",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "full_name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "phone",
+          "type": "varchar(20)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "avatar_url",
+          "type": "varchar(1000)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "avatar_public_id",
+          "type": "varchar(255)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "is_active",
+          "type": "tinyint(1)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "email_verified_at",
+          "type": "datetime(6)",
+          "nullable": "YES",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "created_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime(6)",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        },
+        {
+          "name": "version",
+          "type": "bigint",
+          "nullable": "NO",
+          "key": "",
+          "extra": ""
+        }
+      ],
+      "foreignKeys": [
+        {
+          "table": "roles",
+          "target": "id",
+          "column": "role_id"
+        }
+      ]
+    }
+  ],
+  "caseInsensitiveDuplicateNameGroups": [],
+  "identicalColumnAndForeignKeyGroups": [],
+  "emptyTables": [
+    "cart_item_toppings",
+    "cart_items",
+    "comment_media",
+    "delivery_assignments",
+    "delivery_events",
+    "payment_callback_events",
+    "promotion_products",
+    "refund_transactions",
+    "return_requests",
+    "review_media",
+    "store_registration_requests",
+    "support_conversations",
+    "support_messages"
+  ],
+  "emptyTableCount": 13
+}
