@@ -1,5 +1,7 @@
 # feature/order-payment — Bán hàng, thanh toán và vận hành mọi role
 
+> Shipper 28/10/2026: đã bật chức năng và bổ sung phân công bằng danh sách, đơn giao responsive, nhật ký, COD và thống kê đúng phạm vi. Xem [SHIPPER_COMPLETION_20261028.md](SHIPPER_COMPLETION_20261028.md) để biết cấu hình, diễn giải và kiểm chứng hiện tại.
+
 > Mới nhất: [VNPAY](VNPAY.md) đã có adapter/test, chưa merchant thật; Manager đã CRUD carrier riêng shop. Xem [FINAL_REQUIREMENTS_STATUS](../../FINAL_REQUIREMENTS_STATUS.md).
 
 Bàn giao 24/10: đọc [JWT DB, stock/version và WebSocket checkout](../order-payment/REALTIME_CHECKOUT_JWT.md) trước khi merge/chạy với schema mới. Các nhánh cần nhận đủ source integration, không chỉ migration/JS; JWT cũ cần đăng nhập lại hoặc refresh hợp lệ.

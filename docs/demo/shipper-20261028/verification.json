@@ -1,0 +1,10 @@
+{
+  "checks": [
+    "Unassigned shipper cannot read the order; buyer cannot access delivery endpoints",
+    "Manager assigns through eligible shipper dropdown; NEW order has no forbidden shipper actions",
+    "Pickup, failure log, retry and delivering work; COD completion requires cash, terminal order is read-only",
+    "Assigned list, delivery details and own COD report render through shared Tomcat/SiteMesh layout at 1440/390px"
+  ],
+  "errors": [],
+  "fixture": "Isolated H2 only; no cloud orders, provider calls or actual cash"
+}

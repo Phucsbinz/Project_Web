@@ -38,7 +38,7 @@ Các mutation order dùng READ_COMMITTED và khóa hàng. Contract ghép cần t
 
 `order.return-window=3h`: đúng mốc delivered_at + 3 giờ bị từ chối; hoàn cả đơn. COD bắt đầu unpaid, người có quyền phải xác nhận đã thu đủ tiền khi giao; refund COD chỉ được ghi sau khi thực sự trả tiền, có tham chiếu chứng cứ. App ghi nhận đối soát tiền mặt, không tự chuyển tiền ngân hàng.
 
-`features.shipper.enabled` giữ mặc định false của cấu hình chung. Khi nhóm dùng phần Shipper, bật true tại properties triển khai được quản lý; các test/harness bật qua tham số riêng. Shipper đã được phân công chỉ lấy/giao sau CONFIRMED, không tự hủy/hoàn tiền.
+`features.shipper.enabled=true` trong cấu hình chung của nhánh order từ 28/10/2026 theo yêu cầu hoàn thiện Shipper. Có thể override false tại môi trường không triển khai giao hàng. Quy trình cấp role, phân công, COD và thống kê: [SHIPPER_COMPLETION_20261028.md](SHIPPER_COMPLETION_20261028.md). Shipper đã được phân công chỉ lấy/giao sau CONFIRMED, không tự hủy/hoàn tiền.
 
 VNPAY giữ disabled và chưa mở lựa chọn checkout theo ORD-AI-002. Khi người dùng cho làm tiếp cần merchant sandbox, secret trong cấu hình riêng, Return/IPN HTTPS và test signed callback/replay/amount. Không đưa hash secret vào prompt/log.
 

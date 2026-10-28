@@ -197,3 +197,15 @@ Prompt: còn 1 người chưa thanh toán nhưng chủ nhóm hủy thì sao; că
 
 ## 28/10/2026 — Popup hủy nhóm và hoàn sau 30 phút
 Prompt: chủ nhóm cần cảnh báo/xác nhận mới hủy; thành viên nhận popup nhóm bị hủy, đã trả có thêm dòng hoàn sau 30 phút. Notice dựa phần thanh toán cá nhân, thời gian dự kiến; không tự xác nhận hoàn. Thực hiện và kiểm chứng tại PARTIAL_GROUP_CANCEL_20261028.md. Chưa push.
+
+
+## 28/10/2026 — Hoàn thiện Shipper trên nhánh order
+
+Prompt nguyên văn:
+```text
+bạn hoàn thiện đầy đủ cho role shiper đi
+```
+
+Kết quả: bật features.shipper.enabled; bổ sung chọn Shipper hoạt động/đã xác minh thay ID nhập tay, đơn giao responsive có địa chỉ/điện thoại lấy và giao, COD cần thu, nhật ký và thao tác đúng trạng thái. Giữ backend kiểm assignment/role/version/CSRF; chỉ hoàn tất COD khi thu đủ, người cũ mất quyền khi đổi/hủy. Báo cáo SQL aggregate đúng user/ngày, thêm đơn hủy/COD, phân công lặp cùng người không tạo event trùng. Không thêm bảng hoặc sửa DB cloud, không refactor 3NF. Hướng dẫn: docs/features/order-payment/SHIPPER_COMPLETION_20261028.md.
+
+Kiểm thực tế: clean verify cuối 214 tests, 0 failures/errors/skipped; WAR thành công; Shared UI 21 files đạt; 4 Shipper browser scenarios H2/Tomcat/SiteMesh và 18 shopping scenarios đạt. Test UI phát hiện mã đơn dài tràn mobile, đã sửa text-break và chạy lại đạt; lỗi shopping badge trước đó do chưa chờ navigation/refresh, đã sửa harness và chạy lại đủ 18 case. Minh chứng docs/demo/shipper-20261028. Không thử thu/giao hàng thật. Chỉ lưu công việc trên nhánh order, chưa push; giữ nguyên thay đổi xóa ảnh nguồn cục bộ có trước.

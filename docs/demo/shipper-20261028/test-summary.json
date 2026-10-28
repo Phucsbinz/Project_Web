@@ -1,0 +1,12 @@
+{
+  "totals": {
+    "tests": 214,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "build": "Maven clean verify BUILD SUCCESS",
+  "fixture": "H2 only; no cloud data or actual deliveries/payments",
+  "shipper_browser_checks": 4,
+  "shopping_browser_checks": 18
+}

@@ -35,7 +35,9 @@ with sync_playwright() as p:
  gp.wait_for_selector('#drink-modal',state='hidden');gp.wait_for_function("document.querySelector('[data-cart-count]').textContent==='1'")
  assert gp.locator('#site-toast').is_visible();assert '1 giờ' in gp.locator('#site-toast').inner_text();checks.append('Guest popup updates badge and shows success with one-hour retention reminder')
  gp.goto(base+'/cart',wait_until='networkidle');assert gp.locator('.cart-line').count()==1;assert gp.locator('.cart-line img').count()==1
- gp.get_by_role('button',name='Tăng số ly',exact=True).click();gp.wait_for_load_state('networkidle');gp.wait_for_function("document.querySelector('.quantity').value==='2'")
+ with gp.expect_navigation(wait_until='networkidle'):
+  gp.get_by_role('button',name='Tăng số ly',exact=True).click()
+ gp.wait_for_function("document.querySelector('.quantity').value==='2' && document.querySelector('.nav-actions [data-cart-count]').textContent==='1'")
  assert gp.locator('.nav-actions [data-cart-count]').inner_text()=='1'
  checks.append('Stepper updates quantity and totals; badge counts lines rather than cups')
  assert post(guest,'/cart/draft/items',{'variantId':1,'sugar':0,'ice':0,'toppingIds':[],'quantity':1,'note':'Later'}).ok

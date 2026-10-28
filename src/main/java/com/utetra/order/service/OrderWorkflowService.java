@@ -82,10 +82,28 @@ public class OrderWorkflowService {
     readable(actor, o);
     Map<String, Object> result = new LinkedHashMap<>(support.view(o));
     if("LOCAL_QR".equals(o.paymentMethod)){var payments=data.query(LocalQrPayment.class,"where e.orderId=:order",Map.of("order",id),false,100);result.put("qrCollected",payments.stream().filter(p->Set.of("SUCCESS","REFUNDED").contains(p.status)).map(p->p.amount).reduce(BigDecimal.ZERO,BigDecimal::add));result.put("qrRefundDue",payments.stream().filter(p->"SUCCESS".equals(p.status)&&"REFUND_PENDING".equals(o.paymentStatus)).map(p->p.amount).reduce(BigDecimal.ZERO,BigDecimal::add));result.put("qrRefunded",payments.stream().filter(p->"REFUNDED".equals(p.status)).map(p->p.amount).reduce(BigDecimal.ZERO,BigDecimal::add));}
+    var assignments = data.query(DeliveryAssignment.class, "where e.orderId=:order", Map.of("order",id), false,1);
+    result.put("delivery", assignments.stream().map(a -> {
+      Map<String,Object> delivery = new LinkedHashMap<>();
+      delivery.put("shipperId",a.shipperId);
+      delivery.put("name",refs.one("select full_name from users where id=?",a.shipperId).get("full_name"));
+      delivery.put("status",a.status);
+      delivery.put("assignedAt",a.assignedAt.toString());
+      delivery.put("completedAt",a.completedAt==null ? "" : a.completedAt.toString());
+      delivery.put("events",data.query(DeliveryEvent.class,"where e.assignmentId=:assignment order by e.createdAt,e.id",Map.of("assignment",a.id),false,200));
+      return delivery;
+    }).toList());
+    result.put("canShip",actor.is("SHIPPER") && assigned(actor,id)
+        && Set.of("CONFIRMED","PICKED_UP","DELIVERING").contains(o.status));
     result.put("owner",o.userId==actor.userId());result.put("groupOrder",o.groupOrderId!=null);
     result.put("qrPayer","LOCAL_QR".equals(o.paymentMethod)&&!data.query(LocalQrPayment.class,"where e.orderId=:order and e.userId=:user",Map.of("order",o.id,"user",actor.userId()),false,1).isEmpty());
     if(o.groupOrderId!=null)result.put("groupToken",refs.one("select invite_token from group_orders where id=?",o.groupOrderId).get("invite_token"));
     result.put("received",o.receivedAt!=null);result.put("receivedAt",o.receivedAt==null?"":o.receivedAt.toString());
+    if (actor.is("SHIPPER")) {
+      var pickup = refs.store(o.storeId,false);
+      result.put("pickupAddress",pickup.get("address"));
+      result.put("pickupPhone",pickup.get("phone"));
+    }
     result.put("recipientName", o.recipientName);
     result.put("recipientPhone", o.recipientPhone);
     result.put("deliveryAddress", o.deliveryAddress);
@@ -178,20 +196,9 @@ public class OrderWorkflowService {
       params.put("user", actor.userId());
     } else if ("shipper".equals(mode)) {
       shipper(actor);
-      List<Long> ids =
-          data
-              .query(
-                  DeliveryAssignment.class,
-                  "where e.shipperId=:user and e.status in ('ACTIVE','COMPLETED')",
-                  Map.of("user", actor.userId()),
-                  false,
-                  10000)
-              .stream()
-              .map(a -> a.orderId)
-              .toList();
-      if (ids.isEmpty()) return List.of();
-      where = "where e.id in :ids";
-      params.put("ids", ids);
+      where = "where exists (select a.id from DeliveryAssignment a where a.orderId=e.id"
+          + " and a.shipperId=:user and a.status in ('ACTIVE','COMPLETED'))";
+      params.put("user", actor.userId());
     } else {
       if (!actor.is("ADMIN") && !actor.is("MANAGER") && !actor.is("VENDOR"))
         throw OrderProblem.forbidden();
@@ -229,7 +236,20 @@ public class OrderWorkflowService {
             Math.min(10000, (page + 1) * size))
         .stream()
         .skip((long) page * size)
-        .map(support::view)
+        .map(o -> {
+          Map<String,Object> view = support.view(o);
+          if ("shipper".equals(mode)) {
+            var pickup = refs.store(o.storeId,false);
+            view.put("pickupAddress",pickup.get("address"));
+            view.put("pickupPhone",pickup.get("phone"));
+            view.put("recipientName", o.recipientName);
+            view.put("recipientPhone", o.recipientPhone);
+            view.put("deliveryAddress", o.deliveryAddress);
+            view.put("codDue", "COD".equals(o.paymentMethod) && !"PAID".equals(o.paymentStatus)
+                ? o.finalAmount : BigDecimal.ZERO);
+          }
+          return view;
+        })
         .toList();
   }
 
@@ -589,6 +609,16 @@ public class OrderWorkflowService {
     return support.view(o);
   }
 
+  @Transactional(readOnly = true)
+  public List<Map<String,Object>> availableShippers(Actor actor, long orderId) {
+    if (!shipperEnabled) return List.of();
+    Order order = data.require(Order.class,orderId,false);
+    refs.requireOperator(actor,order.storeId);
+    return refs.list("select u.id,u.full_name from users u join roles r on r.id=u.role_id"
+        + " where r.name='ROLE_SHIPPER' and u.is_active=true and u.email_verified_at is not null"
+        + " order by u.full_name,u.id");
+  }
+
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public void assign(Actor actor, long id, Assignment request) {
     if (!shipperEnabled) throw OrderProblem.forbidden();
@@ -606,6 +636,7 @@ public class OrderWorkflowService {
             .findFirst()
             .orElse(null);
     boolean fresh = a == null;
+    if (!fresh && a.shipperId.equals(request.shipperId()) && "ACTIVE".equals(a.status)) return;
     Long previous = fresh ? null : a.shipperId;
     if (fresh) {
       a = new DeliveryAssignment();

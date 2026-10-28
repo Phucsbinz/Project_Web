@@ -1114,3 +1114,28 @@ merge vô nhánh order đẩy đủ đi
 ```
 
 Đã fetch tất cả remote và fast-forward integration/utetra tới 57c6b88. Merge vào feature/order-payment, giữ cả hai phần nhật ký bị xung đột. Integration chứa các đầu nhánh catalog/identity/identify/main đã fetch; giữ commit riêng của order và thay đổi xóa ảnh cục bộ có trước. Maven clean verify: 212 tests, 0 failures/errors/skipped, WAR thành công; shared UI 21 files đạt; 4 partial-group browser scenarios H2 đạt. Shopping browser dừng tại kiểm badge giỏ sau tăng số lượng (check_shopping_ui.py:39); chưa khẳng định bộ shopping đạt, sẽ kiểm tra tiếp. Không sửa DB cloud hoặc push trong bước merge.
+
+
+## 28/10/2026 — Bổ sung nhật ký trao đổi DB trước khi tích hợp
+
+Các prompt nguyên văn:
+```text
+bạn check xem tại sao lại nhiểu bảng vậy và liệt kê xem công dụng mỗi bản
+mà project cỡ này sao nhiều table vậy tôi thấy lạ thôi
+nhiều vậy thì các bạn có quan hệ tham chiếu chặt chẽ không
+giờ nếu refactor để tối giản phần db để đạt chuẩn 3 nf trong db nhưng vẫn giữ đầy đủ các chức năng không làm lỗi các chức năng có được k trả lời trước và nêu ra xử lý như nào chứ đừng sửa code liền
+```
+
+Kết quả trao đổi: giải thích bảng cha/chi tiết/liên kết/lịch sử, phân biệt số bảng với số sản phẩm và chuẩn hóa. Snapshot metadata trước đó có 51 bảng vật lý (50 nghiệp vụ, 1 Flyway) và 95 liên kết FK; chưa kiểm chứng lại enforcement/orphan trong trao đổi. Đã đề xuất đánh giá phụ thuộc hàm/ERD/migration trên bản sao và giữ snapshot giao dịch, API cùng chức năng; không áp dụng refactor 3NF hoặc thay đổi DB cloud. Danh mục công dụng chi tiết toàn bộ bảng chưa được soạn trong lượt trao đổi đó, không coi là đã hoàn tất báo cáo kiểm toán 3NF.
+
+
+## 28/10/2026 — Hoàn thiện Shipper trên nhánh order
+
+Prompt nguyên văn:
+```text
+bạn hoàn thiện đầy đủ cho role shiper đi
+```
+
+Kết quả: bật features.shipper.enabled; bổ sung chọn Shipper hoạt động/đã xác minh thay ID nhập tay, đơn giao responsive có địa chỉ/điện thoại lấy và giao, COD cần thu, nhật ký và thao tác đúng trạng thái. Giữ backend kiểm assignment/role/version/CSRF; chỉ hoàn tất COD khi thu đủ, người cũ mất quyền khi đổi/hủy. Báo cáo SQL aggregate đúng user/ngày, thêm đơn hủy/COD, phân công lặp cùng người không tạo event trùng. Không thêm bảng hoặc sửa DB cloud, không refactor 3NF. Hướng dẫn: docs/features/order-payment/SHIPPER_COMPLETION_20261028.md.
+
+Kiểm thực tế: clean verify cuối 214 tests, 0 failures/errors/skipped; WAR thành công; Shared UI 21 files đạt; 4 Shipper browser scenarios H2/Tomcat/SiteMesh và 18 shopping scenarios đạt. Test UI phát hiện mã đơn dài tràn mobile, đã sửa text-break và chạy lại đạt; lỗi shopping badge trước đó do chưa chờ navigation/refresh, đã sửa harness và chạy lại đủ 18 case. Minh chứng docs/demo/shipper-20261028. Không thử thu/giao hàng thật. Chỉ lưu công việc trên nhánh order, chưa push; giữ nguyên thay đổi xóa ảnh nguồn cục bộ có trước.

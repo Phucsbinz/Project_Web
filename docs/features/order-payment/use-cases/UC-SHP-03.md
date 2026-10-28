@@ -1,5 +1,7 @@
 # UC-SHP-03 — Thống kê giao hàng
 
+> Cập nhật 28/10/2026 trên nhánh order: Shipper đã bật trong cấu hình, giao diện và quy trình kiểm chứng tại [SHIPPER_COMPLETION_20261028.md](../SHIPPER_COMPLETION_20261028.md). Các đoạn kế hoạch/kiểm thử cũ bên dưới là lịch sử; dùng hướng dẫn mới cho demo hiện tại.
+
 > Actor: Shipper. Owner: feature/order-payment. P1 thêm. Đặc tả ban đầu được giữ để đối chiếu; kết quả triển khai và kiểm chứng thực tế ở phần hồ sơ bên dưới.
 
 ## Đặc tả chức năng

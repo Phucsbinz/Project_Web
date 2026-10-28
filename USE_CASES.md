@@ -211,7 +211,7 @@ Cập nhật 27/10/2026: hủy và hết hạn có popup riêng cho thành viên
 
 
 ## 28/10/2026 — Xác nhận nhận hàng
-Khách xác nhận Đã nhận hàng khi đơn của mình DELIVERED/PAID; xem danh sách đã xác nhận. Đánh giá shipper hoãn theo yêu cầu Thanh; feature shipper chưa bật.
+Khách xác nhận Đã nhận hàng khi đơn của mình DELIVERED/PAID; xem danh sách đã xác nhận. Đánh giá shipper tiếp tục hoãn theo yêu cầu trước đó; module Shipper được bật và hoàn thiện từ 28/10/2026 trên nhánh order. Xem [hướng dẫn Shipper](docs/features/order-payment/SHIPPER_COMPLETION_20261028.md).
 
 
 ## 28/10/2026 — Theo dõi đơn nhóm

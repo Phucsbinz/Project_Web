@@ -51,9 +51,10 @@ public class OrderController {
     model.addAttribute(
         "orders", orders.list(OrderWebSupport.actor(), mode(request), status, page, 20));
     model.addAttribute("base", base(request));
+    model.addAttribute("mode", mode(request));
     model.addAttribute("page", page);
     model.addAttribute("status", status == null ? "" : status);
-    return "order/list";
+    return "shipper".equals(mode(request)) ? "order/shipper-list" : "order/list";
   }
 
   @GetMapping("/data")
@@ -72,6 +73,8 @@ public class OrderController {
     model.addAttribute("mode", mode(request));
     model.addAttribute("role", OrderWebSupport.actor().role());
     model.addAttribute("bank", bank.instructions(id));
+    if ("operator".equals(mode(request)))
+      model.addAttribute("shippers", orders.availableShippers(OrderWebSupport.actor(),id));
     return "order/detail";
   }
 

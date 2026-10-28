@@ -371,32 +371,22 @@ public class OperationsService {
       throw OrderProblem.invalid("Khoảng ngày không hợp lệ.");
     Instant start = from.atStartOfDay(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant(),
         end = to.plusDays(1).atStartOfDay(ZoneId.of("Asia/Ho_Chi_Minh")).toInstant();
-    var assignments =
-        data.query(
-            DeliveryAssignment.class,
-            "where e.shipperId=:user and e.assignedAt>=:start and e.assignedAt<:end",
-            Map.of("user", actor.userId(), "start", start, "end", end),
-            false,
-            10000);
-    return Map.of(
-        "from",
-        from.toString(),
-        "to",
-        to.toString(),
-        "assigned",
-        assignments.size(),
-        "completed",
-        assignments.stream().filter(a -> "COMPLETED".equals(a.status)).count(),
-        "active",
-        assignments.stream().filter(a -> "ACTIVE".equals(a.status)).count(),
-        "failed",
-        CommerceReferenceRepository.number(
-            refs.one(
-                "select count(distinct assignment_id) n from delivery_events where actor_id=? and"
-                    + " type='FAILED' and created_at>=? and created_at<?",
-                actor.userId(),
-                start,
-                end),
-            "n"));
+    var totals = refs.one("select count(*) assigned,"
+        + " coalesce(sum(case when status='COMPLETED' then 1 else 0 end),0) completed,"
+        + " coalesce(sum(case when status='ACTIVE' then 1 else 0 end),0) active,"
+        + " coalesce(sum(case when status='CANCELLED' then 1 else 0 end),0) cancelled"
+        + " from delivery_assignments where shipper_id=? and assigned_at>=? and assigned_at<?",
+        actor.userId(),start,end);
+    Map<String,Object> result = new LinkedHashMap<>();
+    result.put("from",from.toString()); result.put("to",to.toString());
+    for (String key : List.of("assigned","completed","active","cancelled"))
+      result.put(key,CommerceReferenceRepository.number(totals,key));
+    result.put("failed",CommerceReferenceRepository.number(refs.one(
+        "select count(distinct assignment_id) n from delivery_events where actor_id=?"
+        + " and type='FAILED' and created_at>=? and created_at<?",actor.userId(),start,end),"n"));
+    result.put("codCollected",refs.one("select coalesce(sum(final_amount),0) amount from orders"
+        + " where payment_method='COD' and payment_confirmed_by=? and paid_at>=? and paid_at<?",
+        actor.userId(),start,end).get("amount"));
+    return result;
   }
 }

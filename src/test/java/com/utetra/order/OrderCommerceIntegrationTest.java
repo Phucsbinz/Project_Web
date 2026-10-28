@@ -1559,6 +1559,47 @@ class OrderCommerceIntegrationTest {
   }
 
   @Test
+  void shipperDirectoryAndDeliveryDetailsRespectOperatorScopeAndCurrentRole() {
+    long order = id(create(0));
+    assertThat(workflow.availableShippers(VENDOR,order)).extracting(r -> ((Number)r.get("id")).longValue()).containsExactly(5L);
+    assertThatThrownBy(() -> workflow.availableShippers(BUYER,order)).isInstanceOf(OrderProblem.class);
+    workflow.assign(VENDOR,order,new Assignment(5,version(order)));
+    long original = jdbc.queryForObject("select count(*) from delivery_events",Long.class);
+    workflow.assign(VENDOR,order,new Assignment(5,version(order)));
+    assertThat(jdbc.queryForObject("select count(*) from delivery_events",Long.class)).isEqualTo(original);
+    assertThat(workflow.read(SHIPPER,order).get("canShip")).isEqualTo(false);
+    workflow.transition(VENDOR,order,new Transition("CONFIRMED",version(order),"",false));
+    assertThat(workflow.read(SHIPPER,order).get("canShip")).isEqualTo(true);
+    var list = workflow.list(SHIPPER,"shipper","CONFIRMED",0,20);
+    assertThat(list).hasSize(1);
+    assertThat(list.getFirst()).containsKeys("recipientName","recipientPhone","deliveryAddress","codDue","pickupAddress","pickupPhone");
+    jdbc.update("update users set is_active=false where id=5");
+    assertThat(workflow.availableShippers(VENDOR,order)).isEmpty();
+    assertThatThrownBy(() -> workflow.read(SHIPPER,order)).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(() -> workflow.list(SHIPPER,"shipper",null,0,20)).isInstanceOf(OrderProblem.class);
+  }
+
+  @Test
+  void shipperCodRequiresCashAndReportUsesOwnCollectionsAndDateRange() {
+    long order = id(create(0));
+    workflow.assign(VENDOR,order,new Assignment(5,version(order)));
+    workflow.transition(VENDOR,order,new Transition("CONFIRMED",version(order),"",false));
+    workflow.transition(SHIPPER,order,new Transition("PICKED_UP",version(order),"",false));
+    workflow.transition(SHIPPER,order,new Transition("DELIVERING",version(order),"",false));
+    assertThatThrownBy(() -> workflow.transition(SHIPPER,order,new Transition("DELIVERED",version(order),"",false)))
+        .isInstanceOf(OrderProblem.class).hasMessageContaining("COD");
+    assertThat(workflow.read(SHIPPER,order).get("status")).isEqualTo("DELIVERING");
+    workflow.transition(SHIPPER,order,new Transition("DELIVERED",version(order),"",true));
+    var report = operations.shipperReport(SHIPPER,LocalDate.of(2026,10,14),LocalDate.of(2026,10,14));
+    assertThat(((Number)report.get("completed")).longValue()).isEqualTo(1);
+    assertThat(new BigDecimal(report.get("codCollected").toString())).isEqualByComparingTo(new BigDecimal(workflow.read(SHIPPER,order).get("total").toString()));
+    var later = operations.shipperReport(SHIPPER,LocalDate.of(2026,10,15),LocalDate.of(2026,10,15));
+    assertThat(new BigDecimal(later.get("codCollected").toString())).isZero();
+    assertThatThrownBy(() -> operations.shipperReport(BUYER,LocalDate.of(2026,10,14),LocalDate.of(2026,10,14))).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(() -> operations.shipperReport(SHIPPER,LocalDate.of(2026,10,15),LocalDate.of(2026,10,14))).isInstanceOf(OrderProblem.class);
+  }
+
+  @Test
   void shipperCanReadCompletedAssignmentButCannotChangeDeliveredOrder() {
     long order = id(create(0));
     workflow.assign(VENDOR, order, new Assignment(5, version(order)));

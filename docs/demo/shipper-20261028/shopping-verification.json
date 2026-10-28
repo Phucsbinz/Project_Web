@@ -1,0 +1,24 @@
+{
+  "checks": [
+    "Guest popup updates badge and shows success with one-hour retention reminder",
+    "Stepper updates quantity and totals; badge counts lines rather than cups",
+    "Checkbox persists selected subset; countdown uses server time rather than the fixture/client clock difference",
+    "Clearing guest cart updates empty state and hides badge",
+    "Customer login returns home; vendor destination preserved",
+    "Authenticated header shows account full name with single-line ellipsis and full-name title",
+    "Three distinct contributors, host-only finalization and group page responsive",
+    "Finalized cart has real images/prices and responsive summary at 390/1440px",
+    "Group discount is applied by checkout, order saved in isolated H2, badge clears after checkout",
+    "Personal local QR uses tokenized wallet link, optional promotions and automatic quote; unchecked cart lines preserved",
+    "UUID fallback supports LAN HTTP where crypto.randomUUID is unavailable",
+    "Personal COD checkout from cart uses same automatic bill as group: incomplete form blocks submit, saved contact fills, total auto-updates and order clears only purchased cart",
+    "Buyer sees operator delivery update automatically, confirms own delivered order, and finds it in Received orders",
+    "Split QR group creates order without member confirmation, host sees own QR share, member receives popup on another customer page and opens own QR instructions",
+    "Local wallet requires explicit simulation consent; first/second member payments cannot confirm order, all three verified shares allow confirmation",
+    "Billed member finds group order in personal orders, reads confirmed status/history, auto-updates delivery state, and has no owner action controls",
+    "Distinct group cards show code/host/time/status, host badge is next to member name, host cancel sends popup to member even on a payment page",
+    "Real H2 clock expiry sends popup to member after relogin, opens expired group and blocks further menu choices"
+  ],
+  "errors": [],
+  "fixture": "Isolated H2 only; no cloud orders or provider calls"
+}
