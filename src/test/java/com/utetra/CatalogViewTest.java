@@ -50,8 +50,7 @@ class CatalogViewTest {
         var home=client.exchange("/",HttpMethod.GET,new HttpEntity<>(headers),String.class);
         assertThat(home.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(home.getBody()).contains("catalog-homepage","Xem thực đơn","href=\"/menu\"","home-bestsellers","home-new","home-branches","drink-modal","header-search","Shop demo")
-            .contains("20 món mới nhất","20 món bán chạy","20 món đánh giá cao","20 món được yêu thích")
-            .doesNotContain("catalog-filters","catalog-group");
+            .doesNotContain("catalog-filters","catalog-group","Bốn bảng xếp hạng sản phẩm");
         for(String group:List.of("newest","sold","rating","favorites")) {
             var menu=client.exchange("/menu?top=true&sort="+group,HttpMethod.GET,new HttpEntity<>(headers),String.class);
             assertThat(menu.getStatusCode()).as(group).isEqualTo(HttpStatus.OK);
@@ -59,6 +58,22 @@ class CatalogViewTest {
         }
         var registration=client.exchange("/account/shop-registration",HttpMethod.GET,new HttpEntity<>(headers),String.class);
         assertThat(registration.getStatusCode()).isEqualTo(HttpStatus.OK); assertThat(registration.getBody()).contains("registration-form");
+    }
+    @Test void homepageUsesTheGuestContentForEveryAuthenticatedRole() {
+        String guest=homepageContent(client.getForObject("/",String.class));
+        for(String role:List.of("USER","VENDOR","MANAGER","ADMIN")) {
+            jdbc.update("update users set role_id=(select id from roles where name=?) where id=1","ROLE_"+role);
+            var headers=new HttpHeaders();headers.setBearerAuth(jwt.issue(1L,1L,"ROLE_"+role));
+            var response=client.exchange("/",HttpMethod.GET,new HttpEntity<>(headers),String.class);
+            assertThat(response.getStatusCode()).as(role).isEqualTo(HttpStatus.OK);
+            assertThat(homepageContent(response.getBody())).as(role+" homepage content").isEqualTo(guest);
+        }
+    }
+    private String homepageContent(String html) {
+        int start=html.indexOf("<div class=\"catalog-homepage\">");
+        int end=html.indexOf("<div class=\"modal fade\" id=\"drink-modal\"",start);
+        assertThat(start).isGreaterThanOrEqualTo(0);assertThat(end).isGreaterThan(start);
+        return html.substring(start,end);
     }
     @Test void realCookieCsrfRoundTripAllowsAdminCreateWithoutMockSecurity() {
         jdbc.update("update users set role_id=(select id from roles where name='ROLE_ADMIN') where id=1");
