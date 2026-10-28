@@ -22,10 +22,11 @@ public class PromotionService {
     private final StoreRepository stores;
     private final CatalogGuard guard;
     private final Clock clock;
+    private final com.utetra.identity.IdentityRepository walletDb;
     private final com.utetra.order.service.CheckoutAvailabilityEvents events;
     public PromotionService(PromotionRepository promotions,PromotionProductRepository links,ProductRepository products,
-        StoreRepository stores,CatalogGuard guard,Clock clock,com.utetra.order.service.CheckoutAvailabilityEvents events) {
-        this.promotions=promotions; this.links=links; this.products=products; this.stores=stores; this.guard=guard; this.clock=clock;this.events=events;
+        StoreRepository stores,CatalogGuard guard,Clock clock,com.utetra.order.service.CheckoutAvailabilityEvents events,com.utetra.identity.IdentityRepository walletDb) {
+        this.promotions=promotions; this.links=links; this.products=products; this.stores=stores; this.guard=guard; this.clock=clock;this.events=events;this.walletDb=walletDb;
     }
     public List<PromotionView> managed(UtetraPrincipal p,Long storeId) {
         access(p,storeId);
@@ -33,8 +34,9 @@ public class PromotionService {
     }
     public List<PromotionView> available(Long storeId) {
         require("ACTIVE".equals(found(stores.findById(storeId)).getStatus()),"Shop chưa hoạt động");
+        Set<Long> personal=walletDb.list("select promotion_id from promotion_wallet where source not like 'SAVED:%'").stream().map(row->((Number)row.get("promotion_id")).longValue()).collect(java.util.stream.Collectors.toSet());
         return promotions.findAll().stream().filter(x -> x.getStoreId()==null || storeId.equals(x.getStoreId()))
-            .filter(this::current).map(this::view).toList();
+            .filter(x->!personal.contains(x.getId())).filter(this::current).map(this::view).toList();
     }
     @Transactional public PromotionView save(UtetraPrincipal p,Long id,@Valid PromotionInput input) {
         access(p,input.storeId());
@@ -59,6 +61,7 @@ public class PromotionService {
     }
     /** Pure price calculation for checkout. Quota reservation belongs to Order's same transaction, never this preview. */
     public PromotionQuote quote(Long promotionId,Long storeId,Map<Long,BigDecimal> productAmounts,BigDecimal shipping) {
+        require(walletDb.count("select count(*) from promotion_wallet where promotion_id=? and source not like 'SAVED:%'",promotionId)==0,"Quà cá nhân chỉ áp dụng tại thanh toán của tài khoản sở hữu");
         var promo=found(promotions.findById(promotionId));
         require(current(promo),"Khuyến mãi không còn hiệu lực");
         require(promo.getStoreId()==null || promo.getStoreId().equals(storeId),"Khuyến mãi khác shop");

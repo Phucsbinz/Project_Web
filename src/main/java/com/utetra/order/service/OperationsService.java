@@ -252,11 +252,11 @@ public class OperationsService {
             .toList(),
         "promotions",
         refs.list(
-            "select id,name,kind,code from promotions where is_active=true and (scope='GLOBAL' or"
-                + " store_id=?) and starts_at<=? and ends_at>? order by id",
+            "select p.id,p.name,p.kind,p.code from promotions p where p.is_active=true and (p.scope='GLOBAL' or"
+                + " p.store_id=?) and p.starts_at<=? and p.ends_at>? and "+com.utetra.identity.OfferWalletService.VISIBLE+" order by p.id",
             cart.storeId,
             clock.instant(),
-            clock.instant()));
+              clock.instant(),actor.userId()));
   }
 
   @Transactional(readOnly = true)

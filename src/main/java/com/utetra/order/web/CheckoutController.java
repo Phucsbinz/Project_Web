@@ -15,18 +15,15 @@ public class CheckoutController {
   private final CartService carts;
   private final com.utetra.order.repository.CommerceReferenceRepository refs;
   private final OperationsService operations;
-  private final BankTransferSettings bank;
-  private final VnpaySettings vnpay;
   private final LocalQrPaymentService localQr;
   private final CheckoutAvailabilityService availability;
 
-  public CheckoutController(CheckoutService checkout, OperationsService operations, BankTransferSettings bank,
-      CheckoutAvailabilityService availability,VnpaySettings vnpay,CartService carts,com.utetra.order.repository.CommerceReferenceRepository refs,LocalQrPaymentService localQr) {
+  public CheckoutController(CheckoutService checkout, OperationsService operations,
+      CheckoutAvailabilityService availability,CartService carts,com.utetra.order.repository.CommerceReferenceRepository refs,LocalQrPaymentService localQr) {
     this.carts=carts;this.refs=refs;this.localQr=localQr;
     this.checkout = checkout;
     this.operations = operations;
-    this.bank = bank;
-    this.availability = availability;this.vnpay=vnpay;
+    this.availability = availability;
   }
 
   @GetMapping
@@ -44,8 +41,6 @@ public class CheckoutController {
     model.addAttribute("branchReady",branch!=null && branch>0 && branch.equals(((Number)cart.get("storeId")).longValue()));
     model.addAttribute("choices", operations.checkoutChoices(OrderWebSupport.actor()));
     model.addAttribute("localQrEnabled", localQr.available());
-    model.addAttribute("bankEnabled", bank.available());
-    model.addAttribute("vnpayEnabled",vnpay.available());
     model.addAttribute("availability", availability.snapshot(OrderWebSupport.actor()));
     return "order/checkout";
   }
@@ -60,6 +55,9 @@ public class CheckoutController {
   public Map<String, Object> quote(@RequestBody Checkout request) {
     return checkout.quote(OrderWebSupport.actor(), request);
   }
+
+  @PostMapping("/vouchers") @ResponseBody
+  public Object vouchers(@RequestBody Checkout request){return checkout.vouchers(OrderWebSupport.actor(),request);}
 
   @GetMapping("/availability")
   @ResponseBody

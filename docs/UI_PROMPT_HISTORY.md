@@ -153,3 +153,9 @@ Prompt: còn 1 người chưa thanh toán nhưng chủ nhóm hủy thì sao; că
 
 ## 28/10/2026 — Popup hủy nhóm và hoàn sau 30 phút
 Prompt: chủ nhóm cần cảnh báo/xác nhận mới hủy; thành viên nhận popup nhóm bị hủy, đã trả có thêm dòng hoàn sau 30 phút. Notice dựa phần thanh toán cá nhân, thời gian dự kiến; không tự xác nhận hoàn. Thực hiện và kiểm chứng tại PARTIAL_GROUP_CANCEL_20261028.md. Chưa push.
+
+
+## 28/10/2026 — Voucher popup và hóa đơn cá nhân/nhóm
+Prompt: đổi ưu đãi món/phí giao sang popup tìm voucher, khóa mã không đủ điều kiện kèm lý do đỏ; bỏ nút tự mở thanh toán ở merchant QR, hiển thị bill; thanh toán cá nhân/nhóm xong có popup và chuyển hóa đơn với thông tin đã nhập, nút đơn mua/home. Yêu cầu đã rõ, triển khai trên stack hiện có. Thiết kế, sửa và kiểm chứng VOUCHERS_INVOICES_20261028.md. Không push.
+# 28/10/2026 — Menu ưu đãi / chat nổi
+Thay menu CSKH khách bằng chat góc phải; Ưu đãi của tôi mở popup tìm mã, hai nhóm món/giao hàng và bộ lọc sở hữu. Giữ layout/theme chung; UTF-8 cho JSPF. Chỉ hiển thị COD/QR tại checkout theo chốt mới của Thanh. Chi tiết kiểm ở docs/features/identity-membership/OFFERS_CHAT_20261028.md.

@@ -48,6 +48,7 @@ class OrderCommerceIntegrationTest {
   @Autowired com.utetra.service.SessionIdentityService currentIdentity;
   @Autowired com.utetra.service.CatalogService catalog;
   @Autowired VnpayService vnpay;
+  @Autowired com.utetra.identity.OfferWalletService offers;
   @Autowired VnpaySettings vnpaySettings;
   @Autowired OrderLoyaltyBridge points;
   @Autowired JdbcTemplate jdbc;
@@ -803,7 +804,7 @@ class OrderCommerceIntegrationTest {
     var checkoutPage = http.exchange("/checkout?branch=1", HttpMethod.GET,
         new HttpEntity<>(browserHeaders(buyer)), String.class);
     assertThat(checkoutPage.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(checkoutPage.getBody()).contains("value=\"LOCAL_QR\"","value=\"BANK_TRANSFER\"");
+    assertThat(checkoutPage.getBody()).contains("value=\"LOCAL_QR\"","value=\"COD\"").doesNotContain("value=\"BANK_TRANSFER\"","value=\"VNPAY\"");
   }
 
   @Test
@@ -1355,6 +1356,14 @@ class OrderCommerceIntegrationTest {
     assertThat(currentIdentity.isCurrent(jwt.verify(next.access()),next.access())).isFalse();
   }
 
+  @Test void voucherPickerUsesRealQuoteAndExplainsIneligiblePrograms(){
+    for(int id=1;id<=3;id++)jdbc.update("insert into promotions(id,created_by,scope,kind,code,name,percent,max_discount,min_order,usage_limit,per_user_limit,starts_at,ends_at,is_active,funded_by,created_at,updated_at,version) values(?,4,'GLOBAL','PRODUCT_PERCENT',?,?,10,100000,?,10,10,?,?,?,'APP',?,?,0)",id,"VOUCHER"+id,"Voucher "+id,id==2?999999:0,time.instant().minusSeconds(60),time.instant().plusSeconds(3600),id!=3,time.instant(),time.instant());
+    jdbc.update("insert into promotions(id,created_by,scope,kind,code,name,percent,max_discount,min_order,usage_limit,per_user_limit,starts_at,ends_at,is_active,funded_by,created_at,updated_at,version) values(4,4,'GLOBAL','SHIPPING_PERCENT','SHIP4','Shipping',10,10000,0,10,10,?,?,true,'APP',?,?,0)",time.instant().minusSeconds(60),time.instant().plusSeconds(3600),time.instant(),time.instant());
+    carts.add(BUYER,item(1));var request=new Checkout(UUID.randomUUID().toString(),1,1,1,null,null,0,"","","COD");var options=checkout.vouchers(BUYER,request);
+    assertThat(options).hasSize(4);assertThat(options.get(3)).containsEntry("eligible",true);assertThat(options.get(0)).containsEntry("eligible",true);assertThat(options.get(1)).containsEntry("eligible",false);assertThat(options.get(1).get("reason").toString()).startsWith("Không đủ điều kiện áp dụng");assertThat(options.get(2)).containsEntry("eligible",false);
+    assertThat(jdbc.queryForObject("select count(*) from coupon_redemptions",Long.class)).isZero();
+  }
+
   @Test
   void lastGlobalVoucherCannotBeOversoldAcrossDifferentStores() throws Exception {
     jdbc.update("insert into promotions(id,created_by,scope,kind,code,name,percent,max_discount,min_order,usage_limit,per_user_limit,starts_at,ends_at,is_active,funded_by,created_at,updated_at,version) values(1,4,'GLOBAL','PRODUCT_PERCENT','GLOBAL_LAST','Last global slot',10,100000,0,1,1,?,?,true,'APP',?,?,0)",
@@ -1511,6 +1520,11 @@ class OrderCommerceIntegrationTest {
     assertThatThrownBy(()->workflow.refundCash(VENDOR,order,new RefundInput("not authorized",version(order)))).isInstanceOf(OrderProblem.class);
     workflow.refundCash(ADMIN,order,new RefundInput("Merchant console refund confirmation",version(order)));
     assertThat(workflow.read(BUYER,order)).containsEntry("paymentStatus","REFUNDED");
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest @org.junit.jupiter.params.provider.ValueSource(strings={"COD","LOCAL_QR"})
+  void personalRewardIsAppliedByCommonQuoteAndReservedForEveryPaymentMethod(String method){
+    offers.sync(jwt.verify(jwt.issue(1L,1L,"ROLE_USER")));long reward=jdbc.queryForObject("select promotion_id from promotion_wallet where source='TIER_SILVER'",Long.class);carts.add(BUYER,item(1));String key=UUID.randomUUID().toString();var request=new Checkout(key,1,1,1,reward,null,0,"","",method);var quote=checkout.quote(BUYER,request);assertThat(new BigDecimal(quote.get("productDiscount").toString())).isEqualByComparingTo("4000");long order=id(checkout.checkout(BUYER,new Checkout(key,1,1,1,reward,null,0,quote.get("hash").toString(),"",method)));assertThat(jdbc.queryForObject("select count(*) from coupon_redemptions where order_id=? and promotion_id=? and status='RESERVED'",Long.class,order,reward)).isEqualTo(1);
   }
 
   @Test

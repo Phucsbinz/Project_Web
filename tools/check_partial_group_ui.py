@@ -37,7 +37,7 @@ with sync_playwright() as p:
  request={'key':str(uuid.uuid4()),'addressId':1,'areaId':1,'carrierId':1,'productPromotionId':None,'shippingPromotionId':None,'points':0,'note':'','paymentMethod':'LOCAL_QR','quoteHash':''}
  quote=post(host,'/checkout/quote',request);assert quote.ok,quote.status;request['quoteHash']=quote.json()['hash'];created=post(host,'/checkout',request);assert created.ok,created.status;order=created.json()['id']
  def payment(ctx):
-  data=ctx.request.get(base+'/orders/'+str(order)+'/qr-payment/status').json();markup=ctx.request.get(base+'/orders/'+str(order)+'/qr-payment').text();link=html.unescape(re.search(r'id="open-local-wallet"[^>]+href="([^"]+)"',markup).group(1));data['token']=parse_qs(urlparse(link).fragment)['token'][0];data['url']=link;return data
+  data=ctx.request.get(base+'/orders/'+str(order)+'/qr-payment/status').json();markup=ctx.request.get(base+'/orders/'+str(order)+'/qr-payment').text();link=html.unescape(re.search(r'data-wallet-url="([^"]+)"',markup).group(1));data['token']=parse_qs(urlparse(link).fragment)['token'][0];data['url']=link;return data
  values=[payment(ctx) for ctx in [host,member,third]]
  for value in values[:2]:assert post(guest,'/local-wallet/api/'+value['id']+'/confirm',{'token':value['token'],'expectedAmount':value['amount'],'acknowledged':True}).ok
  due=sum(value['amount'] for value in values[:2]);wallet=guest.new_page();wallet.on('pageerror',lambda error:errors.append(str(error)));wallet.goto(values[2]['url'],wait_until='networkidle');wallet.locator('#wallet-acknowledged').check();assert wallet.locator('#wallet-confirm').is_enabled()

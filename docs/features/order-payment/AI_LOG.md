@@ -273,3 +273,11 @@ Kết quả thực: Maven223/0fail/0error/0skip; sharedUI một layout/21 file; 
 - NativeUI16 nhóm/27 render390-768-1440 đạt;0JS/console errors,0network failure bất thường,1logout navigation abort có200/401 và Guest isolation đối chứng. SharedUI mộtlayout/21file và diffcheck đạt.
 - Host rỗng có tracking/payment đúng nghĩa vụ; revoke đúng PASSWORD_RESET của actor cùng transaction; purchases phân trang20 ở UI và bounded API; stock locks tăngID ở checkout/release/legacy merge, giữ display order. MySQL/TiDB concurrency chưa chạy, không ghi deadlock đó đã tái hiện hoặc loại hết.
 - Codex sửa theo thứ tự, reviewer scoped độc lập chỉ đọc chưa thấy regression source/test; chưa commit/push/merge, không migration/cloud/provider thật. Không ghi secret vào hồ sơ. Không xóa hay thay nội dung nhật ký cũ.
+
+
+## 28/10/2026 — QR Cloudflare trên source mới
+Prompt: lấy source utetra mới nhất/đọc commit, khôi phục QR Internet thay local, rà lại chức năng đã làm và setup skills .agent. Cập nhật 77d27ba, sửa fallback và startup tunnel; kiểm 15 skill ở .agents. Chi tiết QR_CLOUDFLARE_RESTORE_20261028.md. Không ghi khóa/mail/password; chưa push.
+
+
+## 28/10/2026 — Voucher popup và hóa đơn cá nhân/nhóm
+Prompt: đổi ưu đãi món/phí giao sang popup tìm voucher, khóa mã không đủ điều kiện kèm lý do đỏ; bỏ nút tự mở thanh toán ở merchant QR, hiển thị bill; thanh toán cá nhân/nhóm xong có popup và chuyển hóa đơn với thông tin đã nhập, nút đơn mua/home. Yêu cầu đã rõ, triển khai trên stack hiện có. Thiết kế, sửa và kiểm chứng VOUCHERS_INVOICES_20261028.md. Không push.

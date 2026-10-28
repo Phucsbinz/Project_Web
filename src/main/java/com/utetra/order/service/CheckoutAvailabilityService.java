@@ -34,7 +34,7 @@ public class CheckoutAvailabilityService {
         v.put("stockQuantity",row.get("stock_quantity"));v.put("name",row.get("name"));v.put("size",row.get("size_name"));
         variants.add(v);
       }
-      for(var p:refs.list("select p.*, (select count(*) from coupon_redemptions c where c.promotion_id=p.id and c.status in ('RESERVED','USED')) used_count, (select count(*) from coupon_redemptions c where c.promotion_id=p.id and c.user_id=? and c.status in ('RESERVED','USED')) own_count from promotions p where p.scope='GLOBAL' or p.store_id=? order by p.id",actor.userId(),cart.storeId)) {
+      for(var p:refs.list("select p.*, (select count(*) from coupon_redemptions c where c.promotion_id=p.id and c.status in ('RESERVED','USED')) used_count, (select count(*) from coupon_redemptions c where c.promotion_id=p.id and c.user_id=? and c.status in ('RESERVED','USED')) own_count from promotions p where (p.scope='GLOBAL' or p.store_id=?) and "+com.utetra.identity.OfferWalletService.VISIBLE+" order by p.id",actor.userId(),cart.storeId,actor.userId())) {
         long remaining=Math.max(0,number(p,"usage_limit")-number(p,"used_count"));
         long own=Math.max(0,number(p,"per_user_limit")-number(p,"own_count"));
         boolean available=flag(p,"is_active") && remaining>0 && own>0

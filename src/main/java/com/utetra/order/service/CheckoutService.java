@@ -26,6 +26,7 @@ public class CheckoutService {
   private final VnpaySettings vnpay;
   private final GroupOrderService groups;
   private final LocalQrPaymentService localQr;
+  private final CheckoutPaymentPolicy paymentPolicy;
 
   public CheckoutService(
       OrderDataRepository data,
@@ -33,7 +34,7 @@ public class CheckoutService {
       OrderSupport support,
       OrderPromotionService promos,
       OrderLoyaltyBridge loyalty,
-      Clock clock, BankTransferSettings bank, OrderInventoryService inventory,VnpaySettings vnpay,GroupOrderService groups,LocalQrPaymentService localQr) {
+      Clock clock, BankTransferSettings bank, OrderInventoryService inventory,VnpaySettings vnpay,GroupOrderService groups,LocalQrPaymentService localQr,CheckoutPaymentPolicy paymentPolicy) {
     this.data = data;
     this.refs = refs;
     this.support = support;
@@ -43,9 +44,11 @@ public class CheckoutService {
     this.bank = bank;
     this.inventory = inventory;
     this.vnpay = vnpay;this.groups=groups;this.localQr=localQr;
+    this.paymentPolicy=paymentPolicy;
   }
   private String method(Checkout request) {
-    if("LOCAL_QR".equals(request.paymentMethod())){if(!localQr.available())throw OrderProblem.conflict("Ví QR local chưa bật.");return "LOCAL_QR";}
+    paymentPolicy.require(request.paymentMethod());
+    if("LOCAL_QR".equals(request.paymentMethod())){if(!localQr.available())throw OrderProblem.conflict("Thanh toán QR hiện chưa sẵn sàng. Vui lòng thử lại hoặc chọn COD.");return "LOCAL_QR";}
     if("VNPAY".equals(request.paymentMethod())) {
       if(!vnpay.available()) throw OrderProblem.conflict("VNPAY chưa được cấu hình merchant.");
       return "VNPAY";
@@ -241,6 +244,18 @@ public class CheckoutService {
         fee,
         total,
         support.hash(payload));
+  }
+
+  @Transactional(readOnly=true)
+  public List<Map<String,Object>> vouchers(Actor actor,Checkout request){
+    support.buyer(actor);refs.requireCurrent(actor,false);var cart=data.cart(actor.userId(),false);if(cart==null||cart.storeId==null)return List.of();
+    List<Map<String,Object>> result=new ArrayList<>();
+    for(var p:refs.list("select p.* from promotions p where (p.scope='GLOBAL' or p.store_id=?) and "+com.utetra.identity.OfferWalletService.VISIBLE+" order by p.id",cart.storeId,actor.userId())){
+      long id=number(p,"id");String kind=p.get("kind").toString();var row=new LinkedHashMap<String,Object>();row.put("id",id);row.put("name",p.get("name"));row.put("code",Objects.toString(p.get("code"),""));row.put("kind",kind);row.put("percent",p.get("percent"));row.put("maxDiscount",p.get("max_discount"));row.put("minOrder",p.get("min_order"));row.put("endsAt",p.get("ends_at").toString());
+      boolean eligible=false;String reason="";
+      try{var candidate=new Checkout(request.key(),request.addressId(),request.areaId(),request.carrierId(),"PRODUCT_PERCENT".equals(kind)?Long.valueOf(id):request.productPromotionId(),"SHIPPING_PERCENT".equals(kind)?Long.valueOf(id):null,request.points(),"",request.note(),request.paymentMethod());var q=quote(actor,candidate);String discountKey="PRODUCT_PERCENT".equals(kind)?"productDiscount":"shippingDiscount";if(new BigDecimal(q.get(discountKey).toString()).signum()<=0)reason="Không có món hoặc phí giao phù hợp với ưu đãi này.";else eligible=true;}catch(OrderProblem problem){reason=problem.getMessage();}
+      row.put("eligible",eligible);row.put("reason",eligible?"":"Không đủ điều kiện áp dụng. "+reason);result.add(row);
+    }return result;
   }
 
   @Transactional(readOnly = true)

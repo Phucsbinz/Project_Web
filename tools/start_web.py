@@ -13,3 +13,8 @@ with (local/'web.stdout.log').open('wb') as out,(local/'web.stderr.log').open('w
  p=subprocess.Popen([str(java),'-Xms24m','-Xmx192m','-Xss512k','-XX:+UseSerialGC','-XX:ActiveProcessorCount=2','-XX:TieredStopAtLevel=1','-XX:ReservedCodeCacheSize=24m','-XX:HeapBaseMinAddress=8g','-XX:MaxDirectMemorySize=24m','-jar',str(root/'target/utetra.war'),'--spring.profiles.active=mysql',f'--server.port={port}','--server.address=127.0.0.1','--server.tomcat.threads.max=16','--server.tomcat.threads.min-spare=2'],cwd=root,stdout=out,stderr=err,creationflags=subprocess.CREATE_NO_WINDOW)
 (local/'web-process.json').write_text(json.dumps({'pid':p.pid,'port':port,'mode':'mysql','url':f'http://localhost:{port}'}),encoding='utf-8')
 print(f'Started actual mysql WAR PID {p.pid} at http://localhost:{port}; logs: .local/web.stdout.log')
+
+if port==8080:
+ result=subprocess.run([sys.executable,str(root/'tools/qr_tunnel.py'),'ensure'],cwd=root)
+ if result.returncode:print('Server started, but QR Cloudflare is unavailable. Fix the tunnel and run qr_tunnel.py ensure; no localhost QR will be issued.')
+else:print('QR Cloudflare gateway uses port 8080. Configure a public HTTPS origin for a different server port.')

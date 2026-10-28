@@ -11,3 +11,6 @@
 - Ghi prompt và kết quả thực vào Markdown; không ghi khóa, token, password hoặc khẳng định đã kiểm thử khi chưa chạy.
 
 Chỉ commit/push các nhánh và phạm vi người dùng yêu cầu. Tài liệu use case và contract nghiệp vụ vẫn nằm trong PROJECT_PLAN.md, DATABASE_DESIGN.md, USE_CASES.md và docs/features/.
+
+## Skill của repository
+Bộ skill dùng chung nằm ở `.agents/skills/*/SKILL.md` (không phải `.agent`). Đọc skill phù hợp với tác vụ; sửa lỗi ưu tiên systematic-debugging, test-driven-development và verification-before-completion. Hướng dẫn trực tiếp của người dùng và quy ước UTETra ở trên có ưu tiên cao hơn workflow chung trong skill. Không tự ghi đè cấu hình Codex cá nhân hay cài plugin bên ngoài. Kiểm cấu trúc bằng `python tools/check_agent_skills.py`.

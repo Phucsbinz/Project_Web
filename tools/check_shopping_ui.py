@@ -20,15 +20,13 @@ with sync_playwright() as p:
  def page(ctx):
   value=ctx.new_page();value.on('pageerror',lambda e:errors.append(str(e)));return value
  def pay_local(merchant):
-  link=merchant.locator('#open-local-wallet');merchant.wait_for_function("!document.querySelector('#open-local-wallet').hidden")
-  assert link.get_attribute('href').startswith(base+'/local-wallet/pay/')
+  link=merchant.locator('.local-qr-page').get_attribute('data-wallet-url');assert link.startswith(base+'/local-wallet/pay/')
   from urllib.parse import urlparse,parse_qs
-  address=urlparse(link.get_attribute('href'));public_id=address.path.rsplit('/',1)[1];capability=parse_qs(address.fragment)['token'][0]
+  address=urlparse(link);public_id=address.path.rsplit('/',1)[1];capability=parse_qs(address.fragment)['token'][0]
   assert post(guest,'/local-wallet/api/'+public_id+'/status',{'token':capability}).ok
   assert guest.request.post(base+'/local-wallet/api/'+public_id+'/confirm',data={'token':capability,'expectedAmount':1,'acknowledged':True}).status==403
-  with merchant.expect_popup() as event:link.click()
-  wallet_page=event.value;wallet_page.wait_for_selector('#wallet-amount');wallet_page.wait_for_function("document.querySelector('#wallet-amount').textContent.length>0");assert wallet_page.locator('#wallet-confirm').is_disabled();wallet_page.locator('#wallet-acknowledged').check();wallet_page.locator('#wallet-confirm').click();wallet_page.wait_for_function("document.querySelector('#wallet-state').textContent.includes('đã thanh toán')||document.querySelector('#wallet-state').textContent.includes('hoàn tất')")
-  wallet_page.close();merchant.bring_to_front()
+  wallet_page=merchant.context.new_page();wallet_page.goto(link,wait_until='networkidle');wallet_page.wait_for_selector('#wallet-amount');wallet_page.wait_for_function("document.querySelector('#wallet-amount').textContent.length>0");assert wallet_page.locator('#wallet-confirm').is_disabled();wallet_page.locator('#wallet-acknowledged').check();wallet_page.locator('#wallet-confirm').click();wallet_page.wait_for_function("document.querySelector('#wallet-state').textContent.includes('đã thanh toán')||document.querySelector('#wallet-state').textContent.includes('hoàn tất')")
+  wallet_page.close();merchant.bring_to_front();merchant.wait_for_url('**/invoice*');merchant.wait_for_selector('.modal.show');merchant.locator('.modal.show [data-confirm-accept]').click();merchant.wait_for_selector('.modal.show',state='hidden')
  guest=browser.new_context();gp=page(guest);gp.goto(base+'/menu',wait_until='networkidle')
  gp.locator('.product-card .card-footer a').first.click();gp.wait_for_selector('#drink-modal.show')
  frame=gp.frame_locator('#drink-modal-frame');frame.get_by_role('button',name='Thêm vào giỏ hàng',exact=True).click()
@@ -96,7 +94,7 @@ with sync_playwright() as p:
  if mp.locator('.modal.show #utetra-confirm-title').count():mp.locator('.modal.show [data-bs-dismiss=modal]').last.click()
  address_form=mp.locator('#checkout-form');address_form.locator('[name=recipientName]').fill('Nguyễn Minh Anh');address_form.locator('[name=phone]').fill('0901234567');address_form.locator('[name=addressDetail]').fill('12 Nguyễn Văn Bảo, Gò Vấp, TP.HCM')
  mp.locator('[data-choice=areaId]').fill('Khu vực không tồn tại');assert not mp.locator('[data-choice=areaId]').evaluate('e=>e.checkValidity()')
- mp.locator('[data-choice=areaId]').fill('Area A');mp.locator('[data-choice=carrierId]').fill('Carrier');mp.locator('#checkout-form [name=points]').fill('0');mp.locator('#checkout-form [name=note]').fill('Gọi trước khi giao');mp.locator('[data-choice=productPromotionId]').fill('Không dùng');mp.locator('[data-choice=shippingPromotionId]').fill('Không dùng');mp.locator('[name=paymentMethod][value=LOCAL_QR]').check();assert mp.locator('[name=paymentMethod]:checked').input_value()=='LOCAL_QR'
+ mp.locator('[data-choice=areaId]').fill('Area A');mp.locator('[data-choice=carrierId]').fill('Carrier');mp.locator('#checkout-form [name=points]').fill('0');mp.locator('#checkout-form [name=note]').fill('Gọi trước khi giao');assert mp.locator('[data-voucher-for]').count()==2;mp.locator('[name=paymentMethod][value=LOCAL_QR]').check();assert mp.locator('[name=paymentMethod]:checked').input_value()=='LOCAL_QR'
  try:mp.wait_for_selector('#quote-detail[data-state=ready]',timeout=10000)
  except Exception:
   print('CHECKOUT_DIAGNOSTIC',json.dumps({'message':mp.locator('#order-message').text_content(),'form':mp.locator('#checkout-form').evaluate("f=>({values:Object.fromEntries(new FormData(f)),invalid:[...f.elements].filter(e=>e.validity&&!e.validity.valid).map(e=>({name:e.name,message:e.validationMessage}))})"),'errors':errors},ensure_ascii=True))
@@ -111,7 +109,7 @@ with sync_playwright() as p:
  except Exception:
   print('AUTOQUOTE_DIAGNOSTIC',json.dumps({'errors':errors,'panel':mp.locator('#quote-detail').inner_text(),'form':mp.locator('#checkout-form').evaluate('f=>({values:Object.fromEntries(new FormData(f)),invalid:[...f.elements].filter(e=>!e.validity.valid).map(e=>e.name)})')},ensure_ascii=True));raise
  left=member.request.get(base+'/cart/data').json()['items'];assert len(left)==1 and left[0]['note']=='Keep later' and not left[0]['selected']
- mp.wait_for_selector('.local-qr-image svg');assert mp.locator('#local-qr-expiry').inner_text()!='';mp.set_viewport_size({'width':1440,'height':1000});mp.screenshot(path=str(out/'qr-payment-1440.png'),full_page=True);mp.set_viewport_size({'width':390,'height':844});mp.screenshot(path=str(out/'qr-payment-390.png'),full_page=True);assert mp.evaluate('document.documentElement.scrollWidth<=innerWidth');mp.set_viewport_size({'width':1440,'height':1000});pay_local(mp);mp.wait_for_function("document.querySelector('#local-qr-state').textContent.includes('hoàn tất')");checks.append('Personal local QR uses tokenized wallet link, optional promotions and automatic quote; unchecked cart lines preserved')
+ mp.wait_for_selector('.local-qr-image svg');assert mp.locator('#local-qr-expiry').inner_text()!='';mp.set_viewport_size({'width':1440,'height':1000});mp.screenshot(path=str(out/'qr-payment-1440.png'),full_page=True);mp.set_viewport_size({'width':390,'height':844});mp.screenshot(path=str(out/'qr-payment-390.png'),full_page=True);assert mp.evaluate('document.documentElement.scrollWidth<=innerWidth');mp.set_viewport_size({'width':1440,'height':1000});pay_local(mp);mp.wait_for_url('**/invoice*');checks.append('Personal local QR uses tokenized wallet link, optional promotions and automatic quote; unchecked cart lines preserved')
  mp.evaluate("Object.defineProperty(window.crypto,'randomUUID',{value:undefined,configurable:true})");assert mp.evaluate("/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(utetra.uuid())")
  checks.append('UUID fallback supports LAN HTTP where crypto.randomUUID is unavailable')
  # Personal COD flow starts from the actual cart link and uses the same automatic bill panel.
@@ -119,9 +117,9 @@ with sync_playwright() as p:
  mp.locator('[data-choice=branch]').fill('Shop 1 — Address');mp.locator('#branch-form > button').click();mp.wait_for_url('**/checkout?branch=1');mp.wait_for_load_state('networkidle')
  assert mp.locator('#quote-detail').is_visible();assert mp.locator('#quote').count()==0;assert mp.locator('#confirm-order').is_disabled();assert mp.locator('[name=paymentMethod][value=COD]').is_checked()
  mp.locator('[name=addressDetail]').click();mp.locator('#address-suggestions button').first.click();mp.locator('[data-choice=areaId]').fill('Area A');mp.locator('[data-choice=carrierId]').fill('Carrier');mp.wait_for_selector('#quote-detail[data-state=ready]')
- assert '50.000' in mp.locator('[data-bill=total]').inner_text();assert mp.locator('[data-choice=productPromotionId]').is_visible();mp.locator('#confirm-order').click();mp.wait_for_url('**/orders/*');assert member.request.get(base+'/cart/data').json()['items']==[]
+ assert '50.000' in mp.locator('[data-bill=total]').inner_text();assert mp.locator('[data-voucher-for=productPromotionId]').is_visible();mp.locator('#confirm-order').click();mp.wait_for_url('**/invoice*');assert member.request.get(base+'/cart/data').json()['items']==[]
  checks.append('Personal COD checkout from cart uses same automatic bill as group: incomplete form blocks submit, saved contact fills, total auto-updates and order clears only purchased cart')
- receipt_id=int(mp.url.rsplit('/',1)[1])
+ mp.wait_for_selector('.modal.show');assert 'để ý điện thoại' in mp.locator('.modal.show .modal-body').inner_text();mp.locator('.modal.show [data-confirm-accept]').click();receipt_id=int(mp.url.split('/orders/')[1].split('/')[0]);mp.goto(base+'/orders/'+str(receipt_id),wait_until='networkidle')
  assert post(member,'/orders/'+str(receipt_id)+'/received',{}).status==409
  for status in ['CONFIRMED','PICKED_UP','DELIVERING','DELIVERED']:
   state=vendor.request.get(base+'/vendor/orders/'+str(receipt_id)+'/data').json()
@@ -168,8 +166,8 @@ with sync_playwright() as p:
  assert try_confirm().status==409
  pay_local(hp);assert try_confirm().status==409;pay_local(mp);assert try_confirm().status==409
  vp=page(vendor);vp.goto(base+'/orders/'+str(order_id)+'/qr-payment',wait_until='networkidle');vp.wait_for_selector('.local-qr-image svg');pay_local(vp)
- hp.bring_to_front();hp.wait_for_url("**/group-orders/*");hp.wait_for_function("document.querySelector('.group-page')?.dataset.paidCount==='3'")
- assert group_order_state()['paymentStatus']=='PAID';assert try_confirm().ok
+ hp.bring_to_front();hp.wait_for_url("**/invoice*");hp.wait_for_function("document.querySelector('#invoice-progress')?.textContent.includes('3/3')")
+ assert hp.locator('.invoice-actions a[href="/orders"]').count()==1;assert group_order_state()['paymentStatus']=='PAID';assert try_confirm().ok
  checks.append('Local wallet requires explicit simulation consent; first/second member payments cannot confirm order, all three verified shares allow confirmation')
  mp.goto(base+'/orders',wait_until='networkidle');mp.locator('tbody a[href="/orders/'+str(order_id)+'"]').click();mp.wait_for_url('**/orders/'+str(order_id));assert mp.locator('.status-pill[data-status=CONFIRMED]').count()>0
  assert mp.locator('#cancel,#confirm-received,#request-return').count()==0

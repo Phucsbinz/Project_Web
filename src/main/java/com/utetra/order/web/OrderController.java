@@ -78,6 +78,9 @@ public class OrderController {
     return "order/detail";
   }
 
+  @GetMapping("/{id}/invoice")
+  public String invoice(@PathVariable long id,HttpServletRequest request,Model model){model.addAttribute("order",orders.read(OrderWebSupport.actor(),id));model.addAttribute("viewerId",OrderWebSupport.actor().userId());return "order/invoice";}
+
   @PostMapping("/{id}/received") @ResponseBody
   public Map<String,Object> received(@PathVariable long id){return orders.confirmReceived(OrderWebSupport.actor(),id);}
 

@@ -1,5 +1,8 @@
 # UTETra — Một layout dùng chung cho toàn bộ nhóm
 
+## Ví ưu đãi và chat nổi — 28/10/2026
+`app.jsp` thêm nút Ưu đãi của tôi trong menu buyer, bỏ link CSKH customer ở menu/footer và nạp widget nổi góc phải cho khách (Admin giữ hộp thư workspace). `NavigationAdvice` cung cấp currentUserId; app.jsp vẫn decorator duy nhất. CSS/JS chức năng nằm ở account-offers/support-widget, fragment support/widget.jspf phải có UTF-8. Khi ghép bundle chung phải ghép cùng module/migration ví voucher và module Support hiện có; không chỉ chép menu. Cache theme/site-ui tăng phiên bản offers-chat. Chi tiết tại docs/features/identity-membership/OFFERS_CHAT_20261028.md.
+
 ## Đồng bộ catalog-sales — 28/10/2026
 
 Bundle được ghép từ `origin/integration/utetra@57c6b88` sang nhánh catalog độc lập. `NavigationAdvice`, `app.jsp`, `site-ui.js` bổ sung capability commerce dựa trên bean thật để không gọi giỏ/nhóm khi chưa có module Order. Các điều chỉnh vẫn tập trung trong manifest, cần đồng bộ cùng nhau khi tích hợp main/feature. Catalog giữ API quote thật và một layout; không thêm backend giả. Chi tiết phạm vi và kết quả thực tại [SYNC_UTETRA_20261028.md](features/catalog-sales/SYNC_UTETRA_20261028.md).
@@ -167,3 +170,7 @@ utetra.css dùng pseudo chevron và flex-center cho choice-toggle/workspace menu
 
 ## Popup hủy nhóm — 28/10/2026
 site-ui.js dùng notice cá nhân để thêm dòng dự kiến hoàn sau 30 phút đúng người đã trả; dialog hỗ trợ xuống dòng và nhãn nút, vẫn textContent/Bootstrap. app.jsp tăng cache. Nội dung cảnh báo hủy trong module order; không layout/framework mới.
+
+
+## Voucher và invoice — 28/10/2026
+app.jsp tăng cache; site-ui.js không chen nhắc thanh toán vào invoice đang xem. Voucher/invoice là module order với CSS riêng scoped, dùng Bootstrap/modal/layout chung. Không thêm decorator/framework/provider mới. Xem VOUCHERS_INVOICES_20261028.md.

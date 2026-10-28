@@ -1,7 +1,7 @@
 /* Searchable choices keep server IDs and expose a visible, keyboard-accessible menu. */
 'use strict';
 document.addEventListener('DOMContentLoaded',()=>{
- document.querySelectorAll('.checkout-page select').forEach(select=>{
+ document.querySelectorAll('.checkout-page select:not([data-voucher-kind])').forEach(select=>{
   const required=select.required,label=select.getAttribute('aria-label')||select.closest('label')?.childNodes[0].textContent.trim()||'Lựa chọn';
   const wrap=document.createElement('div'),input=document.createElement('input'),toggle=document.createElement('button'),menu=document.createElement('div');
   wrap.className='choice-control';input.className='form-control';input.type='text';input.required=required;input.autocomplete='off';input.dataset.choice=select.name;input.setAttribute('aria-label',label);input.setAttribute('role','combobox');input.setAttribute('aria-autocomplete','list');input.setAttribute('aria-expanded','false');

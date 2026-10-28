@@ -1240,3 +1240,13 @@ Kết quả thực: Maven223/0fail/0error/0skip; sharedUI một layout/21 file; 
 - TestscriptH2 và rollback/recovery/whitelist/idempotency đạt; Maven257/0failure/0error/0skip đạt.9nhómHTTPmenu/detail/search/filter/paging/placeholder đạt; quote2lần timeout runtime thiếuThrowableProxy, chưa kiểm chứng quote/browser và chưa sửa/restart app. FK/unique/stock data checks0vi phạm.
 - DBdùngchung có thayđổi bảngB ngoàimanifest trong khoảngchụp, ghi riêng không nhận làseed và không xóa. Có0DBtrigger; utilitykhôngkhởiđộngSpring/callprovider hay ghi bảngB/C.
 - Không đổiappsource/schema/datasource/provider/JWT; khôngmigration, Gitcommit/push/merge. Reviewer catalog_seed_safety_review chỉđọc, gópý ledger/preflight đãsửatrướcapply; khôngcònblocker. Cần nhómchốt tồn/mởbán, đồngbộ schemaV2026102802/runtime và kiểmbrowser. Khôngghi credentials/token/password/dữliệucánhân trong hồsơ.
+
+
+## 28/10/2026 — QR Cloudflare trên source mới
+Prompt: lấy source utetra mới nhất/đọc commit, khôi phục QR Internet thay local, rà lại chức năng đã làm và setup skills .agent. Cập nhật 77d27ba, sửa fallback và startup tunnel; kiểm 15 skill ở .agents. Chi tiết QR_CLOUDFLARE_RESTORE_20261028.md. Không ghi khóa/mail/password; chưa push.
+
+
+## 28/10/2026 — Voucher popup và hóa đơn cá nhân/nhóm
+Prompt: đổi ưu đãi món/phí giao sang popup tìm voucher, khóa mã không đủ điều kiện kèm lý do đỏ; bỏ nút tự mở thanh toán ở merchant QR, hiển thị bill; thanh toán cá nhân/nhóm xong có popup và chuyển hóa đơn với thông tin đã nhập, nút đơn mua/home. Yêu cầu đã rõ, triển khai trên stack hiện có. Thiết kế, sửa và kiểm chứng VOUCHERS_INVOICES_20261028.md. Không push.
+# 28/10/2026 — Ví ưu đãi và chat nổi
+Thanh yêu cầu ưu đãi sở hữu/quà theo mốc trong menu tài khoản và chat nổi khách–admin qua cookie riêng; duyệt mốc Bạc 100/Vàng 500 điểm, mỗi 5 đơn, hạn 30 ngày một lượt. Áp dụng tất cả checkout, chốt chỉ COD/QR Cloudflare. Thực hiện và kết quả thực ghi tại docs/features/identity-membership/OFFERS_CHAT_20261028.md; chưa push.

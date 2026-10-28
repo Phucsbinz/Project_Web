@@ -36,6 +36,8 @@ public class OrderPromotionService {
       boolean lock) {
     if (id == null) return BigDecimal.ZERO;
     var p = refs.one("select * from promotions where id=?" + (lock ? " for update" : ""), id);
+    if (!refs.list("select id from promotion_wallet where promotion_id=? and source not like 'SAVED:%' and user_id<>?",id,user).isEmpty())
+      throw OrderProblem.conflict("Ưu đãi này thuộc tài khoản khác.");
     Instant now = clock.instant();
     if (!CommerceReferenceRepository.flag(p, "is_active")
         || !kind.equals(p.get("kind"))

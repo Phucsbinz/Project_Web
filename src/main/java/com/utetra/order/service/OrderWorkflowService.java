@@ -23,6 +23,7 @@ public class OrderWorkflowService {
   private final Duration returnWindow;
   private final boolean shipperEnabled;
   private final OrderInventoryService inventory;
+  private final org.springframework.context.ApplicationEventPublisher rewardEvents;
 
   public OrderWorkflowService(
       OrderDataRepository data,
@@ -32,7 +33,7 @@ public class OrderWorkflowService {
       OrderPromotionService promos,
       Clock clock,
       @Value("${order.return-window:3h}") Duration returnWindow,
-      @Value("${features.shipper.enabled:false}") boolean shipperEnabled, OrderInventoryService inventory) {
+      @Value("${features.shipper.enabled:false}") boolean shipperEnabled, OrderInventoryService inventory,org.springframework.context.ApplicationEventPublisher rewardEvents) {
     this.data = data;
     this.refs = refs;
     this.support = support;
@@ -42,6 +43,7 @@ public class OrderWorkflowService {
     this.returnWindow = returnWindow;
     this.shipperEnabled = shipperEnabled;
     this.inventory = inventory;
+    this.rewardEvents=rewardEvents;
   }
 
   public void shipper(Actor actor) {
@@ -95,6 +97,7 @@ public class OrderWorkflowService {
     }).toList());
     result.put("canShip",actor.is("SHIPPER") && assigned(actor,id)
         && Set.of("CONFIRMED","PICKED_UP","DELIVERING").contains(o.status));
+    if("LOCAL_QR".equals(o.paymentMethod)){var ledger=data.query(LocalQrPayment.class,"where e.orderId=:order",Map.of("order",id),false,100);result.put("paidCount",ledger.stream().filter(p->"SUCCESS".equals(p.status)).count());result.put("payerCount",ledger.size());var mine=ledger.stream().filter(p->p.userId==actor.userId()).findFirst();result.put("myShare",mine.map(p->p.amount).orElse(BigDecimal.ZERO));result.put("myPaymentStatus",mine.map(p->p.status).orElse("HOST"));}
     result.put("owner",o.userId==actor.userId());result.put("groupOrder",o.groupOrderId!=null);
     result.put("qrPayer","LOCAL_QR".equals(o.paymentMethod)&&!data.query(LocalQrPayment.class,"where e.orderId=:order and e.userId=:user",Map.of("order",o.id,"user",actor.userId()),false,1).isEmpty());
     if(o.groupOrderId!=null)result.put("groupToken",refs.one("select invite_token from group_orders where id=?",o.groupOrderId).get("invite_token"));
@@ -104,7 +107,8 @@ public class OrderWorkflowService {
       result.put("pickupAddress",pickup.get("address"));
       result.put("pickupPhone",pickup.get("phone"));
     }
-    result.put("recipientName", o.recipientName);
+    result.put("appliedVouchers",data.query(CouponRedemption.class,"where e.orderId=:order order by e.id",Map.of("order",id),false,10).stream().map(r->Map.of("name",Objects.toString(r.promotionNameSnapshot,"Ưu đãi"),"discount",r.discountSnapshot)).toList());
+    result.put("deliveryAreaName",o.deliveryAreaName);result.put("pointsUsed",o.pointsUsed);result.put("recipientName", o.recipientName);
     result.put("recipientPhone", o.recipientPhone);
     result.put("deliveryAddress", o.deliveryAddress);
     result.put("carrierName", o.carrierName);
@@ -348,6 +352,7 @@ public class OrderWorkflowService {
     }
     support.audit(actor, "ORDER_TRANSITION", id);
     support.event(o, actor, from, "TRANSITION", request.reason());
+    if("DELIVERED".equals(o.status))rewardEvents.publishEvent(new com.utetra.identity.OfferDeliveryReward(o.id));
     return support.view(o);
   }
 

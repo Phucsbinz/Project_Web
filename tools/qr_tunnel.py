@@ -71,9 +71,47 @@ def run():
             PUBLIC.unlink(missing_ok=True)
             if process.poll() is None: process.terminate();process.wait(timeout=10)
             server.shutdown();server.server_close();STATE.unlink(missing_ok=True);STOP.unlink(missing_ok=True)
+def install():
+    import urllib.request, hashlib
+    binary=ROOT/'.tools/cloudflared/cloudflared.exe'
+    if binary.exists(): return
+    request=urllib.request.Request('https://api.github.com/repos/cloudflare/cloudflared/releases/latest',headers={'User-Agent':'UTETra-setup'})
+    with urllib.request.urlopen(request,timeout=30) as response: release=json.load(response)
+    asset=next(a for a in release['assets'] if a['name']=='cloudflared-windows-amd64.exe')
+    digest=asset.get('digest','')
+    if not digest.startswith('sha256:'): raise RuntimeError('Official release has no SHA256; installation stopped.')
+    with urllib.request.urlopen(asset['browser_download_url'],timeout=60) as response: payload=response.read()
+    if hashlib.sha256(payload).hexdigest()!=digest.split(':',1)[1]: raise RuntimeError('cloudflared checksum mismatch.')
+    binary.parent.mkdir(parents=True,exist_ok=True);binary.write_bytes(payload)
+    print('Installed official cloudflared; SHA256 verified.')
+def ensure():
+    import urllib.request
+    if STATE.exists():
+        try:
+            state=json.loads(STATE.read_text(encoding='utf-8'))
+            with urllib.request.urlopen('http://127.0.0.1:8086/local-wallet/health',timeout=3) as response:
+                if state.get('url') and json.load(response).get('scope')=='qr-only':
+                    print('QR Cloudflare gateway already running.');return
+        except (OSError,ValueError): pass
+        STOP.touch()
+        for _ in range(10):
+            if not STATE.exists():break
+            time.sleep(1)
+        if STATE.exists():
+            # Stale metadata is not proof that the port is safe to replace.
+            import socket
+            with socket.socket() as probe:
+                if probe.connect_ex(('127.0.0.1',8086))==0:raise RuntimeError('Gateway occupied; inspect qr_tunnel status before restarting.')
+            STATE.unlink();PUBLIC.unlink(missing_ok=True)
+    install()
+    with (LOCAL/'qr-gateway.log').open('w') as log:
+        subprocess.Popen([sys.executable,str(Path(__file__).resolve()),'_run'],cwd=ROOT,stdout=log,stderr=log,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
+    print('Starting QR-only Cloudflare. Readiness is reported by qr_tunnel status.')
 def main():
     action=sys.argv[1] if len(sys.argv)>1 else 'status'
     if action=='_run': run();return
+    if action=='ensure': LOCAL.mkdir(exist_ok=True);ensure();return
+    if action=='install': install();return
     if action=='stop': STOP.touch();print('Requested QR tunnel shutdown.');return
     if action=='status': print(STATE.read_text(encoding='utf-8') if STATE.exists() else 'QR tunnel is stopped.');return
     if action!='start': raise SystemExit('Use start, status, or stop.')

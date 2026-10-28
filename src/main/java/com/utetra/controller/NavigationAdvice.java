@@ -20,4 +20,5 @@ public class NavigationAdvice {
  @ModelAttribute("currentRole") public String role(@AuthenticationPrincipal UtetraPrincipal principal) {
   return principal==null?"GUEST":principal.role();
  }
+ @ModelAttribute("currentUserId") public Long userId(@AuthenticationPrincipal UtetraPrincipal principal){return principal==null?null:principal.userId();}
 }

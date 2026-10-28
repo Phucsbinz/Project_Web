@@ -20,6 +20,8 @@ public class AllUiServer {
   test.jdbc.update("update store_memberships set member_role='CATALOG_ADMIN' where user_id=3");
   test.jdbc.update("update product_variants set stock_quantity=50 where id=1");
   test.jdbc.update("insert into promotions(id,store_id,created_by,scope,kind,code,name,percent,max_discount,min_order,usage_limit,per_user_limit,starts_at,ends_at,is_active,funded_by,created_at,updated_at,version) values(1,1,2,'SHOP','PRODUCT_PERCENT','REALTIME_LAST','Last voucher - H2 fixture',10,100000,0,1,1,?,?,true,'SHOP',?,?,0)",test.time.instant().minusSeconds(60),test.time.instant().plusSeconds(3600),test.time.instant(),test.time.instant());
+  if("1".equals(System.getenv("UTETRA_VOUCHER_UI")))for(int id=90;id<=92;id++)test.jdbc.update("insert into promotions(id,created_by,scope,kind,code,name,percent,max_discount,min_order,usage_limit,per_user_limit,starts_at,ends_at,is_active,funded_by,created_at,updated_at,version) values(?,4,'GLOBAL',?,?,?,10,15000,?,100,100,?,?,?,'APP',?,?,0)",id,id==92?"SHIPPING_PERCENT":"PRODUCT_PERCENT","CODE"+id,id==90?"Đơn từ 500k":id==91?"Ưu đãi tạm ngừng":"Giảm phí giao 10%",id==90?500000:0,test.time.instant().minusSeconds(60),test.time.instant().plusSeconds(3600),id!=91,test.time.instant(),test.time.instant());
+
   long id=test.id(test.createBank());
   test.carts.add(OrderCommerceIntegrationTest.BUYER,test.item(1));
   Files.writeString(Path.of(".local/all-ui-server.json"),"{\"pid\":"+ProcessHandle.current().pid()+",\"orderId\":"+id+",\"port\":8882}");
