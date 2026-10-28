@@ -102,7 +102,7 @@ public class CatalogService {
     }
     @Transactional public ProductView saveProduct(UtetraPrincipal p,Long id,@Valid ProductInput input) {
         guard.store(p,input.storeId()); var product=id==null?new Product():found(products.findById(id));
-        if(id!=null) { guard.store(p,product.getStoreId()); require(product.getStoreId().equals(input.storeId()),"Không được chuyển món sang shop khác"); version(product.getVersion(),input.version()); }
+        if(id!=null) { guard.store(p,product.getStoreId()); require(product.getStoreId().equals(input.storeId()),"Không được chuyển món sang shop khác"); expectedVersion(product.getVersion(),input.version()); }
         require(found(categories.findById(input.categoryId())).getActive(),"Danh mục đã ngừng hoạt động");
         require(input.variants().stream().map(VariantInput::sizeName).distinct().count()==input.variants().size(),"Size bị trùng");
         require(input.variants().stream().anyMatch(VariantInput::active),"Cần ít nhất một size hoạt động");

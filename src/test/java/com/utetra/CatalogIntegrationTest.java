@@ -90,6 +90,38 @@ class CatalogIntegrationTest {
             .contentType("application/json").content(mapper.writeValueAsString(body)))
             .andExpect(status().is(expectedStatus));
     }
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans={false,true})
+    void productUpdateRequiresExplicitVersionAtZero(boolean explicitNull) throws Exception {
+        var p=product();assertThat(p.version()).isZero();
+        Map<String,Object> body=mapper.convertValue(productInput(storeId,p.slug(),0),Map.class);
+        body.put("name","Must not be saved");
+        if(explicitNull)body.put("version",null);else body.remove("version");
+        auditPut("/api/admin/catalog/products/"+p.id(),body,409);
+        em.flush();em.clear();
+        var unchanged=catalog.detail(p.id());
+        assertThat(unchanged.name()).isEqualTo(p.name());
+        assertThat(unchanged.version()).isZero();
+        assertThat(unchanged.basePrice()).isEqualByComparingTo(p.basePrice());
+        assertThat(unchanged.variants()).usingRecursiveComparison()
+            .withComparatorForType(BigDecimal::compareTo,BigDecimal.class).isEqualTo(p.variants());
+        assertThat(unchanged.toppingIds()).isEqualTo(p.toppingIds());
+    }
+    @Test void productCreateWithoutVersionAndUpdateWithZeroKeepOptimisticLocking() throws Exception {
+        Map<String,Object> body=mapper.convertValue(productInput(storeId,"api-create",0),Map.class);
+        body.remove("version");
+        var auth=auditAdminAuth();
+        var response=mvc.perform(post("/api/admin/catalog/products").with(authentication(auth)).with(csrf())
+            .contentType("application/json").content(mapper.writeValueAsString(body)))
+            .andExpect(status().isOk()).andReturn();
+        var created=mapper.readTree(response.getResponse().getContentAsString());
+        long id=created.get("id").asLong();assertThat(created.get("version").asLong()).isZero();
+        body.put("version",0);body.put("name","Accepted zero version");
+        auditPut("/api/admin/catalog/products/"+id,body,200);
+        body.put("name","Stale overwrite");
+        auditPut("/api/admin/catalog/products/"+id,body,409);
+        assertThat(catalog.detail(id).name()).isEqualTo("Accepted zero version");
+    }
     @Test void staleToppingFormCannotReenableDisabledTopping() throws Exception {
         String path="/api/admin/catalog/toppings/"+toppingId;
         auditPut(path,Map.of("name","Trân châu","price",5000,"active",false,"version",0),200);
@@ -203,6 +235,27 @@ class CatalogIntegrationTest {
     }
     @Test void cannotTransferProductOrModifyAnotherShop() {
         var p=product(); assertThatThrownBy(() -> catalog.saveProduct(other,p.id(),productInput(storeId,p.slug(),p.version()))).isInstanceOf(ResponseStatusException.class);
+    }
+    @Test void drinkQuoteApiUsesServerPricesAndRejectsInvalidSelections() throws Exception {
+        var p=catalog.saveProduct(admin,null,new ProductInput(storeId,categoryId,"Trà sữa","quote-api","",money(30000),
+            true,true,false,List.of(new VariantInput("M",money(5000),true),new VariantInput("L",money(12000),true)),Set.of(toppingId),0));
+        long m=p.variants().stream().filter(v->v.sizeName().equals("M")).findFirst().orElseThrow().id();
+        long l=p.variants().stream().filter(v->v.sizeName().equals("L")).findFirst().orElseThrow().id();
+        var body=new HashMap<String,Object>(Map.of("variantId",m,"quantity",2,"sugarLevel",50,"iceLevel",50,"toppingIds",List.of(toppingId),"total",1));
+        String path="/products/"+p.id()+"/quote";
+        mvc.perform(post(path).with(csrf()).contentType("application/json").content(mapper.writeValueAsString(body)))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.total").value(80000));
+        body.put("variantId",l);body.put("quantity",1);body.put("toppingIds",List.of());
+        mvc.perform(post(path).with(csrf()).contentType("application/json").content(mapper.writeValueAsString(body)))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.total").value(42000));
+        for(var invalid:List.of(Map.of("quantity",0),Map.of("sugarLevel",99),Map.of("toppingIds",List.of(-1)))) {
+            var bad=new HashMap<>(body);bad.putAll(invalid);
+            mvc.perform(post(path).with(csrf()).contentType("application/json").content(mapper.writeValueAsString(bad)))
+                .andExpect(status().isBadRequest());
+        }
+        body.put("variantId",Long.MAX_VALUE);
+        mvc.perform(post(path).with(csrf()).contentType("application/json").content(mapper.writeValueAsString(body)))
+            .andExpect(status().isNotFound());
     }
     @Test void quoteCalculatesEveryToppingPerCupAndRejectsInvalidOptions() {
         var p=product(); Long variant=p.variants().getFirst().id();
