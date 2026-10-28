@@ -109,18 +109,28 @@ with sync_playwright() as p:
  except Exception:
   print('AUTOQUOTE_DIAGNOSTIC',json.dumps({'errors':errors,'panel':mp.locator('#quote-detail').inner_text(),'form':mp.locator('#checkout-form').evaluate('f=>({values:Object.fromEntries(new FormData(f)),invalid:[...f.elements].filter(e=>!e.validity.valid).map(e=>e.name)})')},ensure_ascii=True));raise
  left=member.request.get(base+'/cart/data').json()['items'];assert len(left)==1 and left[0]['note']=='Keep later' and not left[0]['selected']
- mp.wait_for_selector('.local-qr-image svg');pay_local(mp);mp.wait_for_function("document.querySelector('#local-qr-state').textContent.includes('hoàn tất')");checks.append('Personal local QR uses tokenized wallet link, optional promotions and automatic quote; unchecked cart lines preserved')
+ mp.wait_for_selector('.local-qr-image svg');assert mp.locator('#local-qr-expiry').inner_text()!='';mp.set_viewport_size({'width':1440,'height':1000});mp.screenshot(path=str(out/'qr-payment-1440.png'),full_page=True);mp.set_viewport_size({'width':390,'height':844});mp.screenshot(path=str(out/'qr-payment-390.png'),full_page=True);assert mp.evaluate('document.documentElement.scrollWidth<=innerWidth');mp.set_viewport_size({'width':1440,'height':1000});pay_local(mp);mp.wait_for_function("document.querySelector('#local-qr-state').textContent.includes('hoàn tất')");checks.append('Personal local QR uses tokenized wallet link, optional promotions and automatic quote; unchecked cart lines preserved')
  mp.evaluate("Object.defineProperty(window.crypto,'randomUUID',{value:undefined,configurable:true})");assert mp.evaluate("/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(utetra.uuid())")
  checks.append('UUID fallback supports LAN HTTP where crypto.randomUUID is unavailable')
  # Personal COD flow starts from the actual cart link and uses the same automatic bill panel.
  mp.goto(base+'/cart',wait_until='networkidle');mp.locator('.cart-item-select').first.check();mp.wait_for_function("!document.querySelector('.cart-item-select').disabled");mp.locator('#cart-checkout').click();mp.wait_for_url('**/checkout')
- mp.locator('[data-choice=branch]').fill('Shop 1 — Address');mp.locator('#branch-form button').click();mp.wait_for_url('**/checkout?branch=1');mp.wait_for_load_state('networkidle')
+ mp.locator('[data-choice=branch]').fill('Shop 1 — Address');mp.locator('#branch-form > button').click();mp.wait_for_url('**/checkout?branch=1');mp.wait_for_load_state('networkidle')
  assert mp.locator('#quote-detail').is_visible();assert mp.locator('#quote').count()==0;assert mp.locator('#confirm-order').is_disabled();assert mp.locator('[name=paymentMethod][value=COD]').is_checked()
  mp.locator('[name=addressDetail]').click();mp.locator('#address-suggestions button').first.click();mp.locator('[data-choice=areaId]').fill('Area A');mp.locator('[data-choice=carrierId]').fill('Carrier');mp.wait_for_selector('#quote-detail[data-state=ready]')
  assert '50.000' in mp.locator('[data-bill=total]').inner_text();assert mp.locator('[data-choice=productPromotionId]').is_visible();mp.locator('#confirm-order').click();mp.wait_for_url('**/orders/*');assert member.request.get(base+'/cart/data').json()['items']==[]
  checks.append('Personal COD checkout from cart uses same automatic bill as group: incomplete form blocks submit, saved contact fills, total auto-updates and order clears only purchased cart')
+ receipt_id=int(mp.url.rsplit('/',1)[1])
+ assert post(member,'/orders/'+str(receipt_id)+'/received',{}).status==409
+ for status in ['CONFIRMED','PICKED_UP','DELIVERING','DELIVERED']:
+  state=vendor.request.get(base+'/vendor/orders/'+str(receipt_id)+'/data').json()
+  assert post(vendor,'/vendor/orders/'+str(receipt_id)+'/status',{'status':status,'version':state['version'],'reason':'','cashCollected':status=='DELIVERED'}).ok
+ mp.wait_for_selector('#confirm-received',timeout=22000)
+ mp.locator('#confirm-received').click();mp.wait_for_selector('.modal.show [data-confirm-accept]');mp.locator('.modal.show [data-confirm-accept]').click();mp.wait_for_load_state('networkidle');mp.wait_for_function("document.body.textContent.includes('Bạn đã xác nhận nhận hàng lúc')")
+ mp.get_by_role('link',name='Đã nhận hàng',exact=True).click();mp.wait_for_url('**/orders?status=RECEIVED');assert mp.locator('tbody tr').count()==1
+ checks.append('Buyer sees operator delivery update automatically, confirms own delivered order, and finds it in Received orders')
+
  # Full UI flow: homepage -> create -> join first -> group menu -> host chooses COD split -> one order.
- hp.goto(base+'/',wait_until='networkidle');hp.get_by_role('link',name='Đặt đơn nhóm',exact=True).click();hp.wait_for_url('**/group-orders/new')
+ hp.goto(base+'/',wait_until='networkidle');assert hp.locator('.hero-actions a').all_text_contents()==['Khám phá thực đơn →','Đặt đơn','Đặt đơn nhóm'];assert hp.locator('#highlights-title em').count()==0;hp.get_by_role('link',name='Đặt đơn nhóm',exact=True).click();hp.wait_for_url('**/group-orders/new')
  hp.locator('#group-payment-mode').select_option('INDIVIDUAL');hp.locator('#create-group').click();hp.wait_for_url('**/group-orders/*')
  hp.wait_for_selector('.group-page');newtoken=hp.locator('.group-page').get_attribute('data-token')
  def newstate():return host.request.get(base+'/group-orders/'+newtoken+'/data').json()
@@ -137,7 +147,7 @@ with sync_playwright() as p:
   if ctx==vendor:assert post(ctx,'/group-orders/'+newtoken+'/join',{'version':newstate()['version']}).ok
   assert post(ctx,'/group-orders/'+newtoken+'/items',{'version':newstate()['version'],'item':{'variantId':1,'sugar':50,'ice':50,'toppingIds':[1],'quantity':1,'note':''}}).ok
  hp.goto(base+'/group-orders/'+newtoken,wait_until='networkidle');hp.on('dialog',lambda d:d.accept());hp.get_by_role('button',name='Chốt nhóm và thanh toán',exact=True).click();hp.locator('[data-confirm-accept]').click();hp.wait_for_url('**/checkout')
- hp.locator('[data-choice=branch]').fill('Shop 1 — Address');hp.locator('#branch-form button').click();hp.wait_for_url('**/checkout?branch=1');hp.wait_for_load_state('networkidle')
+ hp.locator('[data-choice=branch]').fill('Shop 1 — Address');hp.locator('#branch-form > button').click();hp.wait_for_url('**/checkout?branch=1');hp.wait_for_load_state('networkidle')
  assert hp.locator('[name=paymentMethod][value=LOCAL_QR]').count()==1;assert hp.locator('[data-choice=productPromotionId]').count()==0;assert hp.locator('[name=productPromotionId]').input_value()=='';assert hp.locator('.checkout-group-discount').is_visible()
  hp.locator('[name=addressDetail]').click();hp.locator('#address-suggestions [data-address-id="1"]').click();hp.locator('[data-choice=areaId]').fill('Area A');hp.locator('[data-choice=carrierId]').fill('Carrier');hp.locator('[name=paymentMethod][value=LOCAL_QR]').check();hp.wait_for_selector('#quote-detail[data-state=ready]')
  for width in [1440,390]:
@@ -156,9 +166,17 @@ with sync_playwright() as p:
  assert try_confirm().status==409
  pay_local(hp);assert try_confirm().status==409;pay_local(mp);assert try_confirm().status==409
  vp=page(vendor);vp.goto(base+'/orders/'+str(order_id)+'/qr-payment',wait_until='networkidle');vp.wait_for_selector('.local-qr-image svg');pay_local(vp)
- hp.bring_to_front();hp.wait_for_function("document.querySelector('#local-qr-count').textContent==='3/3'")
+ hp.bring_to_front();hp.wait_for_url("**/group-orders/*");hp.wait_for_function("document.querySelector('.group-page')?.dataset.paidCount==='3'")
  assert group_order_state()['paymentStatus']=='PAID';assert try_confirm().ok
  checks.append('Local wallet requires explicit simulation consent; first/second member payments cannot confirm order, all three verified shares allow confirmation')
+ mp.goto(base+'/orders',wait_until='networkidle');mp.locator('tbody a[href="/orders/'+str(order_id)+'"]').click();mp.wait_for_url('**/orders/'+str(order_id));assert mp.locator('.status-pill[data-status=CONFIRMED]').count()>0
+ assert mp.locator('#cancel,#confirm-received,#request-return').count()==0
+ for status in ['PICKED_UP','DELIVERING']:
+  assert post(vendor,'/vendor/orders/'+str(order_id)+'/status',{'status':status,'version':group_order_state()['version'],'reason':'','cashCollected':False}).ok
+ mp.wait_for_selector('.status-pill[data-status=DELIVERING]',timeout=22000)
+ assert member.request.get(base+'/orders/'+str(order_id)+'/data').json()['status']=='DELIVERING'
+ checks.append('Billed member finds group order in personal orders, reads confirmed status/history, auto-updates delivery state, and has no owner action controls')
+
  # Multiple independently identifiable groups, host badge, cancellation and expiry notices.
  first=post(host,'/group-orders',{}).json();second=post(host,'/group-orders',{}).json()
  for g in [first,second]:assert post(member,'/group-orders/'+g['token']+'/join',{'version':g['version']}).ok
@@ -168,7 +186,7 @@ with sync_playwright() as p:
  hp.goto(base+'/group-orders/'+first['token'],wait_until='networkidle');assert hp.locator('.group-member .badge').filter(has_text='Chủ nhóm').count()==1
  mp.goto(base+'/group-orders/'+first['token'],wait_until='networkidle')
  hp.locator('[data-group-action=cancel]').click();hp.locator('[data-confirm-accept]').click();hp.wait_for_url('**/group-orders/new')
- mp.bring_to_front();mp.wait_for_selector('.modal.show #utetra-confirm-title',timeout=20000);assert mp.locator('.modal.show .modal-title').inner_text()=='Nhóm đã được hủy';assert first['code'] in mp.locator('.modal.show .modal-body').inner_text();mp.locator('.modal.show [data-bs-dismiss=modal]').last.click();mp.wait_for_selector('#utetra-confirm-title',state='detached');mp.wait_for_url('**/group-orders/new');assert mp.locator('.group-page').count()==0;mp.goto(base+'/group-orders/'+first['token'],wait_until='networkidle');mp.wait_for_url('**/group-orders/new')
+ mp.bring_to_front();mp.wait_for_selector('.modal.show #utetra-confirm-title',timeout=20000);assert mp.locator('.modal.show .modal-title').inner_text()=='Nhóm đã bị hủy';assert first['code'] in mp.locator('.modal.show .modal-body').inner_text();mp.locator('.modal.show [data-bs-dismiss=modal]').last.click();mp.wait_for_selector('#utetra-confirm-title',state='detached');mp.wait_for_url('**/group-orders/new');assert mp.locator('.group-page').count()==0;mp.goto(base+'/group-orders/'+first['token'],wait_until='networkidle');mp.wait_for_url('**/group-orders/new')
  checks.append('Distinct group cards show code/host/time/status, host badge is next to member name, host cancel sends popup to member even on a payment page')
  assert post(host,'/api/ui-fixture/advance',{'seconds':90000}).ok
  for ctx,user in [(host,1),(member,6)]:

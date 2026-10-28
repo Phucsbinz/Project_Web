@@ -1072,3 +1072,45 @@ push lên nhánh order của tôi luôn
 ```
 
 Đã fetch và xác nhận origin/feature/order-payment không có commit riêng ngoài integration; fast-forward nhánh order từ e200a64 tới a93e1c1, giữ toàn bộ lịch sử/bản tích hợp đã kiểm 206 test và 5 browser H2 scenarios. Chỉ thêm nhật ký yêu cầu này rồi push feature/order-payment, không force push hoặc sửa main/integration/identify. Giữ nguyên trạng thái xóa ảnh nguồn QR cục bộ có trước. Không chạy lại test/provider vì source ứng dụng giữ nguyên; SHA remote được đối chiếu sau push.
+
+## 28/10/2026 — Merge integration, QR Internet, countdown 10 phút
+Prompt: Thanh yêu cầu merge source integration trước, giữ UI mới; QR mọi thiết bị Internet, trang thanh toán chuyên nghiệp, quay về nhóm và hiển thị tiến độ, 10 phút đếm ngược, nhắc nhận đơn/để ý điện thoại. Thực hiện và kiểm chứng: QR_INTERNET_20261028.md trong docs/features/order-payment. Chưa push; không ghi khóa/token/mật khẩu.
+
+
+## 28/10/2026 — CTA, typography, COD chủ nhóm và popup theo vai trò
+Thanh yêu cầu ba nút Khám phá thực đơn / Đặt đơn / Đặt đơn nhóm; tiêu đề đồng nhất font/weight; chủ nhóm nhận nhắc điện thoại, thành viên nhận đặt thành công. COD chuyển HOST ở quote và khi tạo đơn, giữ chia tiền QR. Khách có danh sách/chi tiết/lịch sử; chi tiết tự tải trạng thái mới khi không thao tác form/modal. Kiểm chứng ghi tại GROUP_CHECKOUT_REFINEMENT_20261028.md. Không push.
+
+
+## 28/10/2026 — Quản trị dễ dùng, dropdown rõ ràng
+Prompt: Thanh yêu cầu dễ thao tác quản trị và nút/dấu mở danh sách. Thay đổi và kiểm chứng tại ADMIN_USABILITY_20261028.md. Giữ layout/theme/quyền hiện hành; không push.
+
+
+## 28/10/2026 — Thành viên xem trạng thái đơn nhóm
+Prompt: trạng thái đơn thì thành viên cũng phải coi được. Mở quyền đọc đúng participant snapshot, danh sách/chi tiết/link theo dõi và thông báo; không mở quyền thao tác chủ nhóm. Thực hiện và kiểm chứng tại docs/features/order-payment/GROUP_MEMBER_TRACKING_20261028.md. Chưa push.
+
+
+## 28/10/2026 — Phát hành integration/utetra
+Thanh yêu cầu push các thay đổi đã duyệt lên integration. Đã fetch xác nhận origin/integration/utetra cùng base a93e1c1; chuyển sang local integration/utetra để phát hành, không push identify. Full Maven test cuối: 208 tests, 0 failures/errors. Các lượt browser gần nhất: 18 shopping và 17 admin scenarios qua; Shared UI checker và diff --check qua. Commit chỉ gồm source/migration/tài liệu/công cụ kiểm; không thêm cấu hình local, khóa QR, metadata tunnel hoặc binary. Trạng thái push được xác nhận trực tiếp ở phản hồi phát hành.
+
+
+## 28/10/2026 — Hủy khi thanh toán một phần và căn giữa mũi tên
+Prompt: còn 1 người chưa thanh toán nhưng chủ nhóm hủy thì sao; căn giữa mũi tên thả xuống toàn web. Sửa ghi nhận phần đã trả/chờ hoàn, Admin hoàn đúng phần thực tế, khóa QR sau hủy; chevron flex-centered và sửa margin mobile. Chi tiết PARTIAL_GROUP_CANCEL_20261028.md. Chưa push bản sửa này.
+
+
+## 28/10/2026 — Popup hủy nhóm và hoàn sau 30 phút
+Prompt: chủ nhóm cần cảnh báo/xác nhận mới hủy; thành viên nhận popup nhóm bị hủy, đã trả có thêm dòng hoàn sau 30 phút. Notice dựa phần thanh toán cá nhân, thời gian dự kiến; không tự xác nhận hoàn. Thực hiện và kiểm chứng tại PARTIAL_GROUP_CANCEL_20261028.md. Chưa push.
+
+
+## 28/10/2026 — Push bản sửa hủy nhóm lên integration
+Thanh yêu cầu push bản đã hoàn thành. Đã fetch xác nhận integration/utetra không lệch remote; kiểm lại diff/shared UI. Bản này qua 88 commerce tests, 4 partial-group UI và 18 shopping UI scenarios; không lỗi. Phạm vi: hủy khi thanh toán một phần, popup xác nhận/cá nhân với mốc hoàn dự kiến 30 phút, chevron căn giữa. Không thêm cấu hình local/khóa/token/binary. Trạng thái push xác nhận ở phản hồi phát hành.
+
+
+## 28/10/2026 — Pull và merge đầy đủ vào order
+
+Prompt nguyên văn:
+```text
+pull code các nhánh về
+merge vô nhánh order đẩy đủ đi
+```
+
+Đã fetch tất cả remote và fast-forward integration/utetra tới 57c6b88. Merge vào feature/order-payment, giữ cả hai phần nhật ký bị xung đột. Integration chứa các đầu nhánh catalog/identity/identify/main đã fetch; giữ commit riêng của order và thay đổi xóa ảnh cục bộ có trước. Maven clean verify: 212 tests, 0 failures/errors/skipped, WAR thành công; shared UI 21 files đạt; 4 partial-group browser scenarios H2 đạt. Shopping browser dừng tại kiểm badge giỏ sau tăng số lượng (check_shopping_ui.py:39); chưa khẳng định bộ shopping đạt, sẽ kiểm tra tiếp. Không sửa DB cloud hoặc push trong bước merge.

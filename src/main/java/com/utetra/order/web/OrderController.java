@@ -75,6 +75,9 @@ public class OrderController {
     return "order/detail";
   }
 
+  @PostMapping("/{id}/received") @ResponseBody
+  public Map<String,Object> received(@PathVariable long id){return orders.confirmReceived(OrderWebSupport.actor(),id);}
+
   @GetMapping("/{id}/data")
   @ResponseBody
   public Map<String, Object> detailData(@PathVariable long id) {

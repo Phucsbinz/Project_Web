@@ -129,3 +129,27 @@ Prompt Thanh: đã hủy nhóm nhưng thành viên vẫn ở được trong nhó
 Nguyên nhân: group view trước đó vẫn hiển thị danh sách thành viên ở trạng thái readonly và popup Tiếp tục lại mở chính nhóm đã đóng.
 Sửa: view terminal CANCELLED/EXPIRED trả joined=false, memberCount=0/members rỗng; giữ snapshot DB chỉ phục vụ lịch sử và notification. Nhóm terminal không còn trong mine/list Nhóm của bạn. HTML GET link cũ redirect /group-orders/new; host hủy cũng về danh sách. Poll trang nhóm và lifecycle kiểm trạng thái đóng, đẩy khỏi cả /group-orders/token và /menu?group=token; popup được hiện trên trang danh sách và Tiếp tục không quay lại nhóm đóng. Sự kiện hủy/hết hạn vẫn lấy từ lịch sử riêng nên không mất thông báo khi bỏ khỏi list active. Không xóa dữ liệu giao dịch/đơn hàng.
 Kiểm thực: 82 commerce tests qua, WAR build thành công; 16 shopping browser scenarios qua, gồm member đang trong nhóm khi host hủy tự ra danh sách, popup đúng mã nhóm, thử link cũ vẫn bị chuyển ra; expiry tương tự. Shared UI/diff check qua. Server mở lại; chưa commit/push.
+
+
+## 28/10/2026 — Merge integration, QR Internet, countdown 10 phút
+Prompt: Thanh yêu cầu merge source integration trước, giữ UI mới; QR mọi thiết bị Internet, trang thanh toán chuyên nghiệp, quay về nhóm và hiển thị tiến độ, 10 phút đếm ngược, nhắc nhận đơn/để ý điện thoại. Thực hiện và kiểm chứng: QR_INTERNET_20261028.md trong docs/features/order-payment. Chưa push; không ghi khóa/token/mật khẩu.
+
+
+## 28/10/2026 — CTA, typography, COD chủ nhóm và popup theo vai trò
+Thanh yêu cầu ba nút Khám phá thực đơn / Đặt đơn / Đặt đơn nhóm; tiêu đề đồng nhất font/weight; chủ nhóm nhận nhắc điện thoại, thành viên nhận đặt thành công. COD chuyển HOST ở quote và khi tạo đơn, giữ chia tiền QR. Khách có danh sách/chi tiết/lịch sử; chi tiết tự tải trạng thái mới khi không thao tác form/modal. Kiểm chứng ghi tại GROUP_CHECKOUT_REFINEMENT_20261028.md. Không push.
+
+
+## 28/10/2026 — Quản trị dễ dùng, dropdown rõ ràng
+Prompt: Thanh yêu cầu dễ thao tác quản trị và nút/dấu mở danh sách. Thay đổi và kiểm chứng tại ADMIN_USABILITY_20261028.md. Giữ layout/theme/quyền hiện hành; không push.
+
+
+## 28/10/2026 — Thành viên xem trạng thái đơn nhóm
+Prompt: trạng thái đơn thì thành viên cũng phải coi được. Mở quyền đọc đúng participant snapshot, danh sách/chi tiết/link theo dõi và thông báo; không mở quyền thao tác chủ nhóm. Thực hiện và kiểm chứng tại docs/features/order-payment/GROUP_MEMBER_TRACKING_20261028.md. Chưa push.
+
+
+## 28/10/2026 — Hủy khi thanh toán một phần và căn giữa mũi tên
+Prompt: còn 1 người chưa thanh toán nhưng chủ nhóm hủy thì sao; căn giữa mũi tên thả xuống toàn web. Sửa ghi nhận phần đã trả/chờ hoàn, Admin hoàn đúng phần thực tế, khóa QR sau hủy; chevron flex-centered và sửa margin mobile. Chi tiết PARTIAL_GROUP_CANCEL_20261028.md. Chưa push bản sửa này.
+
+
+## 28/10/2026 — Popup hủy nhóm và hoàn sau 30 phút
+Prompt: chủ nhóm cần cảnh báo/xác nhận mới hủy; thành viên nhận popup nhóm bị hủy, đã trả có thêm dòng hoàn sau 30 phút. Notice dựa phần thanh toán cá nhân, thời gian dự kiến; không tự xác nhận hoàn. Thực hiện và kiểm chứng tại PARTIAL_GROUP_CANCEL_20261028.md. Chưa push.

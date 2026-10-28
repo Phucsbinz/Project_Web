@@ -95,6 +95,7 @@ public class OrderSupport {
     data.save(h);
     LinkedHashSet<Long> recipients = new LinkedHashSet<>(refs.recipients(order.storeId));
     recipients.add(order.userId);
+    if(order.groupOrderId!=null)for(var member:data.query(GroupOrderMember.class,"where e.orderId=:order and e.groupOrderId=:group",Map.of("order",order.id,"group",order.groupOrderId),false,51))recipients.add(member.userId);
     for (var assignment :
         data.query(
             DeliveryAssignment.class,
@@ -147,7 +148,7 @@ public class OrderSupport {
   public Map<String, Object> view(Order o) {
     Map<String, Object> v = new LinkedHashMap<>();
     v.put("id", o.id);
-    v.put("code", o.orderCode);
+    v.put("code", o.orderCode);v.put("groupOrder",o.groupOrderId!=null);
     v.put("storeId", o.storeId);
     v.put("storeName", o.storeName);
     v.put("status", o.status);

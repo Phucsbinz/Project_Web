@@ -312,7 +312,7 @@ class OrderCommerceIntegrationTest {
     var req=new Checkout(key,1,1,1,null,null,0,quote.get("hash").toString(),"","COD");var order=checkout.checkout(BUYER,req);
     assertThat(order.get("groupParticipants")).isEqualTo(3);assertThat(new BigDecimal(order.get("groupDiscount").toString())).isEqualByComparingTo("6000");
     assertThat(checkout.checkout(BUYER,req).get("id")).isEqualTo(order.get("id"));
-    assertThat(groups.view(BUYER,token).get("status")).isEqualTo("ORDERED");
+    assertThat(groups.view(BUYER,token).get("status")).isEqualTo("ORDERED");assertThat(groups.view(BUYER,token).get("paymentMode")).isEqualTo("HOST");assertThat(groups.paymentPage(BUYER_B,token)).containsEntry("payer",false);
     groups.cancel(BUYER,token,groupVersion(token));assertThat(groups.view(BUYER,token)).containsEntry("status","CANCELLED");
     carts.addDraft(BUYER,item(1));
   }
@@ -393,7 +393,7 @@ class OrderCommerceIntegrationTest {
     groups.addItem(BUYER,token,groupVersion(token),new Item(1,0,0,List.of(),1,""));assertThat(groups.view(BUYER,token).get("participants")).isEqualTo(1);
     assertThat(carts.count(BUYER)).containsEntry("count",0L);
   }
-  @Test void hostChoosesCodSplitAndPlacesOneOrderWithoutMemberPaymentConfirmation() {
+  @Test void codDefaultsToHostPaymentEvenWhenGroupWasIndividual() {
     jdbc.update("update products set base_price=21000 where id=1");String token=groups.create(BUYER,"INDIVIDUAL").get("token").toString();
     for(var actor:List.of(BUYER,BUYER_B,VENDOR)){if(!actor.equals(BUYER))groups.join(actor,token,groupVersion(token));groups.addItem(actor,token,groupVersion(token),new Item(1,50,50,List.of(),1,""));}
     assertThatThrownBy(()->groups.paymentMode(BUYER_B,token,groupVersion(token),"HOST")).isInstanceOf(OrderProblem.class);
@@ -407,7 +407,7 @@ class OrderCommerceIntegrationTest {
     var rows=jdbc.queryForList("select billed_subtotal,discount_share,shipping_share,amount_due from group_order_members order by id");assertThat(rows).hasSize(3);
     for(var row:rows){assertThat(new BigDecimal(row.get("billed_subtotal").toString())).isEqualByComparingTo("26000");assertThat(new BigDecimal(row.get("discount_share").toString())).isEqualByComparingTo("1300");assertThat(new BigDecimal(row.get("amount_due").toString())).isEqualByComparingTo("29700");}
     assertThat(jdbc.queryForObject("select sum(amount_due) from group_order_members",BigDecimal.class)).isEqualByComparingTo(order.get("total").toString());
-    assertThat(groups.view(BUYER,token).get("status")).isEqualTo("ORDERED");
+    assertThat(groups.view(BUYER,token).get("status")).isEqualTo("ORDERED");assertThat(groups.view(BUYER,token).get("paymentMode")).isEqualTo("HOST");assertThat(groups.paymentPage(BUYER_B,token)).containsEntry("payer",false);
     assertThatThrownBy(()->groups.paymentMode(BUYER,token,groupVersion(token),"HOST")).isInstanceOf(OrderProblem.class);
   }
 
@@ -436,6 +436,62 @@ class OrderCommerceIntegrationTest {
   @Test void hostCannotCancelGroupAfterStoreConfirmation() {
     long order=localGroupOrder();String token=jdbc.queryForObject("select invite_token from group_orders where order_id=?",String.class,order);for(var actor:List.of(BUYER,BUYER_B,VENDOR)){var payment=localQr.merchant(actor,order);localQr.confirm(payment.get("id").toString(),localToken(payment),new BigDecimal(payment.get("amount").toString()),true);}workflow.transition(VENDOR,order,new Transition("CONFIRMED",version(order),"",false));assertThatThrownBy(()->groups.cancel(BUYER,token,groupVersion(token))).isInstanceOf(OrderProblem.class);assertThat(groups.view(BUYER,token)).containsEntry("status","ORDERED");
   }
+  @Test void billedGroupMemberCanTrackOrderButCannotControlIt(){
+    long order=localGroupOrder();
+    assertThat(workflow.read(BUYER_B,order)).containsEntry("owner",false).containsEntry("status","NEW");
+    assertThat(workflow.list(BUYER_B,"buyer",null,0,20)).anySatisfy(row->assertThat(((Number)row.get("id")).longValue()).isEqualTo(order));
+    assertThat(workflow.list(BUYER,"buyer",null,0,20)).hasSize(1);
+    assertThatThrownBy(()->workflow.read(SHIPPER,order)).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->workflow.cancel(BUYER_B,order,version(order),"Không phải chủ đơn")).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->workflow.confirmReceived(BUYER_B,order)).isInstanceOf(OrderProblem.class);
+    for(var actor:List.of(BUYER,BUYER_B,VENDOR)){var payment=localQr.merchant(actor,order);localQr.confirm(payment.get("id").toString(),localToken(payment),new BigDecimal(payment.get("amount").toString()),true);}
+    workflow.transition(ADMIN,order,new Transition("CONFIRMED",version(order),"Đã xác nhận",false));
+    assertThat(workflow.read(BUYER_B,order)).containsEntry("status","CONFIRMED");
+    assertThat(workflow.list(BUYER_B,"buyer","CONFIRMED",0,20)).hasSize(1);
+    assertThat(workflow.list(BUYER_B,"buyer","DELIVERING",0,20)).isEmpty();
+    assertThat(jdbc.queryForObject("select count(*) from notifications where user_id=? and order_id=? and type='TRANSITION'",Long.class,BUYER_B.userId(),order)).isEqualTo(1);
+    assertThatThrownBy(()->workflow.requestReturn(BUYER_B,order,"Không phải chủ đơn")).isInstanceOf(OrderProblem.class);
+    jdbc.update("update group_order_members set order_id=null where order_id=? and user_id=?",order,BUYER_B.userId());
+    assertThatThrownBy(()->workflow.read(BUYER_B,order)).isInstanceOf(OrderProblem.class);
+    assertThat(workflow.list(BUYER_B,"buyer",null,0,20)).isEmpty();
+  }
+
+  @Test void cancelPartiallyPaidGroupPreservesAndRefundsOnlyCollectedShares(){
+    long order=localGroupOrder();var last=localQr.merchant(VENDOR,order);BigDecimal collected=BigDecimal.ZERO;
+    for(var actor:List.of(BUYER,BUYER_B)){var payment=localQr.merchant(actor,order);var amount=new BigDecimal(payment.get("amount").toString());collected=collected.add(amount);localQr.confirm(payment.get("id").toString(),localToken(payment),amount,true);}
+    String token=jdbc.queryForObject("select invite_token from group_orders where order_id=?",String.class,order);groups.cancel(BUYER,token,groupVersion(token));
+    assertThat(workflow.read(BUYER_B,order)).containsEntry("status","CANCELLED").containsEntry("paymentStatus","REFUND_PENDING");
+    assertThat(new BigDecimal(workflow.read(BUYER_B,order).get("qrRefundDue").toString())).isEqualByComparingTo(collected);
+    var paidNotice=groups.lifecycleNotices(BUYER_B).stream().filter(n->token.equals(n.get("token"))).findFirst().orElseThrow();assertThat(paidNotice).containsEntry("refundPending",true).containsEntry("refunded",false);assertThat(Instant.parse(paidNotice.get("refundExpectedAt").toString())).isEqualTo(time.instant().plus(Duration.ofMinutes(30)));
+    var unpaidNotice=groups.lifecycleNotices(VENDOR).stream().filter(n->token.equals(n.get("token"))).findFirst().orElseThrow();assertThat(unpaidNotice).containsEntry("refundPending",false).containsEntry("refunded",false);assertThat(unpaidNotice).doesNotContainKey("refundExpectedAt");
+    var paid=localQr.merchant(BUYER_B,order);assertThat(paid).containsEntry("state","REFUND_PENDING");
+    assertThat(localQr.publicStatus(last.get("id").toString(),localToken(last))).containsEntry("state","CANCELLED");
+    assertThatThrownBy(()->localQr.confirm(last.get("id").toString(),localToken(last),new BigDecimal(last.get("amount").toString()),true)).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->localQr.renew(VENDOR,order)).isInstanceOf(OrderProblem.class);
+    assertThatThrownBy(()->workflow.refundCash(BUYER,order,new RefundInput("NOT-ADMIN",version(order)))).isInstanceOf(OrderProblem.class);
+    workflow.refundCash(ADMIN,order,new RefundInput("INTERNAL-CANCEL",version(order)));
+    assertThat(jdbc.queryForObject("select amount from refund_transactions where order_id=?",BigDecimal.class,order)).isEqualByComparingTo(collected);
+    assertThat(jdbc.queryForObject("select count(*) from local_qr_payments where order_id=? and status='REFUNDED'",Long.class,order)).isEqualTo(2);
+    assertThat(localQr.merchant(BUYER_B,order)).containsEntry("state","REFUNDED");var refundedNotice=groups.lifecycleNotices(BUYER_B).stream().filter(n->token.equals(n.get("token"))).findFirst().orElseThrow();assertThat(refundedNotice).containsEntry("refunded",true).containsEntry("refundPending",false);assertThat(refundedNotice.get("noticeKey")).isNotEqualTo(paidNotice.get("noticeKey"));
+    assertThat(localQr.publicStatus(last.get("id").toString(),localToken(last))).containsEntry("state","CANCELLED");
+    assertThat(workflow.read(BUYER,order)).containsEntry("status","CANCELLED").containsEntry("paymentStatus","REFUNDED");
+    assertThat(groups.lifecycleNotices(BUYER_B)).anySatisfy(notice->assertThat(notice).containsEntry("status","CANCELLED"));
+    assertThatThrownBy(()->workflow.refundCash(ADMIN,order,new RefundInput("DUPLICATE",version(order)))).isInstanceOf(OrderProblem.class);
+    assertThat(jdbc.queryForObject("select count(*) from refund_transactions where order_id=?",Long.class,order)).isEqualTo(1);
+  }
+
+  @Test void fullyPaidLocalQrCancellationRefundsEveryShare(){long order=localGroupOrder();for(var actor:List.of(BUYER,BUYER_B,VENDOR)){var p=localQr.merchant(actor,order);localQr.confirm(p.get("id").toString(),localToken(p),new BigDecimal(p.get("amount").toString()),true);}workflow.cancel(BUYER,order,version(order),"Hủy trước xác nhận");var total=jdbc.queryForObject("select final_amount from orders where id=?",BigDecimal.class,order);workflow.refundCash(ADMIN,order,new RefundInput("ALL-INTERNAL",version(order)));assertThat(jdbc.queryForObject("select amount from refund_transactions where order_id=?",BigDecimal.class,order)).isEqualByComparingTo(total);assertThat(jdbc.queryForObject("select count(*) from local_qr_payments where order_id=? and status='REFUNDED'",Long.class,order)).isEqualTo(3);}
+
+  @Test void lastMemberPaymentRacingCancellationCannotOverRefund() throws Exception {
+    long order=localGroupOrder();for(var actor:List.of(BUYER,BUYER_B)){var p=localQr.merchant(actor,order);localQr.confirm(p.get("id").toString(),localToken(p),new BigDecimal(p.get("amount").toString()),true);}
+    var last=localQr.merchant(VENDOR,order);long before=version(order);var start=new CountDownLatch(1);var pool=Executors.newFixedThreadPool(2);
+    try{var cancel=pool.submit(()->{start.await();try{workflow.cancel(BUYER,order,before,"Hủy cùng lúc trả cuối");}catch(OrderProblem conflict){}return true;});var pay=pool.submit(()->{start.await();try{localQr.confirm(last.get("id").toString(),localToken(last),new BigDecimal(last.get("amount").toString()),true);}catch(OrderProblem conflict){}return true;});start.countDown();assertThat(cancel.get(15,TimeUnit.SECONDS)).isTrue();assertThat(pay.get(15,TimeUnit.SECONDS)).isTrue();}finally{pool.shutdownNow();}
+    if("NEW".equals(workflow.read(BUYER,order).get("status")))workflow.cancel(BUYER,order,version(order),"Tải lại sau thanh toán cuối");
+    assertThat(workflow.read(BUYER,order)).containsEntry("status","CANCELLED").containsEntry("paymentStatus","REFUND_PENDING");var collected=jdbc.queryForObject("select sum(amount) from local_qr_payments where order_id=? and status='SUCCESS'",BigDecimal.class,order);workflow.refundCash(ADMIN,order,new RefundInput("RACE-INTERNAL",version(order)));assertThat(jdbc.queryForObject("select amount from refund_transactions where order_id=?",BigDecimal.class,order)).isEqualByComparingTo(collected);assertThatThrownBy(()->localQr.confirm(last.get("id").toString(),localToken(last),new BigDecimal(last.get("amount").toString()),true)).isInstanceOf(OrderProblem.class);
+  }
+
+  @Test void cancelledUnpaidQrHasNothingToRefund(){long order=localGroupOrder();workflow.cancel(BUYER,order,version(order),"Hủy trước thanh toán");assertThat(workflow.read(BUYER,order)).containsEntry("paymentStatus","CANCELLED");assertThatThrownBy(()->workflow.refundCash(ADMIN,order,new RefundInput("NONE",version(order)))).isInstanceOf(OrderProblem.class);}
+
   @Test void localQrRequiresEveryMemberBeforeOrderCanBeConfirmed() {
     long order=localGroupOrder();assertThat(jdbc.queryForObject("select count(*) from local_qr_payments",Long.class)).isEqualTo(3);
     assertThatThrownBy(()->workflow.transition(VENDOR,order,new Transition("CONFIRMED",version(order),"",false))).isInstanceOf(OrderProblem.class);
@@ -457,7 +513,7 @@ class OrderCommerceIntegrationTest {
     long order=localGroupOrder();var payment=localQr.merchant(BUYER,order);String id=payment.get("id").toString(),token=localToken(payment);var amount=new BigDecimal(payment.get("amount").toString());var pool=java.util.concurrent.Executors.newFixedThreadPool(2);var start=new java.util.concurrent.CountDownLatch(1);try{var tasks=new java.util.ArrayList<java.util.concurrent.Future<Map<String,Object>>>();for(int i=0;i<2;i++)tasks.add(pool.submit(()->{start.await();return localQr.confirm(id,token,amount,true);}));start.countDown();for(var task:tasks)assertThat(task.get(15,java.util.concurrent.TimeUnit.SECONDS)).containsEntry("state","SUCCESS");}finally{pool.shutdownNow();}assertThat(jdbc.queryForObject("select count(*) from local_qr_payments where status='SUCCESS'",Long.class)).isEqualTo(1);assertThat(jdbc.queryForObject("select payment_status from orders where id=?",String.class,order)).isEqualTo("UNPAID");
   }
   @Test void localQrExpiredCanRenewButCancelledCannotPay() {
-    long order=localGroupOrder();var payment=localQr.merchant(BUYER,order);String old=payment.get("id").toString(),token=localToken(payment);var amount=new BigDecimal(payment.get("amount").toString());time.advance(Duration.ofMinutes(31));assertThat(localQr.publicStatus(old,token)).containsEntry("state","EXPIRED");assertThatThrownBy(()->localQr.confirm(old,token,amount,true)).isInstanceOf(OrderProblem.class);var fresh=localQr.renew(BUYER,order);assertThat(fresh.get("id")).isNotEqualTo(old);assertThatThrownBy(()->localQr.publicStatus(old,token)).isInstanceOf(OrderProblem.class);workflow.cancel(BUYER,order,version(order),"Hủy đơn thử");assertThatThrownBy(()->localQr.confirm(fresh.get("id").toString(),localToken(fresh),amount,true)).isInstanceOf(OrderProblem.class);
+    long order=localGroupOrder();var payment=localQr.merchant(BUYER,order);assertThat(Duration.between(java.time.Instant.parse(payment.get("serverNow").toString()),java.time.Instant.parse(payment.get("expiresAt").toString()))).isEqualTo(Duration.ofMinutes(10));String old=payment.get("id").toString(),token=localToken(payment);var amount=new BigDecimal(payment.get("amount").toString());time.advance(Duration.ofMinutes(10));assertThat(localQr.publicStatus(old,token)).containsEntry("state","EXPIRED");assertThatThrownBy(()->localQr.confirm(old,token,amount,true)).isInstanceOf(OrderProblem.class);var fresh=localQr.renew(BUYER,order);assertThat(fresh.get("id")).isNotEqualTo(old);assertThatThrownBy(()->localQr.publicStatus(old,token)).isInstanceOf(OrderProblem.class);workflow.cancel(BUYER,order,version(order),"Hủy đơn thử");assertThatThrownBy(()->localQr.confirm(fresh.get("id").toString(),localToken(fresh),amount,true)).isInstanceOf(OrderProblem.class);
   }
   @Test void localQrFullPaymentOnlyEmitsAggregateEventOnceAndCannotUseBankConfirm() {
     long order=localGroupOrder();for(var actor:List.of(BUYER,BUYER_B,VENDOR)){var payment=localQr.merchant(actor,order);localQr.confirm(payment.get("id").toString(),localToken(payment),new BigDecimal(payment.get("amount").toString()),true);localQr.confirm(payment.get("id").toString(),localToken(payment),new BigDecimal(payment.get("amount").toString()),true);}assertThat(jdbc.queryForObject("select count(*) from order_status_history where event_type='LOCAL_QR_ALL_PAID'",Long.class)).isEqualTo(1);assertThatThrownBy(()->bankTransfers.confirm(ADMIN,order,new BankConfirmation("LOCAL-FAKE",new BigDecimal("1"),version(order)))).isInstanceOf(OrderProblem.class);
@@ -694,6 +750,18 @@ class OrderCommerceIntegrationTest {
 
   long version(long id) {
     return ((Number) workflow.read(BUYER, id).get("version")).longValue();
+  }
+
+  @Test void customerReceiptRequiresDeliveredOwnOrderAndIsIdempotent(){
+    long order=id(create(0));
+    assertThatThrownBy(()->workflow.confirmReceived(BUYER,order)).isInstanceOf(OrderProblem.class);
+    delivered(order);
+    assertThatThrownBy(()->workflow.confirmReceived(BUYER_B,order)).isInstanceOf(OrderProblem.class);
+    assertThat(workflow.confirmReceived(BUYER,order)).containsEntry("received",true);
+    workflow.confirmReceived(BUYER,order);
+    assertThat(workflow.list(BUYER,"buyer","RECEIVED",0,20)).hasSize(1);
+    assertThat(workflow.list(BUYER_B,"buyer","RECEIVED",0,20)).isEmpty();
+    assertThat(jdbc.queryForObject("select count(*) from order_status_history where order_id=? and event_type='CUSTOMER_RECEIVED'",Long.class,order)).isEqualTo(1);
   }
 
   void delivered(long id) {

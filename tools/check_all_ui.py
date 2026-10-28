@@ -9,9 +9,11 @@ root=Path(__file__).resolve().parent.parent
 os.chdir(root)
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--shopping',action='store_true',help='Audit cart badges and group checkout rather than all module pages')
+parser.add_argument('--partial',action='store_true',help='Audit partially paid group cancellation and refunds')
+parser.add_argument('--admin',action='store_true',help='Audit administration usability and visible dropdown menus')
 parser.add_argument('--support',action='store_true',help='Audit CSKH realtime, isolation and manual checkout address')
 args=parser.parse_args()
-audit='check_support_ui.py' if args.support else 'check_shopping_ui.py' if args.shopping else 'check_all_module_ui.py'
+audit='check_partial_group_ui.py' if args.partial else 'check_admin_ui.py' if args.admin else 'check_support_ui.py' if args.support else 'check_shopping_ui.py' if args.shopping else 'check_all_module_ui.py'
 with socket.socket() as probe:
     if probe.connect_ex(('127.0.0.1',8882))==0:
         raise SystemExit('Port 8882 is occupied; no existing process was stopped.')
