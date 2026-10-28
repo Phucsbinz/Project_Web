@@ -1082,3 +1082,15 @@ Prompt: trạng thái đơn thì thành viên cũng phải coi được. Mở qu
 
 ## 28/10/2026 — Phát hành integration/utetra
 Thanh yêu cầu push các thay đổi đã duyệt lên integration. Đã fetch xác nhận origin/integration/utetra cùng base a93e1c1; chuyển sang local integration/utetra để phát hành, không push identify. Full Maven test cuối: 208 tests, 0 failures/errors. Các lượt browser gần nhất: 18 shopping và 17 admin scenarios qua; Shared UI checker và diff --check qua. Commit chỉ gồm source/migration/tài liệu/công cụ kiểm; không thêm cấu hình local, khóa QR, metadata tunnel hoặc binary. Trạng thái push được xác nhận trực tiếp ở phản hồi phát hành.
+
+
+## 28/10/2026 — Hủy khi thanh toán một phần và căn giữa mũi tên
+Prompt: còn 1 người chưa thanh toán nhưng chủ nhóm hủy thì sao; căn giữa mũi tên thả xuống toàn web. Sửa ghi nhận phần đã trả/chờ hoàn, Admin hoàn đúng phần thực tế, khóa QR sau hủy; chevron flex-centered và sửa margin mobile. Chi tiết PARTIAL_GROUP_CANCEL_20261028.md. Chưa push bản sửa này.
+
+
+## 28/10/2026 — Popup hủy nhóm và hoàn sau 30 phút
+Prompt: chủ nhóm cần cảnh báo/xác nhận mới hủy; thành viên nhận popup nhóm bị hủy, đã trả có thêm dòng hoàn sau 30 phút. Notice dựa phần thanh toán cá nhân, thời gian dự kiến; không tự xác nhận hoàn. Thực hiện và kiểm chứng tại PARTIAL_GROUP_CANCEL_20261028.md. Chưa push.
+
+
+## 28/10/2026 — Push bản sửa hủy nhóm lên integration
+Thanh yêu cầu push bản đã hoàn thành. Đã fetch xác nhận integration/utetra không lệch remote; kiểm lại diff/shared UI. Bản này qua 88 commerce tests, 4 partial-group UI và 18 shopping UI scenarios; không lỗi. Phạm vi: hủy khi thanh toán một phần, popup xác nhận/cá nhân với mốc hoàn dự kiến 30 phút, chevron căn giữa. Không thêm cấu hình local/khóa/token/binary. Trạng thái push xác nhận ở phản hồi phát hành.

@@ -81,6 +81,7 @@ public class OrderWorkflowService {
     Order o = data.require(Order.class, id, false);
     readable(actor, o);
     Map<String, Object> result = new LinkedHashMap<>(support.view(o));
+    if("LOCAL_QR".equals(o.paymentMethod)){var payments=data.query(LocalQrPayment.class,"where e.orderId=:order",Map.of("order",id),false,100);result.put("qrCollected",payments.stream().filter(p->Set.of("SUCCESS","REFUNDED").contains(p.status)).map(p->p.amount).reduce(BigDecimal.ZERO,BigDecimal::add));result.put("qrRefundDue",payments.stream().filter(p->"SUCCESS".equals(p.status)&&"REFUND_PENDING".equals(o.paymentStatus)).map(p->p.amount).reduce(BigDecimal.ZERO,BigDecimal::add));result.put("qrRefunded",payments.stream().filter(p->"REFUNDED".equals(p.status)).map(p->p.amount).reduce(BigDecimal.ZERO,BigDecimal::add));}
     result.put("owner",o.userId==actor.userId());result.put("groupOrder",o.groupOrderId!=null);
     result.put("qrPayer","LOCAL_QR".equals(o.paymentMethod)&&!data.query(LocalQrPayment.class,"where e.orderId=:order and e.userId=:user",Map.of("order",o.id,"user",actor.userId()),false,1).isEmpty());
     if(o.groupOrderId!=null)result.put("groupToken",refs.one("select invite_token from group_orders where id=?",o.groupOrderId).get("invite_token"));
@@ -343,7 +344,10 @@ public class OrderWorkflowService {
     if (owner && !operator && !"NEW".equals(o.status)
         || !Set.of("NEW", "CONFIRMED", "PICKED_UP", "DELIVERING").contains(o.status))
       throw OrderProblem.conflict("Đơn không còn trong thời điểm cho phép hủy.");
-    boolean prepaidBank = Set.of("BANK_TRANSFER","VNPAY","LOCAL_QR").contains(o.paymentMethod) && "PAID".equals(o.paymentStatus);
+    BigDecimal localCollected=BigDecimal.ZERO;
+    if("LOCAL_QR".equals(o.paymentMethod)){LocalQrPaymentService.assertLedger(data,refs,o,false);localCollected=data.query(LocalQrPayment.class,"where e.orderId=:order and e.status='SUCCESS'",Map.of("order",id),false,100).stream().map(p->p.amount).reduce(BigDecimal.ZERO,BigDecimal::add);}
+    boolean localRefundPending=localCollected.signum()>0;
+    boolean prepaidBank = localRefundPending || Set.of("BANK_TRANSFER","VNPAY","LOCAL_QR").contains(o.paymentMethod) && "PAID".equals(o.paymentStatus);
     if ("PAID".equals(o.paymentStatus) && !prepaidBank)
       throw OrderProblem.conflict(
           "Đơn trả trước cần quy trình hoàn ngân hàng; tích hợp này đang được hoãn.");
@@ -368,7 +372,7 @@ public class OrderWorkflowService {
     for (var p :
         data.query(
             PaymentTransaction.class, "where e.orderId=:order", Map.of("order", id), true, 20)) {
-      if (!"SUCCEEDED".equals(p.status)) p.status = "FAILED";
+      if (!"SUCCEEDED".equals(p.status)&&!(localRefundPending&&"LOCAL_QR".equals(p.provider))) p.status = "FAILED";
       p.updatedAt = clock.instant();
     }
     support.audit(actor, "ORDER_CANCEL", id);
@@ -501,10 +505,13 @@ public class OrderWorkflowService {
         || !("RETURNED".equals(o.status)
             || "RETURN_APPROVED".equals(o.status) && r.waivePhysicalReturn)))
       throw OrderProblem.conflict("Chưa đủ điều kiện hoàn tiền cả đơn.");
+    boolean cancelledLocalQr=cancelledBank&&"LOCAL_QR".equals(o.paymentMethod);
+    BigDecimal refundAmount=o.finalAmount;
+    if(cancelledLocalQr){LocalQrPaymentService.assertLedger(data,refs,o,false);refundAmount=data.query(LocalQrPayment.class,"where e.orderId=:order and e.status='SUCCESS'",Map.of("order",id),false,100).stream().map(payment->payment.amount).reduce(BigDecimal.ZERO,BigDecimal::add);if(refundAmount.signum()<=0||refundAmount.compareTo(o.finalAmount)>0)throw OrderProblem.conflict("Không có phần thanh toán hợp lệ để hoàn.");}
     PaymentTransaction p =
         data.query(
                 PaymentTransaction.class,
-                "where e.orderId=:order and e.status='SUCCEEDED'",
+                cancelledLocalQr ? "where e.orderId=:order and e.provider='LOCAL_QR' and e.status in ('PENDING','SUCCEEDED')" : "where e.orderId=:order and e.status='SUCCEEDED'",
                 Map.of("order", id),
                 true,
                 1)
@@ -524,7 +531,7 @@ public class OrderWorkflowService {
     refund.paymentId = p.id;
     refund.returnRequestId = r == null ? null : r.id;
     refund.refundRef = "RF-" + UUID.randomUUID();
-    refund.amount = o.finalAmount;
+    refund.amount = refundAmount;
     refund.status = "SUCCEEDED";
     refund.reason = cancelledBank ? o.cancelReason : r.reason;
     refund.evidenceRef = OrderSupport.required(request.evidence(), 500);
@@ -548,7 +555,8 @@ public class OrderWorkflowService {
       r.updatedAt = clock.instant();
     }
     String from = o.status;
-    o.status = "REFUNDED";
+    if("LOCAL_QR".equals(o.paymentMethod)){for(var payment:data.query(LocalQrPayment.class,"where e.orderId=:order and e.status='SUCCESS'",Map.of("order",id),true,100))payment.status="REFUNDED";p.status="REFUNDED";p.updatedAt=clock.instant();}
+    if(!cancelledLocalQr)o.status = "REFUNDED";
     o.paymentStatus = "REFUNDED";
     o.updatedAt = clock.instant();
     support.audit(actor, bank ? "BANK_REFUND" : "CASH_REFUND", id);

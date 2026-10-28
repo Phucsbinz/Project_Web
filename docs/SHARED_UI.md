@@ -155,3 +155,11 @@ site-ui.js đổi tiêu đề thông báo thành viên thành Đặt đơn nhóm
 Theo yêu cầu Thanh, utetra.css khôi phục mũi tên select sau shorthand background, chừa padding và disabled state; app.jsp tăng cache CSS. Checkout có nút/menu tìm kiếm scope checkout-page; quản trị catalog scope #catalog-manager. Không layout/framework thứ hai. Xem ADMIN_USABILITY_20261028.md.
 
 Bổ sung cùng đợt: site-ui.js bật/tắt workspace-sidebar trên mobile; app.jsp thêm nút truy cập menu và link Tổng quan cho Admin, cache JS/CSS đồng bộ. Không thay menu bằng kiểm quyền; chỉ thu gọn hình thức hiển thị.
+
+
+## Căn giữa chevron — 28/10/2026
+utetra.css dùng pseudo chevron và flex-center cho choice-toggle/workspace menu, căn caret dropdown; bỏ margin inherited và scope margin submit chi nhánh riêng. Native select vẫn center background. app.jsp tăng cache; không layout/theme mới. Kiểm chứng trong PARTIAL_GROUP_CANCEL_20261028.md.
+
+
+## Popup hủy nhóm — 28/10/2026
+site-ui.js dùng notice cá nhân để thêm dòng dự kiến hoàn sau 30 phút đúng người đã trả; dialog hỗ trợ xuống dòng và nhãn nút, vẫn textContent/Bootstrap. app.jsp tăng cache. Nội dung cảnh báo hủy trong module order; không layout/framework mới.

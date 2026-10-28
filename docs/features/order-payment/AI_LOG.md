@@ -189,3 +189,11 @@ Bổ sung yêu cầu nối tiếp: kiểm trạng thái role khách, mục Đã 
 
 ## 28/10/2026 — Thành viên xem trạng thái đơn nhóm
 Prompt: trạng thái đơn thì thành viên cũng phải coi được. Mở quyền đọc đúng participant snapshot, danh sách/chi tiết/link theo dõi và thông báo; không mở quyền thao tác chủ nhóm. Thực hiện và kiểm chứng tại docs/features/order-payment/GROUP_MEMBER_TRACKING_20261028.md. Chưa push.
+
+
+## 28/10/2026 — Hủy khi thanh toán một phần và căn giữa mũi tên
+Prompt: còn 1 người chưa thanh toán nhưng chủ nhóm hủy thì sao; căn giữa mũi tên thả xuống toàn web. Sửa ghi nhận phần đã trả/chờ hoàn, Admin hoàn đúng phần thực tế, khóa QR sau hủy; chevron flex-centered và sửa margin mobile. Chi tiết PARTIAL_GROUP_CANCEL_20261028.md. Chưa push bản sửa này.
+
+
+## 28/10/2026 — Popup hủy nhóm và hoàn sau 30 phút
+Prompt: chủ nhóm cần cảnh báo/xác nhận mới hủy; thành viên nhận popup nhóm bị hủy, đã trả có thêm dòng hoàn sau 30 phút. Notice dựa phần thanh toán cá nhân, thời gian dự kiến; không tự xác nhận hoàn. Thực hiện và kiểm chứng tại PARTIAL_GROUP_CANCEL_20261028.md. Chưa push.

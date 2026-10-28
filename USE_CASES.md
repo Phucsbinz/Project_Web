@@ -216,3 +216,7 @@ Khách xác nhận Đã nhận hàng khi đơn của mình DELIVERED/PAID; xem d
 
 ## 28/10/2026 — Theo dõi đơn nhóm
 Thành viên có món trong đơn xem đơn nhóm tại Đơn mua của tôi, chi tiết/lịch sử/trạng thái; nhận thông báo cập nhật sau commit. Thao tác hủy/nhận/trả hàng giữ quyền chủ đơn/operator theo workflow hiện hành.
+
+
+## 28/10/2026 — Hủy nhóm trước khi trả đủ
+LOCAL_QR có phần đã thanh toán khi hủy phải chuyển REFUND_PENDING và giữ ledger. Admin hoàn nội bộ đúng tổng phần SUCCESS, không hoàn phần chưa trả; sau xử lý đơn CANCELLED/payment REFUNDED. QR không nhận thêm tiền hoặc renew sau hủy.
