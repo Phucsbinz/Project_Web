@@ -46,6 +46,17 @@ public class OrderWorkflowService {
     this.rewardEvents=rewardEvents;
   }
 
+  /** Match checkout/group's user -> order order before any loyalty mutation.
+   * The order's buyer is immutable; locate it without locking or caching the order.
+   * Lock only the row here: a blocked buyer must not prevent an operator's refund.
+   */
+  private Order lockForLoyalty(long id) {
+    long userId = CommerceReferenceRepository.number(
+        refs.one("select user_id from orders where id=?", id), "user_id");
+    refs.one("select id from users where id=? for update", userId);
+    return data.require(Order.class, id, true);
+  }
+
   public void shipper(Actor actor) {
     refs.requireCurrent(actor, false);
     if (!shipperEnabled || !actor.is("SHIPPER")) throw OrderProblem.forbidden();
@@ -274,7 +285,7 @@ public class OrderWorkflowService {
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public Map<String, Object> transition(Actor actor, long id, Transition request) {
     refs.requireCurrent(actor, false);
-    Order o = data.require(Order.class, id, true);
+    Order o = lockForLoyalty(id);
     version(o, request.version());
     boolean shipping = actor.is("SHIPPER");
     if (shipping) {
@@ -359,7 +370,7 @@ public class OrderWorkflowService {
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public Map<String, Object> cancel(Actor actor, long id, long version, String reason) {
     refs.requireCurrent(actor, false);
-    Order o = data.require(Order.class, id, true);
+    Order o = lockForLoyalty(id);
     version(o, version);
     boolean owner = actor.buyer() && o.userId == actor.userId();
     boolean operator = refs.operates(actor, o.storeId);
@@ -513,7 +524,7 @@ public class OrderWorkflowService {
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public Map<String, Object> refundCash(Actor actor, long id, RefundInput request) {
-    Order o = data.require(Order.class, id, true);
+    Order o = lockForLoyalty(id);
     refs.requireOperator(actor, o.storeId);
     boolean bank = Set.of("BANK_TRANSFER","VNPAY","LOCAL_QR").contains(o.paymentMethod);
     if (bank && !actor.is("ADMIN")) throw OrderProblem.forbidden();
