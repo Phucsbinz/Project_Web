@@ -43,8 +43,8 @@ public class CatalogController {
         }
         if(home) {
             // Use the guest homepage selection for every authentication state.
-            model.addAttribute("result",bean(catalog.search("",null,null,null,null,"sold",0,4,true,false)));
-            model.addAttribute("newProducts",bean(catalog.search("",null,null,null,null,"newest",0,4,true,false)));
+            model.addAttribute("result",bean(catalog.search("",null,null,null,null,"sold",0,20,true,true)));
+            model.addAttribute("newProducts",bean(catalog.search("",null,null,null,null,"newest",0,20,true,true)));
             model.addAttribute("categories",bean(catalog.categories(false,null)));
             var branches=stores.publicStores();
             model.addAttribute("stores",bean(branches));
