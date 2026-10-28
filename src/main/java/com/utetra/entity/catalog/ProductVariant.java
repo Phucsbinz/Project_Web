@@ -10,6 +10,8 @@ public class ProductVariant {
     @Column(name="size_name", nullable=false, length=5) private String sizeName;
     @Column(name="extra_price", nullable=false, precision=14, scale=2) private BigDecimal extraPrice;
     @Column(name="is_active", nullable=false) private boolean active;
+    @Column(name="stock_quantity") private Integer stockQuantity;
+    @Version @Column(nullable=false,columnDefinition="bigint default 0") private long version;
     @Column(name="created_at",nullable=false) private Instant createdAt;
     @Column(name="updated_at",nullable=false) private Instant updatedAt;
     public Long getId() { return id; }
@@ -20,6 +22,9 @@ public class ProductVariant {
     public BigDecimal getExtraPrice() { return extraPrice; }
     public void setExtraPrice(BigDecimal value) { extraPrice=value; }
     public boolean getActive() { return active; }
+    public Integer getStockQuantity() { return stockQuantity; }
+    public long getVersion() { return version; }
+    public void setStockQuantity(Integer value) { stockQuantity=value; }
     public void setActive(boolean value) { active=value; }
     public Instant getCreatedAt() { return createdAt; }
     @PrePersist void created() { createdAt=Instant.now(); updatedAt=createdAt; }

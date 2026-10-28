@@ -10,6 +10,9 @@ public class Product {
     @Column(name="category_id", nullable=false) private Long categoryId;
     @Column(name="name", nullable=false, length=150) private String name;
     @Column(name="slug", nullable=false, length=150) private String slug;
+    @Column(name="catalog_key", length=150) private String catalogKey;
+    public String getCatalogKey() { return catalogKey; }
+    public void setCatalogKey(String value) { catalogKey=value; }
     @Column(name="description", nullable=true, length=4000) private String description;
     @Column(name="base_price", nullable=false, precision=14, scale=2) private BigDecimal basePrice;
     @Column(name="image_url", nullable=true, length=1000) private String imageUrl;

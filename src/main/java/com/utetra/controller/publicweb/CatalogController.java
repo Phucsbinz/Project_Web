@@ -34,16 +34,24 @@ public class CatalogController {
         @RequestParam(defaultValue="12") int size,@RequestParam(defaultValue="false") boolean top,
         @AuthenticationPrincipal UtetraPrincipal principal,jakarta.servlet.http.HttpServletRequest request,Model model) {
         boolean home="/".equals(request.getServletPath());
-        model.addAttribute("result",bean(catalog.search(keyword,categoryId,storeId,min,max,home?"sold":sort,page,size,home && principal==null,top)));
-        if(home && principal!=null) {
-            Map<String,Object> groups=new LinkedHashMap<>();
-            for(String group:List.of("newest","sold","rating","favorites")) groups.put(group,bean(catalog.search("",null,storeId,null,null,group,0,20,false,true)));
-            model.addAttribute("groups",groups);
+        if(home) {
+            if(principal!=null)model.addAttribute("groups",bean(catalog.homeGroups(storeId)));
+            model.addAttribute("result",bean(catalog.search("",null,null,null,null,"sold",0,4,principal==null,false)));
+            model.addAttribute("newProducts",bean(catalog.search("",null,null,null,null,"newest",0,4,principal==null,false)));
+            model.addAttribute("categories",bean(catalog.categories(false,null)));
+            var branches=stores.publicStores();
+            model.addAttribute("stores",bean(branches));
+            if(!branches.isEmpty()) {
+                model.addAttribute("promotionStore",bean(branches.getFirst()));
+                model.addAttribute("homePromotions",bean(promotions.available(branches.getFirst().id()).stream().limit(2).toList()));
+            }
+            return "catalog/home";
         }
+        model.addAttribute("result",bean(catalog.search(keyword,categoryId,storeId,min,max,sort,page,size,false,top)));
         model.addAttribute("categories",bean(catalog.categories(false,null))); model.addAttribute("stores",bean(stores.publicStores()));
         return "catalog/menu";
     }
-    @GetMapping("/products/{id}") public String product(@PathVariable Long id,Model model) {
+    @GetMapping("/products/{id}") public String product(@PathVariable Long id,@AuthenticationPrincipal UtetraPrincipal principal,Model model) {
         model.addAttribute("product",bean(catalog.detail(id))); return "catalog/product";
     }
     @PostMapping("/products/{id}/quote") @ResponseBody public Object quote(@PathVariable Long id,@Valid @RequestBody DrinkInput input) { return catalog.quote(id,input); }

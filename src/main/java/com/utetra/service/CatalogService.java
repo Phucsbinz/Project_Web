@@ -23,14 +23,15 @@ public class CatalogService {
     private final StoreToppingRepository stock;
     private final StoreRepository stores;
     private final CatalogGuard guard;
-    private final CatalogStatistics statistics;
+    private final CatalogStatisticsRepository statistics;
     private final CatalogQueryRepository queries;
     private final java.time.Clock clock;
+    private final com.utetra.order.service.CheckoutAvailabilityEvents availabilityEvents;
     public CatalogService(ProductRepository products,CategoryRepository categories,ToppingRepository toppings,
         ProductVariantRepository variants,ProductToppingRepository links,StoreToppingRepository stock,StoreRepository stores,
-        CatalogGuard guard,CatalogStatistics statistics,CatalogQueryRepository queries,java.time.Clock clock) {
+        CatalogGuard guard,CatalogStatisticsRepository statistics,CatalogQueryRepository queries,java.time.Clock clock,com.utetra.order.service.CheckoutAvailabilityEvents availabilityEvents) {
         this.products=products; this.categories=categories; this.toppings=toppings; this.variants=variants;
-        this.links=links; this.stock=stock; this.stores=stores; this.guard=guard; this.statistics=statistics; this.queries=queries; this.clock=clock;
+        this.links=links; this.stock=stock; this.stores=stores; this.guard=guard; this.statistics=statistics; this.queries=queries; this.clock=clock; this.availabilityEvents=availabilityEvents;
     }
     public List<CategoryView> categories(boolean management,UtetraPrincipal p) {
         if(management) guard.catalog(p);
@@ -60,8 +61,35 @@ public class CatalogService {
         require((min==null || min.signum()>=0) && (max==null || max.signum()>=0) && (min==null || max==null || min.compareTo(max)<=0),"Khoảng giá không hợp lệ");
         require(Set.of("newest","price_asc","price_desc","sold","rating","favorites").contains(sort),"Kiểu sắp xếp không hợp lệ");
         var result=queries.search(keyword,categoryId,storeId,min,max,sort,page,size,guestTop,top20);
-        var items=result.items().stream().map(x -> view(found(products.findById(x.id())),x.sold(),x.rating(),x.favorites())).toList();
+        var items=views(result.items());
         return new PageView<>(items,page,size,result.total(),(result.total()+size-1)/size);
+    }
+    public Map<String,PageView<ProductView>> homeGroups(Long storeId) {
+        Map<String,CatalogQueryRepository.Result> ranked=new LinkedHashMap<>();
+        for(String sort:List.of("newest","sold","rating","favorites")) ranked.put(sort,queries.search("",null,storeId,null,null,sort,0,20,false,true));
+        var unique=new LinkedHashMap<Long,CatalogQueryRepository.RankedProduct>();
+        ranked.values().forEach(r -> r.items().forEach(p -> unique.putIfAbsent(p.id(),p)));
+        Map<Long,ProductView> loaded=new HashMap<>();views(new ArrayList<>(unique.values())).forEach(p -> loaded.put(p.id(),p));
+        Map<String,PageView<ProductView>> result=new LinkedHashMap<>();
+        ranked.forEach((sort,r) -> result.put(sort,new PageView<>(r.items().stream().map(p -> loaded.get(p.id())).toList(),0,20,r.total(),(r.total()+19)/20)));
+        return result;
+    }
+    private List<ProductView> views(List<CatalogQueryRepository.RankedProduct> ranked) {
+        if(ranked.isEmpty())return List.of();
+        var ids=ranked.stream().map(CatalogQueryRepository.RankedProduct::id).toList();
+        Map<Long,Product> byId=new HashMap<>();products.findAllById(ids).forEach(p -> byId.put(p.getId(),p));
+        var storeIds=byId.values().stream().map(Product::getStoreId).distinct().toList();
+        var available=stock.findByStoreIdIn(storeIds).stream().filter(StoreTopping::getAvailable).collect(java.util.stream.Collectors.groupingBy(StoreTopping::getStoreId,java.util.stream.Collectors.mapping(StoreTopping::getToppingId,java.util.stream.Collectors.toSet())));
+        var allLinks=links.findByProductIdIn(ids).stream().collect(java.util.stream.Collectors.groupingBy(ProductTopping::getProductId));
+        var allVariants=variants.findByProductIdIn(ids).stream().collect(java.util.stream.Collectors.groupingBy(ProductVariant::getProductId));
+        Map<Long,Topping> allTops=new HashMap<>();toppings.findAllById(allLinks.values().stream().flatMap(Collection::stream).map(ProductTopping::getToppingId).distinct().toList()).forEach(t -> allTops.put(t.getId(),t));
+        return ranked.stream().map(r -> {
+            var p=found(Optional.ofNullable(byId.get(r.id())));
+            var topIds=allLinks.getOrDefault(p.getId(),List.of()).stream().map(ProductTopping::getToppingId).collect(java.util.stream.Collectors.toSet());
+            var options=topIds.stream().sorted().map(allTops::get).filter(Objects::nonNull).filter(t -> t.getActive() && available.getOrDefault(p.getStoreId(),Set.of()).contains(t.getId())).map(this::toppingView).toList();
+            var sizes=allVariants.getOrDefault(p.getId(),List.of()).stream().sorted(Comparator.comparing(ProductVariant::getId)).map(v -> new VariantView(v.getId(),v.getSizeName(),v.getExtraPrice(),v.getActive(),v.getStockQuantity(),v.getVersion())).toList();
+            return new ProductView(p.getId(),p.getStoreId(),p.getCategoryId(),p.getName(),p.getSlug(),p.getDescription(),p.getBasePrice(),p.getImageUrl(),p.getActive(),p.getAvailable(),p.getFeatured(),p.getVersion(),p.getCreatedAt(),sizes,options,topIds,r.sold(),r.rating(),r.favorites(),p.getCatalogKey());
+        }).toList();
     }
     public ProductView detail(Long id) {
         var p=found(products.findById(id)); require(visible(p),"Sản phẩm không được bán");
@@ -78,16 +106,22 @@ public class CatalogService {
         require(input.variants().stream().anyMatch(VariantInput::active),"Cần ít nhất một size hoạt động");
         for(Long toppingId:input.toppingIds()) require(found(toppings.findById(toppingId)).getActive(),"Topping đã ngừng hoạt động");
         product.setStoreId(input.storeId()); product.setCategoryId(input.categoryId()); product.setName(input.name().trim()); product.setSlug(input.slug());
+        if(input.catalogKey()!=null) {
+            String key=input.catalogKey().isBlank()?null:input.catalogKey();
+            require(key==null || products.findAll().stream().noneMatch(x -> !x.getId().equals(id) && x.getStoreId().equals(input.storeId()) && key.equals(x.getCatalogKey())),"Mã món chung đã tồn tại trong chi nhánh này");
+            product.setCatalogKey(key);
+        }
         product.setDescription(input.description()); product.setBasePrice(input.basePrice()); product.setActive(input.active()); product.setAvailable(input.available()); product.setFeatured(input.featured());
         product.touch(); products.saveAndFlush(product);
         var old=variants.findByProductId(product.getId()); old.forEach(v -> v.setActive(false));
         for(var i:input.variants()) {
             var v=old.stream().filter(x -> x.getSizeName().equals(i.sizeName())).findFirst().orElseGet(ProductVariant::new);
-            v.setProductId(product.getId()); v.setSizeName(i.sizeName()); v.setExtraPrice(i.extraPrice()); v.setActive(i.active()); variants.save(v);
+            if(i.stockQuantity()!=null && v.getId()!=null) require(i.stockVersion()!=null && i.stockVersion()==v.getVersion(),"Tồn kho đã thay đổi; tải lại sản phẩm trước khi chỉnh số lượng");
+            v.setProductId(product.getId()); v.setSizeName(i.sizeName()); v.setExtraPrice(i.extraPrice()); v.setActive(i.active()); if(i.stockQuantity()!=null) v.setStockQuantity(i.stockQuantity()); variants.save(v);
         }
         links.deleteByProductId(product.getId()); links.flush();
         for(Long toppingId:input.toppingIds()) { var link=new ProductTopping(); link.setProductId(product.getId()); link.setToppingId(toppingId); links.save(link); }
-        variants.flush(); products.flush(); guard.audit(p,"SAVE","PRODUCT",product.getId()); return view(product,0,BigDecimal.ZERO,0);
+        variants.flush(); products.flush(); availabilityEvents.changed(product.getStoreId(),variants.findByProductId(product.getId()).stream().map(ProductVariant::getId).toList(),List.of()); guard.audit(p,"SAVE","PRODUCT",product.getId()); return view(product,0,BigDecimal.ZERO,0);
     }
     @Transactional public void disableProduct(UtetraPrincipal p,Long id,long suppliedVersion) {
         var product=found(products.findById(id)); guard.store(p,product.getStoreId()); version(product.getVersion(),suppliedVersion);
@@ -100,6 +134,7 @@ public class CatalogService {
         require(!time.isBefore(store.getOpenTime()) && time.isBefore(store.getCloseTime()),"Shop đang ngoài giờ phục vụ");
         require(Set.of(0,30,50,70,100).contains(input.sugarLevel()) && Set.of(0,30,50,70,100).contains(input.iceLevel()),"Mức đường/đá không hợp lệ");
         var variant=found(variants.findById(input.variantId())); require(id.equals(variant.getProductId()) && variant.getActive(),"Size không hợp lệ");
+        require(variant.getStockQuantity()==null || variant.getStockQuantity()>=input.quantity(),"Size không còn đủ số lượng");
         var allowed=links.findByProductId(id).stream().map(ProductTopping::getToppingId).collect(java.util.stream.Collectors.toSet());
         BigDecimal extra=BigDecimal.ZERO;
         for(Long toppingId:input.toppingIds()) {
@@ -119,9 +154,9 @@ public class CatalogService {
             .filter(t -> t.getActive() && available.contains(t.getId())).map(this::toppingView).toList();
         return new ProductView(p.getId(),p.getStoreId(),p.getCategoryId(),p.getName(),p.getSlug(),p.getDescription(),p.getBasePrice(),p.getImageUrl(),
             p.getActive(),p.getAvailable(),p.getFeatured(),p.getVersion(),p.getCreatedAt(),variants.findByProductId(p.getId()).stream()
-            .map(v -> new VariantView(v.getId(),v.getSizeName(),v.getExtraPrice(),v.getActive())).toList(),options,
-            links.findByProductId(p.getId()).stream().map(ProductTopping::getToppingId).collect(java.util.stream.Collectors.toSet()),sold,rating,favorites);
+            .map(v -> new VariantView(v.getId(),v.getSizeName(),v.getExtraPrice(),v.getActive(),v.getStockQuantity(),v.getVersion())).toList(),options,
+            links.findByProductId(p.getId()).stream().map(ProductTopping::getToppingId).collect(java.util.stream.Collectors.toSet()),sold,rating,favorites,p.getCatalogKey());
     }
-    private CategoryView categoryView(Category c) { return new CategoryView(c.getId(),c.getName(),c.getSlug(),c.getDescription(),c.getDisplayOrder(),c.getActive()); }
+    private CategoryView categoryView(Category c) { return new CategoryView(c.getId(),c.getName(),c.getSlug(),c.getDescription(),c.getDisplayOrder(),c.getActive(),c.getImageUrl()); }
     private ToppingView toppingView(Topping t) { return new ToppingView(t.getId(),t.getName(),t.getPrice(),t.getActive()); }
 }

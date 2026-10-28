@@ -11,12 +11,19 @@
   const tabs = app.dataset.role === 'vendor' ? ['stores','products','promotions','areas','stock'] : ['stores','products','categories','toppings','promotions','areas','stock',...(app.dataset.role === 'admin' ? ['memberships'] : [])];
   const section = tabs.includes(app.dataset.section) ? app.dataset.section : 'stores';
   let editing = null, shopList = [], categories = [], toppings = [], productList = [], loading = false;
-  const labels = {stores:'Shop',products:'Sản phẩm',categories:'Danh mục',toppings:'Topping',promotions:'Khuyến mãi',areas:'Khu vực giao',stock:'Topping tại shop',memberships:'Phân công Manager'};
+  const labels = {stores:'Chi nhánh',products:'Sản phẩm',categories:'Danh mục',toppings:'Topping',promotions:'Khuyến mãi',areas:'Khu vực giao',stock:'Topping tại shop',memberships:'Phân công Manager'};
+  const help={stores:'Xem thông tin chi nhánh, duyệt hồ sơ và cập nhật tình trạng nhận đơn.',products:'Chọn chi nhánh, tìm món trong danh sách rồi bấm Chỉnh sửa; hoặc thêm món mới.',categories:'Quản lý nhóm đồ uống dùng chung. Thứ tự quyết định cách hiển thị trên thực đơn.',toppings:'Quản lý tên, giá và trạng thái topping dùng chung.',promotions:'Kiểm tra phạm vi chi nhánh, thời gian và điều kiện trước khi lưu ưu đãi.',areas:'Chọn chi nhánh để cấu hình những khu vực nhận giao hàng.',stock:'Chọn chi nhánh và topping để cập nhật khả năng phục vụ.',memberships:'Chọn chi nhánh rồi nhập ID Manager cần phân công. Quyền có hiệu lực sau khi lưu.'};
+  const states={ACTIVE:'Đang hoạt động',APPROVED:'Đã duyệt',PENDING_APPROVAL:'Chờ duyệt',REJECTED:'Đã từ chối',SUSPENDED:'Tạm khóa',DRAFT:'Bản nháp'};
+  document.getElementById('management-title').textContent=app.dataset.role==='admin'&&location.pathname===context+'/admin'?'Tổng quan quản trị':'Quản lý '+labels[section].toLocaleLowerCase('vi');document.getElementById('management-guide').textContent=help[section];
+  function filterRecords(){const query=document.getElementById('management-search').value.trim().toLocaleLowerCase('vi');const cards=[...list.querySelectorAll('article')];let count=0;cards.forEach(card=>{card.hidden=!card.dataset.search.includes(query);if(!card.hidden)count++;});document.getElementById('management-result-count').textContent=cards.length?count+'/'+cards.length+' mục':'';}
+  document.getElementById('management-search').addEventListener('input',filterRecords);
+  document.getElementById('management-create').hidden=section==='stores'&&app.dataset.role!=='vendor';
+  document.getElementById('management-create').addEventListener('click',()=>{if(!form.querySelector('input,select,textarea')){select.focus();notice('Hãy chọn chi nhánh trước khi thêm dữ liệu.',true);return;}edit();document.getElementById('management-editor').scrollIntoView({behavior:'smooth',block:'start'});form.querySelector('input:not([type=checkbox]),select,textarea')?.focus({preventScroll:true});});
   const specs = {
-    stores:[['name','Tên shop'],['slug','Đường dẫn'],['address','Địa chỉ'],['phone','Điện thoại'],['description','Giới thiệu','textarea'],['openTime','Mở cửa','time'],['closeTime','Đóng cửa','time'],['acceptingOrders','Nhận đơn','checkbox']],
+    stores:[['name','Tên chi nhánh'],['slug','Đường dẫn'],['address','Địa chỉ'],['phone','Điện thoại'],['description','Giới thiệu','textarea'],['openTime','Mở cửa','time'],['closeTime','Đóng cửa','time'],['acceptingOrders','Nhận đơn','checkbox']],
     categories:[['name','Tên danh mục'],['slug','Đường dẫn'],['description','Mô tả','textarea'],['displayOrder','Thứ tự','number'],['active','Hoạt động','checkbox']],
     toppings:[['name','Tên topping'],['price','Giá (đ)','number'],['active','Hoạt động','checkbox']],
-    products:[['name','Tên sản phẩm'],['slug','Đường dẫn'],['categoryId','Danh mục','category'],['description','Mô tả','textarea'],['basePrice','Giá gốc (đ)','number'],['active','Hoạt động','checkbox'],['available','Sẵn bán','checkbox'],['featured','Nổi bật','checkbox'],['toppingIds','Topping được phép chọn','toppings']],
+    products:[['name','Tên sản phẩm'],['slug','Đường dẫn'],['categoryId','Danh mục','category'],['description','Mô tả','textarea'],['catalogKey','Mã món chung giữa các chi nhánh (có thể để trống)','text'],['basePrice','Giá gốc (đ)','number'],['active','Hoạt động','checkbox'],['available','Sẵn bán','checkbox'],['featured','Nổi bật','checkbox'],['toppingIds','Topping được phép chọn','toppings']],
     promotions:[['name','Tên chương trình'],['code','Mã (có thể bỏ trống)'],['kind','Loại ưu đãi','kind'],['percent','Giảm (%)','number'],['maxDiscount','Giảm tối đa (đ)','number'],['minOrder','Đơn tối thiểu (đ)','number'],['usageLimit','Tổng hạn mức','number'],['perUserLimit','Hạn mức mỗi người','number'],['startsAt','Bắt đầu','datetime-local'],['endsAt','Kết thúc','datetime-local'],['productIds','Sản phẩm áp dụng (bỏ trống: toàn phạm vi)','products'],['active','Hoạt động','checkbox']],
     areas:[['areaCode','Mã khu vực'],['name','Tên khu vực'],['active','Hoạt động','checkbox']],
     stock:[['toppingId','Topping','topping'],['available','Sẵn bán','checkbox']],
@@ -50,21 +57,24 @@
     else { if(type !== 'textarea') input.type = type; input.value = value ?? (type === 'number' ? (name.includes('Limit') ? 1 : 0) : ''); }
     if(type === 'datetime-local' && value) { const date = new Date(value); input.value = new Date(date - date.getTimezoneOffset()*60000).toISOString().slice(0,16); }
     if(type === 'number') { input.min = name.includes('Limit') || name.endsWith('Id') ? '1' : '0'; input.step = name === 'percent' ? '0.01' : '1'; if(name === 'percent') input.max = '100'; }
-    input.required = !['checkbox','textarea','toppings','products'].includes(type) && name !== 'code';
+    input.required = !['checkbox','textarea','toppings','products'].includes(type) && !['code','catalogKey'].includes(name);
     if(type === 'text') input.maxLength = name === 'phone' ? 20 : name === 'code' ? 50 : section === 'categories' || section === 'toppings' ? 100 : 150;
     if(type === 'textarea') input.maxLength = 4000;
-    group.append(input); return group;
+    group.append(input);if(input.multiple)group.append(el('small','Giữ Ctrl (Windows) hoặc ⌘ (Mac) để chọn nhiều mục; bỏ chọn tất cả nếu không áp dụng.','field-help'));if(name==='slug')group.append(el('small','Đường dẫn không dấu, viết thường, ngăn cách bằng dấu gạch ngang.','field-help'));return group;
   }
   function edit(item = null) {
-    editing = item; form.replaceChildren(); document.querySelector('#catalog-form-title').textContent = (item ? 'Cập nhật ' : 'Tạo / cấu hình ') + labels[section];
+    document.getElementById('management-editor').hidden=section==='stores'&&app.dataset.role!=='vendor'&&!item;
+    editing = item;list.querySelectorAll('article').forEach(card=>card.classList.toggle('record-editing',Boolean(item)&&card.dataset.recordId===String(item.id)));form.replaceChildren(); document.querySelector('#catalog-form-title').textContent = (item ? 'Cập nhật ' : 'Tạo / cấu hình ') + labels[section];
     specs[section].forEach(([name,label,type]) => form.append(field(name,label,type,item?.[name])));
     if(section === 'products') ['S','M','L'].forEach(size => {
       const old = item?.variants.find(v => v.sizeName === size);
       form.append(field('size_' + size,'Bán size ' + size,'checkbox',old ? old.active : size === 'M'));
       form.append(field('extra_' + size,'Phụ thu size ' + size + ' (đ)','number',old?.extraPrice || 0));
+      const quantity = field('stock_' + size,'Số ly còn nhận size ' + size + ' (trống: giữ hiện có)','number',old?.stockQuantity ?? '');
+      const input = quantity.querySelector('input'); if(input) {input.required=false;input.min='0';input.max='1000000';input.step='1';} form.append(quantity);
     });
-    const save = el('button',item ? 'Lưu thay đổi' : 'Lưu','btn btn-dark'); form.append(save);
-    const reset = el('button','Tạo / cấu hình mới','btn btn-outline-secondary'); reset.type = 'button'; reset.onclick = () => edit(); form.append(reset);
+    const save = el('button',item ? 'Lưu thay đổi' : 'Lưu '+labels[section].toLocaleLowerCase('vi'),'btn btn-dark'); form.append(save);
+    const reset = el('button',item?'Hủy chỉnh sửa / thêm mới':'Làm trống biểu mẫu','btn btn-outline-secondary'); reset.type = 'button'; reset.onclick = () => edit(); form.append(reset);
     if(section === 'stores' && !item) { save.disabled = true; form.append(el('p','Đăng ký shop mới tại trang Đăng ký shop. Chọn một shop để cập nhật.','small text-secondary')); }
     document.querySelector('#image-panel').hidden = !item || !['products','stores'].includes(section);
     if(item) document.querySelector('#image-type').value = section === 'products' ? 'product' : 'store';
@@ -111,13 +121,25 @@
     });
   }
   async function refresh() {
+    document.querySelectorAll('[data-catalog-tab]').forEach(tab => {
+      const active = tab.dataset.catalogTab === section;
+      tab.classList.toggle('btn-primary', active); tab.classList.toggle('btn-outline-dark', !active);
+      if(active) tab.setAttribute('aria-current','page'); else tab.removeAttribute('aria-current');
+    });
     list.replaceChildren(el('p','Đang tải…'));
     const storeRequired = ['products','areas','stock','memberships'].includes(section) || (section === 'promotions' && app.dataset.role !== 'admin');
-    if(storeRequired && !select.value) {
-      editing = null; document.querySelector('#image-panel').hidden = true;
+    if (app.dataset.role === 'admin' && select.options[0]?.value === '') select.options[0].textContent = section === 'promotions' ? 'Toàn hệ thống (khuyến mãi)' : 'Chọn cửa hàng để quản lý';
+    if (storeRequired && !select.value) {
+      editing = null;
       document.querySelector('#catalog-list-title').textContent = labels[section];
-      list.replaceChildren(el('p',shopList.length ? 'Chọn shop phía trên để quản lý dữ liệu.' : 'Chưa có shop được duyệt hoặc phân công trong phạm vi của bạn.','alert alert-light border'));
-      form.replaceChildren(el('p','Chọn shop trước khi tạo hoặc cập nhật.')); return;
+      const empty = el('div',undefined,'empty-state');
+      empty.append(el('h3','Bắt đầu từ một cửa hàng.'),el('p',shopList.length ? 'Chọn cửa hàng ở phía trên để xem và quản lý dữ liệu.' : 'Chưa có cửa hàng trong phạm vi của bạn. Khi cửa hàng được duyệt hoặc phân công, dữ liệu sẽ xuất hiện tại đây.'));
+      if(app.dataset.role === 'vendor') {const link=el('a','Đăng ký cửa hàng','btn btn-primary');link.href=context+'/account/shop-registration';empty.append(link);}
+      else {const link=el('a','Xem cửa hàng','btn btn-outline-dark');link.href=context+'/'+app.dataset.role+'/stores';empty.append(link);}
+      list.replaceChildren(empty); form.replaceChildren(el('p','Chọn cửa hàng trước khi tạo hoặc cập nhật dữ liệu.','small text-secondary'));
+      document.querySelector('#catalog-form-title').textContent = 'Sẵn sàng cho cửa hàng của bạn';
+      document.querySelector('#image-panel').hidden = true;
+      return;
     }
     try {
       let data = [];
@@ -127,11 +149,11 @@
       else data = await request('/' + section + (['products','promotions'].includes(section) && select.value ? '?storeId=' + select.value : ''));
       list.replaceChildren(); document.querySelector('#catalog-list-title').textContent = labels[section] + ' (' + data.length + ')';
       data.forEach(item => {
-        const card = el('article',undefined,'card p-3'); card.append(el('h3',item.name,'h5'));
-        const info = section === 'stores' ? item.address + ' · ' + item.status : section === 'products' ? item.basePrice + ' đ · ' + (item.active ? 'Hoạt động' : 'Ngừng bán') : section === 'promotions' ? item.percent + '% · ' + (item.active ? 'Bật' : 'Tắt') : item.active ? 'Hoạt động' : 'Ngừng hoạt động';
+        const card = el('article',undefined,'card p-3');card.dataset.recordId=String(item.id);card.dataset.search=((item.name||'')+' '+(item.address||'')+' '+(item.code||'')).toLocaleLowerCase('vi');card.append(el('h3',item.name,'h5'));
+        const info = section === 'stores' ? item.address + ' · ' + (states[item.status]||item.status) : section === 'products' ? new Intl.NumberFormat('vi-VN').format(item.basePrice) + ' đ · ' + (item.active ? 'Hoạt động' : 'Ngừng bán') : section === 'promotions' ? item.percent + '% · ' + (item.active ? 'Bật' : 'Tắt') : item.active ? 'Hoạt động' : 'Ngừng hoạt động';
         card.append(el('p',info,'small text-secondary')); const actions = el('div',undefined,'d-flex flex-wrap gap-2');
-        actions.append(button('Sửa',() => edit(item)));
-        if(section === 'products') actions.append(button('Ngừng bán',async () => { if(!confirm('Ngừng bán sản phẩm này?')) return; await request('/products/' + item.id + '?version=' + item.version,'DELETE'); await refresh(); }));
+        actions.append(button('Chỉnh sửa',() => {edit(item);document.getElementById('management-editor').scrollIntoView({behavior:'smooth',block:'start'});form.querySelector('input,select,textarea')?.focus({preventScroll:true});}));
+        if(section === 'products') actions.append(button('Ngừng bán',async () => { if(!await window.utetraConfirm('Ngừng bán sản phẩm này?')) return; await request('/products/' + item.id + '?version=' + item.version,'DELETE'); await refresh(); }));
         if(section === 'stores' && app.dataset.role !== 'vendor') {
           if(item.status === 'PENDING_APPROVAL') { actions.append(button('Duyệt',() => review(item,'APPROVED',card)),button('Từ chối',() => review(item,'REJECTED',card))); }
           if(['ACTIVE','SUSPENDED'].includes(item.status)) actions.append(button(item.status === 'ACTIVE' ? 'Tạm khóa' : 'Mở lại', async () => {
@@ -141,14 +163,14 @@
         card.append(actions); list.append(card);
       });
       if(!data.length) list.append(el('p','Chưa có dữ liệu trong phạm vi này.','alert alert-light border'));
-      edit();
+      filterRecords();edit();
     } catch(error) { list.replaceChildren(el('p',error.message,'alert alert-warning')); edit(); }
   }
   async function reload() {
     const previous = select.value || new URL(location.href).searchParams.get('storeId'); shopList = await request('/stores'); select.replaceChildren();
     if(app.dataset.role === 'admin') { const o = el('option','Toàn hệ thống (khuyến mãi)'); o.value = ''; select.append(o); }
-    shopList.forEach(s => { const o = el('option',s.name + ' · ' + s.status); o.value = s.id; select.append(o); });
-    if(!select.options.length) { const o = el('option','Chưa có shop được phân công'); o.value = ''; select.append(o); }
+    shopList.forEach(s => { const o = el('option',s.name + ' · ' + (states[s.status]||s.status)); o.value = s.id; select.append(o); });
+    if(!select.options.length) {const o=el('option','Chưa có cửa hàng được phân công');o.value='';select.append(o);}
     if([...select.options].some(o => o.value === previous)) select.value = previous;
     rememberStore();
     const lookups = await fetch(context + '/products/lookups').then(r => r.ok ? r.json() : {categories:[]}); categories = lookups.categories;
@@ -163,7 +185,7 @@
       specs[section].forEach(([name,,type]) => { data[name] = type === 'checkbox' ? form.elements[name].checked : ['toppings','products'].includes(type) ? values.getAll(name).map(Number) : type === 'number' || ['category','topping'].includes(type) ? Number(values.get(name)) : type === 'datetime-local' ? new Date(values.get(name)).toISOString() : values.get(name); });
       let path = '/' + section + (editing ? '/' + editing.id : ''), method = editing ? 'PUT' : 'POST'; data.version = editing?.version || 0;
       if(section === 'products') {
-        data.storeId = Number(select.value); data.variants = ['S','M','L'].filter(s => form.elements['size_' + s].checked).map(s => ({sizeName:s,extraPrice:Number(values.get('extra_' + s)),active:true}));
+        data.storeId = Number(select.value); data.variants = ['S','M','L'].filter(s => form.elements['size_' + s].checked).map(s => ({sizeName:s,extraPrice:Number(values.get('extra_' + s)),active:true,stockQuantity:values.get('stock_' + s)===''?null:Number(values.get('stock_' + s)),stockVersion:editing?.variants.find(v=>v.sizeName===s)?.version??null}));
       }
       if(section === 'promotions') { data.storeId = select.value ? Number(select.value) : null; if(!data.code) data.code = null; }
       if(['areas','stock','memberships'].includes(section)) {
@@ -175,7 +197,7 @@
     } catch(error) { notice(error.message,true); } finally { save.disabled = false; loading = false; }
   });
   tabs.forEach(tab => {
-    const link = el('a',labels[tab],tab === section ? 'btn btn-dark' : 'btn btn-outline-dark'); link.dataset.catalogTab = tab;
+    const link = el('a',labels[tab],tab === section ? 'btn btn-primary' : 'btn btn-outline-dark'); link.dataset.catalogTab = tab;
     link.href = context + '/' + app.dataset.role + '/' + tab;
     if(tab === section) link.setAttribute('aria-current','page'); document.querySelector('#catalog-tabs').append(link);
   });

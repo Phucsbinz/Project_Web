@@ -28,8 +28,13 @@ class CatalogViewTest {
         jdbc.update("insert into product_variants(product_id,size_name,extra_price,is_active,created_at,updated_at) values(1,'M',5000,true,current_timestamp,current_timestamp)");
         jdbc.update("insert into auth_sessions(id,user_id,refresh_token_hash,created_at,expires_at,version) values(1,1,?,current_timestamp,?,0)","b".repeat(64),java.sql.Timestamp.from(Instant.now().plusSeconds(3600)));
     }
+    @Test void quickViewAllowsSameOriginAndNormalProductKeepsFrameProtection() {
+        assertThat(client.getForEntity("/products/1?quick=1",String.class).getHeaders().getFirst("X-Frame-Options")).isEqualTo("SAMEORIGIN");
+        assertThat(client.getForEntity("/products/1",String.class).getHeaders().getFirst("X-Frame-Options")).isEqualTo("DENY");
+        assertThat(client.getForObject("/products/1",String.class)).contains("Tính giá lựa chọn").doesNotContain("/cart/draft/items","product-community.js");
+    }
     @Test void publicPagesRenderEscapedDataAndNoJspSource() {
-        for(String path:List.of("/menu","/products/1","/stores","/stores/1")) {
+        for(String path:List.of("/","/menu","/products/1","/stores","/stores/1")) {
             var response=client.getForEntity(path,String.class);
             assertThat(response.getStatusCode()).as(path).isEqualTo(HttpStatus.OK);
             assertThat(response.getBody()).as(path).contains("navbar-brand","site-footer").doesNotContain("<%@","<c:forEach","<script>alert(1)</script>");
@@ -48,7 +53,15 @@ class CatalogViewTest {
         jdbc.update("update users set role_id=(select id from roles where name='ROLE_VENDOR') where id=1");
         var headers=new HttpHeaders(); headers.setBearerAuth(jwt.issue(1L,1L,"ROLE_VENDOR"));
         var home=client.exchange("/",HttpMethod.GET,new HttpEntity<>(headers),String.class);
-        assertThat(home.getStatusCode()).isEqualTo(HttpStatus.OK); assertThat(home.getBody()).contains("20 món mới nhất","20 món bán chạy","20 món đánh giá cao","20 món được yêu thích");
+        assertThat(home.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(home.getBody()).contains("catalog-homepage","Xem thực đơn","href=\"/menu\"","home-bestsellers","home-new","home-branches","drink-modal","header-search","Shop demo")
+            .contains("20 món mới nhất","20 món bán chạy","20 món đánh giá cao","20 món được yêu thích")
+            .doesNotContain("catalog-filters","catalog-group");
+        for(String group:List.of("newest","sold","rating","favorites")) {
+            var menu=client.exchange("/menu?top=true&sort="+group,HttpMethod.GET,new HttpEntity<>(headers),String.class);
+            assertThat(menu.getStatusCode()).as(group).isEqualTo(HttpStatus.OK);
+            assertThat(menu.getBody()).contains("20 món mới nhất","20 món bán chạy","20 món đánh giá cao","20 món được yêu thích","name=\"top\" value=\"true\"");
+        }
         var registration=client.exchange("/account/shop-registration",HttpMethod.GET,new HttpEntity<>(headers),String.class);
         assertThat(registration.getStatusCode()).isEqualTo(HttpStatus.OK); assertThat(registration.getBody()).contains("registration-form");
     }

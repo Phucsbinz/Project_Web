@@ -75,6 +75,38 @@ class CatalogIntegrationTest {
     PromotionInput promo(Long shop,Set<Long> ids,BigDecimal percent,long version) {
         return new PromotionInput(shop,"Ưu đãi","TEST10","PRODUCT_PERCENT",percent,money(100000),money(0),100,1,clock.instant().minusSeconds(60),clock.instant().plusSeconds(3600),true,ids,version);
     }
+    @Test void homepageHydratesAllRankingSectionsInOneBoundedBatch() {
+        for(int n=0;n<12;n++)catalog.saveProduct(admin,null,productInput(storeId,"home-batch-"+n,0));
+        em.flush();em.clear();
+        var stats=em.getEntityManagerFactory().unwrap(org.hibernate.SessionFactory.class).getStatistics();
+        boolean enabled=stats.isStatisticsEnabled();stats.setStatisticsEnabled(true);stats.clear();
+        try {
+            var sections=catalog.homeGroups(null);
+            assertThat(sections.keySet()).containsExactly("newest","sold","rating","favorites");
+            sections.values().forEach(section->{assertThat(section.items()).hasSize(12);section.items().forEach(p->{assertThat(p.variants()).hasSize(1);assertThat(p.toppings()).hasSize(1);});});
+            assertThat(stats.getPrepareStatementCount()).isLessThanOrEqualTo(6);
+        } finally {stats.setStatisticsEnabled(enabled);}
+    }
+    @Test void catalogStockRejectsAnOldVariantVersionAndInsufficientQuantity() {
+        var p=product(); var v=p.variants().getFirst();
+        var input=new ProductInput(storeId,categoryId,p.name(),p.slug(),p.description(),p.basePrice(),true,true,false,
+            List.of(new VariantInput("M",v.extraPrice(),true,10,v.version())),Set.of(toppingId),p.version());
+        var saved=catalog.saveProduct(admin,p.id(),input);em.flush();em.clear();
+        var current=saved.variants().getFirst();
+        assertThatThrownBy(()->catalog.quote(p.id(),new DrinkInput(current.id(),11,50,50,Set.of())))
+            .isInstanceOf(ResponseStatusException.class);
+        jdbc.update("update product_variants set stock_quantity=9,version=version+1 where id=?",current.id());em.clear();
+        var stale=new ProductInput(storeId,categoryId,p.name(),p.slug(),p.description(),p.basePrice(),true,true,false,
+            List.of(new VariantInput("M",v.extraPrice(),true,8,current.version())),Set.of(toppingId),saved.version());
+        assertThatThrownBy(()->catalog.saveProduct(admin,p.id(),stale)).isInstanceOf(ResponseStatusException.class);
+        assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=?",Integer.class,current.id())).isEqualTo(9);
+    }
+    @Test void stockJsonRejectsFractionsAndStringVersions() {
+        assertThatThrownBy(()->mapper.readValue("{\"sizeName\":\"M\",\"extraPrice\":0,\"active\":true,\"stockQuantity\":1.5}",VariantInput.class))
+            .isInstanceOf(com.fasterxml.jackson.core.JsonProcessingException.class);
+        assertThatThrownBy(()->mapper.readValue("{\"sizeName\":\"M\",\"extraPrice\":0,\"active\":true,\"stockVersion\":\"1\"}",VariantInput.class))
+            .isInstanceOf(com.fasterxml.jackson.core.JsonProcessingException.class);
+    }
     @Test void approvalPromotesBuyerAndRejectsReplay() {
         assertThat(jdbc.queryForObject("select r.name from users u join roles r on r.id=u.role_id where u.id=105",String.class)).isEqualTo("ROLE_VENDOR");
         var current=storeRepo.findById(storeId).orElseThrow();

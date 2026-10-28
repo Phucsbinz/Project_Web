@@ -20,6 +20,10 @@ public class SecurityConfig {
     @Bean public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
     @Bean public SecurityFilterChain securityFilterChain(HttpSecurity http,JwtAuthenticationFilter jwt) throws Exception {
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .headers(headers -> headers.frameOptions(frame -> frame.disable()).addHeaderWriter((req,res) -> {
+                boolean quick=req.getServletPath().matches("/products/[0-9]+") && "1".equals(req.getParameter("quick"));
+                res.setHeader("X-Frame-Options",quick?"SAMEORIGIN":"DENY");
+            }))
             .requestCache(cache -> cache.disable())
             .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .authorizeHttpRequests(auth -> auth

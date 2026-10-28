@@ -6,7 +6,6 @@ import com.utetra.entity.catalog.*;
 import com.utetra.repository.catalog.*;
 import com.utetra.security.UtetraPrincipal;
 import jakarta.validation.Valid;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -21,18 +20,18 @@ public class StoreService {
     private final StoreDeliveryAreaRepository areas;
     private final StoreMembershipRepository memberships;
     private final CatalogGuard guard;
-    private final JdbcTemplate jdbc;
+    private final StoreOperationsRepository operations;
     private final Clock clock;
-    private final CatalogStatistics schema;
+    private final CatalogStatisticsRepository schema;
     public StoreService(StoreRepository stores,StoreRegistrationRequestRepository requests,StoreDeliveryAreaRepository areas,
-        StoreMembershipRepository memberships,CatalogGuard guard,JdbcTemplate jdbc,Clock clock,CatalogStatistics schema) {
+        StoreMembershipRepository memberships,CatalogGuard guard,StoreOperationsRepository operations,Clock clock,CatalogStatisticsRepository schema) {
         this.stores=stores; this.requests=requests; this.areas=areas; this.memberships=memberships;
-        this.guard=guard; this.jdbc=jdbc; this.clock=clock; this.schema=schema;
+        this.guard=guard; this.operations=operations; this.clock=clock; this.schema=schema;
     }
     public List<DeliveryRateView> deliveryRates(Long storeId) {
         publicStore(storeId);
         if(!schema.tables("carriers","carrier_area_rates")) return List.of();
-        return jdbc.query("select a.id,a.name,c.id carrier_id,c.name carrier_name,c.base_fee+r.additional_fee fee from store_delivery_areas a join carrier_area_rates r on r.delivery_area_id=a.id join carriers c on c.id=r.carrier_id where a.store_id=? and a.is_active=true and r.is_active=true and c.is_active=true order by a.id,c.id",(rs,n) -> new DeliveryRateView(rs.getLong("id"),rs.getString("name"),rs.getLong("carrier_id"),rs.getString("carrier_name"),rs.getBigDecimal("fee")),storeId);
+        return operations.deliveryRates(storeId);
     }
     public List<StoreView> publicStores() { return stores.findAll().stream().filter(s -> "ACTIVE".equals(s.getStatus())).map(this::view).toList(); }
     public StoreView publicStore(Long id) {
@@ -47,8 +46,7 @@ public class StoreService {
     /** Read existing policies for shop approval; creating policies belongs to Order. */
     public List<CommissionPolicyView> commissionPolicies(UtetraPrincipal p,Long storeId) {
         guard.reviewer(p,storeId);
-        return jdbc.query("select id,name,rate_percent from commission_policies where is_active=true order by name,id",
-            (rs,n) -> new CommissionPolicyView(rs.getLong("id"),rs.getString("name"),rs.getBigDecimal("rate_percent")));
+        return operations.commissionPolicies();
     }
     public List<StoreView> managedStores(UtetraPrincipal p) {
         guard.role(p);
@@ -73,8 +71,8 @@ public class StoreService {
         require("PENDING_APPROVAL".equals(s.getStatus()),"Hồ sơ đã được xử lý");
         if("APPROVED".equals(input.decision())) {
             require(input.commissionPolicyId()!=null,"Cần chọn chính sách hoa hồng đã được quản trị phê duyệt");
-            Integer policies=jdbc.queryForObject("select count(*) from commission_policies where id=? and is_active=true",Integer.class,input.commissionPolicyId());
-            require(policies!=null && policies==1,"Chính sách hoa hồng không hợp lệ");
+            boolean policyActive=operations.activePolicy(input.commissionPolicyId());
+            require(policyActive,"Chính sách hoa hồng không hợp lệ");
         }
         var request=found(requests.findFirstByStoreIdOrderByIdDesc(id));
         request.setStatus(input.decision()); request.setNote(input.note().trim()); request.setReviewedBy(p.userId()); request.setReviewedAt(clock.instant());
@@ -82,9 +80,9 @@ public class StoreService {
         if("APPROVED".equals(input.decision())) {
             s.setCommissionPolicyId(input.commissionPolicyId());
             // Update only an active, verified buyer; role promotion and session revocation share this transaction.
-            int changed=jdbc.update("update users set role_id=(select id from roles where name='ROLE_VENDOR'), version=version+1, updated_at=? where id=? and is_active=true and email_verified_at is not null and role_id in (select id from roles where name in ('ROLE_USER','ROLE_VENDOR'))", java.sql.Timestamp.from(clock.instant()),s.getOwnerUserId());
+            int changed=operations.promoteVendor(s.getOwnerUserId(),clock.instant());
             require(changed==1,"Chủ shop không còn là tài khoản mua hàng hợp lệ");
-            jdbc.update("update auth_sessions set revoked_at=?, version=version+1 where user_id=? and revoked_at is null",java.sql.Timestamp.from(clock.instant()),s.getOwnerUserId());
+            operations.revokeSessions(s.getOwnerUserId(),clock.instant());
         }
         stores.flush(); guard.audit(p,input.decision(),"STORE",id); return view(s);
     }
@@ -102,8 +100,8 @@ public class StoreService {
     }
     @Transactional public void assign(UtetraPrincipal p,Long storeId,@Valid Membership input,boolean catalogDelegation) {
         guard.admin(p); found(stores.findById(storeId));
-        Integer count=jdbc.queryForObject("select count(*) from users u join roles r on r.id=u.role_id where u.id=? and r.name='ROLE_MANAGER' and u.is_active=true and u.email_verified_at is not null",Integer.class,input.userId());
-        require(count!=null && count==1,"Chỉ phân công Manager đang hoạt động");
+        boolean managerActive=operations.activeManager(input.userId());
+        require(managerActive,"Chỉ phân công Manager đang hoạt động");
         var m=memberships.findAll().stream().filter(x -> x.getUserId().equals(input.userId()) && x.getStoreId().equals(storeId)).findFirst().orElseGet(StoreMembership::new);
         m.setStoreId(storeId); m.setUserId(input.userId()); m.setAssignedBy(p.userId()); m.setActive(input.active()); m.setMemberRole(catalogDelegation?"CATALOG_ADMIN":"MANAGER");
         memberships.saveAndFlush(m); guard.audit(p,"ASSIGN","STORE",storeId);

@@ -1,4 +1,4 @@
-# Shared UI v1: Git paths only; no credentials, database or business code.
+# Shared UI reference 2026-10-26: Git paths only; no credentials, database or business code.
 AGENTS.md
 docs/SHARED_UI.md
 docs/SHARED_UI_FILES.txt
@@ -15,3 +15,8 @@ src/main/resources/static/assets/vendor/bootstrap/bootstrap.bundle.min.js
 src/main/resources/static/assets/images/utetra-mark.svg
 src/main/resources/static/assets/images/utetra-tea-ritual.webp
 src/main/resources/static/assets/images/utetra-tea-ritual.png
+src/main/resources/static/assets/vendor/fonts/be-vietnam-pro/BeVietnamPro-Regular.ttf
+src/main/resources/static/assets/vendor/fonts/be-vietnam-pro/BeVietnamPro-Medium.ttf
+src/main/resources/static/assets/vendor/fonts/be-vietnam-pro/BeVietnamPro-SemiBold.ttf
+src/main/resources/static/assets/vendor/fonts/be-vietnam-pro/BeVietnamPro-Bold.ttf
+src/main/resources/static/assets/vendor/fonts/be-vietnam-pro/OFL.txt

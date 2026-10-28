@@ -22,9 +22,10 @@ public class PromotionService {
     private final StoreRepository stores;
     private final CatalogGuard guard;
     private final Clock clock;
+    private final com.utetra.order.service.CheckoutAvailabilityEvents events;
     public PromotionService(PromotionRepository promotions,PromotionProductRepository links,ProductRepository products,
-        StoreRepository stores,CatalogGuard guard,Clock clock) {
-        this.promotions=promotions; this.links=links; this.products=products; this.stores=stores; this.guard=guard; this.clock=clock;
+        StoreRepository stores,CatalogGuard guard,Clock clock,com.utetra.order.service.CheckoutAvailabilityEvents events) {
+        this.promotions=promotions; this.links=links; this.products=products; this.stores=stores; this.guard=guard; this.clock=clock;this.events=events;
     }
     public List<PromotionView> managed(UtetraPrincipal p,Long storeId) {
         access(p,storeId);
@@ -54,7 +55,7 @@ public class PromotionService {
         promotion.setUsageLimit(input.usageLimit()); promotion.setPerUserLimit(input.perUserLimit()); promotion.setStartsAt(input.startsAt()); promotion.setEndsAt(input.endsAt()); promotion.setActive(input.active());
         promotion.touch(); promotions.saveAndFlush(promotion); links.deleteByPromotionId(promotion.getId()); links.flush();
         for(Long productId:input.productIds()) { var link=new PromotionProduct(); link.setPromotionId(promotion.getId()); link.setProductId(productId); links.save(link); }
-        links.flush(); guard.audit(p,"SAVE","PROMOTION",promotion.getId()); return view(promotion);
+        links.flush(); guard.audit(p,"SAVE","PROMOTION",promotion.getId()); events.changed(null,List.of(),List.of(promotion.getId())); return view(promotion);
     }
     /** Pure price calculation for checkout. Quota reservation belongs to Order's same transaction, never this preview. */
     public PromotionQuote quote(Long promotionId,Long storeId,Map<Long,BigDecimal> productAmounts,BigDecimal shipping) {

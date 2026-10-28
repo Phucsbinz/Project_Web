@@ -1,5 +1,11 @@
 # feature/catalog-sales — Danh mục, shop Vendor và khuyến mãi
 
+> Ghép chọn lọc từ `integration/utetra@57c6b88` ngày 28/10: xem [SYNC_UTETRA_20261028.md](SYNC_UTETRA_20261028.md) về source mới, giao diện và các điểm nối chưa có backend Order/Identity trong nhánh độc lập. Các ghi chú baseline cũ bên dưới là lịch sử.
+
+> Trạng thái source/test hiện tại: [CURRENT_IMPLEMENTATION](CURRENT_IMPLEMENTATION.md); phần ghi việc/reviewer cá nhân vẫn phải hoàn thiện.
+
+Bàn giao 24/10: đọc [JWT DB, stock/version và WebSocket checkout](../order-payment/REALTIME_CHECKOUT_JWT.md) trước khi merge/chạy với schema mới. Các nhánh cần nhận đủ source integration, không chỉ migration/JS; JWT cũ cần đăng nhập lại hoặc refresh hợp lệ.
+
 > Cập nhật chức năng catalog ngày 24/10/2026: [UPDATE_20261024](UPDATE_20261024.md). Audit trước sửa: [AUDIT_20261024](AUDIT_20261024.md). Các dependency Identity/Order được giữ ngoài phạm vi nhánh.
 
 > Cập nhật theo quy định thầy ngày 13/10/2026. Người phụ trách TV1: [điền tên]. Baseline main/commit: [điền]. Hướng dẫn gốc; trạng thái mới ngày 15/10/2026 tại [RUNBOOK](RUNBOOK.md). Đã có code cho 18 UC, kiểm H2/Tomcat; chưa nghiệm thu cloud/tích hợp.
@@ -106,3 +112,8 @@ vào AI_LOG và hồ sơ UC. Sơ đồ dự kiến và ảnh UI thật phải ph
 - [ ] Có kiến trúc/activity/sequence, hình code/UI chú giải, setup và test thật.
 - [ ] Prompt nguyên văn/response/nhóm sửa/commit/reviewer đầy đủ.
 - [ ] Ghép integration cùng owner dependency; kiểm chức năng chung theo thang điểm.
+
+
+## Cập nhật tích hợp 20/10/2026
+
+Nhánh identity đã ghép UI/schema/service với module này theo IDN-AI-003. Xem [kết quả và giới hạn hiện tại](../identity-membership/INTEGRATION_20261020.md); các ghi chú chưa tích hợp phía trên là lịch sử của nhánh gốc.

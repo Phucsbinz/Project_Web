@@ -1,5 +1,19 @@
 # UTETra — Một layout dùng chung cho toàn bộ nhóm
 
+## Đồng bộ catalog-sales — 28/10/2026
+
+Bundle được ghép từ `origin/integration/utetra@57c6b88` sang nhánh catalog độc lập. `NavigationAdvice`, `app.jsp`, `site-ui.js` bổ sung capability commerce dựa trên bean thật để không gọi giỏ/nhóm khi chưa có module Order. Các điều chỉnh vẫn tập trung trong manifest, cần đồng bộ cùng nhau khi tích hợp main/feature. Catalog giữ API quote thật và một layout; không thêm backend giả. Chi tiết phạm vi và kết quả thực tại [SYNC_UTETRA_20261028.md](features/catalog-sales/SYNC_UTETRA_20261028.md).
+
+> CSKH 27/10: các trang /support, /manager/support, /admin/support dùng app.jsp chung và support.css scope support-page. Dropdown/sidebar/footer thêm đường dẫn đúng role; backend SupportService và private queue kiểm quyền độc lập. Khi chuyển tính năng sang nhánh khác phải ghép cả module/migration/security theo docs/features/customer-support, không chỉ chép link/JSP.
+
+## Sửa font tiếng Việt — 26/10/2026
+
+Theo phản hồi về chữ “Nhiều niềm vui.”, thay các khai báo Georgia trong theme và CSS trang chủ bằng Be Vietnam Pro local; các câu nhấn dùng kiểu normal/weight 500. Header/footer và các chữ dùng cùng font được đồng nhất trong `utetra.css`, không tạo bộ font hoặc layout theo role. `app.jsp` tăng cache version CSS. Khi tích hợp cần đồng bộ các file chung này cùng bundle. Chi tiết và kiểm chứng: [VIETNAMESE_FONT_FIX_20261026.md](VIETNAMESE_FONT_FIX_20261026.md).
+
+## Modern Matcha — bản local 26/10/2026
+
+Trang chủ mới dùng `catalog/home.jsp`, CSS scope `.catalog-homepage` và các fragment catalog hiện có. Header vẫn nằm duy nhất ở `layouts/app.jsp`, bổ sung form tìm kiếm GET `/menu`; style header tìm kiếm đặt trong `utetra.css`. Hai file này đã thuộc `SHARED_UI_FILES.txt`; cần tích hợp và đồng bộ cùng bundle khi phát hành từ main, không sao chép header vào JSP chức năng. Không đổi palette/provider/datasource/JWT hoặc tạo layout theo role. Chưa commit/push hay tự đồng bộ các nhánh. Phạm vi, endpoint và kết quả kiểm thực tế được ghi ở [MODERN_MATCHA_20261026.md](MODERN_MATCHA_20261026.md).
+
 ## Quyết định chung
 
 Từ 22/10/2026, **chỉ có một layout SiteMesh**: `src/main/webapp/WEB-INF/views/layouts/app.jsp`. Không tạo client.jsp/auth.jsp/admin.jsp/vendor.jsp/manager.jsp/shipper.jsp riêng. Bộ chuẩn lấy từ giao diện đã ghép trên identify/order: xanh trà, nền kem, Bootstrap 5.3.3 local, header/footer và sidebar responsive chung. Đây là chuẩn trình bày; không thay đổi quyền hoặc phạm vi nghiệp vụ.
@@ -51,7 +65,7 @@ Ví dụ JSP chức năng:
 
 - SiteMesh filter đăng ký một lần; `setDecoratorPrefix("")`; một mapping /* tới app.jsp. Giữ exclusions /api/*, /assets/*, /ws, /payments/*, /error; JSON/static không bị bọc HTML.
 - NavigationAdvice cung cấp currentRole từ principal hiện hành, currentPath và workspace cho URL quản lý. Thêm role/menu trong logic chung, không thêm decorator. Security/Service vẫn quyết định quyền thật.
-- Theme tokens hiện có: --tea #173c32, --cream #faf8f3, --ink #233b33, --orange #cb643d; font Segoe UI/Arial. Dùng var(...) thay vì đặt màu/font mới theo từng module.
+- Theme tokens hiện có: --tea #315638, --cream #f5f2e8, --ink #263b2c, --orange #a5773d; font Be Vietnam Pro local, fallback Segoe UI/Arial. Dùng var(...) thay vì đặt màu/font mới theo từng module.
 - Dùng breakpoint Bootstrap và quy tắc trong utetra.css; kiểm 390px, 768px, desktop. Table có table-responsive, form có label, trạng thái/loading/lỗi rõ ràng. Không tải Bootstrap/jQuery/font/icon từ CDN riêng.
 - Chỉ thay file giao diện và config SiteMesh/NavigationAdvice cho nhu cầu này; không sửa datasource/JWT/Cloudinary/mail/pom để làm trang đẹp hơn.
 
@@ -75,3 +89,81 @@ Kiểm ngay trên nhánh hiện tại: `py -3 tools/check_shared_ui.py`. So vớ
 ## Triển khai và chứng cứ
 
 Bundle này được tách từ main, không chứa code order/catalog/identity nghiệp vụ. Chỉ có một app.jsp; sáu file layout cũ là bản sao được thay thế bằng nguồn duy nhất, các trang chức năng vẫn giữ nguyên. Main đã qua clean verify với Java 21: 16/16 tests đạt, gồm render JSP/Tomcat/SiteMesh và kiểm JSON/static không bị decorate; WAR build thành công. Công cụ check_shared_ui xác nhận một layout và đủ 16 file chung. Việc này chưa đồng nghĩa các remote đã nhận thay đổi; phải xác nhận trạng thái push trước khi yêu cầu thành viên pull.
+
+## Giao diện theo bản thiết kế — 26/10/2026
+
+Thanh yêu cầu áp dụng bản thiết kế kem/xanh lá trên source hiện có. Thay đổi được thực hiện local trên identify, chưa đồng bộ/push main: vẫn một app.jsp, một Bootstrap và một utetra.css. Cập nhật token xanh lá/kem, header, nút, hero ảnh matcha, thẻ danh mục có ảnh, card món, bộ lọc trái/giỏ tóm tắt phải ở desktop, bố cục mobile, sidebar quản lý và bảng trạng thái đơn. Báo cáo dùng KPI/biểu đồ từ số liệu service hiện có, không thêm số liệu tăng trưởng giả. Trang chi tiết vẫn giữ URL và luồng tùy chọn hiện hành. Thumbnail ba ly có logo lá và 30 ảnh món mới nằm trong assets/images; manifest/prompt ở docs/demo.
+
+Bundle thay đổi chung tập trung ở utetra.css và app.jsp; nội dung catalog/order giữ trong module. Chủ nhóm có thể review rồi tích hợp bộ chung sang main/các feature theo workflow cũ. Không tạo theme/layout theo role hoặc framework mới.
+
+
+## Tinh chỉnh theo ảnh tham chiếu — 26/10/2026
+
+Yêu cầu mới: `[Image #1] bạn thiết kế giao diện theo màu và phông như này được không vẫn giữ đầy đủ chức năng`. Ảnh tham chiếu do người dùng cung cấp: `2aOboR8CXHLLqRujaayM4hUEoJJikhocP0fkZwvY.jpg`. Không đưa toàn bộ poster thành nền website.
+
+Bản thử nghiệm nằm trên integration/utetra: màu kem ấm, xanh trà và nhấn nâu vàng; Be Vietnam Pro 400/500/600/700 hỗ trợ tiếng Việt, logo/nhấn biên tập dùng Georgia. Font được chọn để gần tinh thần ảnh, không khẳng định nhận diện chính xác font trong poster. Font và giấy phép SIL OFL được đóng gói local trong assets/vendor/fonts/be-vietnam-pro, không phụ thuộc CDN lúc chạy. Nguồn: https://github.com/google/fonts/tree/main/ofl/bevietnampro.
+
+Thay đổi chung: utetra.css (token/typography/nút/focus/card/sidebar/mobile), app.jsp (preload font, theme-color, cache version) và manifest thêm 5 file font/license. Không thêm decorator/layout/framework. Không đổi URL/action/name/id nghiệp vụ, provider, datasource, JWT hoặc quyền. Các KPI và trạng thái vẫn lấy từ service hiện có. Không ẩn chức năng để giống poster.
+
+Khi phát hành bundle này, đồng bộ cả font/license trong SHARED_UI_FILES.txt. Main và các feature chưa được cập nhật tự động. Kết quả kiểm thử hiện tại xem UI_REFERENCE_REFINEMENT_20261026.md; các biên bản cũ là lịch sử.
+
+
+## Tích hợp toàn bộ module — 26/10/2026
+
+Bản tích hợp dùng chung cả Guest/User, tài khoản/OTP, Vendor, Manager, Admin và Shipper. Sidebar bổ sung khu vực giao, topping tại shop, danh mục topping, phân công/quyền danh mục (Admin), thông báo, hồ sơ và bảo mật. Dropdown người mua có địa chỉ, đã xem, đánh giá và bình luận. Footer chỉ dẫn sang chức năng phù hợp vai trò; không dùng menu để thay quyền backend.
+
+Sidebar desktop cuộn độc lập khi dài; mobile dùng menu xuống dòng. Bộ chọn shop của catalog wrap trên màn hình nhỏ. Shipper report dùng cùng KPI/card/font/màu và bộ lọc ngày responsive. Nội dung catalog vẫn ở catalog/manage.jsp, shipper ở order/shipper-report.jsp, cùng được app.jsp decorate.
+
+Kiểm đầy đủ và đường dẫn ảnh: ALL_MODULE_UI_20261026.md. Công cụ `py -3 tools/check_all_ui.py` dựng H2 fixture riêng, bật Shipper riêng fixture và tự dừng server sau kiểm. Phải package/test trước để có classpath và JDK 21; không chạy fixture trên datasource cloud. Không thay features.shipper.enabled của cấu hình dùng chung chỉ để lấy ảnh.
+
+## Giỏ hàng và badge — 26/10/2026
+
+Theo yêu cầu Thanh, app.jsp bổ sung badge giỏ cho desktop/mobile, site-ui.js đọc endpoint count nhẹ và nhận event cập nhật; utetra.css chỉ thêm kiểu badge dùng token chung. Giỏ/đơn nhóm dùng cart.css scope .cart-page/.group-page và cart.js, JSP ở order. Không tạo layout hoặc Bootstrap thứ hai. Home vẫn dùng cùng UI, chỉ thay cách tải dữ liệu theo lô. Ghi chi tiết tại docs/features/order-payment/GROUP_ORDERS_20261026.md.
+
+## Rà typography tiếng Việt — 26/10/2026
+
+Thanh yêu cầu sửa đầy đủ lỗi font. Giữ Be Vietnam Pro đóng gói và wordmark/nhấn trang trí Georgia của theme hiện tại. utetra.css chuẩn hóa các weight 650/750/800/850 thành weight thực 600/700, nới line-height/letter-spacing tiêu đề (cả Bootstrap .h1–.h6), nhãn form, bảng, sidebar và phản hồi. app.jsp preload SemiBold, tăng cache version. Tiêu đề popup cho wrap, dành chỗ cho nút đóng và khoảng cao cho dấu tiếng Việt; không chép layout hay thêm font CDN.
+
+`python tools/check_font_coverage.py` đọc cmap TTF kiểm 146 ký tự tiếng Việt ở 4 mức weight. Audit UI hiện kiểm cả font body/h1 từng trang; kiểm font không thay kiểm render/overflow thực tế. Trạng thái/bằng chứng: docs/demo/FEEDBACK_TYPOGRAPHY_20261026.json.
+
+## Nhắc hạn giỏ và form checkout — 27/10/2026
+
+site-ui.js hiển thị toast thêm giỏ với dòng nhắc 1 giờ, dùng site-toast chung của app.jsp; utetra.js có UUID fallback cho HTTP LAN. Giỏ checkbox/tổng/countdown ở cart.css/cart.js, form checkout ở module order. Giữ một decorator/theme; không gộp toast với sự kiện sửa/xóa giỏ. Hành vi server và local/LAN: docs/features/order-payment/CART_SELECTION_EXPIRY_20261027.md.
+
+
+## Popup xác nhận — 27/10/2026
+site-ui.js cung cấp utetraConfirm dùng Bootstrap modal chung cho xác nhận giỏ, nhóm, địa chỉ và thao tác quản lý; thay hộp thoại trình duyệt. app.jsp tăng cache version. Không thêm layout/theme hoặc thư viện. Hero đặt nút nhóm cạnh đặt món; module nhóm mở checkout hiện có. 77 tests và 11 shopping browser scenarios đã qua.
+
+
+## Popup đơn nhóm — 27/10/2026
+app.jsp thêm data-current-role và tăng cache version; site-ui.js dùng popup Bootstrap chung, kiểm thông báo bill của thành viên đang đăng nhập trên trang khách. Chuẩn hóa role ROLE_ prefix. Không thêm layout/framework; 11 shopping UI scenarios qua. Chi tiết GROUP_SPLIT_QR_POPUP_20261027.md.
+
+
+## Tên người dùng ở header — 27/10/2026
+Theo yêu cầu Thanh, NavigationAdvice cung cấp tên hồ sơ hiện tại cho app.jsp; nút tài khoản hiện tên đã escape, một dòng/ellipsis trong utetra.css. Bộ thay đổi chung nằm trong manifest hiện có, không tạo menu/layout riêng.
+
+
+## Ví QR local — 27/10/2026
+app.jsp tăng cache version, site-ui.js không chen thông báo vào trang QR/ví. Hai JSP local-qr/local-wallet dùng duy nhất SiteMesh hiện có, CSS scope local-qr-page/local-wallet-page. Không layout/framework thứ hai. ZXing sinh SVG server-side, không tải QR từ bên thứ ba. Xem LOCAL_QR_WALLET_20261027.md.
+
+
+## Lifecycle nhóm — 27/10/2026
+site-ui.js thêm popup hủy/hết hạn, dùng modal Bootstrap chung và busy flag tránh chồng dialog. Lifecycle vẫn hoạt động trên trang QR; app.jsp tăng cache version. Thẻ nhóm/badge host ở JSP module và CSS scoped cart/group. Không thêm layout hoặc framework.
+
+
+## Thông báo nhóm theo vai trò — 28/10/2026
+site-ui.js đổi tiêu đề thông báo thành viên thành Đặt đơn nhóm thành công; app.jsp tăng cache version. Nội dung chủ nhóm/tiến độ giữ trong module order, homepage CTA/typography scope catalog-homepage. Giữ một layout/theme.
+
+
+## Nhận biết ô lựa chọn — 28/10/2026
+Theo yêu cầu Thanh, utetra.css khôi phục mũi tên select sau shorthand background, chừa padding và disabled state; app.jsp tăng cache CSS. Checkout có nút/menu tìm kiếm scope checkout-page; quản trị catalog scope #catalog-manager. Không layout/framework thứ hai. Xem ADMIN_USABILITY_20261028.md.
+
+Bổ sung cùng đợt: site-ui.js bật/tắt workspace-sidebar trên mobile; app.jsp thêm nút truy cập menu và link Tổng quan cho Admin, cache JS/CSS đồng bộ. Không thay menu bằng kiểm quyền; chỉ thu gọn hình thức hiển thị.
+
+
+## Căn giữa chevron — 28/10/2026
+utetra.css dùng pseudo chevron và flex-center cho choice-toggle/workspace menu, căn caret dropdown; bỏ margin inherited và scope margin submit chi nhánh riêng. Native select vẫn center background. app.jsp tăng cache; không layout/theme mới. Kiểm chứng trong PARTIAL_GROUP_CANCEL_20261028.md.
+
+
+## Popup hủy nhóm — 28/10/2026
+site-ui.js dùng notice cá nhân để thêm dòng dự kiến hoàn sau 30 phút đúng người đã trả; dialog hỗ trợ xuống dòng và nhãn nút, vẫn textContent/Bootstrap. app.jsp tăng cache. Nội dung cảnh báo hủy trong module order; không layout/framework mới.
