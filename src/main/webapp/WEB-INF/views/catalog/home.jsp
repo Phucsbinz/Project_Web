@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="vi"><head><title>UTETra · Một chút matcha, một ngày thật khác</title>
-<link rel="stylesheet" href="<c:url value='/assets/css/catalog-home.css?v=modern-matcha-vietnamese-font'/>">
+<link rel="stylesheet" href="<c:url value='/assets/css/catalog-home.css?v=top20-two-rows-20261028'/>">
 </head><body>
 <div class="catalog-homepage">
   <section class="matcha-hero" aria-labelledby="home-title">
@@ -19,7 +19,7 @@
   <section class="home-highlights home-section" id="home-drinks" aria-labelledby="highlights-title">
     <div class="home-heading"><div><span class="home-eyebrow">SIP. SMILE. REPEAT.</span><h2 id="highlights-title">Tìm thấy ly yêu thích.</h2></div><a class="text-link" href="<c:url value='/menu'/>">Xem thực đơn <span aria-hidden="true">↗</span></a></div>
     <div class="home-tabs" role="tablist" aria-label="Khám phá đồ uống"><button class="active" id="bestseller-tab" data-bs-toggle="tab" data-bs-target="#home-bestsellers" type="button" role="tab" aria-controls="home-bestsellers" aria-selected="true">Bán chạy <span aria-hidden="true">✳</span></button><button id="new-tab" data-bs-toggle="tab" data-bs-target="#home-new" type="button" role="tab" aria-controls="home-new" aria-selected="false">Món mới nhất <span aria-hidden="true">↗</span></button></div>
-    <div class="tab-content"><div class="tab-pane show active" id="home-bestsellers" role="tabpanel" aria-labelledby="bestseller-tab" tabindex="0"><c:set var="homeCards" value="true"/><%@ include file="product-list.jspf" %></div><div class="tab-pane" id="home-new" role="tabpanel" aria-labelledby="new-tab" tabindex="0"><c:set var="result" value="${newProducts}"/><%@ include file="product-list.jspf" %><c:set var="homeCards" value="false"/></div></div>
+    <div class="tab-content"><div class="tab-pane show active" id="home-bestsellers" role="tabpanel" aria-labelledby="bestseller-tab" tabindex="0"><c:set var="homeCards" value="true"/><c:set var="carouselId" value="bestseller-track"/><c:set var="carouselLabel" value="Top 20 món bán chạy"/><%@ include file="home-product-carousel.jspf" %></div><div class="tab-pane" id="home-new" role="tabpanel" aria-labelledby="new-tab" tabindex="0"><c:set var="result" value="${newProducts}"/><c:set var="carouselId" value="newest-track"/><c:set var="carouselLabel" value="Top 20 món mới nhất"/><%@ include file="home-product-carousel.jspf" %><c:set var="homeCards" value="false"/></div></div>
     <p class="home-selection-note">Chọn món để tùy chỉnh trước khi thêm vào giỏ.</p>
   </section>
 
@@ -31,4 +31,5 @@
 </div>
 <%@ include file="drink-modal.jspf" %>
 <script src="<c:url value='/assets/js/catalog.js'/>" defer></script>
+<script src="<c:url value='/assets/js/catalog-home.js?v=20261028'/>" defer></script>
 </body></html>

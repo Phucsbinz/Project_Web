@@ -45,6 +45,19 @@ Log thô ở `.local/publish-20261028/` (không công bố log có thể chứa 
 - Build riêng có đủ SQL proposal mà test đọc ngoài src. Lượt copy đầu thiếu hai file SQL nên 2 test báo NoSuchFile, được sửa bằng bổ sung đầu vào chứ không bỏ/sửa test. Đối chiếu **323 file đầu vào** (src, wrapper, pom, SQL proposal), không có khác biệt với workspace. Kết quả clean verify cuối cập nhật khi lệnh hoàn thành.
 - Tài liệu seed được agent khác hoàn tất trong lúc kiểm chứng cũng được đưa vào phạm vi công bố đầy đủ. Agent công bố không chạy seed/migration cloud, không restart app/provider và không xác nhận các kết quả provider/DB của hồ sơ cũ như kiểm thử mới trong lượt này.
 
+## Cập nhật integration đến trong lúc kiểm tra
+
+- Lần fetch trước push phát hiện `origin/integration/utetra` vừa tiến từ `7c7ea82` lên `27eaa83` (carousel Top 20). Đã ghép tiếp mà không conflict, giữ cả thay đổi local và cập nhật đồng đội. Reviewer không thấy blocker tương thích với modal/giỏ/nhóm hoặc layout chung.
+- `mvnw.cmd -B -ntp -Dtest=CatalogViewTest test`: **8 tests đạt**, gồm hai carousel 20 món, xếp hạng đúng và nội dung Guest/người đăng nhập thống nhất trên Tomcat/SiteMesh thật.
+- Browser Edge/H2 riêng với 22 món fixture: **6 tổ hợp Guest/User × 390/768/1440 đạt**, mỗi tab có 20 thẻ; nút xem thêm, phím Home/End, cuộn ngang, không tràn trang, một header; 0 page errors. Fixture và script smoke chỉ ở `.local/publish-20261028`, không tạo dữ liệu cloud.
+- Bản build riêng được cập nhật lại theo commit mới nhất; đối chiếu **325 file đầu vào**, không khác biệt. Bản trước carousel đã clean verify thành công với 261 tests và WAR executable; không dùng kết quả đó để thay kiểm tra cây mã nguồn mới.
+
+## Nghiệm thu cuối trước push
+
+- Bản mới nhất gồm carousel `27eaa83`: `mvnw.cmd -f .local/publish-20261028/build-input/pom.xml -B -ntp verify` **262 tests, 0 failures/errors/skipped; BUILD SUCCESS**; WAR executable repackage thành công. SHA256: `b4ce6f99ab034d907b9fcca7e2e02d20f00ee03d826b5342b35e1ce322c75985`.
+- Bằng chứng tổng hợp của lượt này: [verification.json](reviews/publish-integration-20261028/verification.json). Shared UI, node syntax của các script bị tác động và staged whitespace check đạt. Không chạy `--compare main` vì main chưa nhận các cập nhật UI của integration; không sửa main ngoài phạm vi.
+- Phạm vi công bố là cả `feature/order-payment` và `integration/utetra`. Bản local được merge với các remote có cập nhật trước push; chỉ cập nhật fast-forward, không force push. Các file ignore như build output, runtime log và công cụ cài cục bộ không đưa vào Git.
+
 ## Cách thành viên nhận bộ skill
 
 Sau khi nhánh remote được công bố, thành viên lưu công việc local của mình, fetch rồi cập nhật `integration/utetra` hoặc merge nhánh đó vào nhánh feature của mình. Bộ skill nằm trong `.agents/skills`, metadata nguồn nằm ở `skills-lock.json`. Đọc `AGENTS.md` và quy ước UI trước khi giao agent sửa code. Không cần chép đường dẫn tuyệt đối từ máy người công bố sang máy khác.

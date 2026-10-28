@@ -1,0 +1,269 @@
+{
+  "mode": "isolated H2 fixture, 22 eligible products, no provider or cloud writes",
+  "checks": [
+    {
+      "role": "guest",
+      "width": 1440,
+      "tab": "bestseller-tab",
+      "state": {
+        "items": 20,
+        "rows": 2,
+        "columns": 4,
+        "scrollLeft": 0,
+        "max": 2073,
+        "overflow": false,
+        "previous": true,
+        "next": false,
+        "status": "Món 1–8 / 20",
+        "lastVisible": false
+      },
+      "nextPrevious": true,
+      "keyboardEndHome": true,
+      "lastItemReachable": true,
+      "touchSwipe": false
+    },
+    {
+      "role": "guest",
+      "width": 1440,
+      "tab": "new-tab",
+      "state": {
+        "items": 20,
+        "rows": 2,
+        "columns": 4,
+        "scrollLeft": 0,
+        "max": 2073,
+        "overflow": false,
+        "previous": true,
+        "next": false,
+        "status": "Món 1–8 / 20",
+        "lastVisible": false
+      },
+      "nextPrevious": true,
+      "keyboardEndHome": true,
+      "lastItemReachable": true,
+      "touchSwipe": false
+    },
+    {
+      "role": "guest",
+      "width": 768,
+      "tab": "bestseller-tab",
+      "state": {
+        "items": 20,
+        "rows": 2,
+        "columns": 3,
+        "scrollLeft": 0,
+        "max": 1685,
+        "overflow": false,
+        "previous": true,
+        "next": false,
+        "status": "Món 1–6 / 20",
+        "lastVisible": false
+      },
+      "nextPrevious": true,
+      "keyboardEndHome": true,
+      "lastItemReachable": true,
+      "touchSwipe": false
+    },
+    {
+      "role": "guest",
+      "width": 768,
+      "tab": "new-tab",
+      "state": {
+        "items": 20,
+        "rows": 2,
+        "columns": 3,
+        "scrollLeft": 0,
+        "max": 1685,
+        "overflow": false,
+        "previous": true,
+        "next": false,
+        "status": "Món 1–6 / 20",
+        "lastVisible": false
+      },
+      "nextPrevious": true,
+      "keyboardEndHome": true,
+      "lastItemReachable": true,
+      "touchSwipe": false
+    },
+    {
+      "role": "guest",
+      "width": 390,
+      "tab": "bestseller-tab",
+      "state": {
+        "items": 20,
+        "rows": 2,
+        "columns": 2,
+        "scrollLeft": 0,
+        "max": 1386,
+        "overflow": false,
+        "previous": true,
+        "next": false,
+        "status": "Món 1–4 / 20",
+        "lastVisible": false
+      },
+      "nextPrevious": true,
+      "keyboardEndHome": true,
+      "lastItemReachable": true,
+      "touchSwipe": true
+    },
+    {
+      "role": "guest",
+      "width": 390,
+      "tab": "new-tab",
+      "state": {
+        "items": 20,
+        "rows": 2,
+        "columns": 2,
+        "scrollLeft": 0,
+        "max": 1386,
+        "overflow": false,
+        "previous": true,
+        "next": false,
+        "status": "Món 1–4 / 20",
+        "lastVisible": false
+      },
+      "nextPrevious": true,
+      "keyboardEndHome": true,
+      "lastItemReachable": true,
+      "touchSwipe": true
+    },
+    {
+      "role": "guest",
+      "action": "carousel card opens actual product quickview",
+      "passed": true
+    },
+    {
+      "role": "vendor",
+      "width": 1440,
+      "tab": "bestseller-tab",
+      "state": {
+        "items": 20,
+        "rows": 2,
+        "columns": 4,
+        "scrollLeft": 0,
+        "max": 2073,
+        "overflow": false,
+        "previous": true,
+        "next": false,
+        "status": "Món 1–8 / 20",
+        "lastVisible": false
+      },
+      "nextPrevious": true,
+      "keyboardEndHome": true,
+      "lastItemReachable": true,
+      "touchSwipe": false
+    },
+    {
+      "role": "vendor",
+      "width": 1440,
+      "tab": "new-tab",
+      "state": {
+        "items": 20,
+        "rows": 2,
+        "columns": 4,
+        "scrollLeft": 0,
+        "max": 2073,
+        "overflow": false,
+        "previous": true,
+        "next": false,
+        "status": "Món 1–8 / 20",
+        "lastVisible": false
+      },
+      "nextPrevious": true,
+      "keyboardEndHome": true,
+      "lastItemReachable": true,
+      "touchSwipe": false
+    },
+    {
+      "role": "vendor",
+      "width": 768,
+      "tab": "bestseller-tab",
+      "state": {
+        "items": 20,
+        "rows": 2,
+        "columns": 3,
+        "scrollLeft": 0,
+        "max": 1685,
+        "overflow": false,
+        "previous": true,
+        "next": false,
+        "status": "Món 1–6 / 20",
+        "lastVisible": false
+      },
+      "nextPrevious": true,
+      "keyboardEndHome": true,
+      "lastItemReachable": true,
+      "touchSwipe": false
+    },
+    {
+      "role": "vendor",
+      "width": 768,
+      "tab": "new-tab",
+      "state": {
+        "items": 20,
+        "rows": 2,
+        "columns": 3,
+        "scrollLeft": 0,
+        "max": 1685,
+        "overflow": false,
+        "previous": true,
+        "next": false,
+        "status": "Món 1–6 / 20",
+        "lastVisible": false
+      },
+      "nextPrevious": true,
+      "keyboardEndHome": true,
+      "lastItemReachable": true,
+      "touchSwipe": false
+    },
+    {
+      "role": "vendor",
+      "width": 390,
+      "tab": "bestseller-tab",
+      "state": {
+        "items": 20,
+        "rows": 2,
+        "columns": 2,
+        "scrollLeft": 0,
+        "max": 1386,
+        "overflow": false,
+        "previous": true,
+        "next": false,
+        "status": "Món 1–4 / 20",
+        "lastVisible": false
+      },
+      "nextPrevious": true,
+      "keyboardEndHome": true,
+      "lastItemReachable": true,
+      "touchSwipe": true
+    },
+    {
+      "role": "vendor",
+      "width": 390,
+      "tab": "new-tab",
+      "state": {
+        "items": 20,
+        "rows": 2,
+        "columns": 2,
+        "scrollLeft": 0,
+        "max": 1386,
+        "overflow": false,
+        "previous": true,
+        "next": false,
+        "status": "Món 1–4 / 20",
+        "lastVisible": false
+      },
+      "nextPrevious": true,
+      "keyboardEndHome": true,
+      "lastItemReachable": true,
+      "touchSwipe": true
+    },
+    {
+      "role": "vendor",
+      "action": "carousel card opens actual product quickview",
+      "passed": true
+    }
+  ],
+  "javascriptErrors": [],
+  "passed": true
+}

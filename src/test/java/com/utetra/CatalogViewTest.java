@@ -80,6 +80,33 @@ class CatalogViewTest {
         assertThat(start).isGreaterThanOrEqualTo(0);assertThat(end).isGreaterThan(start);
         return html.substring(start,end);
     }
+    @Test void homepageCapsEachCarouselAtTwentyWithTheCorrectRanking() {
+        try {
+            TestRows.insert(jdbc,"orders",java.util.Map.of("id",500,"user_id",1,"store_id",1,"status","DELIVERED","payment_status","PAID"));
+            for(int n=1;n<=22;n++) {
+                int id=500+n;
+                TestRows.insert(jdbc,"products",java.util.Map.of("id",id,"store_id",1,"category_id",1,"name","Carousel "+n,
+                    "slug","carousel-"+n,"base_price",30000,"is_active",true,"is_available",true,
+                    "created_at",java.sql.Timestamp.from(Instant.parse("2026-01-01T00:00:00Z").plusSeconds(n))));
+                TestRows.insert(jdbc,"product_variants",java.util.Map.of("id",id,"product_id",id,"size_name","M","extra_price",0,"is_active",true));
+                TestRows.insert(jdbc,"order_items",java.util.Map.of("id",id,"order_id",500,"variant_id",id,"quantity",100-n));
+            }
+            String html=client.getForObject("/",String.class);
+            String best=html.substring(html.indexOf("id=\"home-bestsellers\""),html.indexOf("id=\"home-new\""));
+            String newest=html.substring(html.indexOf("id=\"home-new\""),html.indexOf("class=\"home-selection-note\""));
+            for(String pane:List.of(best,newest)) {
+                assertThat(java.util.regex.Pattern.compile("<article class=\"card h-100 product-card\">").matcher(pane).results().count()).isEqualTo(20);
+                assertThat(pane).contains("home-product-track","data-carousel-next","Xem thêm");
+            }
+            assertThat(best).contains("/products/501").doesNotContain("/products/522");
+            assertThat(newest).contains("/products/522").doesNotContain("/products/501");
+        } finally {
+            jdbc.update("delete from order_items where id between 501 and 522");
+            jdbc.update("delete from orders where id=500");
+            jdbc.update("delete from product_variants where id between 501 and 522");
+            jdbc.update("delete from products where id between 501 and 522");
+        }
+    }
     @Test void realCookieCsrfRoundTripAllowsAdminCreateWithoutMockSecurity() {
         jdbc.update("update users set role_id=(select id from roles where name='ROLE_ADMIN') where id=1");
         var csrf=client.getForEntity("/products/csrf",java.util.Map.class);

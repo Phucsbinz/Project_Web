@@ -1,0 +1,14 @@
+<%@ page pageEncoding="UTF-8" %>
+<div class="home-product-carousel" data-home-carousel>
+  <div class="home-carousel-toolbar">
+    <p id="${carouselId}-hint">Top 20 · 2 hàng <span class="home-carousel-swipe">· Vuốt ngang để xem thêm</span></p>
+    <div class="home-carousel-controls">
+      <span class="home-carousel-status" data-carousel-status aria-live="polite" aria-atomic="true">${result.items.size()} món</span>
+      <button class="btn btn-outline-dark" type="button" data-carousel-prev aria-controls="${carouselId}" aria-label="Xem các món trước" disabled><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+      <button class="btn btn-outline-dark" type="button" data-carousel-next aria-controls="${carouselId}" disabled>Xem thêm <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+    </div>
+  </div>
+  <div class="home-product-track ${empty result.items ? 'is-empty' : result.items.size() == 1 ? 'is-single' : ''}" id="${carouselId}" role="region" aria-label="${carouselLabel}" aria-describedby="${carouselId}-hint" tabindex="0">
+    <%@ include file="product-list.jspf" %>
+  </div>
+</div>
