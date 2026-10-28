@@ -1228,3 +1228,15 @@ Kết quả thực: Maven223/0fail/0error/0skip; sharedUI một layout/21 file; 
 - NativeUI16 nhóm/27 render390-768-1440 đạt;0JS/console errors,0network failure bất thường,1logout navigation abort có200/401 và Guest isolation đối chứng. SharedUI mộtlayout/21file và diffcheck đạt.
 - Host rỗng có tracking/payment đúng nghĩa vụ; revoke đúng PASSWORD_RESET của actor cùng transaction; purchases phân trang20 ở UI và bounded API; stock locks tăngID ở checkout/release/legacy merge, giữ display order. MySQL/TiDB concurrency chưa chạy, không ghi deadlock đó đã tái hiện hoặc loại hết.
 - Codex sửa theo thứ tự, reviewer scoped độc lập chỉ đọc chưa thấy regression source/test; chưa commit/push/merge, không migration/cloud/provider thật. Không ghi secret vào hồ sơ. Không xóa hay thay nội dung nhật ký cũ.
+
+
+## 28/10/2026 — UTETRA-DATA-20261028: bổ sung danh mục demo có kiểm soát
+
+- Prompt nguyên văn đầy đủ và xác nhận DBdemo, theo mẫu PROMPT_ENTRY: [PROMPT.md](data-seeding/2026-10-28/PROMPT.md).
+- Kết quả/source/script/chạy lại/hoàn tác/giới hạn: [hồ sơ seed](data-seeding/2026-10-28/README.md).
+- User xác nhận utetra_db là demo project cuối kỳ. Kiểm kê COUNT(*)51bảng/13trống; giữ nguyên13 bảngtrống, không chạy seed_demo giao dịch.
+- Đã commit transaction dữ liệu31 dòng vào5 bảng danh mục:products6,product_variants9,toppings1,store_toppings3,product_toppings12. Đây không phải Gitcommit. ID và snapshot tại applied-ledger.json; preview sau0 mới/0conflict; rollback chỉpreview, không xóaTiDB.
+- Source:trang chính thức GongCha/ToCoToCo/Chapa được mở qua công cụweb; PhúcLong/KOI ghi rõ giới hạn. KhôngbrowserUI khả dụng nên không nhận đã kiểm native browser. Tên/mô tả UTETra tự biên soạn; giádemo có nguồn; không tự gán size, tồn, stats hoặc ảnh thương hiệu.6products mới chưa mởbán vì thiếu quyếtđịnh tồn.
+- TestscriptH2 và rollback/recovery/whitelist/idempotency đạt; Maven257/0failure/0error/0skip đạt.9nhómHTTPmenu/detail/search/filter/paging/placeholder đạt; quote2lần timeout runtime thiếuThrowableProxy, chưa kiểm chứng quote/browser và chưa sửa/restart app. FK/unique/stock data checks0vi phạm.
+- DBdùngchung có thayđổi bảngB ngoàimanifest trong khoảngchụp, ghi riêng không nhận làseed và không xóa. Có0DBtrigger; utilitykhôngkhởiđộngSpring/callprovider hay ghi bảngB/C.
+- Không đổiappsource/schema/datasource/provider/JWT; khôngmigration, Gitcommit/push/merge. Reviewer catalog_seed_safety_review chỉđọc, gópý ledger/preflight đãsửatrướcapply; khôngcònblocker. Cần nhómchốt tồn/mởbán, đồngbộ schemaV2026102802/runtime và kiểmbrowser. Khôngghi credentials/token/password/dữliệucánhân trong hồsơ.

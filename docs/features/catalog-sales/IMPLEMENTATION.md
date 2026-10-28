@@ -1,5 +1,7 @@
 # feature/catalog-sales — Danh mục, shop Vendor và khuyến mãi
 
+> Ghép chọn lọc từ `integration/utetra@57c6b88` ngày 28/10: xem [SYNC_UTETRA_20261028.md](SYNC_UTETRA_20261028.md) về source mới, giao diện và các điểm nối chưa có backend Order/Identity trong nhánh độc lập. Các ghi chú baseline cũ bên dưới là lịch sử.
+
 > Trạng thái source/test hiện tại: [CURRENT_IMPLEMENTATION](CURRENT_IMPLEMENTATION.md); phần ghi việc/reviewer cá nhân vẫn phải hoàn thiện.
 
 Bàn giao 24/10: đọc [JWT DB, stock/version và WebSocket checkout](../order-payment/REALTIME_CHECKOUT_JWT.md) trước khi merge/chạy với schema mới. Các nhánh cần nhận đủ source integration, không chỉ migration/JS; JWT cũ cần đăng nhập lại hoặc refresh hợp lệ.

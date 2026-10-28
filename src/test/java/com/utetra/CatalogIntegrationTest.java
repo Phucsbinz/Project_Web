@@ -142,6 +142,26 @@ class CatalogIntegrationTest {
             assertThat(stats.getPrepareStatementCount()).isLessThanOrEqualTo(6);
         } finally {stats.setStatisticsEnabled(enabled);}
     }
+    @Test void catalogStockRejectsAnOldVariantVersionAndInsufficientQuantity() {
+        var p=product(); var v=p.variants().getFirst();
+        var input=new ProductInput(storeId,categoryId,p.name(),p.slug(),p.description(),p.basePrice(),true,true,false,
+            List.of(new VariantInput("M",v.extraPrice(),true,10,v.version())),Set.of(toppingId),p.version());
+        var saved=catalog.saveProduct(admin,p.id(),input);em.flush();em.clear();
+        var current=saved.variants().getFirst();
+        assertThatThrownBy(()->catalog.quote(p.id(),new DrinkInput(current.id(),11,50,50,Set.of())))
+            .isInstanceOf(ResponseStatusException.class);
+        jdbc.update("update product_variants set stock_quantity=9,version=version+1 where id=?",current.id());em.clear();
+        var stale=new ProductInput(storeId,categoryId,p.name(),p.slug(),p.description(),p.basePrice(),true,true,false,
+            List.of(new VariantInput("M",v.extraPrice(),true,8,current.version())),Set.of(toppingId),saved.version());
+        assertThatThrownBy(()->catalog.saveProduct(admin,p.id(),stale)).isInstanceOf(ResponseStatusException.class);
+        assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=?",Integer.class,current.id())).isEqualTo(9);
+    }
+    @Test void stockJsonRejectsFractionsAndStringVersions() {
+        assertThatThrownBy(()->mapper.readValue("{\"sizeName\":\"M\",\"extraPrice\":0,\"active\":true,\"stockQuantity\":1.5}",VariantInput.class))
+            .isInstanceOf(com.fasterxml.jackson.core.JsonProcessingException.class);
+        assertThatThrownBy(()->mapper.readValue("{\"sizeName\":\"M\",\"extraPrice\":0,\"active\":true,\"stockVersion\":\"1\"}",VariantInput.class))
+            .isInstanceOf(com.fasterxml.jackson.core.JsonProcessingException.class);
+    }
     @Test void approvalPromotesBuyerAndRejectsReplay() {
         assertThat(jdbc.queryForObject("select r.name from users u join roles r on r.id=u.role_id where u.id=105",String.class)).isEqualTo("ROLE_VENDOR");
         var current=storeRepo.findById(storeId).orElseThrow();

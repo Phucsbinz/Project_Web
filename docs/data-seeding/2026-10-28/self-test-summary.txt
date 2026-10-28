@@ -1,0 +1,1 @@
+CATALOG_SEED_SELF_TEST_PASS: preview, apply31, idempotency, stock/availability, conflict, whitelist, JSON ledger recovery, rollback edit and external-FK guards

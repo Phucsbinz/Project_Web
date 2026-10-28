@@ -1,5 +1,9 @@
 # UTETra — Một layout dùng chung cho toàn bộ nhóm
 
+## Đồng bộ catalog-sales — 28/10/2026
+
+Bundle được ghép từ `origin/integration/utetra@57c6b88` sang nhánh catalog độc lập. `NavigationAdvice`, `app.jsp`, `site-ui.js` bổ sung capability commerce dựa trên bean thật để không gọi giỏ/nhóm khi chưa có module Order. Các điều chỉnh vẫn tập trung trong manifest, cần đồng bộ cùng nhau khi tích hợp main/feature. Catalog giữ API quote thật và một layout; không thêm backend giả. Chi tiết phạm vi và kết quả thực tại [SYNC_UTETRA_20261028.md](features/catalog-sales/SYNC_UTETRA_20261028.md).
+
 > CSKH 27/10: các trang /support, /manager/support, /admin/support dùng app.jsp chung và support.css scope support-page. Dropdown/sidebar/footer thêm đường dẫn đúng role; backend SupportService và private queue kiểm quyền độc lập. Khi chuyển tính năng sang nhánh khác phải ghép cả module/migration/security theo docs/features/customer-support, không chỉ chép link/JSP.
 
 ## Sửa font tiếng Việt — 26/10/2026

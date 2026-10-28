@@ -62,7 +62,7 @@
   const context = document.querySelector('meta[name="app-context"]')?.content || '';
   const money = value => new Intl.NumberFormat('vi-VN').format(value) + ' đ';
   async function refresh() {
-    if(!list)return;
+    if(!list || document.querySelector('meta[name="utetra-commerce"]')?.content!=='true')return;
     try {
       const response = await fetch(context + '/cart/data', {headers:{Accept:'application/json'},credentials:'same-origin',cache:'no-store'});
       if(!response.ok || !response.headers.get('Content-Type')?.includes('application/json'))throw new Error();

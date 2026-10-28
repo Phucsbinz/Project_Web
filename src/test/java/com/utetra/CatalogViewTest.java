@@ -28,6 +28,11 @@ class CatalogViewTest {
         jdbc.update("insert into product_variants(product_id,size_name,extra_price,is_active,created_at,updated_at) values(1,'M',5000,true,current_timestamp,current_timestamp)");
         jdbc.update("insert into auth_sessions(id,user_id,refresh_token_hash,created_at,expires_at,version) values(1,1,?,current_timestamp,?,0)","b".repeat(64),java.sql.Timestamp.from(Instant.now().plusSeconds(3600)));
     }
+    @Test void quickViewAllowsSameOriginAndNormalProductKeepsFrameProtection() {
+        assertThat(client.getForEntity("/products/1?quick=1",String.class).getHeaders().getFirst("X-Frame-Options")).isEqualTo("SAMEORIGIN");
+        assertThat(client.getForEntity("/products/1",String.class).getHeaders().getFirst("X-Frame-Options")).isEqualTo("DENY");
+        assertThat(client.getForObject("/products/1",String.class)).contains("Thêm vào giỏ hàng","product-community.js");
+    }
     @Test void publicPagesRenderEscapedDataAndNoJspSource() {
         for(String path:List.of("/","/menu","/products/1","/stores","/stores/1")) {
             var response=client.getForEntity(path,String.class);

@@ -1,0 +1,80 @@
+{
+  "source": "origin/integration/utetra@57c6b88",
+  "target": "feature/catalog-sales",
+  "mode": "isolated H2; test JWT; no real provider or datasource writes",
+  "checks": [
+    {
+      "width": 1440,
+      "route": "/",
+      "guestRanking": true,
+      "noUnsupportedGroupCTA": true,
+      "noOverflow": true
+    },
+    {
+      "width": 1440,
+      "action": "real filtered menu + iframe quickview + server quote 80000 VND",
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "action": "admin search + edit + stock fields + upload form",
+      "passed": true
+    },
+    {
+      "action": "admin persists stock through real catalog API",
+      "stock": 15,
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "route": "/admin/promotions",
+      "passed": true
+    },
+    {
+      "width": 768,
+      "route": "/",
+      "guestRanking": true,
+      "noUnsupportedGroupCTA": true,
+      "noOverflow": true
+    },
+    {
+      "width": 768,
+      "action": "real filtered menu + iframe quickview + server quote 80000 VND",
+      "passed": true
+    },
+    {
+      "width": 768,
+      "action": "admin search + edit + stock fields + upload form",
+      "passed": true
+    },
+    {
+      "width": 768,
+      "route": "/admin/promotions",
+      "passed": true
+    },
+    {
+      "width": 390,
+      "route": "/",
+      "guestRanking": true,
+      "noUnsupportedGroupCTA": true,
+      "noOverflow": true
+    },
+    {
+      "width": 390,
+      "action": "real filtered menu + iframe quickview + server quote 80000 VND",
+      "passed": true
+    },
+    {
+      "width": 390,
+      "action": "admin search + edit + stock fields + upload form",
+      "passed": true
+    },
+    {
+      "width": 390,
+      "route": "/admin/promotions",
+      "passed": true
+    }
+  ],
+  "javascriptErrors": [],
+  "passed": true
+}
