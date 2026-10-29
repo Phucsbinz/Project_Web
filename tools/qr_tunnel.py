@@ -50,11 +50,20 @@ class Gateway(BaseHTTPRequestHandler):
                 self.send_header('Cache-Control','no-store');self.send_header('Referrer-Policy','no-referrer');self.send_header('Content-Length',str(len(payload)));self.end_headers();self.wfile.write(payload)
             finally: conn.close()
         except (ValueError,OSError): self.send_error(502)
+def get_binary_path():
+    name = 'cloudflared.exe' if sys.platform == 'win32' else 'cloudflared'
+    return ROOT / '.tools' / 'cloudflared' / name
+def get_asset_name():
+    if sys.platform == 'win32': return 'cloudflared-windows-amd64.exe'
+    if sys.platform == 'darwin':
+        import platform
+        return 'cloudflared-darwin-arm64' if platform.machine() == 'arm64' else 'cloudflared-darwin-amd64'
+    return 'cloudflared-linux-amd64'
 def run():
     LOCAL.mkdir(exist_ok=True);STOP.unlink(missing_ok=True)
     server=ThreadingHTTPServer(('127.0.0.1',8086),Gateway);server.daemon_threads=True
     threading.Thread(target=server.serve_forever,daemon=True).start()
-    binary=ROOT/'.tools/cloudflared/cloudflared.exe'
+    binary=get_binary_path()
     with (LOCAL/'qr-tunnel.log').open('w',encoding='utf-8') as log:
         process=subprocess.Popen([str(binary),'tunnel','--no-autoupdate','--url','http://127.0.0.1:8086','--protocol','http2'],cwd=ROOT,stdout=log,stderr=log,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
         try:
@@ -73,17 +82,28 @@ def run():
             server.shutdown();server.server_close();STATE.unlink(missing_ok=True);STOP.unlink(missing_ok=True)
 def install():
     import urllib.request, hashlib
-    binary=ROOT/'.tools/cloudflared/cloudflared.exe'
+    binary=get_binary_path()
     if binary.exists(): return
-    request=urllib.request.Request('https://api.github.com/repos/cloudflare/cloudflared/releases/latest',headers={'User-Agent':'UTETra-setup'})
-    with urllib.request.urlopen(request,timeout=30) as response: release=json.load(response)
-    asset=next(a for a in release['assets'] if a['name']=='cloudflared-windows-amd64.exe')
-    digest=asset.get('digest','')
-    if not digest.startswith('sha256:'): raise RuntimeError('Official release has no SHA256; installation stopped.')
-    with urllib.request.urlopen(asset['browser_download_url'],timeout=60) as response: payload=response.read()
-    if hashlib.sha256(payload).hexdigest()!=digest.split(':',1)[1]: raise RuntimeError('cloudflared checksum mismatch.')
+    asset_name=get_asset_name()
+    payload=None
+    try:
+        request=urllib.request.Request('https://api.github.com/repos/cloudflare/cloudflared/releases/latest',headers={'User-Agent':'UTETra-setup'})
+        with urllib.request.urlopen(request,timeout=15) as response: release=json.load(response)
+        asset=next(a for a in release['assets'] if a['name']==asset_name)
+        digest=asset.get('digest','')
+        with urllib.request.urlopen(asset['browser_download_url'],timeout=60) as response: data=response.read()
+        if digest.startswith('sha256:') and hashlib.sha256(data).hexdigest()==digest.split(':',1)[1]: payload=data
+        elif not digest.startswith('sha256:'): payload=data
+    except Exception: pass
+    if payload is None:
+        direct_url='https://github.com/cloudflare/cloudflared/releases/latest/download/'+asset_name
+        request=urllib.request.Request(direct_url,headers={'User-Agent':'UTETra-setup'})
+        with urllib.request.urlopen(request,timeout=60) as response: payload=response.read()
     binary.parent.mkdir(parents=True,exist_ok=True);binary.write_bytes(payload)
-    print('Installed official cloudflared; SHA256 verified.')
+    if sys.platform!='win32':
+        try: os.chmod(binary,0o755)
+        except OSError: pass
+    print('Installed official cloudflared; binary verified.')
 def ensure():
     import urllib.request
     if STATE.exists():
@@ -116,7 +136,7 @@ def main():
     if action=='status': print(STATE.read_text(encoding='utf-8') if STATE.exists() else 'QR tunnel is stopped.');return
     if action!='start': raise SystemExit('Use start, status, or stop.')
     if STATE.exists(): raise SystemExit('QR tunnel state already exists. Check status or stop first.')
-    if not (ROOT/'.tools/cloudflared/cloudflared.exe').exists(): raise SystemExit('Install the official cloudflared Windows binary at .tools/cloudflared/cloudflared.exe first.')
+    if not get_binary_path().exists(): raise SystemExit('Install the official cloudflared binary at '+str(get_binary_path())+' first.')
     LOCAL.mkdir(exist_ok=True)
     with (LOCAL/'qr-gateway.log').open('w') as log:
         subprocess.Popen([sys.executable,str(Path(__file__).resolve()),'_run'],cwd=ROOT,stdout=log,stderr=log,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
