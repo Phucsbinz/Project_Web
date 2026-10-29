@@ -1,6 +1,7 @@
 /* Cart and group-order interactions; prices and eligibility remain server-owned. */
 'use strict';
-(() => {
+// JSP content loads before the shared layout helpers at the end of the body.
+document.addEventListener('DOMContentLoaded', () => {
  const context=document.querySelector('meta[name="app-context"]')?.content||'';
  const cart=document.querySelector('.cart-page'),group=document.querySelector('.group-page');let busy=false;
  async function change(path,data,redirect){if(busy)return;busy=true;try{const result=await orders.send(path,data);if(redirect){location.assign(context+redirect(result));return;}location.reload();}catch(e){orders.message(e.message,true);}finally{busy=false;}}
@@ -29,4 +30,4 @@
   // Refresh only an idle, visible group; submitting always sends the displayed version.
   const poll=setInterval(async()=>{if(document.hidden||busy||window.utetraDialogBusy)return;try{const r=await fetch(context+'/group-orders/'+token+'/data',{headers:{Accept:'application/json'},cache:'no-store'});if(r.ok){const current=await r.json();if(['CANCELLED','EXPIRED'].includes(current.status))location.replace(context+'/group-orders/new');else if(Number(current.paidCount||0)!==Number(group.dataset.paidCount||0)||current.orderStatus!==group.dataset.orderStatus&&Boolean(current.orderStatus)||current.version!==version||current.status!==group.dataset.status)location.reload();}}catch(_){}},15000);window.addEventListener('pagehide',()=>clearInterval(poll));
  }
-})();
+});
