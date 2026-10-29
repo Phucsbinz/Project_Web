@@ -124,9 +124,22 @@ class ShippingScopeIntegrationTest {
    assertThatThrownBy(()->workflow.read(SHIPPER,id)).isInstanceOf(OrderProblem.class);
    assertThat(workflow.list(SHIPPER,"shipper",null,0,20)).singleElement().satisfies(row->assertThat(row).containsEntry("canRead",false).doesNotContainKeys("recipientPhone","deliveryAddress","total","note"));
  }
- @Test void managerOperationalReportHasNoSettlementFields(){
+ @Test void managerOperationalReportIncludesScopedSalesAndSeparateCod(){
    order("NEW");var report=operations.operationalReport(MANAGER,1L,LocalDate.now().minusDays(1),LocalDate.now().plusDays(1));
-   assertThat(report).containsEntry("orders",1L).containsKeys("codDue","codCollected").doesNotContainKeys("goods","commission","storeNet");
+   assertThat(report).containsEntry("orders",1L).containsKeys("codDue","codCollected","salesOrders","goods","shipping","refund","commission","storeNet");
+ }
+
+ @Test void managerSalesIncludeCodAndQrButExcludeUnassignedBranch(){
+   for(int i=0;i<3;i++){
+     long id=order("DELIVERED");long shop=i==2?2:1;
+     jdbc.update("update orders set store_id=?,payment_method=?,payment_status='PAID',delivered_at=?,final_amount=115000 where id=?",shop,i==0?"COD":"LOCAL_QR",Instant.now(),id);
+     new TransactionTemplate(tx).executeWithoutResult(s->{var entry=new StoreSettlement();entry.orderId=id;entry.storeId=shop;entry.goodsNet=new java.math.BigDecimal("100000");entry.shippingNet=new java.math.BigDecimal("15000");entry.commissionAmount=new java.math.BigDecimal("10000");entry.updatedAt=Instant.now();data.save(entry);data.flush();});
+   }
+   var report=operations.operationalReport(MANAGER,null,LocalDate.now().minusDays(1),LocalDate.now().plusDays(1));
+   assertThat(report).containsEntry("salesOrders",2L).containsEntry("orders",2L);
+   assertThat((java.math.BigDecimal)report.get("goods")).isEqualByComparingTo("200000");
+   assertThat((java.math.BigDecimal)report.get("codCollected")).isEqualByComparingTo("115000");
+   assertThatThrownBy(()->operations.operationalReport(MANAGER,2L,LocalDate.now(),LocalDate.now())).isInstanceOf(OrderProblem.class);
  }
 
  @Test void scopeCannotBeGrantedByManagerOrToInactiveShipper(){

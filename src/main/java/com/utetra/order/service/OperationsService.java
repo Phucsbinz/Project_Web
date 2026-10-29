@@ -265,6 +265,10 @@ public class OperationsService {
     refs.requireCurrent(actor, false);
     if (!actor.is("ADMIN") && !actor.is("VENDOR"))
       throw OrderProblem.forbidden();
+    return scopedRevenue(actor,store,from,to);
+  }
+
+  private Map<String,Object> scopedRevenue(Actor actor,Long store,LocalDate from,LocalDate to) {
     if (store != null) refs.requireOperator(actor, store);
     if (from == null || to == null || to.isBefore(from) || to.isAfter(from.plusDays(365)))
       throw OrderProblem.invalid("Khoảng ngày báo cáo không hợp lệ; tối đa 366 ngày.");
@@ -340,7 +344,11 @@ public class OperationsService {
       count++;if("DELIVERED".equals(row.get("status")))delivered++;if("CANCELLED".equals(row.get("status")))cancelled++;
       if("COD".equals(row.get("payment_method"))){if("PAID".equals(row.get("payment_status")))collected=collected.add(CommerceReferenceRepository.money(row,"final_amount"));else if(!Set.of("CANCELLED","REFUNDED").contains(row.get("status")))due=due.add(CommerceReferenceRepository.money(row,"final_amount"));}
     }
-    return Map.of("from",from.toString(),"to",to.toString(),"orders",count,"delivered",delivered,"cancelled",cancelled,"codDue",due,"codCollected",collected);
+    var result=new LinkedHashMap<String,Object>(scopedRevenue(actor,store,from,to));
+    result.put("salesOrders",result.get("orders"));
+    result.put("orders",count);result.put("delivered",delivered);result.put("cancelled",cancelled);
+    result.put("codDue",due);result.put("codCollected",collected);
+    return result;
   }
 
   @Transactional(readOnly = true)
