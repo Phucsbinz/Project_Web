@@ -10,6 +10,7 @@
   const headers={Accept:'application/json'};if(body!==undefined)headers['Content-Type']='application/json';
   const token=document.querySelector('meta[name="_csrf"]')?.content,key=document.querySelector('meta[name="_csrf_header"]')?.content;if(token&&key)headers[key]=token;
   const res=await fetch(context+path,{method,headers,body:body===undefined?undefined:JSON.stringify(body),credentials:'same-origin',cache:'no-store'});
+  if(res.ok && method!=='GET' && !res.redirected && !res.headers.get('Content-Type'))return {};
   if(res.redirected||!res.headers.get('Content-Type')?.includes('application/json'))throw new Error('Phiên đăng nhập hoặc phân công đã thay đổi. Hãy tải lại trang.');
   const data=await res.json();if(!res.ok)throw new Error(data.message||'Không thể cập nhật. Hãy tải lại dữ liệu và thử lại.');return data;
  }
@@ -53,6 +54,14 @@
     row.append(stock,saveCell);tbody.append(row);
    }
   }
+  const toppings=await request('/api/manager/catalog/stores/'+id+'/toppings');if(ticket!==sequence)return;
+  const toppingBody=document.getElementById('operations-toppings');toppingBody.replaceChildren();
+  for(const topping of toppings){
+   const row=node('tr'),cell=node('td'),toggle=node('button',topping.available?'Tạm ngưng bán':'Cho phép bán','btn btn-outline-primary btn-sm');toggle.type='button';toggle.disabled=!topping.active;
+   toggle.addEventListener('click',()=>action(toggle,()=>request('/api/manager/catalog/stores/'+id+'/toppings/'+topping.id,'PUT',{available:!topping.available})));
+   cell.append(toggle);row.append(node('td',topping.name),node('td',!topping.active?'Đã ngừng hoạt động toàn hệ thống':topping.available?'Sẵn bán':'Tạm ngưng bán'),cell);toppingBody.append(row);
+  }
+  if(!toppings.length){const row=node('tr'),cell=node('td','Chưa có topping.');cell.colSpan=3;row.append(cell);toppingBody.append(row);}
   content.hidden=false;say('Đang vận hành '+branch.name+'.');
  }
  select.addEventListener('change',()=>{current=stores.find(s=>String(s.id)===select.value)||null;const url=new URL(location.href);if(current)url.searchParams.set('store',current.id);else url.searchParams.delete('store');history.replaceState(null,'',url);load().catch(e=>say(e.message,true));});

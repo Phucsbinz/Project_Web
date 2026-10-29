@@ -99,7 +99,7 @@
   function edit(item = null) {
     document.getElementById('management-editor').hidden=section==='stores'&&app.dataset.role!=='vendor'&&!item;
     editing = item;list.querySelectorAll('article').forEach(card=>card.classList.toggle('record-editing',Boolean(item)&&card.dataset.recordId===String(item.id)));form.replaceChildren(); document.querySelector('#catalog-form-title').textContent = (item ? 'Cập nhật ' : 'Tạo / cấu hình ') + labels[section];
-    specs[section].forEach(([name,label,type]) => form.append(field(name,label,type,item?.[name])));
+    specs[section].forEach(([name,label,type]) => form.append(field(name,label,type,(section === 'stock' && name === 'toppingId' ? item?.id : item?.[name]))));
     if(section === 'products') ['S','M','L'].forEach(size => {
       const old = item?.variants.find(v => v.sizeName === size);
       form.append(field('size_' + size,'Bán size ' + size,'checkbox',old ? old.active : size === 'M'));
@@ -179,12 +179,13 @@
       let data = [];
       if(section === 'stores') data = shopList;
       else if(section === 'areas') data = shopList.find(s => String(s.id) === select.value)?.areas || [];
-      else if(section === 'stock' || section === 'memberships') { edit(); list.replaceChildren(el('p','Chọn dữ liệu bên phải để cập nhật cấu hình.')); return; }
+      else if(section === 'stock') data = await request('/stores/' + select.value + '/toppings');
+      else if(section === 'memberships') { edit(); list.replaceChildren(el('p','Chọn dữ liệu bên phải để cập nhật cấu hình.')); return; }
       else data = await request('/' + section + (['products','promotions'].includes(section) && select.value ? '?storeId=' + select.value : ''));
       list.replaceChildren(); document.querySelector('#catalog-list-title').textContent = labels[section] + ' (' + data.length + ')';
       data.forEach(item => {
         const card = el('article',undefined,'card p-3');card.dataset.recordId=String(item.id);card.dataset.search=((item.name||'')+' '+(item.address||'')+' '+(item.code||'')).toLocaleLowerCase('vi');card.append(el('h3',item.name,'h5'));
-        const info = section === 'stores' ? item.address + ' · ' + (states[item.status]||item.status) : section === 'products' ? new Intl.NumberFormat('vi-VN').format(item.basePrice) + ' đ · ' + (item.active ? 'Hoạt động' : 'Ngừng bán') : section === 'promotions' ? item.percent + '% · ' + (item.active ? 'Bật' : 'Tắt') : item.active ? 'Hoạt động' : 'Ngừng hoạt động';
+        const info = section === 'stores' ? item.address + ' · ' + (states[item.status]||item.status) : section === 'products' ? new Intl.NumberFormat('vi-VN').format(item.basePrice) + ' đ · ' + (item.active ? 'Hoạt động' : 'Ngừng bán') : section === 'stock' ? (item.available ? 'Sẵn bán' : 'Tạm ngưng bán') + (item.active ? '' : ' · Định nghĩa đã ngừng hoạt động') : section === 'promotions' ? item.percent + '% · ' + (item.active ? 'Bật' : 'Tắt') : item.active ? 'Hoạt động' : 'Ngừng hoạt động';
         card.append(el('p',info,'small text-secondary')); const actions = el('div',undefined,'d-flex flex-wrap gap-2');
         actions.append(button('Chỉnh sửa',() => {edit(item);document.getElementById('management-editor').scrollIntoView({behavior:'smooth',block:'start'});form.querySelector('input,select,textarea')?.focus({preventScroll:true});}));
         if(section === 'products') actions.append(button('Ngừng bán',async () => { if(!await window.utetraConfirm('Ngừng bán sản phẩm này?')) return; await request('/products/' + item.id + '?version=' + item.version,'DELETE'); await refresh(); }));

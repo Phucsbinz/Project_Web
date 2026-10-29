@@ -14,8 +14,8 @@ class ShowcaseOrders extends SeedDemo {
   if(!List.of(args).contains("--apply-utetra-demo"))throw new IllegalArgumentException("Explicit apply required");
   try(var ctx=new SpringApplicationBuilder(UtetraApplication.class).run("--spring.profiles.active=mysql","--server.port=0","--server.address=127.0.0.1","--app.mail.enabled=false")){
    db=ctx.getBean(JdbcTemplate.class);if(!"utetra_db".equals(db.queryForObject("select database()",String.class)))throw new IllegalStateException("Wrong DB");
-   var buyer=new Actor(existing("users","email","demo.thanh@example.test"),"ROLE_USER");
-   var admin=new Actor(existing("users","email","demo.admin@example.test"),"ROLE_ADMIN");
+   var buyer=new Actor(existing("users","email","thanhpt.guest@example.test"),"ROLE_USER");
+   var admin=new Actor(existing("users","email","minhnd.admin@example.test"),"ROLE_ADMIN");
    var carts=ctx.getBean(CartService.class);var checkout=ctx.getBean(CheckoutService.class);var flow=ctx.getBean(OrderWorkflowService.class);
    var menu=new com.fasterxml.jackson.databind.ObjectMapper().readTree(java.nio.file.Files.readString(java.nio.file.Path.of("tools/demo/menu.json")));
    long address=id("select id from user_addresses where user_id=? order by id limit 1",buyer.userId());

@@ -1,5 +1,15 @@
 'use strict';
 window.utetra = Object.freeze({
+  money(value) {
+    const amount=Number(value);
+    return Number.isFinite(amount)?new Intl.NumberFormat('vi-VN',{minimumFractionDigits:0,maximumFractionDigits:0}).format(amount)+'đ':'—';
+  },
+  moneyText(value) {
+    return value.replace(/(-?\d[\d.,]*)[ \u00a0\u202f]*(?:₫|đ)(?=$|[\s).,·;:/])/g, (whole,raw)=>{
+      const normalized=raw.includes(',')?raw.replace(/\./g,'').replace(',','.'):/^-?\d{1,3}(?:\.\d{3})+$/.test(raw)?raw.replace(/\./g,''):raw;
+      const amount=Number(normalized);return Number.isFinite(amount)?window.utetra.money(amount):whole;
+    });
+  },
   uuid() {
     if(crypto.randomUUID)return crypto.randomUUID();
     const bytes=crypto.getRandomValues(new Uint8Array(16));bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;

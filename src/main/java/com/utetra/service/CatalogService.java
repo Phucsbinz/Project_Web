@@ -51,6 +51,12 @@ public class CatalogService {
         t.setName(input.name().trim()); t.setPrice(input.price()); t.setActive(input.active());
         toppings.saveAndFlush(t); guard.audit(p,"SAVE","TOPPING",t.getId()); return toppingView(t);
     }
+    public List<StoreToppingView> storeToppings(UtetraPrincipal p,Long storeId) {
+        guard.store(p,storeId);
+        Set<Long> available=stock.findByStoreId(storeId).stream().filter(StoreTopping::getAvailable)
+            .map(StoreTopping::getToppingId).collect(java.util.stream.Collectors.toSet());
+        return toppings.findAll().stream().map(t -> new StoreToppingView(t.getId(),t.getName(),t.getPrice(),t.getActive(),available.contains(t.getId()))).toList();
+    }
     @Transactional public void availability(UtetraPrincipal p,Long storeId,Long toppingId,boolean available) {
         guard.mutation(p,storeId); found(toppings.findById(toppingId));
         var s=stock.findByStoreIdAndToppingId(storeId,toppingId).orElseGet(StoreTopping::new);

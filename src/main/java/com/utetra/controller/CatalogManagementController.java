@@ -32,6 +32,7 @@ public class CatalogManagementController {
     @GetMapping("/toppings") public Object toppings(@AuthenticationPrincipal UtetraPrincipal p) { return catalog.toppings(p); }
     @PostMapping("/toppings") public Object topping(@AuthenticationPrincipal UtetraPrincipal p,@Valid @RequestBody ToppingInput input) { return catalog.saveTopping(p,null,input); }
     @PutMapping("/toppings/{id}") public Object topping(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable Long id,@Valid @RequestBody ToppingInput input) { return catalog.saveTopping(p,id,input); }
+    @GetMapping("/stores/{storeId}/toppings") public Object stock(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable Long storeId) { return catalog.storeToppings(p,storeId); }
     @PutMapping("/stores/{storeId}/toppings/{id}") public void stock(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable Long storeId,@PathVariable Long id,@RequestBody Availability input) { catalog.availability(p,storeId,id,input.available()); }
     @GetMapping("/products") public Object products(@AuthenticationPrincipal UtetraPrincipal p,@RequestParam Long storeId) { return catalog.managed(p,storeId); }
     @PostMapping("/products") public Object product(@AuthenticationPrincipal UtetraPrincipal p,@Valid @RequestBody ProductInput input) { return catalog.saveProduct(p,null,input); }

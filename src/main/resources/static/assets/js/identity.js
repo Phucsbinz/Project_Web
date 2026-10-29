@@ -7,7 +7,7 @@
   const context = document.querySelector('meta[name="app-context"]')?.content || '';
   const output = document.getElementById('identity-content');
   const message = document.getElementById('identity-message');
-  let currentPage = 0, query = '', rows = [];
+  let currentPage = 0, query = '', roleFilter = '', rows = [];
   // Keep the email within this tab; never put it or a reset grant in a URL.
   const pendingKey = purpose => `utetra.otp.${purpose}`;
   function rememberEmail(purpose, email) {
@@ -215,12 +215,16 @@
   }));
   document.getElementById('refresh-session')?.addEventListener('click', () => run(async () => { say((await request('/auth/refresh', 'POST')).message); }));
   document.getElementById('user-search')?.addEventListener('submit', e => {
-    e.preventDefault(); query = e.target.elements.q.value; currentPage = 0; run(load);
+    e.preventDefault(); query = e.target.elements.q.value; roleFilter = e.target.elements.role.value; currentPage = 0; run(load);
   });
-  document.getElementById('assignment-form')?.addEventListener('submit', e => {
-    e.preventDefault(); run(async () => {
-      const f = e.target.elements;
-      say((await request(`/admin/users/${Number(f.managerId.value)}/assignments`, 'POST', {storeId: Number(f.storeId.value), active: f.active.checked})).message);
+  document.querySelectorAll('#create-account-form input').forEach(input => input.addEventListener('input', () => input.setCustomValidity('')));
+  document.getElementById('create-account-form')?.addEventListener('submit', e => {
+    e.preventDefault(); const form = e.target, submit = form.querySelector('button');
+    if (!validateForm(form)) return;
+    run(async () => { submit.disabled = true;
+      try { const result = await request('/admin/users', 'POST', fieldData(form));
+        form.reset(); query = ''; roleFilter = ''; document.getElementById('user-search').reset(); currentPage = 0; await load(); say(result.message);
+      } finally { submit.disabled = false; }
     });
   });
   document.getElementById('prev-page')?.addEventListener('click', () => { currentPage = Math.max(0, currentPage - 1); run(load); });
@@ -264,20 +268,28 @@
   }
   function user(row) {
     const body = card(`${row.full_name} · #${row.id}`); body.closest('.card').classList.add('user-list-card'); body.prepend(text('span',row.full_name?.trim().split(/\s+/).map(v=>v[0]).slice(-2).join('')||'U','user-avatar')); body.append(text('p', `${row.email} · ${row.username}`));
-    const active = document.createElement('input'); active.type = 'checkbox'; active.checked = row.is_active; active.className = 'form-check-input me-2';
-    const label = text('label', '', 'form-check-label d-block mb-3'); label.append(active, document.createTextNode('Tài khoản hoạt động')); body.append(label);
-    const role = document.createElement('select'); role.className = 'form-select mb-3'; role.setAttribute('aria-label', 'Vai trò');
-    for (const r of ['USER', 'VENDOR', 'MANAGER', 'ADMIN', 'SHIPPER']) { const o = text('option', ({USER:'Khách hàng',VENDOR:'Chủ cửa hàng',MANAGER:'Quản lý chi nhánh',ADMIN:'Quản trị viên',SHIPPER:'Nhân viên giao hàng'})[r]); o.value = 'ROLE_' + r; role.append(o); }
+    const roles = {ROLE_USER:'Khách hàng', ROLE_VENDOR:'Chủ cửa hàng', ROLE_MANAGER:'Quản lý chi nhánh', ROLE_ADMIN:'Quản trị viên', ROLE_SHIPPER:'Nhân viên giao hàng'};
+    body.append(text('p', `${roles[row.role_name] || row.role_name} · ${row.is_active ? 'Đang hoạt động' : 'Đã vô hiệu hóa'} · ${row.email_verified_at ? 'Đã xác minh email' : 'Chờ xác minh email'}`, 'small text-secondary'));
+    const role = document.createElement('select'); role.className = 'form-select mb-3'; role.setAttribute('aria-label', 'Vai trò tài khoản ' + row.username);
+    for (const [value, name] of Object.entries(roles)) { const option = text('option', name); option.value = value; role.append(option); }
     role.value = row.role_name; role.disabled = !page.startsWith('/admin/'); body.append(role);
-    body.append(button('Lưu tài khoản', async () => {
-      say((await request(`${page}/${row.id}`, 'PUT', {active: active.checked, role: role.value, version: row.version})).message); await load();
+    if (page.startsWith('/admin/')) body.append(button('Lưu vai trò', async () => {
+      if (role.value === row.role_name) { say('Vai trò chưa thay đổi.'); return; }
+      if (!await window.utetraConfirm(`Đổi vai trò của ${row.username} từ ${roles[row.role_name]} sang ${roles[role.value]}? Các phiên đăng nhập sẽ kết thúc; phân công Manager bị thu hồi khi đổi sang vai trò khác.${row.role_name === 'ROLE_SHIPPER' ? ' Đơn đã lấy hàng phải giao xong trước khi đổi vai trò; hãy phân công lại đơn chưa lấy hàng.' : ''}`)) return;
+      say((await request(`${page}/${row.id}`, 'PUT', {active: row.is_active, role: role.value, version: row.version})).message); await load();
     }));
+    body.append(button(row.is_active ? 'Vô hiệu hóa tài khoản' : 'Kích hoạt lại tài khoản', async () => {
+      const question = row.is_active ? `Vô hiệu hóa tài khoản ${row.username}? Tài khoản sẽ không đăng nhập được và các phiên hiện tại sẽ kết thúc. Lịch sử giao dịch được giữ lại.${row.role_name === 'ROLE_SHIPPER' ? ' Đơn đã lấy hàng phải giao xong trước khi vô hiệu hóa; hãy phân công lại đơn chưa lấy hàng.' : ''}` : `Kích hoạt lại tài khoản ${row.username}? Người dùng đã xác minh email có thể đăng nhập trở lại.`;
+      if (!await window.utetraConfirm(question)) return;
+      say((await request(`${page}/${row.id}`, 'PUT', {active: !row.is_active, role: row.role_name, version: row.version})).message); await load();
+    }, 'btn btn-outline-danger btn-sm ms-2'));
   }
+
   async function load() {
     if (!output || page.startsWith('/auth/') || page === '/account/security') return;
     output.replaceChildren(text('p', 'Đang tải…', 'text-secondary'));
     try {
-      const suffix = `?page=${currentPage}&size=20&q=${encodeURIComponent(query)}`;
+      const suffix = `?page=${currentPage}&size=20&q=${encodeURIComponent(query)}&role=${encodeURIComponent(roleFilter)}`;
       const data = await request(page + '/data' + suffix); output.replaceChildren();
       if (page === '/account/profile') {
         fill(document.getElementById('profile-form'), data);

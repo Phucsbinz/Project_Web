@@ -6,6 +6,10 @@ public final class IdentityForms {
     public record Register(@NotBlank @Pattern(regexp="[a-zA-Z0-9_.-]{3,50}") String username,
         @NotBlank @Email @Size(max=254) String email,@NotBlank @Size(min=8,max=72) String password,
         @NotBlank @CodePointLength(min=1,max=100) String fullName) {}
+    public record CreateAccount(@NotBlank @Pattern(regexp="[a-zA-Z0-9_.-]{3,50}") String username,
+        @NotBlank @Email @Size(max=254) String email,@NotBlank @Size(min=8,max=72) String password,
+        @NotBlank @CodePointLength(min=1,max=100) String fullName,
+        @NotNull @Pattern(regexp="ROLE_USER|ROLE_VENDOR|ROLE_MANAGER|ROLE_SHIPPER") String role) {}
     public record EmailRequest(@NotBlank @Email @Size(max=254) String email) {}
     public record SendOtp(@NotBlank @Email @Size(max=254) String email,
         @Pattern(regexp="REGISTER|PASSWORD_RESET") @NotNull String purpose) {}

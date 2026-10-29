@@ -28,7 +28,7 @@ class SeedDemo {
   }
   static long existing(String table,String column,String value){var x=db.queryForList("select id from "+table+" where "+column+"=?",Long.class,value);return x.isEmpty()?0:x.getFirst();}
   static long user(String handle,String name,String role,String hash,int index){
-    String email=handle+"@example.test";long found=existing("users","email",email);if(found>0)return found;
+    String email=TestAccountEmails.email(name,role);long found=existing("users","username",handle);if(found==0)found=existing("users","email",email);if(found>0)return found;
     return insert("users","role_id,username,email,password_hash,full_name,phone,is_active,email_verified_at,created_at,updated_at,version",id("select id from roles where name=?",role),handle,email,hash,name,"090800"+String.format("%04d",index),true,NOW,NOW,NOW,0);
   }
   static long version(long order){return id("select version from orders where id=?",order);}

@@ -864,9 +864,10 @@ class OrderCommerceIntegrationTest {
   }
 
   void delivered(long id) {
-    for (String state : List.of("CONFIRMED", "PICKED_UP", "DELIVERING", "DELIVERED"))
-      workflow.transition(
-          VENDOR, id, new Transition(state, version(id), "", state.equals("DELIVERED")));
+    workflow.transition(VENDOR,id,new Transition("CONFIRMED",version(id),"",false));
+    workflow.assign(ADMIN,id,new Assignment(5,version(id)));
+    for (String state : List.of("PICKED_UP", "DELIVERING", "DELIVERED"))
+      workflow.transition(SHIPPER,id,new Transition(state,version(id),"",state.equals("DELIVERED")));
   }
 
   private void rememberCookies(Map<String, String> cookies, HttpHeaders headers) {
@@ -1118,16 +1119,18 @@ class OrderCommerceIntegrationTest {
     assertThatThrownBy(
             () ->
                 workflow.transition(
-                    VENDOR, order, new Transition("DELIVERED", version(order), "", true)))
+                    SHIPPER, order, new Transition("DELIVERED", version(order), "", true)))
         .isInstanceOf(OrderProblem.class);
-    for (String state : List.of("CONFIRMED", "PICKED_UP", "DELIVERING"))
-      workflow.transition(VENDOR, order, new Transition(state, version(order), "", false));
+    workflow.transition(VENDOR,order,new Transition("CONFIRMED",version(order),"",false));
+    workflow.assign(ADMIN,order,new Assignment(5,version(order)));
+    for (String state : List.of("PICKED_UP", "DELIVERING"))
+      workflow.transition(SHIPPER,order,new Transition(state,version(order),"",false));
     assertThatThrownBy(
             () ->
                 workflow.transition(
-                    VENDOR, order, new Transition("DELIVERED", version(order), "", false)))
+                    SHIPPER, order, new Transition("DELIVERED", version(order), "", false)))
         .isInstanceOf(OrderProblem.class);
-    workflow.transition(VENDOR, order, new Transition("DELIVERED", version(order), "", true));
+    workflow.transition(SHIPPER, order, new Transition("DELIVERED", version(order), "", true));
     assertThat(workflow.read(BUYER, order).get("paymentStatus")).isEqualTo("PAID");
     assertThat(jdbc.queryForObject("select count(*) from store_settlements", Long.class))
         .isEqualTo(1);
@@ -1188,7 +1191,7 @@ class OrderCommerceIntegrationTest {
                 cancelled))
         .isEqualTo("CANCELLED");
     assertThatThrownBy(() -> workflow.read(SHIPPER, cancelled)).isInstanceOf(OrderProblem.class);
-    assertThat(workflow.list(SHIPPER, "shipper", null, 0, 20)).isEmpty();
+    assertThat(workflow.list(SHIPPER, "shipper", null, 0, 20)).noneMatch(row->Objects.equals(row.get("id"),cancelled));
   }
 
   @Test
@@ -1434,7 +1437,8 @@ class OrderCommerceIntegrationTest {
     jdbc.update("update product_variants set stock_quantity=5 where id=1");
     long order=id(create(0));
     workflow.transition(VENDOR,order,new Transition("CONFIRMED",version(order),"",false));
-    workflow.transition(VENDOR,order,new Transition("PICKED_UP",version(order),"",false));
+    workflow.assign(ADMIN,order,new Assignment(5,version(order)));
+    workflow.transition(SHIPPER,order,new Transition("PICKED_UP",version(order),"",false));
     workflow.cancel(VENDOR,order,version(order),"Delivery cannot continue");
     assertThat(jdbc.queryForObject("select stock_quantity from product_variants where id=1",Integer.class)).isEqualTo(3);
   }

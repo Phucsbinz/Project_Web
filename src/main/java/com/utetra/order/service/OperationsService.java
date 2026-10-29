@@ -220,7 +220,7 @@ public class OperationsService {
     if (!actor.is("ADMIN") && !actor.is("MANAGER")) throw OrderProblem.forbidden();
     return refs
         .list(
-            "select r.additional_fee,r.is_active,c.name carrier_name,a.name"
+            "select r.id,r.carrier_id,a.id area_id,r.additional_fee,r.is_active,c.name carrier_name,a.name"
                 + " area_name,a.store_id,s.name store_name from carrier_area_rates r join carriers"
                 + " c on c.id=r.carrier_id join store_delivery_areas a on a.id=r.delivery_area_id"
                 + " join stores s on s.id=a.store_id order by a.store_id,a.id,r.carrier_id")

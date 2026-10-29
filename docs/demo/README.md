@@ -8,18 +8,18 @@ Mật khẩu hiện tại cho **toàn bộ tài khoản có sẵn trong database
 
 | Vai trò | Tên hiển thị | Email đăng nhập |
 | --- | --- | --- |
-| Admin | Nguyễn Đức Minh | demo.admin@example.test |
-| Manager | Trần Hoài An | demo.manager@example.test |
-| Vendor | Lê Phương Thảo | demo.vendor@example.test |
-| Shipper | Nguyễn Quốc Bảo | demo.shipper@example.test |
-| User | Phan Tuấn Thanh | demo.thanh@example.test |
-| User | Nguyễn Minh Anh | demo.minhanh@example.test |
-| User | Trần Ngọc Linh | demo.ngoclinh@example.test |
-| User | Lê Hoàng Nam | demo.hoangnam@example.test |
-| User | Phạm Thu Hà | demo.thuha@example.test |
-| User | Võ Gia Huy | demo.giahuy@example.test |
-| User | Đặng Khánh Vy | demo.khanhvy@example.test |
-| User | Bùi Quang Hưng | demo.quanghung@example.test |
+| Admin | Nguyễn Đức Minh | minhnd.admin@example.test |
+| Manager | Trần Hoài An | anth.manager@example.test |
+| Vendor | Lê Phương Thảo | thaolp.vendor@example.test |
+| Shipper | Nguyễn Quốc Bảo | baonq.shipper@example.test |
+| User | Phan Tuấn Thanh | thanhpt.guest@example.test |
+| User | Nguyễn Minh Anh | anhnm.guest@example.test |
+| User | Trần Ngọc Linh | linhtn.guest@example.test |
+| User | Lê Hoàng Nam | namlh.guest@example.test |
+| User | Phạm Thu Hà | hapt.guest@example.test |
+| User | Võ Gia Huy | huyvg.guest@example.test |
+| User | Đặng Khánh Vy | vydk.guest@example.test |
+| User | Bùi Quang Hưng | hungbq.guest@example.test |
 
 Các email `.test` đã được xác minh trong fixture để đăng nhập demo, không nhận email thật. Kiểm OTP/mail bằng tài khoản và hộp thư thật của bạn. Shipper chỉ hoạt động khi feature tương ứng được bật; fixture không thay cấu hình feature. Admin/Manager/Vendor dùng quyền ứng dụng hiện có; Manager được phân công cả ba chi nhánh demo. Tài khoản cũ của Thanh cũng nằm trong lần reset toàn bộ theo yêu cầu mới. Trạng thái active/xác minh và vai trò không thay đổi.
 

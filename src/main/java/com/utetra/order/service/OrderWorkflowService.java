@@ -23,6 +23,7 @@ public class OrderWorkflowService {
   private final Clock clock;
   private final Duration returnWindow;
   private final boolean shipperEnabled;
+  private final boolean autoDispatch;
   private final OrderInventoryService inventory;
   private final org.springframework.context.ApplicationEventPublisher rewardEvents;
 
@@ -34,8 +35,8 @@ public class OrderWorkflowService {
       OrderPromotionService promos,
       Clock clock,
       @Value("${order.return-window:3h}") Duration returnWindow,
-      @Value("${features.shipper.enabled:false}") boolean shipperEnabled, OrderInventoryService inventory,org.springframework.context.ApplicationEventPublisher rewardEvents) {
-    this.scopes=scopes;
+      @Value("${features.shipper.enabled:false}") boolean shipperEnabled, OrderInventoryService inventory,org.springframework.context.ApplicationEventPublisher rewardEvents,@Value("${order.auto-dispatch.enabled:true}") boolean autoDispatch) {
+    this.scopes=scopes;this.autoDispatch=autoDispatch;
     this.data = data;
     this.refs = refs;
     this.support = support;
@@ -108,6 +109,7 @@ public class OrderWorkflowService {
       delivery.put("events",data.query(DeliveryEvent.class,"where e.assignmentId=:assignment order by e.createdAt,e.id",Map.of("assignment",a.id),false,200));
       return delivery;
     }).toList());
+    result.put("dispatchStatus",!assignments.isEmpty() && "ACTIVE".equals(assignments.getFirst().status)?"ASSIGNED":"CONFIRMED".equals(o.status)?"WAITING":"NOT_READY");
     result.put("canShip",actor.is("SHIPPER") && assigned(actor,id)
         && Set.of("CONFIRMED","PICKED_UP","DELIVERING").contains(o.status));
     if("LOCAL_QR".equals(o.paymentMethod)){var ledger=data.query(LocalQrPayment.class,"where e.orderId=:order",Map.of("order",id),false,100);result.put("paidCount",ledger.stream().filter(p->"SUCCESS".equals(p.status)).count());result.put("payerCount",ledger.size());var mine=ledger.stream().filter(p->p.userId==actor.userId()).findFirst();result.put("myShare",mine.map(p->p.amount).orElse(BigDecimal.ZERO));result.put("myPaymentStatus",mine.map(p->p.status).orElse("HOST"));}
@@ -309,10 +311,12 @@ public class OrderWorkflowService {
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   public Map<String, Object> transition(Actor actor, long id, Transition request) {
+    var candidates=shipperEnabled && autoDispatch && "CONFIRMED".equals(request.status())?lockDispatchCandidates(actor,id):List.<Long>of();
     mutationActor(actor,id);
     Order o = lockForLoyalty(id);
     version(o, request.version());
     boolean shipping = actor.is("SHIPPER");
+    if(!shipping && !"CONFIRMED".equals(request.status()))throw OrderProblem.forbidden();
     if (shipping) {
       shipper(actor);
       scopes.requireService(actor.userId(),o.storeId);
@@ -389,6 +393,7 @@ public class OrderWorkflowService {
     }
     support.audit(actor, "ORDER_TRANSITION", id);
     support.event(o, actor, from, "TRANSITION", request.reason());
+    if(shipperEnabled && autoDispatch && "CONFIRMED".equals(o.status))dispatchPrepared(actor,o,candidates);
     if("DELIVERED".equals(o.status))rewardEvents.publishEvent(new com.utetra.identity.OfferDeliveryReward(o.id));
     return support.view(o);
   }
@@ -684,21 +689,25 @@ public class OrderWorkflowService {
     scopes.requireService(request.shipperId(),o.storeId);
     if (!"ROLE_SHIPPER".equals(refs.user(request.shipperId(), true).get("role_name")))
       throw OrderProblem.invalid("Người nhận không phải Shipper hoạt động.");
+    assignPrepared(actor,o,request.shipperId(),request.reason());
+  }
+
+  private void assignPrepared(Actor actor,Order o,long shipperId,String reason){
     DeliveryAssignment a =
         data
-            .query(DeliveryAssignment.class, "where e.orderId=:order", Map.of("order", id), true, 1)
+            .query(DeliveryAssignment.class, "where e.orderId=:order", Map.of("order", o.id), true, 1)
             .stream()
             .findFirst()
             .orElse(null);
     boolean fresh = a == null;
-    if (!fresh && a.shipperId.equals(request.shipperId()) && "ACTIVE".equals(a.status)) return;
+    if (!fresh && a.shipperId.equals(shipperId) && "ACTIVE".equals(a.status)) return;
     Long previous = fresh ? null : a.shipperId;
-    if(!fresh)OrderSupport.required(request.reason(),500);
+    if(!fresh)OrderSupport.required(reason,500);
     if (fresh) {
       a = new DeliveryAssignment();
-      a.orderId = id;
+      a.orderId = o.id;
     }
-    a.shipperId = request.shipperId();
+    a.shipperId = shipperId;
     a.assignedBy = actor.userId();
     a.status = "ACTIVE";
     a.assignedAt = clock.instant();
@@ -709,15 +718,33 @@ public class OrderWorkflowService {
     assignedEvent.assignmentId = a.id;
     assignedEvent.actorId = actor.userId();
     assignedEvent.type = fresh ? "ASSIGNED" : "REASSIGNED";
-    assignedEvent.note = "shipper:" + (previous == null ? "none" : previous) + "->" + a.shipperId + "; " + OrderSupport.note(request.reason(),400);
+    assignedEvent.note = "shipper:" + (previous == null ? "none" : previous) + "->" + a.shipperId + "; " + OrderSupport.note(reason,400);
     assignedEvent.createdAt = clock.instant();
     data.save(assignedEvent);
     DeliveryAssignmentChange change=new DeliveryAssignmentChange();
-    change.assignmentId=a.id;change.previousShipperId=previous;change.shipperId=a.shipperId;change.actorId=actor.userId();change.reason=OrderSupport.note(request.reason(),500);change.createdAt=clock.instant();data.save(change);
+    change.assignmentId=a.id;change.previousShipperId=previous;change.shipperId=a.shipperId;change.actorId=actor.userId();change.reason=OrderSupport.note(reason,500);change.createdAt=clock.instant();data.save(change);
     String from = o.status;
     o.updatedAt =
         clock.instant().isAfter(o.updatedAt) ? clock.instant() : o.updatedAt.plusNanos(1000);
-    support.audit(actor, "SHIPPER_ASSIGN", id);
+    support.audit(actor, "SHIPPER_ASSIGN", o.id);
     support.event(o, actor, from, "ASSIGNED", "");
   }
+  private List<Long> lockDispatchCandidates(Actor actor,long id){
+    var order=refs.one("select user_id,store_id from orders where id=?",id);
+    List<Long> candidates=refs.list("select shipper_id from shipper_store_scopes where store_id=? order by shipper_id",order.get("store_id")).stream().map(row->CommerceReferenceRepository.number(row,"shipper_id")).toList();
+    var locks=new TreeSet<Long>(candidates);locks.add(actor.userId());locks.add(CommerceReferenceRepository.number(order,"user_id"));
+    scopes.lockUsers(locks.stream().mapToLong(Long::longValue).toArray());return candidates;
+  }
+  private void dispatchPrepared(Actor actor,Order o,List<Long> candidates){
+    if(!data.query(DeliveryAssignment.class,"where e.orderId=:order and e.status='ACTIVE'",Map.of("order",o.id),false,1).isEmpty())return;
+    var eligible=refs.list("select u.id,(select count(*) from delivery_assignments a where a.shipper_id=u.id and a.status='ACTIVE') workload from users u join roles r on r.id=u.role_id join shipper_store_scopes sc on sc.shipper_id=u.id join stores s on s.id=sc.store_id where sc.store_id=? and sc.is_active=true and s.status='ACTIVE' and r.name='ROLE_SHIPPER' and u.is_active=true and u.email_verified_at is not null order by workload,u.id",o.storeId);
+    for(var row:eligible){long shipper=CommerceReferenceRepository.number(row,"id");if(candidates.contains(shipper)){assignPrepared(actor,o,shipper,"Tự động phân công theo phạm vi chi nhánh và số chuyến đang thực hiện.");return;}}
+  }
+  @Transactional(isolation=Isolation.READ_COMMITTED)
+  public Map<String,Object> retryDispatch(Actor actor,long id,long version){
+    if(!shipperEnabled)throw OrderProblem.forbidden();var candidates=lockDispatchCandidates(actor,id);mutationActor(actor,id);Order o=data.require(Order.class,id,true);refs.requireOperator(actor,o.storeId);version(o,version);
+    if(!"CONFIRMED".equals(o.status))throw OrderProblem.conflict("Chỉ phân công đơn đã xác nhận và chưa lấy hàng.");
+    LocalQrPaymentService.assertLedger(data,refs,o,true);if(!"COD".equals(o.paymentMethod)&&!"PAID".equals(o.paymentStatus))throw OrderProblem.conflict("Đơn chưa thanh toán đủ.");dispatchPrepared(actor,o,candidates);return read(actor,id);
+  }
+
 }

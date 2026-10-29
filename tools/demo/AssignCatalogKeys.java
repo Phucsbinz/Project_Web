@@ -13,7 +13,7 @@ class AssignCatalogKeys {
    try{
     for(var item:menu)for(int branch=0;branch<3;branch++){
      String key="demo-"+item.get("slug").asText();
-     try(var s=c.prepareStatement("update products p join stores s on s.id=p.store_id join users u on u.id=s.owner_user_id set p.catalog_key=? where p.slug=? and u.email='demo.vendor@example.test' and (p.catalog_key is null or p.catalog_key=?)")){
+     try(var s=c.prepareStatement("update products p join stores s on s.id=p.store_id join users u on u.id=s.owner_user_id set p.catalog_key=? where p.slug=? and u.email='thaolp.vendor@example.test' and (p.catalog_key is null or p.catalog_key=?)")){
       s.setString(1,key);s.setString(2,key+"-"+branch);s.setString(3,key);changed+=s.executeUpdate();
      }
     }

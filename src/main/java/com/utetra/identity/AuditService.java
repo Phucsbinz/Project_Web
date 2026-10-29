@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.*;
 /** Append-only contract. Enum-only summaries prevent accidental secret/raw-body logging. */
 @Service
 public class AuditService {
-    public enum Action { MANAGE_USER,ASSIGN_MANAGER,HIDE_COMMUNITY,ORDER_STATE_CHANGED,REFUND_RECORDED,STORE_CHANGED,PROMOTION_CHANGED }
+    public enum Action { MANAGE_USER,ASSIGN_MANAGER,HIDE_COMMUNITY,RESTORE_COMMUNITY,ORDER_STATE_CHANGED,REFUND_RECORDED,STORE_CHANGED,PROMOTION_CHANGED }
     public enum Target { USERS,STORES,REVIEWS,PRODUCT_COMMENTS,ORDERS,PROMOTIONS }
     private final IdentityRepository db; private final AccountService accounts; private final Clock clock;
     public AuditService(IdentityRepository db,AccountService accounts,Clock clock) { this.db=db; this.accounts=accounts; this.clock=clock; }

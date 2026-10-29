@@ -1,5 +1,11 @@
 # UTETra — Một layout dùng chung cho toàn bộ nhóm
 
+## Tiền VND dùng chung — 29/10/2026
+`utetra.js` cung cấp money/moneyText theo dạng 1.000đ; site-ui.js dùng chung cho data-money và các text tiền còn xuất thô, không sửa input/API hoặc text script. Các module cart/checkout/QR/voucher dùng helper. app.jsp đổi cache phiên bản money-shipping; không tạo formatter/layout theo role. Kết quả thực ở docs/features/order-payment/MONEY_SHIPPING_EMAILS_20261029.md.
+
+## Quản lý tài khoản và tự phân Shipper — 29/10/2026
+Sidebar app.jsp tách Quản lý tài khoản, Phân công nhân sự, Phạm vi Shipper và Kiểm duyệt nội dung; không tạo layout theo role. Các JSP/JS identity/moderation và topping/readback quản lý dùng chung theme. Detail order hiện kết quả tự phân công hoặc chờ đúng phạm vi, có nút thử lại cho operator hợp lệ. Nguồn/kết quả thật ở docs/features/order-payment/AUTO_DISPATCH_20261029.md; cần ghép cả backend và module assets với shared nav. Không chỉ chép menu.
+
 ## Ví ưu đãi và chat nổi — 28/10/2026
 `app.jsp` thêm nút Ưu đãi của tôi trong menu buyer, bỏ link CSKH customer ở menu/footer và nạp widget nổi góc phải cho khách (Admin giữ hộp thư workspace). `NavigationAdvice` cung cấp currentUserId; app.jsp vẫn decorator duy nhất. CSS/JS chức năng nằm ở account-offers/support-widget, fragment support/widget.jspf phải có UTF-8. Khi ghép bundle chung phải ghép cùng module/migration ví voucher và module Support hiện có; không chỉ chép menu. Cache theme/site-ui tăng phiên bản offers-chat. Chi tiết tại docs/features/identity-membership/OFFERS_CHAT_20261028.md.
 

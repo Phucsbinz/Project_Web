@@ -16,7 +16,7 @@ class RepairDemoFeedback {
     int changed=0,eligible=0;Set<String> covered=new HashSet<>();
     for(String table:List.of("reviews","product_comments")){
      record Change(long id,String previous,String content){}var changes=new ArrayList<Change>();
-     String sql="select f.id,f.content,p.name,p.slug,p.catalog_key,i.size_name,i.sugar_level,i.ice_level from "+table+" f join users a on a.id=f.author_id join products p on p.id=f.product_id join stores s on s.id=p.store_id join users owner on owner.id=s.owner_user_id join order_items i on i.id=f.order_item_id join orders o on o.id=i.order_id where a.email like 'demo.%@example.test' and owner.email='demo.vendor@example.test' and p.catalog_key like 'demo-%' and o.user_id=f.author_id and o.status='DELIVERED' and o.payment_status='PAID' order by f.id";
+     String sql="select f.id,f.content,p.name,p.slug,p.catalog_key,i.size_name,i.sugar_level,i.ice_level from "+table+" f join users a on a.id=f.author_id join products p on p.id=f.product_id join stores s on s.id=p.store_id join users owner on owner.id=s.owner_user_id join order_items i on i.id=f.order_item_id join orders o on o.id=i.order_id where a.email like 'demo.%@example.test' and owner.email='thaolp.vendor@example.test' and p.catalog_key like 'demo-%' and o.user_id=f.author_id and o.status='DELIVERED' and o.payment_status='PAID' order by f.id";
      try(var statement=connection.createStatement();var rows=statement.executeQuery(sql)){
       while(rows.next()){
        var drink=drinks.get(rows.getString("catalog_key"));if(drink==null)continue;

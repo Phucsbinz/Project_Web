@@ -52,15 +52,15 @@ def run_tests():
             return resp.json()
 
         # =========================================================================
-        # ROLE 1: USER (demo.thanh@example.test)
+        # ROLE 1: USER (thanhpt.guest@example.test)
         # =========================================================================
-        print("\n=== STARTING ROLE_USER TESTS (demo.thanh@example.test) ===")
+        print("\n=== STARTING ROLE_USER TESTS (thanhpt.guest@example.test) ===")
         user_ctx = browser.new_context(viewport={'width': 1440, 'height': 900})
         user_page = user_ctx.new_page()
         user_page.on('pageerror', lambda e: errors.append(f"USER PageError: {e}"))
 
-        login_res = login_user(user_ctx, 'demo.thanh@example.test', '123456')
-        record(1, "User: Đăng nhập tài khoản demo.thanh@example.test", "PASS", f"Đăng nhập thành công, vai trò ROLE_USER, redirect={login_res.get('redirect')}")
+        login_res = login_user(user_ctx, 'thanhpt.guest@example.test', '123456')
+        record(1, "User: Đăng nhập tài khoản thanhpt.guest@example.test", "PASS", f"Đăng nhập thành công, vai trò ROLE_USER, redirect={login_res.get('redirect')}")
 
         # --- Kịch bản 1: Menu & Customization ---
         # 1.1 Trang chủ /
@@ -208,7 +208,7 @@ def run_tests():
         user_page.wait_for_selector('#identity, main', timeout=10000)
         shot_profile = save_shots(user_page, "user_08_profile")
         record(7, "User: Hồ sơ cá nhân /account/profile (Họ tên, Email, SĐT)", "PASS",
-               "Hiển thị đầy đủ thông tin: Phan Tuấn Thanh, email demo.thanh@example.test, SĐT cá nhân.", shot_profile)
+               "Hiển thị đầy đủ thông tin: Phan Tuấn Thanh, email thanhpt.guest@example.test, SĐT cá nhân.", shot_profile)
 
         # 3.2 Sổ địa chỉ /account/addresses
         user_page.goto(BASE + '/account/addresses', wait_until='domcontentloaded')
@@ -272,15 +272,15 @@ def run_tests():
                f"Khởi tạo nhóm thành công: {group_url}; Link mời: {invite_link}; Bảng quyền lợi: 3 người giảm 5%, 5 người giảm 10%, 10 người giảm 15%.", shot_group)
 
         # =========================================================================
-        # ROLE 2: VENDOR (demo.vendor@example.test)
+        # ROLE 2: VENDOR (thaolp.vendor@example.test)
         # =========================================================================
-        print("\n=== STARTING ROLE_VENDOR TESTS (demo.vendor@example.test) ===")
+        print("\n=== STARTING ROLE_VENDOR TESTS (thaolp.vendor@example.test) ===")
         vendor_ctx = browser.new_context(viewport={'width': 1440, 'height': 900})
         vendor_page = vendor_ctx.new_page()
         vendor_page.on('pageerror', lambda e: errors.append(f"VENDOR PageError: {e}"))
 
-        login_res_vendor = login_user(vendor_ctx, 'demo.vendor@example.test', '123456')
-        record(14, "Vendor: Đăng nhập tài khoản demo.vendor@example.test", "PASS", "Đăng nhập Vendor thành công (Lê Phương Thảo - Chủ cửa hàng)")
+        login_res_vendor = login_user(vendor_ctx, 'thaolp.vendor@example.test', '123456')
+        record(14, "Vendor: Đăng nhập tài khoản thaolp.vendor@example.test", "PASS", "Đăng nhập Vendor thành công (Lê Phương Thảo - Chủ cửa hàng)")
 
         # 2.1 Quản lý sản phẩm /vendor/products
         vendor_page.goto(BASE + '/vendor/products', wait_until='domcontentloaded')
@@ -306,15 +306,15 @@ def run_tests():
                "Xem thống kê doanh thu bán hàng, biểu đồ và xuất báo cáo CSV phục vụ kinh doanh.", shot_vendor_rev)
 
         # =========================================================================
-        # ROLE 3: MANAGER (demo.manager@example.test)
+        # ROLE 3: MANAGER (anth.manager@example.test)
         # =========================================================================
-        print("\n=== STARTING ROLE_MANAGER TESTS (demo.manager@example.test) ===")
+        print("\n=== STARTING ROLE_MANAGER TESTS (anth.manager@example.test) ===")
         mgr_ctx = browser.new_context(viewport={'width': 1440, 'height': 900})
         mgr_page = mgr_ctx.new_page()
         mgr_page.on('pageerror', lambda e: errors.append(f"MANAGER PageError: {e}"))
 
-        login_res_mgr = login_user(mgr_ctx, 'demo.manager@example.test', '123456')
-        record(18, "Manager: Đăng nhập tài khoản demo.manager@example.test", "PASS", "Đăng nhập Quản lý chi nhánh thành công (Trần Hoài An)")
+        login_res_mgr = login_user(mgr_ctx, 'anth.manager@example.test', '123456')
+        record(18, "Manager: Đăng nhập tài khoản anth.manager@example.test", "PASS", "Đăng nhập Quản lý chi nhánh thành công (Trần Hoài An)")
 
         # 3.1 Quản lý đơn hàng cả 3 chi nhánh /manager/orders
         mgr_page.goto(BASE + '/manager/orders', wait_until='domcontentloaded')
@@ -339,15 +339,15 @@ def run_tests():
                "Cấu hình và kiểm tra trạng thái hoạt động, địa chỉ và giờ mở cửa các điểm bán.", shot_mgr_stores)
 
         # =========================================================================
-        # ROLE 4: SHIPPER (demo.shipper@example.test)
+        # ROLE 4: SHIPPER (baonq.shipper@example.test)
         # =========================================================================
-        print("\n=== STARTING ROLE_SHIPPER TESTS (demo.shipper@example.test) ===")
+        print("\n=== STARTING ROLE_SHIPPER TESTS (baonq.shipper@example.test) ===")
         shipper_ctx = browser.new_context(viewport={'width': 1440, 'height': 900})
         shipper_page = shipper_ctx.new_page()
         shipper_page.on('pageerror', lambda e: errors.append(f"SHIPPER PageError: {e}"))
 
-        login_res_shipper = login_user(shipper_ctx, 'demo.shipper@example.test', '123456')
-        record(22, "Shipper: Đăng nhập tài khoản demo.shipper@example.test", "PASS", "Đăng nhập Nhân viên giao hàng thành công (Nguyễn Quốc Bảo)")
+        login_res_shipper = login_user(shipper_ctx, 'baonq.shipper@example.test', '123456')
+        record(22, "Shipper: Đăng nhập tài khoản baonq.shipper@example.test", "PASS", "Đăng nhập Nhân viên giao hàng thành công (Nguyễn Quốc Bảo)")
 
         # 4.1 Báo cáo & Lịch trình chuyến giao /shipper/reports
         shipper_page.goto(BASE + '/shipper/reports', wait_until='domcontentloaded')
@@ -357,15 +357,15 @@ def run_tests():
                "Bảng theo dõi lịch trình nhận đơn, giao hàng thành công và thống kê hiệu suất giao nhận.", shot_shipper)
 
         # =========================================================================
-        # ROLE 5: ADMIN (demo.admin@example.test)
+        # ROLE 5: ADMIN (minhnd.admin@example.test)
         # =========================================================================
-        print("\n=== STARTING ROLE_ADMIN TESTS (demo.admin@example.test) ===")
+        print("\n=== STARTING ROLE_ADMIN TESTS (minhnd.admin@example.test) ===")
         admin_ctx = browser.new_context(viewport={'width': 1440, 'height': 900})
         admin_page = admin_ctx.new_page()
         admin_page.on('pageerror', lambda e: errors.append(f"ADMIN PageError: {e}"))
 
-        login_res_admin = login_user(admin_ctx, 'demo.admin@example.test', '123456')
-        record(24, "Admin: Đăng nhập tài khoản demo.admin@example.test", "PASS", "Đăng nhập Quản trị viên cấp cao thành công (Nguyễn Đức Minh)")
+        login_res_admin = login_user(admin_ctx, 'minhnd.admin@example.test', '123456')
+        record(24, "Admin: Đăng nhập tài khoản minhnd.admin@example.test", "PASS", "Đăng nhập Quản trị viên cấp cao thành công (Nguyễn Đức Minh)")
 
         # 5.1 Dashboard quản trị /admin
         admin_page.goto(BASE + '/admin', wait_until='domcontentloaded')

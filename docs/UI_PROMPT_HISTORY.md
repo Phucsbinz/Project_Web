@@ -163,3 +163,7 @@ Thay menu CSKH khách bằng chat góc phải; Ưu đãi của tôi mở popup t
 
 ## 29/10/2026 — Workspace theo role và phạm vi hiện hành
 Yêu cầu: Vendor vào tổng quan kinh doanh tất cả cửa hàng sở hữu, tách mua hàng/workspace; Manager vào vận hành chi nhánh theo phân công 0/1/nhiều, không có menu giá món/khuyến mãi/đối soát, CATALOG_ADMIN chỉ bổ sung danh mục/topping; Shipper vào dashboard giao hàng. Giữ deep link hợp lệ, một SiteMesh layout và widget đang có. Kết quả local: thêm workspace Vendor/Manager, Admin phân công đọc được, redirect kiểm role/local path, menu chung theo capability. Chạy Java 21: 8 tests đạt sau RED cho redirect/route; Shared UI/skills/Node syntax đạt. Render Tomcat và kiểm tích hợp toàn bộ do lượt kiểm chung thực hiện, chưa tự ghi là đã đạt tại mục này. Không commit/push hoặc đổi datasource/provider.
+# 29/10/2026 — Quản trị CRUD / tự phân công
+Tách tài khoản và phân công thành mục riêng, thêm lọc vai trò/tạo/vô hiệu hóa/kích hoạt, màn kiểm duyệt nội dung; topping/biểu phí đọc lại giá trị đã lưu. Chi tiết đơn thông báo đã tự gán Shipper hoặc chờ phù hợp. UI thực kiểm 5 nhóm, account390/768/1440, không lỗi browser; một SiteMesh layout. Xem AUTO_DISPATCH_20261029.md.
+# 29/10/2026 — Tiền VND và nút hóa đơn/giao hàng
+Đổi Phí giao, chuẩn hóa 1.000đ qua helper chung; ẩn nút tiến hành giao ở operator sau xác nhận, chỉ Shipper thao tác; đơn thanh toán đủ thay khối QR bằng Xem hóa đơn. Giữ một layout, cache chung tăng phiên bản. Browser CRUD/dispatch5 và voucher/invoice3 qua, xem MONEY_SHIPPING_EMAILS_20261029.md.

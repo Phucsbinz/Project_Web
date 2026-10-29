@@ -8,6 +8,7 @@ public final class CatalogViews {
     private CatalogViews() {}
     public record CategoryView(Long id,String name,String slug,String description,int displayOrder,boolean active,String imageUrl,long version) {}
     public record ToppingView(Long id,String name,BigDecimal price,boolean active,long version) {}
+    public record StoreToppingView(Long id,String name,BigDecimal price,boolean active,boolean available) {}
     public record AreaView(Long id,String areaCode,String name,boolean active,long version) {}
     public record DeliveryRateView(Long areaId,String areaName,Long carrierId,String carrierName,BigDecimal fee) {}
     public record CommissionPolicyView(Long id,String name,BigDecimal ratePercent) {}
