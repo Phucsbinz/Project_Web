@@ -17,6 +17,8 @@ public class CatalogManagementController {
     private final CatalogMediaService media;
     public CatalogManagementController(CatalogService catalog,StoreService stores,PromotionService promotions,CatalogMediaService media) { this.catalog=catalog; this.stores=stores; this.promotions=promotions; this.media=media; }
     @PostMapping(value="/media/{type}/{id}",consumes="multipart/form-data") public void image(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable String type,@PathVariable Long id,@RequestParam long version,@RequestParam org.springframework.web.multipart.MultipartFile file) { media.upload(p,type,id,version,file); }
+    @GetMapping("/vendors") public Object vendors(@AuthenticationPrincipal UtetraPrincipal p) {return stores.vendors(p);}
+    @PutMapping("/stores/{id}/owner") public Object owner(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable Long id,@Valid @RequestBody OwnerInput input) {return stores.owner(p,id,input);}
     @GetMapping("/stores") public Object stores(@AuthenticationPrincipal UtetraPrincipal p) { return stores.managedStores(p); }
     @GetMapping("/stores/{id}") public Object store(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable Long id) { return stores.managedStore(p,id); }
     @GetMapping("/stores/{id}/commission-policies") public Object policies(@AuthenticationPrincipal UtetraPrincipal p,@PathVariable Long id) { return stores.commissionPolicies(p,id); }

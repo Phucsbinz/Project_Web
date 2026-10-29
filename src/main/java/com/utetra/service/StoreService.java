@@ -65,6 +65,16 @@ public class StoreService {
         require(!input.acceptingOrders() || "ACTIVE".equals(s.getStatus()),"Shop chưa được duyệt hoặc đang bị khóa");
         apply(s,input); stores.flush(); guard.audit(p,"UPDATE","STORE",id); return view(s);
     }
+    public Object vendors(UtetraPrincipal p) { guard.admin(p);return operations.vendors(); }
+    @Transactional public StoreView owner(UtetraPrincipal p,Long id,@Valid OwnerInput input) {
+        guard.admin(p);
+        require(operations.lockActiveVendor(input.userId()),"Chủ chi nhánh phải là Vendor đang hoạt động và đã xác minh email");
+        var s=found(stores.locked(id));expectedVersion(s.getVersion(),input.version());
+        if(s.getOwnerUserId().equals(input.userId())) return view(s);
+        Long previous=s.getOwnerUserId();s.setOwnerUserId(input.userId());stores.flush();
+        guard.audit(p,"TRANSFER_OWNER","STORE",id,"Chủ cũ #"+previous+"; chủ mới #"+input.userId());
+        return view(s);
+    }
     @Transactional public StoreView review(UtetraPrincipal p,Long id,@Valid Decision input) {
         guard.admin(p); var s=found(stores.findById(id)); version(s.getVersion(),input.version());
         require(!s.getOwnerUserId().equals(p.userId()),"Không được tự duyệt shop");
@@ -101,7 +111,18 @@ public class StoreService {
     }
     @Transactional public void assign(UtetraPrincipal p,Long storeId,@Valid Membership input,boolean catalogDelegation) {
         guard.admin(p); found(stores.findById(storeId));
-        guard.assignmentTarget(input.userId(),input.active());
+        require((input.previousUserId()==null)==(input.previousStoreId()==null),"Thiếu thông tin phân công cần sửa. Hãy tải lại trang");
+        // Lock affected users in a stable order, shared with scope revocation/operational writes.
+        var users=new TreeSet<Long>();users.add(input.userId());if(input.previousUserId()!=null) users.add(input.previousUserId());
+        for(Long user:users) guard.assignmentTarget(user,user.equals(input.userId()) && input.active());
+        boolean moving=input.previousUserId()!=null && (!input.userId().equals(input.previousUserId()) || !storeId.equals(input.previousStoreId()));
+        if(moving) {
+            var previous=found(memberships.assignment(input.previousUserId(),input.previousStoreId()));
+            var target=memberships.assignment(input.userId(),storeId);
+            require(target.isEmpty() || !target.get().getActive(),"Phân công đích đã có hiệu lực. Hãy sửa phân công đó");
+            previous.setActive(false);previous.setAssignedBy(p.userId());
+            guard.audit(p,"REASSIGN_MANAGER","STORE",input.previousStoreId(),"Manager #"+input.previousUserId()+" tại chi nhánh #"+input.previousStoreId()+" chuyển sang Manager #"+input.userId()+" tại chi nhánh #"+storeId);
+        }
         var m=memberships.assignment(input.userId(),storeId).orElseGet(StoreMembership::new);
         m.setStoreId(storeId); m.setUserId(input.userId()); m.setAssignedBy(p.userId()); m.setActive(input.active()); m.setMemberRole(catalogDelegation?"CATALOG_ADMIN":"MANAGER");
         memberships.saveAndFlush(m); guard.audit(p,"ASSIGN","STORE",storeId);

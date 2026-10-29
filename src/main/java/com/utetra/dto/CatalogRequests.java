@@ -72,5 +72,9 @@ public final class CatalogRequests {
         public AreaInput(String areaCode,String name,boolean active) { this(areaCode,name,active,null); }
     }
     public record Availability(boolean available) {}
-    public record Membership(@NotNull Long userId, boolean active) {}
+    public record OwnerInput(@NotNull @Positive Long userId, @NotNull @PositiveOrZero
+        @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using=com.utetra.identity.StrictNumbers.LongValue.class) Long version) {}
+    public record Membership(@NotNull @Positive Long userId, boolean active, @Positive Long previousUserId, @Positive Long previousStoreId) {
+        public Membership(Long userId,boolean active) {this(userId,active,null,null);}
+    }
 }

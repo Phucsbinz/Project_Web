@@ -30,6 +30,17 @@ public class StoreOperationsRepository {
     public void revokeSessions(long userId, Instant now) {
         jdbc.update("update auth_sessions set revoked_at=?, version=version+1 where user_id=? and revoked_at is null",Timestamp.from(now),userId);
     }
+    public List<java.util.Map<String,Object>> vendors() {
+        return jdbc.query("select u.id,u.full_name as name from users u join roles r on r.id=u.role_id where r.name='ROLE_VENDOR' and u.is_active=true and u.email_verified_at is not null order by u.full_name,u.id",
+            (rs,n)->java.util.Map.<String,Object>of("id",rs.getLong("id"),"name",rs.getString("name")));
+    }
+    public boolean lockActiveVendor(long userId) {
+        var rows=jdbc.queryForList("select role_id,is_active,email_verified_at from users where id=? for update",userId);
+        if(rows.isEmpty()) return false;
+        var row=rows.getFirst();Object active=row.get("is_active");
+        return (Boolean.TRUE.equals(active) || active instanceof Number n && n.intValue()!=0) && row.get("email_verified_at")!=null
+            && "ROLE_VENDOR".equals(jdbc.queryForObject("select name from roles where id=?",String.class,row.get("role_id")));
+    }
     public boolean activeManager(long userId) {
         return Integer.valueOf(1).equals(jdbc.queryForObject("select count(*) from users u join roles r on r.id=u.role_id where u.id=? and r.name='ROLE_MANAGER' and u.is_active=true and u.email_verified_at is not null",Integer.class,userId));
     }

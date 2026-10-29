@@ -124,3 +124,12 @@ Theo yêu cầu mới, Manager là vận hành, không còn sửa giá món/prom
 Dispatch: Admin/Manager, CONFIRMED và đủ điều kiện thanh toán, Shipper active có shipper_store_scopes; không đổi bình thường sau PICKED_UP. Assignment hiện hành giữ unique order, delivery_assignment_changes lưu lịch sử old/new/operator/reason; không thay event cũ. Shipper hoàn tất chỉ xem lịch sử tối thiểu, không PII/link chi tiết. COD là thu hộ, không phải thu nhập. Không tự hủy/hoàn khi giao thất bại.
 
 Migration V2026102901 tạo scopes/events/history, không tự cấp scope; giữ snapshot assignment cũ, không suy dựng lịch sử đã mất. Chưa áp DB shared. Xem docs/reviews/role-workflow-fixes-2026-10-29/REPORT.md về vận hành/kiểm chứng.
+
+
+## Admin đổi chủ chi nhánh và sửa phân công — 29/10/2026
+
+- `/admin/stores` → Chỉnh sửa → Vendor sở hữu chi nhánh → Lưu Vendor sở hữu. Thao tác riêng, cần xác nhận; không tự lưu các trường thông tin cửa hàng đang sửa.
+- `GET /api/admin/catalog/vendors` chỉ liệt kê Vendor đang hoạt động, đã xác minh email; không trả email hoặc thông tin xác thực.
+- `PUT /api/admin/catalog/stores/{id}/owner` yêu cầu `userId` và `version` hiện tại. Chỉ Admin được thực hiện; cập nhật sở hữu và audit chủ cũ/mới trong cùng transaction, không đổi role hay tự cấp membership. Vendor cũ mất quyền sở hữu ở request tiếp theo, Vendor mới có quyền theo store; không viết lại đơn hoặc ledger/settlement đã ghi nhận.
+- `/admin/assignments`: Sửa nạp dữ liệu, hiện trạng thái sửa và nút Hủy. Khi đổi Manager/chi nhánh, UI gửi thêm `previousUserId`, `previousStoreId`; backend thu hồi đúng phân công cũ và lưu đích trong cùng transaction, giữ lịch sử. Nếu đích đã active, từ chối để không ghi đè phân công khác. Tạo thêm phân công độc lập không gửi cặp gốc.
+- Không migration và không cập nhật DB demo trong lượt này. Test và giới hạn thực tế tại `docs/reviews/admin-ownership-manager-fixes-20261029.md`.

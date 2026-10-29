@@ -174,6 +174,57 @@ class CatalogWorkflowRegressionTest {
         return new StoreInput("Shop trà","fractional","1 Võ Văn Ngân","0901234567","Fractional",
             LocalTime.of(8,0,0,fractionOnOpen?1:0),LocalTime.of(22,0,0,fractionOnOpen?0:123000000),false,0);
     }
+    @Test void adminCanTransferExistingStoreOwnershipAndOldOwnerLosesAccess() throws Exception {
+        long version=stores.managedStore(admin,storeId).version();
+        assertThat(stores.managedStore(buyer,storeId).id()).isEqualTo(storeId);
+        putBody("/api/admin/catalog/stores/"+storeId+"/owner",Map.of("userId",vendor.userId(),"version",version),200);
+        em.clear();
+        assertThat(stores.managedStore(admin,storeId).ownerUserId()).isEqualTo(vendor.userId());
+        assertThat(policy.canOperate(vendor,storeId)).isTrue();
+        assertThatThrownBy(()->stores.managedStore(buyer,storeId)).isInstanceOfSatisfying(ResponseStatusException.class,e->assertThat(e.getStatusCode().value()).isEqualTo(403));
+        assertThat(jdbc.queryForObject("select count(*) from audit_logs where action='TRANSFER_OWNER' and entity_id=?",Integer.class,storeId)).isEqualTo(1);
+        putBody("/api/admin/catalog/stores/"+storeId+"/owner",Map.of("userId",other.userId(),"version",version),409);
+        assertThat(stores.managedStore(admin,storeId).ownerUserId()).isEqualTo(vendor.userId());
+    }
+    @Test void ownershipChangeRejectsInvalidTargetMissingVersionAndOtherRoles() throws Exception {
+        long version=stores.managedStore(admin,storeId).version();
+        String path="/api/admin/catalog/stores/"+storeId+"/owner";
+        putBody(path,Map.of("userId",manager.userId(),"version",version),400);
+        jdbc.update("update users set is_active=false where id=?",other.userId());
+        putBody(path,Map.of("userId",other.userId(),"version",version),400);
+        putBody(path,Map.of("userId",vendor.userId()),400);
+        var auth=new UsernamePasswordAuthenticationToken(vendor,null,List.of(new SimpleGrantedAuthority(vendor.role())));
+        mvc.perform(put("/api/vendor/catalog/stores/"+storeId+"/owner").with(authentication(auth)).with(csrf()).contentType("application/json").content(mapper.writeValueAsString(Map.of("userId",vendor.userId(),"version",version)))).andExpect(status().isForbidden());
+        em.clear();assertThat(stores.managedStore(admin,storeId).ownerUserId()).isEqualTo(buyer.userId());
+    }
+    @Test void editingManagerAssignmentMovesOnlyTheSelectedAssignment() throws Exception {
+        stores.assign(admin,storeId,new Membership(manager.userId(),true),false);
+        var second=stores.register(vendor,shop("second-assignment",0,false));
+        var body=Map.of("userId",manager.userId(),"active",true,"previousUserId",manager.userId(),"previousStoreId",storeId);
+        var auth=new UsernamePasswordAuthenticationToken(admin,null,List.of(new SimpleGrantedAuthority(admin.role())));
+        mvc.perform(post("/api/admin/catalog/stores/"+second.id()+"/memberships").with(authentication(auth)).with(csrf()).contentType("application/json").content(mapper.writeValueAsString(body))).andExpect(status().isOk());
+        em.flush();em.clear();
+        assertThat(policy.canOperate(manager,storeId)).isFalse();
+        assertThat(policy.canOperate(manager,second.id())).isTrue();
+        assertThat(jdbc.queryForObject("select count(*) from store_memberships where user_id=? and is_active=true",Integer.class,manager.userId())).isEqualTo(1);
+    }
+    @Test void movingAssignmentToExistingActiveTargetIsRejectedWithoutRevokingSource() throws Exception {
+        stores.assign(admin,storeId,new Membership(manager.userId(),true),false);
+        var second=stores.register(vendor,shop("occupied-target",0,false));
+        stores.assign(admin,second.id(),new Membership(manager.userId(),true),false);
+        var body=Map.of("userId",manager.userId(),"active",true,"previousUserId",manager.userId(),"previousStoreId",storeId);
+        var auth=new UsernamePasswordAuthenticationToken(admin,null,List.of(new SimpleGrantedAuthority(admin.role())));
+        mvc.perform(post("/api/admin/catalog/stores/"+second.id()+"/memberships").with(authentication(auth)).with(csrf()).contentType("application/json").content(mapper.writeValueAsString(body))).andExpect(status().isBadRequest());
+        em.clear();assertThat(policy.canOperate(manager,storeId)).isTrue();assertThat(policy.canOperate(manager,second.id())).isTrue();
+    }
+    @Test void vendorPickerReturnsStableKeysAndOnlyEligibleAccounts() throws Exception {
+        jdbc.update("update users set is_active=false where id=?",other.userId());
+        var auth=new UsernamePasswordAuthenticationToken(admin,null,List.of(new SimpleGrantedAuthority(admin.role())));
+        mvc.perform(get("/api/admin/catalog/vendors").with(authentication(auth))).andExpect(status().isOk())
+            .andExpect(jsonPath("$[*].id",org.hamcrest.Matchers.hasItem(vendor.userId().intValue())))
+            .andExpect(jsonPath("$[*].id",org.hamcrest.Matchers.not(org.hamcrest.Matchers.hasItem(other.userId().intValue()))))
+            .andExpect(jsonPath("$[0].name").isString());
+    }
     private UtetraPrincipal vendorForOwner() { return buyer; }
     private void putBody(String path,Map<String,Object> body,int expected) throws Exception {
         var auth=new UsernamePasswordAuthenticationToken(admin,null,List.of(new SimpleGrantedAuthority(admin.role())));

@@ -79,8 +79,11 @@ public class CatalogGuard {
         if(!"ROLE_MANAGER".equals(role) || jdbc.queryForList("select id from store_memberships where user_id=? and is_active=true and member_role='CATALOG_ADMIN'"+(write?" for update":""),p.userId()).isEmpty()) forbidden();
     }
     public void audit(UtetraPrincipal p,String action,String type,Long id) {
+        audit(p,action,type,id,action+" "+type+" #"+id);
+    }
+    public void audit(UtetraPrincipal p,String action,String type,Long id,String summary) {
         var entry=new CatalogAudit(); entry.setActorId(p.userId()); entry.setAction(action); entry.setEntityType(type);
-        entry.setEntityId(id); entry.setSummary(action+" "+type+" #"+id); audit.save(entry);
+        entry.setEntityId(id); entry.setSummary(summary); audit.save(entry);
     }
     public static void forbidden() { throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Không có quyền trong phạm vi này"); }
     public static void require(boolean condition,String message) { if(!condition) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,message); }

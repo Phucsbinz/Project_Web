@@ -10,7 +10,7 @@
   const message = document.querySelector('#management-message');
   const tabs = app.dataset.role === 'manager' ? ['categories','toppings'] : app.dataset.role === 'vendor' ? ['stores','products','promotions','areas','stock'] : ['stores','products','categories','toppings','promotions','areas','stock',...(app.dataset.role === 'admin' ? ['memberships'] : [])];
   const section = tabs.includes(app.dataset.section) ? app.dataset.section : 'stores';
-  let editing = null, shopList = [], categories = [], toppings = [], productList = [], loading = false;
+  let editing = null, shopList = [], vendors = [], categories = [], toppings = [], productList = [], loading = false;
   let productLookupReady = false, productLookupRevision = 0;
   const labels = {stores:'Chi nhánh',products:'Sản phẩm',categories:'Danh mục',toppings:'Topping',promotions:'Khuyến mãi',areas:'Khu vực giao',stock:'Topping tại shop',memberships:'Phân công Manager'};
   const help={stores:'Xem thông tin chi nhánh, duyệt hồ sơ và cập nhật tình trạng nhận đơn.',products:'Chọn chi nhánh, tìm món trong danh sách rồi bấm Chỉnh sửa; hoặc thêm món mới.',categories:'Quản lý nhóm đồ uống dùng chung. Thứ tự quyết định cách hiển thị trên thực đơn.',toppings:'Quản lý tên, giá và trạng thái topping dùng chung.',promotions:'Kiểm tra phạm vi chi nhánh, thời gian và điều kiện trước khi lưu ưu đãi.',areas:'Chọn chi nhánh để cấu hình những khu vực nhận giao hàng.',stock:'Chọn chi nhánh và topping để cập nhật khả năng phục vụ.',memberships:'Chọn chi nhánh rồi nhập ID Manager cần phân công. Quyền có hiệu lực sau khi lưu.'};
@@ -111,7 +111,20 @@
     const reset = el('button',item?'Hủy chỉnh sửa / thêm mới':'Làm trống biểu mẫu','btn btn-outline-secondary'); reset.type = 'button'; reset.onclick = () => edit(); form.append(reset);
     if(section === 'stores' && !item) { save.disabled = true; form.append(el('p','Đăng ký shop mới tại trang Đăng ký shop. Chọn một shop để cập nhật.','small text-secondary')); }
     document.querySelector('#image-panel').hidden = !item || !['products','stores'].includes(section);
+    if(section === 'stores' && item && app.dataset.role === 'admin') ownerEditor(item);
     if(item) document.querySelector('#image-type').value = section === 'products' ? 'product' : 'store';
+  }
+  function ownerEditor(item) {
+    const panel=el('div',undefined,'border-top pt-3 mt-3');
+    const label=el('label','Vendor sở hữu chi nhánh','form-label');label.htmlFor='store-owner';
+    const owner=el('select',undefined,'form-select');owner.id='store-owner';
+    vendors.forEach(v=>{const option=el('option',v.name+' · #'+v.id);option.value=v.id;owner.append(option);});
+    if(!vendors.some(v=>Number(v.id)===Number(item.ownerUserId))) {const current=el('option','Chủ hiện tại #'+item.ownerUserId+' (không nằm trong danh sách Vendor đủ điều kiện)');current.value=item.ownerUserId;owner.prepend(current);}
+    owner.value=String(item.ownerUserId);
+    const save=button('Lưu Vendor sở hữu',async()=>{const userId=Number(owner.value);if(userId===Number(item.ownerUserId)) {notice('Chủ sở hữu không thay đổi.');return;}
+      if(!await window.utetraConfirm('Đổi chủ sở hữu chi nhánh? Vendor cũ sẽ mất quyền quản lý chi nhánh này.')) return;
+      await request('/stores/'+item.id+'/owner','PUT',{userId,version:item.version});await reload();notice('Đã cập nhật Vendor sở hữu.');});
+    panel.append(label,owner,el('p','Lưu riêng thay đổi chủ sở hữu. Không thay đổi Manager, đơn hàng hoặc số tiền đã ghi nhận.','small text-secondary'),save);form.append(panel);
   }
   function button(text, action) {
     const b = el('button',text,'btn btn-sm btn-outline-dark'); b.type = 'button';
@@ -203,7 +216,7 @@
   }
   async function reload() {
     productLookupReady = false; syncPromotionSave();
-    const previous = select.value || new URL(location.href).searchParams.get('storeId') || new URL(location.href).searchParams.get('store'); shopList = await request('/stores'); select.replaceChildren();
+    const previous = select.value || new URL(location.href).searchParams.get('storeId') || new URL(location.href).searchParams.get('store'); shopList = await request('/stores'); if(app.dataset.role==='admin' && section==='stores') vendors=await request('/vendors'); select.replaceChildren();
     if(app.dataset.role === 'admin') { const o = el('option','Toàn hệ thống (khuyến mãi)'); o.value = ''; select.append(o); }
     shopList.forEach(s => { const o = el('option',s.name + ' · ' + (states[s.status]||s.status)); o.value = s.id; select.append(o); });
     if(!select.options.length) {const o=el('option','Chưa có cửa hàng được phân công');o.value='';select.append(o);}
